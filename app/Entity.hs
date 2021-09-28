@@ -99,4 +99,16 @@ getHp :: Entity -> Int
 getHp e = e ^. hp
 
 updateHp :: Entity -> Int -> Entity
-updateHp e@Actor{ _hp = hp, _maxHp = maxHp } newHp = e{ _hp = max 0 $ min maxHp newHp }
+updateHp e@Actor{ _hp = hp, _maxHp = maxHp } newHp =
+        let hpInRange = max 0 $ min maxHp newHp
+        in if hpInRange > 0
+               then e{ _hp = max 0 $ min maxHp newHp }
+               else die e
+
+die :: Entity -> Entity
+die e = e{ _hp = 0
+         , _char = "%"
+         , _entityAttr = "deadAttr"
+         , _blocksMovement = False
+         , _name = "remains of " ++ (e ^. name)
+         }
