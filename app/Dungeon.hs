@@ -16,6 +16,7 @@ module Dungeon
     , walkableFloor
     , getPlayerEntity
     , enemyCoords
+    , aliveEnemies
     ) where
 
 import           Brick                          (AttrName)
@@ -44,7 +45,8 @@ import           Dungeon.Map.Tile               (Tile, TileMap, darkAttr,
 import           Dungeon.Room                   (Room (..), x1, x2, y1, y2)
 import           Dungeon.Size                   (height, maxRooms, roomMaxSize,
                                                  roomMinSize, width)
-import           Entity                         (Entity (..), name, position)
+import           Entity                         (Entity (..), isAlive, name,
+                                                 position)
 import qualified Entity                         as E
 import           Graphics.Vty.Attributes.Color  (Color, white, yellow)
 import           Linear.V2                      (V2 (..), _x, _y)
@@ -123,6 +125,9 @@ transparentMap = do
 
 enemyCoords :: Dungeon -> [Coord]
 enemyCoords d = map (^. position) $ filter (not . E.isPlayer) $ d ^. entities
+
+aliveEnemies :: State Dungeon [Entity]
+aliveEnemies = filter (^. isAlive) <$> enemies
 
 enemies :: State Dungeon [Entity]
 enemies = do
