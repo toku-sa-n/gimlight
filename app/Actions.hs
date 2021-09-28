@@ -71,7 +71,9 @@ moveOrWait e =
                      offset = nextCoord - e ^. position
                      newAi = HostileEnemy { _path = remaining }
                      newEntity = e & ai .~ newAi
-                 in moveAction newEntity offset
+                 in do
+                     moveAction newEntity offset
+                     return Nothing
 
 bumpAction :: Entity -> V2 Int -> State Dungeon (Maybe Message)
 bumpAction src offset = do
@@ -79,7 +81,9 @@ bumpAction src offset = do
 
         case x of
             Just _  -> meleeAction src offset
-            Nothing -> moveAction src offset
+            Nothing -> do
+                moveAction src offset
+                return Nothing
 
 getBlockingEntityAtLocation :: Coord -> State Dungeon (Maybe Entity)
 getBlockingEntityAtLocation c = find (\x -> x ^. position == c) <$> enemies
@@ -114,8 +118,8 @@ meleeAction src offset = do
                                     pushEntity x
                                     return $ Just $ attackMessage $ msg ++ " but does not damage."
 
-moveAction :: Entity -> V2 Int -> State Dungeon (Maybe Message)
-moveAction src offset = state $ \d -> (Nothing, execState (pushEntity $ updatePosition src offset d) d)
+moveAction :: Entity -> V2 Int -> State Dungeon ()
+moveAction src offset = state $ \d -> ((), execState (pushEntity $ updatePosition src offset d) d)
 
 waitAction :: Entity -> State Dungeon ()
 waitAction = pushEntity
