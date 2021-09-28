@@ -18,9 +18,9 @@ import           Dungeon                   (Dungeon, enemies, entities,
 import           Dungeon.Map.Tile          (walkable)
 import           Dungeon.PathFinder        (getPathTo)
 import qualified Dungeon.Size              as DS
-import           Entity                    (Ai (..), Entity, ai, defence, getHp,
-                                            hp, isAlive, name, path, position,
-                                            power, updateHp)
+import           Entity                    (Ai (..), Entity, ai, blocksMovement,
+                                            defence, getHp, hp, isAlive, name,
+                                            path, position, power, updateHp)
 import           Linear.V2                 (V2 (..), _x, _y)
 import           Log                       (Message, attackMessage)
 
@@ -86,7 +86,7 @@ bumpAction src offset = do
                 return Nothing
 
 getBlockingEntityAtLocation :: Coord -> State Dungeon (Maybe Entity)
-getBlockingEntityAtLocation c = find (\x -> x ^. position == c) <$> enemies
+getBlockingEntityAtLocation c = find (\x -> x ^. position == c && x ^. blocksMovement) <$> enemies
 
 getAliveActorAtLocation :: Coord -> State Dungeon (Maybe Entity)
 getAliveActorAtLocation c = find (\x -> x ^. position == c && x ^. isAlive) <$> enemies

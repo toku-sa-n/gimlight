@@ -20,6 +20,7 @@ module Entity
     , updateHp
     , hp
     , isAlive
+    , blocksMovement
     ) where
 
 import           Brick.AttrMap (AttrName)
