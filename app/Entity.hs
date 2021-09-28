@@ -14,6 +14,11 @@ module Entity
     , Ai(..)
     , ai
     , path
+    , getHp
+    , power
+    , defence
+    , updateHp
+    , hp
     ) where
 
 import           Brick.AttrMap (AttrName)

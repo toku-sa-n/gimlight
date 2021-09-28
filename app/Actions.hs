@@ -5,7 +5,7 @@ module Actions
     , enemyAction
     ) where
 
-import           Control.Lens              (use, (&), (.=), (.~), (^.))
+import           Control.Lens              (use, (%~), (&), (.=), (.~), (^.))
 import           Control.Monad.Trans.State (State, evalState, execState,
                                             runState, state)
 import           Coord                     (Coord)
@@ -13,13 +13,14 @@ import           Data.Array                ((!))
 import           Data.List                 (find)
 import           Data.Maybe                (fromMaybe, isJust, isNothing)
 import           Dungeon                   (Dungeon, enemies, entities,
-                                            getPlayerEntity, pushEntity,
-                                            tileMap, visible)
+                                            getPlayerEntity, popActorAt,
+                                            pushEntity, tileMap, visible)
 import           Dungeon.Map.Tile          (walkable)
 import           Dungeon.PathFinder        (getPathTo)
 import qualified Dungeon.Size              as DS
-import           Entity                    (Ai (..), Entity, ai, name, path,
-                                            position)
+import           Entity                    (Ai (..), Entity, ai, defence, getHp,
+                                            hp, name, path, position, power,
+                                            updateHp)
 import           Linear.V2                 (V2 (..), _x, _y)
 import           Log                       (Message, attackMessage)
 
@@ -36,7 +37,7 @@ updatePathOrMelee e = do
         p <- getPlayerEntity
 
         let pos = e ^. position
-            posDiff = (p ^. position) - pos
+            posDiff = p ^. position - pos
             distance = max (abs posDiff ^. _x) (abs posDiff ^. _y)
 
         v <- use visible
@@ -61,7 +62,7 @@ updatePathOrMelee e = do
 
 moveOrWait :: Entity -> State Dungeon (Maybe Message)
 moveOrWait e =
-        let p = e ^. (ai . path)
+        let p = e ^. ai . path
         in if null p
             then do
                     waitAction e
@@ -89,11 +90,26 @@ meleeAction src offset = do
 
         let pos = src ^. position
             dest = pos + offset
-            entity = find (\x -> x ^. position == dest) es
-            entityName = fmap (\x -> "Hello, " ++ x ^. name) entity
 
-        pushEntity src
-        return $ fmap attackMessage entityName
+        target <- popActorAt dest
+
+        case target of
+            Nothing -> do
+                pushEntity src
+                return Nothing
+            Just x -> let damage = (src ^. power) - (x ^. defence)
+                          msg = (src ^. name) ++ " attacks " ++ (x ^. name)
+                        in if damage > 0
+                            then do
+                                let newHp = getHp x - damage
+                                    newEntity = updateHp x newHp
+                                pushEntity src
+                                pushEntity newEntity
+                                return $ Just $ attackMessage $ msg ++ " for " ++ show damage ++ " hit points."
+                            else do
+                                    pushEntity src
+                                    pushEntity x
+                                    return $ Just $ attackMessage $ msg ++ " but does not damage."
 
 moveAction :: Entity -> V2 Int -> State Dungeon (Maybe Message)
 moveAction src offset = state $ \d -> (Nothing, execState (pushEntity $ updatePosition src offset d) d)
