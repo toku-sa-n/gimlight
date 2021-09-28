@@ -32,16 +32,17 @@ newtype Ai = HostileEnemy
 makeLenses ''Ai
 
 data Entity = Actor
-            { _position   :: Coord
-            , _char       :: String
-            , _entityAttr :: AttrName
-            , _name       :: [Char]
-            , _hp         :: Int
-            , _maxHp      :: Int
-            , _defence    :: Int
-            , _power      :: Int
-            , _ai         :: Ai
-            , _isAlive    :: Bool
+            { _position       :: Coord
+            , _char           :: String
+            , _entityAttr     :: AttrName
+            , _name           :: [Char]
+            , _hp             :: Int
+            , _maxHp          :: Int
+            , _defence        :: Int
+            , _power          :: Int
+            , _ai             :: Ai
+            , _isAlive        :: Bool
+            , _blocksMovement :: Bool
             } deriving (Show)
 makeLenses ''Entity
 
@@ -56,6 +57,7 @@ player c = Actor { _position = c
                   , _power = 5
                   , _ai = hostileEnemy
                   , _isAlive = True
+                  , _blocksMovement = True
                   }
 
 orc :: Coord -> Entity
@@ -69,6 +71,7 @@ orc c = Actor { _position = c
                , _power = 3
                , _ai = hostileEnemy
                , _isAlive = True
+               , _blocksMovement = True
                }
 
 troll :: Coord -> Entity
@@ -82,6 +85,7 @@ troll c = Actor { _position = c
                  , _power = 4
                  , _ai = hostileEnemy
                  , _isAlive = True
+                 , _blocksMovement = True
                  }
 
 hostileEnemy :: Ai
