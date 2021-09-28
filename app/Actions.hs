@@ -19,8 +19,8 @@ import           Dungeon.Map.Tile          (walkable)
 import           Dungeon.PathFinder        (getPathTo)
 import qualified Dungeon.Size              as DS
 import           Entity                    (Ai (..), Entity, ai, defence, getHp,
-                                            hp, name, path, position, power,
-                                            updateHp)
+                                            hp, isAlive, name, path, position,
+                                            power, updateHp)
 import           Linear.V2                 (V2 (..), _x, _y)
 import           Log                       (Message, attackMessage)
 
@@ -75,7 +75,7 @@ moveOrWait e =
 
 bumpAction :: Entity -> V2 Int -> State Dungeon (Maybe Message)
 bumpAction src offset = do
-        x <- getBlockingEntityAtLocation (src ^. position + offset)
+        x <- getAliveActorAtLocation (src ^. position + offset)
 
         case x of
             Just _  -> meleeAction src offset
@@ -83,6 +83,9 @@ bumpAction src offset = do
 
 getBlockingEntityAtLocation :: Coord -> State Dungeon (Maybe Entity)
 getBlockingEntityAtLocation c = find (\x -> x ^. position == c) <$> enemies
+
+getAliveActorAtLocation :: Coord -> State Dungeon (Maybe Entity)
+getAliveActorAtLocation c = find (\x -> x ^. position == c && x ^. isAlive) <$> enemies
 
 meleeAction :: Entity -> V2 Int -> State Dungeon (Maybe Message)
 meleeAction src offset = do

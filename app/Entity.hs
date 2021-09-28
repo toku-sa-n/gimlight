@@ -19,6 +19,7 @@ module Entity
     , defence
     , updateHp
     , hp
+    , isAlive
     ) where
 
 import           Brick.AttrMap (AttrName)
