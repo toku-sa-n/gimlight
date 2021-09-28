@@ -89,7 +89,7 @@ updateFov = do
 getPlayerEntity :: State Dungeon Entity
 getPlayerEntity = do
         xs <- use entities
-        let x = find E.isPlayer xs
+        let x = find (^. E.isPlayer) xs
 
         case x of
             Just p  -> return p
@@ -99,7 +99,7 @@ pushEntity :: Entity -> State Dungeon ()
 pushEntity e = state $ \d@Dungeon{ _entities = entities } -> ((), d { _entities = e:entities })
 
 popPlayer :: State Dungeon Entity
-popPlayer = state $ \d -> case runState (popActorIf E.isPlayer) d of
+popPlayer = state $ \d -> case runState (popActorIf (^. E.isPlayer)) d of
                   (Just x, d') -> (x, d')
                   (Nothing, _) -> error "No player entity."
 
@@ -124,7 +124,7 @@ transparentMap = do
         return $ fmap (^. transparent) t
 
 enemyCoords :: Dungeon -> [Coord]
-enemyCoords d = map (^. position) $ filter (not . E.isPlayer) $ d ^. entities
+enemyCoords d = map (^. position) $ filter (not . (^. E.isPlayer)) $ d ^. entities
 
 aliveEnemies :: State Dungeon [Entity]
 aliveEnemies = filter (^. isAlive) <$> enemies
@@ -132,7 +132,7 @@ aliveEnemies = filter (^. isAlive) <$> enemies
 enemies :: State Dungeon [Entity]
 enemies = do
         xs <- use entities
-        return $ filter (not . E.isPlayer) xs
+        return $ filter (not . (^. E.isPlayer)) xs
 
 initDungeon :: IO Dungeon
 initDungeon = do

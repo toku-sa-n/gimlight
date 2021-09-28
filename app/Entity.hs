@@ -44,6 +44,7 @@ data Entity = Actor
             , _ai             :: Ai
             , _isAlive        :: Bool
             , _blocksMovement :: Bool
+            , _isPlayer       :: Bool
             } deriving (Show)
 makeLenses ''Entity
 
@@ -59,6 +60,7 @@ player c = Actor { _position = c
                   , _ai = hostileEnemy
                   , _isAlive = True
                   , _blocksMovement = True
+                  , _isPlayer = True
                   }
 
 orc :: Coord -> Entity
@@ -73,6 +75,7 @@ orc c = Actor { _position = c
                , _ai = hostileEnemy
                , _isAlive = True
                , _blocksMovement = True
+               , _isPlayer = False
                }
 
 troll :: Coord -> Entity
@@ -87,13 +90,11 @@ troll c = Actor { _position = c
                  , _ai = hostileEnemy
                  , _isAlive = True
                  , _blocksMovement = True
+                 , _isPlayer = False
                  }
 
 hostileEnemy :: Ai
 hostileEnemy = HostileEnemy { _path = [] }
-
-isPlayer :: Entity -> Bool
-isPlayer Actor { _name = name } = name == "Player"
 
 getHp :: Entity -> Int
 getHp e = e ^. hp
