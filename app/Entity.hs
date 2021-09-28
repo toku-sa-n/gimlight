@@ -40,6 +40,7 @@ data Entity = Actor
             , _defence    :: Int
             , _power      :: Int
             , _ai         :: Ai
+            , _isDead     :: Bool
             } deriving (Show)
 makeLenses ''Entity
 
@@ -53,6 +54,7 @@ player c = Actor { _position = c
                   , _defence = 2
                   , _power = 5
                   , _ai = hostileEnemy
+                  , _isDead = False
                   }
 
 orc :: Coord -> Entity
@@ -65,6 +67,7 @@ orc c = Actor { _position = c
                , _defence = 0
                , _power = 3
                , _ai = hostileEnemy
+               , _isDead = False
                }
 
 troll :: Coord -> Entity
@@ -77,6 +80,7 @@ troll c = Actor { _position = c
                  , _defence = 1
                  , _power = 4
                  , _ai = hostileEnemy
+                 , _isDead = False
                  }
 
 hostileEnemy :: Ai
