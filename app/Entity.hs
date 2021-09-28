@@ -111,4 +111,5 @@ die e = e{ _hp = 0
          , _entityAttr = "deadAttr"
          , _blocksMovement = False
          , _name = "remains of " ++ (e ^. name)
+         , _isAlive = False
          }
