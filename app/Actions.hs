@@ -87,8 +87,8 @@ bumpAction src offset = do
                 moveAction src offset
                 return Nothing
 
-getBlockingEntityAtLocation :: Coord -> State Dungeon (Maybe Entity)
-getBlockingEntityAtLocation c = find (\x -> x ^. position == c && x ^. blocksMovement) . enemies <$> get
+getBlockingEntityAtLocation :: Dungeon -> Coord -> Maybe Entity
+getBlockingEntityAtLocation d c = find (\x -> x ^. position == c && x ^. blocksMovement) $ enemies d
 
 getAliveActorAtLocation :: Dungeon -> Coord -> Maybe Entity
 getAliveActorAtLocation d c = find (\x -> x ^. position == c && x ^. isAlive) $ enemies d
@@ -139,8 +139,11 @@ nextPosition src offset =
 
 movable :: Coord -> State Dungeon Bool
 movable c = do
+        d <- get
         t <- use tileMap
-        e <- getBlockingEntityAtLocation c
+
+        let e = getBlockingEntityAtLocation d c
+
         return $ case e of
             Just _  -> False
             Nothing -> t ! (c ^. _x, c ^. _y) ^. walkable
