@@ -77,7 +77,9 @@ moveOrWait e =
 
 bumpAction :: Entity -> V2 Int -> State Dungeon (Maybe Message)
 bumpAction src offset = do
-        x <- getAliveActorAtLocation (src ^. position + offset)
+        d <- get
+
+        let x = getAliveActorAtLocation d (src ^. position + offset)
 
         case x of
             Just _  -> meleeAction src offset
@@ -88,8 +90,8 @@ bumpAction src offset = do
 getBlockingEntityAtLocation :: Coord -> State Dungeon (Maybe Entity)
 getBlockingEntityAtLocation c = find (\x -> x ^. position == c && x ^. blocksMovement) . enemies <$> get
 
-getAliveActorAtLocation :: Coord -> State Dungeon (Maybe Entity)
-getAliveActorAtLocation c = find (\x -> x ^. position == c && x ^. isAlive) . enemies <$> get
+getAliveActorAtLocation :: Dungeon -> Coord -> Maybe Entity
+getAliveActorAtLocation d c = find (\x -> x ^. position == c && x ^. isAlive) $ enemies d
 
 meleeAction :: Entity -> V2 Int -> State Dungeon (Maybe Message)
 meleeAction src offset = do
