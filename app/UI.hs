@@ -127,7 +127,7 @@ theMap = attrMap V.defAttr
     , (infoMessageAttr, fg V.blue)
     ]
 
-playerAttr, npcAttr, emptyAttr, darkFloorAttr, darkWallAttr, orcAttr, trollAttr, infoMessageAttr, deadAttr :: AttrName
+playerAttr, npcAttr, emptyAttr, darkFloorAttr, darkWallAttr, orcAttr, trollAttr, infoMessageAttr, hpBarFilled, hpBarEmpty, deadAttr :: AttrName
 playerAttr = "playerAttr"
 npcAttr = "npcAttr"
 emptyAttr = "emptyAttr"
@@ -139,4 +139,6 @@ orcAttr = "orcAttr"
 trollAttr = "trollAttr"
 attackMessageAttr = "attackMessageAttr"
 infoMessageAttr = "infoMessageAttr"
+hpBarFilled = "hpBarFilled"
+hpBarEmpty = "hpBarEmpty"
 deadAttr = "deadAttr"
