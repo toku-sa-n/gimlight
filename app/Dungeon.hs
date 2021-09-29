@@ -126,8 +126,8 @@ transparentMap = do
 enemyCoords :: Dungeon -> [Coord]
 enemyCoords d = map (^. position) $ filter (not . (^. E.isPlayer)) $ d ^. entities
 
-aliveEnemies :: State Dungeon [Entity]
-aliveEnemies = filter (^. isAlive) . enemies <$> get
+aliveEnemies :: Dungeon -> [Entity]
+aliveEnemies d = filter (^. isAlive) $ enemies d
 
 enemies :: Dungeon -> [Entity]
 enemies d = filter (not . (^. E.isPlayer)) $ d ^. entities
