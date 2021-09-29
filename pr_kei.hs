@@ -1,0 +1,1 @@
+main =putStrln"Hello world"
