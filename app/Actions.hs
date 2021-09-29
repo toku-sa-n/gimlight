@@ -34,9 +34,10 @@ enemyAction e = do
 
 updatePathOrMelee :: Entity -> State Dungeon (Either (Maybe Message) Entity)
 updatePathOrMelee e = do
-        p <- getPlayerEntity
+        d <- get
 
-        let pos = e ^. position
+        let p = getPlayerEntity d
+            pos = e ^. position
             posDiff = p ^. position - pos
             distance = max (abs posDiff ^. _x) (abs posDiff ^. _y)
 

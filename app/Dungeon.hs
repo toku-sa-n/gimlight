@@ -84,18 +84,14 @@ updateFov = do
         d <- get
 
         let t = transparentMap d
-
-        p <- getPlayerEntity
+            p = getPlayerEntity d
 
         visible .= calculateFov (p ^. position) t
 
-getPlayerEntity :: State Dungeon Entity
-getPlayerEntity = do
-        xs <- use entities
-        let x = find (^. E.isPlayer) xs
-
-        case x of
-            Just p  -> return p
+getPlayerEntity :: Dungeon -> Entity
+getPlayerEntity d =
+        case find (^. E.isPlayer) $ d ^. entities of
+            Just p  -> p
             Nothing -> error "No player entity."
 
 pushEntity :: Entity -> State Dungeon ()
