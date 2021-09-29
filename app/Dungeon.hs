@@ -27,7 +27,7 @@ import           Control.Monad                  (join)
 import           Control.Monad.Trans.Maybe      (MaybeT (MaybeT), runMaybeT)
 import           Control.Monad.Trans.State      (State, evalState, runState,
                                                  state)
-import           Control.Monad.Trans.State.Lazy (execState, modify)
+import           Control.Monad.Trans.State.Lazy (execState, get, modify)
 import           Coord                          (Coord (..))
 import           Data.Array                     (Array)
 import           Data.Array.Base                (array, bounds, elems, (!),
@@ -127,12 +127,10 @@ enemyCoords :: Dungeon -> [Coord]
 enemyCoords d = map (^. position) $ filter (not . (^. E.isPlayer)) $ d ^. entities
 
 aliveEnemies :: State Dungeon [Entity]
-aliveEnemies = filter (^. isAlive) <$> enemies
+aliveEnemies = filter (^. isAlive) . enemies <$> get
 
-enemies :: State Dungeon [Entity]
-enemies = do
-        xs <- use entities
-        return $ filter (not . (^. E.isPlayer)) xs
+enemies :: Dungeon -> [Entity]
+enemies d = filter (not . (^. E.isPlayer)) $ d ^. entities
 
 initDungeon :: IO Dungeon
 initDungeon = do

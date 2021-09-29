@@ -6,7 +6,7 @@ module Actions
     ) where
 
 import           Control.Lens              (use, (%~), (&), (.=), (.~), (^.))
-import           Control.Monad.Trans.State (State, evalState, execState,
+import           Control.Monad.Trans.State (State, evalState, execState, get,
                                             runState, state)
 import           Coord                     (Coord)
 import           Data.Array                ((!))
@@ -86,10 +86,10 @@ bumpAction src offset = do
                 return Nothing
 
 getBlockingEntityAtLocation :: Coord -> State Dungeon (Maybe Entity)
-getBlockingEntityAtLocation c = find (\x -> x ^. position == c && x ^. blocksMovement) <$> enemies
+getBlockingEntityAtLocation c = find (\x -> x ^. position == c && x ^. blocksMovement) . enemies <$> get
 
 getAliveActorAtLocation :: Coord -> State Dungeon (Maybe Entity)
-getAliveActorAtLocation c = find (\x -> x ^. position == c && x ^. isAlive) <$> enemies
+getAliveActorAtLocation c = find (\x -> x ^. position == c && x ^. isAlive) . enemies <$> get
 
 meleeAction :: Entity -> V2 Int -> State Dungeon (Maybe Message)
 meleeAction src offset = do
