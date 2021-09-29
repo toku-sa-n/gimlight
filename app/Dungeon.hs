@@ -81,7 +81,10 @@ updateExplored = do
 
 updateFov :: State Dungeon ()
 updateFov = do
-        t <- transparentMap
+        d <- get
+
+        let t = transparentMap d
+
         p <- getPlayerEntity
 
         visible .= calculateFov (p ^. position) t
@@ -117,11 +120,8 @@ popActorIf f = state $ \d@Dungeon{ _entities = entities } ->
 walkableFloor :: Dungeon -> BoolMap
 walkableFloor d = M.generate (\c -> ((d ^. tileMap) ! c) ^. walkable)
 
-transparentMap :: State Dungeon BoolMap
-transparentMap = do
-        t <- use tileMap
-
-        return $ fmap (^. transparent) t
+transparentMap :: Dungeon -> BoolMap
+transparentMap d = fmap (^. transparent) (d ^. tileMap)
 
 enemyCoords :: Dungeon -> [Coord]
 enemyCoords d = map (^. position) $ filter (not . (^. E.isPlayer)) $ d ^. entities
