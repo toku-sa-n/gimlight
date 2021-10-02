@@ -35,12 +35,6 @@ import           Data.Foldable                  (find)
 import           Data.List                      (findIndex)
 import           Data.Maybe                     (isJust, isNothing)
 import           Dungeon.Generate               (generateDungeon)
-import qualified Dungeon.Map                    as M
-import           Dungeon.Map.Bool               (BoolMap, emptyBoolMap)
-import           Dungeon.Map.Fov                (Fov, calculateFov)
-import           Dungeon.Map.Tile               (Tile, TileMap, darkAttr,
-                                                 lightAttr, transparent,
-                                                 walkable)
 import           Dungeon.Room                   (Room (..), x1, x2, y1, y2)
 import           Dungeon.Size                   (height, maxRooms, roomMaxSize,
                                                  roomMinSize, width)
@@ -50,14 +44,21 @@ import           Entity                         (Entity (..), isAlive, name,
 import qualified Entity                         as E
 import           Graphics.Vty.Attributes.Color  (Color, white, yellow)
 import           Linear.V2                      (V2 (..), _x, _y)
-import           Log                            (Message, attackMessage)
+import           Log                            (Message, message)
+import qualified Map                            as M
+import           Map.Bool                       (BoolMap, emptyBoolMap)
+import           Map.Explored                   (ExploredMap, updateExploredMap)
+import           Map.Fov                        (Fov, calculateFov)
+import           Map.Tile                       (Tile, TileMap, darkAttr,
+                                                 lightAttr, transparent,
+                                                 walkable)
 import           System.Random.Stateful         (StdGen, newStdGen, random,
                                                  randomR)
 
 data Dungeon = Dungeon
           { _tileMap  :: TileMap
           , _visible  :: Fov
-          , _explored :: BoolMap
+          , _explored :: ExploredMap
           , _entities :: [Entity]
           } deriving (Show)
 makeLenses ''Dungeon
@@ -78,7 +79,7 @@ updateExplored = do
         v <- use visible
         e <- use explored
 
-        explored .= M.generate (\(x, y) -> v ! (x, y) || e ! (x, y))
+        explored .= updateExploredMap e v
 
 updateFov :: State Dungeon ()
 updateFov = do
