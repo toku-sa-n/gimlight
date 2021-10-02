@@ -1,9 +1,9 @@
-module Predefined
+module Map.Predefined
     ( firstEventMap
     ) where
 
-import           Data.Array       ((//))
-import           Dungeon.Map.Tile (TileMap, allWallTiles, floorTile, wallTile)
+import           Data.Array ((//))
+import           Map.Tile   (TileMap, allWallTiles, floorTile, wallTile)
 
 firstEventMap :: TileMap
 firstEventMap = stringArrayToMap [ "####################"
