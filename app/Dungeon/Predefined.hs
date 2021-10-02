@@ -1,4 +1,4 @@
-module Map.Predefined
+module Dungeon.Predefined
     ( firstEventMap
     ) where
 

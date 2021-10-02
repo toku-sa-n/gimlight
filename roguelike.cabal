@@ -33,8 +33,8 @@ executable roguelike
                       , Map.Bool
                       , Map.Explored
                       , Map.Fov
-                      , Map.Predefined
                       , Dungeon
+                      , Dungeon.Predefined
                       , Dungeon.Room
                       , Dungeon.Size
                       , Dungeon.Generate
