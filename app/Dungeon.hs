@@ -1,3 +1,9 @@
+-- I refer to "Dungeon" in this source code as the mixed things of map and
+-- entities because I could not come up with a much more proper word.  So,
+-- in this code, "Dungeon" means not only dungeon but also towns, etc.
+--
+-- TODO: Change the word to more precise one.
+
 {-# LANGUAGE TemplateHaskell #-}
 
 module Dungeon
