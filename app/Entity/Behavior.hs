@@ -1,4 +1,4 @@
-module Actions
+module Entity.Behavior
     ( bumpAction
     , meleeAction
     , waitAction
@@ -62,7 +62,6 @@ updatePathOrMelee e = do
 
                          return $ Right newEntity
             else return $ Right e
-
 
 moveOrWait :: Entity -> State Dungeon (Maybe Message)
 moveOrWait e =
