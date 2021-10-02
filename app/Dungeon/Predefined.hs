@@ -3,19 +3,22 @@ module Dungeon.Predefined
     ) where
 
 import           Data.Array ((//))
+import           Dungeon    (Dungeon, dungeon)
+import           Entity     (Entity)
 import           Map.Tile   (TileMap, allWallTiles, floorTile, wallTile)
 
-firstEventMap :: TileMap
-firstEventMap = stringArrayToMap [ "####################"
-                                 , "#..................#"
-                                 , "#..................#"
-                                 , "#..................#"
-                                 , "#..................#"
-                                 , "#..................#"
-                                 , "#..................#"
-                                 , "#..................#"
-                                 , "####################"
-                                 ]
+firstEventMap :: Entity -> Dungeon
+firstEventMap e = dungeon (stringArrayToMap [ "####################"
+                                            , "#..................#"
+                                            , "#..................#"
+                                            , "#..................#"
+                                            , "#..................#"
+                                            , "#..................#"
+                                            , "#..................#"
+                                            , "#..................#"
+                                            , "####################"
+                                            ])
+                [e]
 
 stringArrayToMap :: [String] -> TileMap
 stringArrayToMap list = allWallTiles // [((x, y), tile c) | (y, row) <- zip [0..] list, (x, c) <- zip [0..] row]

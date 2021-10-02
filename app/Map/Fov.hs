@@ -1,6 +1,7 @@
 module Map.Fov
     ( Fov
     , calculateFov
+    , initFov
     ) where
 
 import           Coord        (Coord)
@@ -13,6 +14,9 @@ type Fov = BoolMap
 
 fovRadius :: Int
 fovRadius = 8
+
+initFov :: Fov
+initFov = emptyBoolMap
 
 calculateFov :: Coord -> BoolMap -> Fov
 calculateFov (V2 x0 y0) transparentMap =

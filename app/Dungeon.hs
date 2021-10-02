@@ -9,6 +9,7 @@
 module Dungeon
     ( initDungeon
     , Dungeon
+    , dungeon
     , completeThisTurn
     , entities
     , visible
@@ -53,8 +54,9 @@ import           Linear.V2                      (V2 (..), _x, _y)
 import           Log                            (Message, message)
 import qualified Map                            as M
 import           Map.Bool                       (BoolMap, emptyBoolMap)
-import           Map.Explored                   (ExploredMap, updateExploredMap)
-import           Map.Fov                        (Fov, calculateFov)
+import           Map.Explored                   (ExploredMap, initExploredMap,
+                                                 updateExploredMap)
+import           Map.Fov                        (Fov, calculateFov, initFov)
 import           Map.Tile                       (Tile, TileMap, darkAttr,
                                                  lightAttr, transparent,
                                                  walkable)
@@ -68,6 +70,13 @@ data Dungeon = Dungeon
           , _entities :: [Entity]
           } deriving (Show)
 makeLenses ''Dungeon
+
+dungeon :: TileMap -> [Entity] -> Dungeon
+dungeon t e = Dungeon { _tileMap = t
+                      , _visible = initFov
+                      , _explored = initExploredMap
+                      , _entities = e
+                      }
 
 completeThisTurn :: State Dungeon DT.Status
 completeThisTurn = do
