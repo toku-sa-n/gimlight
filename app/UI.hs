@@ -21,9 +21,9 @@ import           Control.Monad.Trans.State  (execState, get)
 import           Data.Array.Base            ((!))
 import           Data.List                  (sortOn)
 import           Data.Maybe                 (fromMaybe)
-import           Dungeon                    (entities, explored, tileMap,
-                                             visible)
 import           Dungeon.Size               (height, width)
+import           Dungeon.Types              (entities, explored, tileMap,
+                                             visible)
 import           Engine                     (Engine (Engine, HandlingEvent, _event),
                                              afterFinish, completeThisTurn,
                                              dungeon, event, initEngine,

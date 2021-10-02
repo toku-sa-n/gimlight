@@ -4,10 +4,6 @@ module Dungeon
     ( initDungeon
     , Dungeon
     , completeThisTurn
-    , entities
-    , visible
-    , explored
-    , tileMap
     , popPlayer
     , popActorAt
     , enemies
@@ -39,6 +35,8 @@ import           Dungeon.Room                   (Room (..), x1, x2, y1, y2)
 import           Dungeon.Size                   (height, maxRooms, roomMaxSize,
                                                  roomMinSize, width)
 import qualified Dungeon.Turn                   as DT
+import           Dungeon.Types                  (Dungeon, dungeon, entities,
+                                                 explored, tileMap, visible)
 import           Entity                         (Entity (..), isAlive, name,
                                                  position)
 import qualified Entity                         as E
@@ -54,15 +52,6 @@ import           Map.Tile                       (Tile, TileMap, darkAttr,
                                                  walkable)
 import           System.Random.Stateful         (StdGen, newStdGen, random,
                                                  randomR)
-
-data Dungeon = Dungeon
-          { _tileMap  :: TileMap
-          , _visible  :: Fov
-          , _explored :: ExploredMap
-          , _entities :: [Entity]
-          } deriving (Show)
-makeLenses ''Dungeon
-
 completeThisTurn :: State Dungeon DT.Status
 completeThisTurn = do
         updateMap
@@ -97,7 +86,7 @@ getPlayerEntity d =
             Nothing -> error "No player entity."
 
 pushEntity :: Entity -> State Dungeon ()
-pushEntity e = state $ \d@Dungeon{ _entities = entities } -> ((), d { _entities = e:entities })
+pushEntity e = state $ \d -> ((), d & entities %~ (e :))
 
 popPlayer :: State Dungeon Entity
 popPlayer = state $ \d -> case runState (popActorIf (^. E.isPlayer)) d of
@@ -108,11 +97,12 @@ popActorAt :: Coord -> State Dungeon (Maybe Entity)
 popActorAt c = popActorIf (\x -> x ^. position == c)
 
 popActorIf :: (Entity -> Bool) -> State Dungeon (Maybe Entity)
-popActorIf f = state $ \d@Dungeon{ _entities = entities } ->
-    case findIndex f entities of
-        Just x -> let entity = entities !! x
-                      newEntities = take x entities ++ drop (x + 1) entities
-                  in (Just entity, d{ _entities = newEntities})
+popActorIf f = state $ \d ->
+    let xs = d ^. entities
+    in case findIndex f xs of
+        Just x -> let entity = xs !! x
+                      newEntities = take x xs ++ drop (x + 1) xs
+                  in (Just entity, d & entities .~ newEntities)
         Nothing -> (Nothing, d)
 
 walkableFloor :: Dungeon -> BoolMap
@@ -136,11 +126,8 @@ enemies d = filter (not . (^. E.isPlayer)) $ d ^. entities
 initDungeon :: IO Dungeon
 initDungeon = do
         gen <- newStdGen
-        let (dungeon, enemies, playerPos, _) = generateDungeon gen maxRooms roomMinSize roomMaxSize (V2 width height)
+        let (tileMap, enemies, playerPos, _) = generateDungeon gen maxRooms roomMinSize roomMaxSize (V2 width height)
         let player = E.player playerPos
-        let g = Dungeon { _tileMap = dungeon
-                        , _visible = emptyBoolMap
-                        , _explored = emptyBoolMap
-                        , _entities = player:enemies
-                        }
-        return $ execState updateMap g
+        let d = dungeon tileMap $ player:enemies
+
+        return $ execState updateMap d
