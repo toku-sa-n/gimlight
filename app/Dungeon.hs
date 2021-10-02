@@ -36,9 +36,9 @@ import           Dungeon.Size                   (height, maxRooms, roomMaxSize,
                                                  roomMinSize, width)
 import qualified Dungeon.Turn                   as DT
 import           Dungeon.Types                  (Dungeon, dungeon, entities,
-                                                 explored, tileMap, visible)
-import           Entity                         (Entity (..), isAlive, name,
-                                                 position)
+                                                 explored, isAlive, isPlayer,
+                                                 position, tileMap, visible)
+import           Entity                         (Entity (..))
 import qualified Entity                         as E
 import           Graphics.Vty.Attributes.Color  (Color, white, yellow)
 import           Linear.V2                      (V2 (..), _x, _y)
@@ -81,7 +81,7 @@ updateFov = do
 
 getPlayerEntity :: Dungeon -> Entity
 getPlayerEntity d =
-        case find (^. E.isPlayer) $ d ^. entities of
+        case find (^. isPlayer) $ d ^. entities of
             Just p  -> p
             Nothing -> error "No player entity."
 
@@ -89,7 +89,7 @@ pushEntity :: Entity -> State Dungeon ()
 pushEntity e = state $ \d -> ((), d & entities %~ (e :))
 
 popPlayer :: State Dungeon Entity
-popPlayer = state $ \d -> case runState (popActorIf (^. E.isPlayer)) d of
+popPlayer = state $ \d -> case runState (popActorIf (^. isPlayer)) d of
                   (Just x, d') -> (x, d')
                   (Nothing, _) -> error "No player entity."
 
@@ -112,7 +112,7 @@ transparentMap :: Dungeon -> BoolMap
 transparentMap d = fmap (^. transparent) (d ^. tileMap)
 
 enemyCoords :: Dungeon -> [Coord]
-enemyCoords d = map (^. position) $ filter (not . (^. E.isPlayer)) $ d ^. entities
+enemyCoords d = map (^. position) $ filter (not . (^. isPlayer)) $ d ^. entities
 
 isPlayerAlive :: Dungeon -> Bool
 isPlayerAlive d = getPlayerEntity d ^. isAlive
@@ -121,7 +121,7 @@ aliveEnemies :: Dungeon -> [Entity]
 aliveEnemies d = filter (^. isAlive) $ enemies d
 
 enemies :: Dungeon -> [Entity]
-enemies d = filter (not . (^. E.isPlayer)) $ d ^. entities
+enemies d = filter (not . (^. isPlayer)) $ d ^. entities
 
 initDungeon :: IO Dungeon
 initDungeon = do

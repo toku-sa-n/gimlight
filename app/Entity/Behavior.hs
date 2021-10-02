@@ -16,11 +16,12 @@ import           Dungeon                   (Dungeon, enemies, getPlayerEntity,
                                             popActorAt, pushEntity)
 import           Dungeon.PathFinder        (getPathTo)
 import qualified Dungeon.Size              as DS
-import           Dungeon.Types             (entities, tileMap, visible)
-import           Entity                    (Ai (..), Entity, ai, blocksMovement,
-                                            defence, getHp, isAlive, isPlayer,
-                                            name, path, position, power,
-                                            updateHp)
+import           Dungeon.Types             (Ai (HostileEnemy, _path), Entity,
+                                            ai, blocksMovement, defence,
+                                            entities, isAlive, isPlayer, name,
+                                            path, position, power, tileMap,
+                                            visible)
+import           Entity                    (getHp, updateHp)
 import           Linear.V2                 (V2 (..), _x, _y)
 import           Log                       (Message, message)
 import           Map.Tile                  (walkable)
