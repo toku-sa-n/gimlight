@@ -38,6 +38,7 @@ import           Data.Foldable                  (find)
 import           Data.List                      (findIndex)
 import           Data.Maybe                     (isJust, isNothing)
 import           Dungeon.Generate               (generateDungeon)
+import           Dungeon.Predefined             (firstEventMap)
 import           Dungeon.Room                   (Room (..), x1, x2, y1, y2)
 import           Dungeon.Size                   (height, maxRooms, roomMaxSize,
                                                  roomMinSize, width)
@@ -135,8 +136,7 @@ enemies d = filter (not . (^. isPlayer)) $ d ^. entities
 initDungeon :: IO Dungeon
 initDungeon = do
         gen <- newStdGen
-        let (tileMap, enemies, playerPos, _) = generateDungeon gen maxRooms roomMinSize roomMaxSize (V2 width height)
-        let player = E.player playerPos
-        let d = dungeon tileMap $ player:enemies
+        let player = E.player $ V2 5 5
+        let d = firstEventMap player
 
         return $ execState updateMap d
