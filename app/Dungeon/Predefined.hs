@@ -22,7 +22,7 @@ firstEventMap player = dungeon (stringArrayToMap
     , "####################"
     ])
     [ player
-    , electria $ V2 3 3
+    , electria $ V2 4 5
     ]
 
 stringArrayToMap :: [String] -> TileMap

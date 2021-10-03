@@ -95,7 +95,7 @@ bumpAction src offset = do
                 return []
 
 getBlockingEntityAtLocation :: Dungeon -> Coord -> Maybe Entity
-getBlockingEntityAtLocation d c = find (\x -> x ^. position == c && x ^. blocksMovement) $ enemies d
+getBlockingEntityAtLocation d c = find (\x -> x ^. position == c && x ^. blocksMovement) (d ^. entities)
 
 getAliveActorAtLocation :: Dungeon -> Coord -> Maybe Entity
 getAliveActorAtLocation d c = find (\x -> x ^. position == c && x ^. isAlive) $ enemies d
