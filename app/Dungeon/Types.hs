@@ -64,6 +64,7 @@ data Entity = Actor
             , _blocksMovement :: Bool
             , _isPlayer       :: Bool
             , _renderOrder    :: RenderOrder
+            , _isEnemy        :: Bool
             } deriving (Show)
 makeLenses ''Entity
 
@@ -82,8 +83,8 @@ dungeon t e = Dungeon { _tileMap = t
                       , _entities = e
                       }
 
-actor :: Coord -> String -> AttrName -> String -> Int -> Int -> Int -> Bool -> Bool -> Bool -> RenderOrder -> Entity
-actor position char entityAttr name hp defence power isAlive blocksMovement isPlayer renderOrder =
+actor :: Coord -> String -> AttrName -> String -> Int -> Int -> Int -> Bool -> Bool -> Bool -> RenderOrder -> Bool -> Entity
+actor position char entityAttr name hp defence power isAlive blocksMovement isPlayer renderOrder isEnemy =
         Actor { _position = position
               , _char = char
               , _entityAttr = entityAttr
@@ -97,6 +98,7 @@ actor position char entityAttr name hp defence power isAlive blocksMovement isPl
               , _blocksMovement = blocksMovement
               , _isPlayer = isPlayer
               , _renderOrder = renderOrder
+              , _isEnemy = isEnemy
               }
 
 hostileEnemy :: Ai
