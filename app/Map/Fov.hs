@@ -1,5 +1,6 @@
 module Map.Fov
     ( Fov
+    , initFov
     , calculateFov
     , initFov
     ) where
