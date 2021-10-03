@@ -34,6 +34,7 @@ module Dungeon.Types
     , isPlayer
     , renderOrder
     , isEnemy
+    , event
     ) where
 
 import           Brick.AttrMap (AttrName)
