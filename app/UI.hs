@@ -25,18 +25,18 @@ import           Dungeon.Size               (height, width)
 import           Dungeon.Types              (char, entities, entityAttr,
                                              explored, name, position,
                                              renderOrder, tileMap, visible)
-import           Engine                     (Engine (HandlingEvent, PlayerIsExploring, Talking, _event),
+import           Engine                     (Engine (HandlingScene, PlayerIsExploring, Talking, _scene),
                                              afterFinish, afterTalking,
-                                             completeThisTurn, dungeon, event,
+                                             completeThisTurn, dungeon,
                                              initEngine, isGameOver, messageLog,
                                              playerBumpAction, playerCurrentHp,
-                                             playerMaxHp, talk)
-import           Event                      (numMessages, popMessage)
+                                             playerMaxHp, scene, talk)
 import qualified Graphics.Vty               as V
 import           Linear.V2                  (V2 (..), _x, _y)
 import qualified Log                        as L
 import           Map.Tile                   (darkAttr, lightAttr)
 import qualified Map.Tile                   as T
+import           Scene                      (numMessages, popMessage)
 import           Talking                    (destruct, talkWith)
 import           UI.Attrs                   (attrMapForThisGame, emptyAttr,
                                              greenAttr, redAttr)
@@ -79,7 +79,7 @@ handleEvent e@PlayerIsExploring{} (VtyEvent (V.EvKey (V.KChar 'k') [])) = handle
 handleEvent e@PlayerIsExploring{} (VtyEvent (V.EvKey (V.KChar 'j') [])) = handlePlayerMove (V2 0 (-1)) e
 handleEvent e@PlayerIsExploring{} (VtyEvent (V.EvKey (V.KChar 'l') [])) = handlePlayerMove (V2 1 0) e
 handleEvent e@PlayerIsExploring{} (VtyEvent (V.EvKey (V.KChar 'h') [])) = handlePlayerMove (V2 (-1) 0) e
-handleEvent e@HandlingEvent{} (VtyEvent (V.EvKey V.KEnter [])) = handleMessageEvent e
+handleEvent e@HandlingScene{} (VtyEvent (V.EvKey V.KEnter [])) = handleMessageEvent e
 handleEvent e@Talking{} (VtyEvent (V.EvKey V.KEnter [])) = handleTalking e
 handleEvent e _                                     = continue e
 
@@ -105,13 +105,13 @@ drawUI engine@Talking{} = [withBorderStyle BS.unicodeBold
     where
         (e, s) = destruct $ engine ^?! talk
         m = (e ^. name) ++ ": " ++ s
-drawUI engine@HandlingEvent{} = [withBorderStyle BS.unicodeBold
+drawUI engine@HandlingScene{} = [withBorderStyle BS.unicodeBold
     $ B.borderWithLabel (str "Roguelike game")
     $ center
     $ padAll 2
     $ strWrap m]
     where
-        m = fromMaybe "" (fst $ popMessage (engine ^?! event))
+        m = fromMaybe "" (fst $ popMessage (engine ^?! scene))
 
 drawGame :: Engine -> Widget Name
 drawGame engine@PlayerIsExploring{} = withBorderStyle BS.unicodeBold
@@ -155,9 +155,9 @@ drawHpBar e = let barWidth = 20
               in vBox [hBox [ x | x <- map (\x -> withAttr (attrAt x) $ str "XX") [0 .. barWidth - 1]], str $ "HP: " ++ show currentHp ++ " / " ++ show maxHp]
 
 handleMessageEvent :: Engine -> EventM Name (Next Engine)
-handleMessageEvent e@HandlingEvent{} =
-        continue $ if numMessages (e ^?! event) > 1
-                    then e { _event = snd $ popMessage (e ^?! event) }
+handleMessageEvent e@HandlingScene{} =
+        continue $ if numMessages (e ^?! scene) > 1
+                    then e { _scene = snd $ popMessage (e ^?! scene) }
                     else e ^?! afterFinish
 handleMessageEvent _ = error "unreachable"
 

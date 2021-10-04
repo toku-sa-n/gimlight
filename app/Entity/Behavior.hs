@@ -25,7 +25,6 @@ import           Dungeon.Types             (Ai (HostileEnemy, _path), Entity,
                                             power, talkMessage, tileMap,
                                             visible)
 import           Entity                    (getHp, updateHp)
-import           Event                     (Event)
 import           Linear.V2                 (V2 (..), _x, _y)
 import           Log                       (Message, message)
 import           Map.Tile                  (walkable)

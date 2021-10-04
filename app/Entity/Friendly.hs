@@ -6,7 +6,6 @@ import           Brick.AttrMap (AttrName)
 import           Coord         (Coord)
 import           Dungeon.Types (RenderOrder (ActorEntity), actor)
 import           Entity        (Entity)
-import           Event         (Event, talkToElectria)
 import           UI.Attrs      (redAttr)
 
 electria :: Coord -> Entity

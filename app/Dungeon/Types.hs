@@ -40,10 +40,10 @@ module Dungeon.Types
 import           Brick.AttrMap (AttrName)
 import           Control.Lens  (makeLenses)
 import           Coord         (Coord)
-import           Event         (Event)
 import           Map.Explored  (ExploredMap, initExploredMap)
 import           Map.Fov       (Fov, initFov)
 import           Map.Tile      (TileMap)
+import           Scene         (Scene)
 
 
 newtype Ai = HostileEnemy

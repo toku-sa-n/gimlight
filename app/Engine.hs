@@ -29,7 +29,6 @@ import           Entity                         (Entity (..))
 import qualified Entity                         as E
 import           Entity.Behavior                (BumpResult (..), bumpAction,
                                                  enemyAction)
-import           Event                          (Event, gameStartEvent)
 import           Graphics.Vty.Attributes.Color  (Color, white, yellow)
 import           Linear.V2                      (V2 (..), _x, _y)
 import           Log                            (MessageLog, addMaybeMessage,
@@ -39,6 +38,7 @@ import           Map.Bool                       (BoolMap, emptyBoolMap)
 import           Map.Tile                       (Tile, TileMap, darkAttr,
                                                  lightAttr, transparent,
                                                  walkable)
+import           Scene                          (Scene, gameStartScene)
 import           System.Random.Stateful         (newStdGen)
 import           Talking                        (TalkWith)
 
@@ -49,8 +49,8 @@ data Engine = PlayerIsExploring
           } | Talking
           { _talk         :: TalkWith
           , _afterTalking :: Engine
-          } | HandlingEvent
-          { _event       :: Event
+          } | HandlingScene
+          { _scene       :: Scene
           , _afterFinish :: Engine
           } deriving (Show)
 makeLenses ''Engine
@@ -117,8 +117,8 @@ playerMaxHp e = getPlayerEntity (e ^?! dungeon) ^. maxHp
 initEngine :: IO Engine
 initEngine = do
         dungeon <- initDungeon
-        return $ HandlingEvent
-                { _event = gameStartEvent
+        return $ HandlingScene
+                { _scene = gameStartScene
                 , _afterFinish =
                     PlayerIsExploring { _dungeon = dungeon
                                     , _messageLog = foldr (addMessage . L.message) L.emptyLog ["Welcome to a roguelike game!"]

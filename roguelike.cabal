@@ -47,7 +47,7 @@ executable roguelike
                       , Entity.Friendly
                       , Entity.Monsters
                       , Log
-                      , Event
+                      , Scene
                       , Talking
 
     -- Modules included in this executable, other than Main.

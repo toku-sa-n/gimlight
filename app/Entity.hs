@@ -14,7 +14,6 @@ import           Coord         (Coord)
 import           Dungeon.Types (Entity, RenderOrder (ActorEntity, Corpse),
                                 actor, blocksMovement, char, entityAttr, hp,
                                 isAlive, maxHp, name, renderOrder)
-import           Event         (noEvent)
 import           UI.Attrs      (greenAttr, redAttr, whiteAttr)
 
 monster :: Coord -> String -> AttrName -> String -> Int -> Int -> Int -> Entity
