@@ -27,6 +27,7 @@ executable roguelike
 
     other-modules:      UI
                       , UI.Attrs
+                      , UI.Draw
                       , UI.Event
                       , UI.Types
                       , Engine
