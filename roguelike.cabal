@@ -48,6 +48,7 @@ executable roguelike
                       , Entity.Monsters
                       , Log
                       , Event
+                      , Talking
 
     -- Modules included in this executable, other than Main.
     -- other-modules:

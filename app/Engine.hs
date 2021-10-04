@@ -40,12 +40,16 @@ import           Map.Tile                       (Tile, TileMap, darkAttr,
                                                  lightAttr, transparent,
                                                  walkable)
 import           System.Random.Stateful         (newStdGen)
+import           Talking                        (TalkWith)
 
 data Engine = PlayerIsExploring
           { _dungeon    :: Dungeon
           , _messageLog :: MessageLog
           , _isGameOver :: Bool
           } | Talking
+          { _talk         :: TalkWith
+          , _afterTalking :: Engine
+          } | HandlingEvent
           { _event       :: Event
           , _afterFinish :: Engine
           } deriving (Show)
@@ -100,9 +104,9 @@ playerBumpAction offset = do
             LogReturned x -> do
                 messageLog %= addMessages x
                 dungeon .= newDungeon
-            EventStarted ev -> put $ Talking { _event = ev
-                                             , _afterFinish = e
-                                             }
+            TalkStarted tw -> put $ Talking { _talk = tw
+                                            , _afterTalking = e
+                                            }
 
 playerCurrentHp :: Engine -> Int
 playerCurrentHp e = E.getHp $ getPlayerEntity (e ^?! dungeon)
@@ -113,7 +117,7 @@ playerMaxHp e = getPlayerEntity (e ^?! dungeon) ^. maxHp
 initEngine :: IO Engine
 initEngine = do
         dungeon <- initDungeon
-        return $ Talking { _event = gameStartEvent
+        return $ HandlingEvent { _event = gameStartEvent
                          , _afterFinish =
                              PlayerIsExploring { _dungeon = dungeon
                                                  , _messageLog = foldr (addMessage . L.message) L.emptyLog ["Welcome to a roguelike game!"]

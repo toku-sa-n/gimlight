@@ -10,7 +10,7 @@ import           Event         (Event, talkToElectria)
 import           UI.Attrs      (redAttr)
 
 electria :: Coord -> Entity
-electria position = friendly position "1" redAttr "Electria" 50 50 50 talkToElectria
+electria position = friendly position "1" redAttr "Electria" 50 50 50 "How's it going, Ruskell?"
 
-friendly :: Coord -> String -> AttrName -> String -> Int -> Int -> Int -> Event -> Entity
+friendly :: Coord -> String -> AttrName -> String -> Int -> Int -> Int -> String -> Entity
 friendly position char entityAttr name maxHp defence power = actor position char entityAttr name maxHp defence power True True False ActorEntity False
