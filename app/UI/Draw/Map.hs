@@ -3,13 +3,21 @@ module UI.Draw.Map
     ) where
 import           Data.Text (pack)
 import           Monomer   (CmbAlignLeft (alignLeft), CmbHeight (height),
+                            CmbPaddingL (paddingL), CmbPaddingT (paddingT),
                             CmbStyleBasic (styleBasic), CmbWidth (width),
                             WidgetEvent, WidgetModel, WidgetNode, box_, hgrid,
-                            image, vgrid)
+                            image, vgrid, zstack)
 
-mapGrid :: WidgetModel s => WidgetEvent e => WidgetNode s e
-mapGrid = box_ [alignLeft] $ vgrid (replicate tileRows rows) `styleBasic` styles
-    where rows = hgrid $ replicate tileColumns $ image $ pack "kabe.png"
+mapGrid :: (WidgetModel s, WidgetEvent e) => WidgetNode s e
+mapGrid = zstack [ mapTiles
+                 , image (pack "images/player.png") `styleBasic` [paddingL 48, paddingT 48]
+                 ] `styleBasic` [ width $ fromIntegral mapWidth
+                                , height $ fromIntegral mapHeight
+                                ]
+
+mapTiles :: WidgetModel s => WidgetEvent e => WidgetNode s e
+mapTiles = box_ [alignLeft] $ vgrid (replicate tileRows rows) `styleBasic` styles
+    where rows = hgrid $ replicate tileColumns $ image $ pack "images/grass.png"
           styles = [ width $ fromIntegral mapWidth
                    , height $ fromIntegral mapHeight]
           tileRows = mapHeight `div` tileHeight
