@@ -15,9 +15,7 @@ module Log
     , addMessages
     ) where
 
-import           Brick.AttrMap   (AttrName)
 import           Data.List.Split (splitOn)
-import           UI.Attrs        (whiteAttr)
 
 type Message = String
 
@@ -46,8 +44,8 @@ addMaybeMessage Nothing l  = l
 message :: String -> Message
 message text = text
 
-messageToAttrNameAndStringList :: Message -> [(AttrName, String)]
-messageToAttrNameAndStringList m =  take height $ map (whiteAttr,) $ messageToStringList m
+messageToAttrNameAndStringList :: Message -> [String]
+messageToAttrNameAndStringList m =  take height $ messageToStringList m
 
 messageToStringList :: Message -> [String]
 messageToStringList text = map (\x -> x ++ replicate (width - length x) ' ') $ concatMap wrapString $ splitStringOnNewLine text

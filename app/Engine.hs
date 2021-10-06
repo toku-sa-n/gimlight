@@ -33,7 +33,7 @@ data Engine = PlayerIsExploring
           } | HandlingScene
           { _scene       :: Scene
           , _afterFinish :: Engine
-          } deriving (Show)
+          } deriving (Show, Ord, Eq)
 makeLenses ''Engine
 
 completeThisTurn :: State Engine ()
@@ -95,13 +95,12 @@ playerCurrentHp e = E.getHp $ getPlayerEntity (e ^?! dungeon)
 playerMaxHp :: Engine -> Int
 playerMaxHp e = getPlayerEntity (e ^?! dungeon) ^. maxHp
 
-initEngine :: IO Engine
+initEngine :: Engine
 initEngine = do
-        d <- initDungeon
-        return $ HandlingScene
+        HandlingScene
                 { _scene = gameStartScene
                 , _afterFinish =
-                    PlayerIsExploring { _dungeon = d
+                    PlayerIsExploring { _dungeon = initDungeon
                                     , _messageLog = foldr (addMessage . L.message) L.emptyLog ["Welcome to a roguelike game!"]
                                     , _isGameOver = False
                                     }

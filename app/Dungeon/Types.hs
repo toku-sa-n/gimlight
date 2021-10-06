@@ -22,7 +22,6 @@ module Dungeon.Types
     , entities
     , position
     , char
-    , entityAttr
     , name
     , hp
     , maxHp
@@ -37,17 +36,16 @@ module Dungeon.Types
     , talkMessage
     ) where
 
-import           Brick.AttrMap (AttrName)
-import           Control.Lens  (makeLenses)
-import           Coord         (Coord)
-import           Map.Explored  (ExploredMap, initExploredMap)
-import           Map.Fov       (Fov, initFov)
-import           Map.Tile      (TileMap)
+import           Control.Lens (makeLenses)
+import           Coord        (Coord)
+import           Map.Explored (ExploredMap, initExploredMap)
+import           Map.Fov      (Fov, initFov)
+import           Map.Tile     (TileMap)
 
 
 newtype Ai = HostileEnemy
              { _path :: [Coord]
-             } deriving (Show)
+             } deriving (Show, Ord, Eq)
 makeLenses ''Ai
 
 data RenderOrder =  ActorEntity| Iten | Corpse deriving (Show, Ord, Eq)
@@ -55,7 +53,6 @@ data RenderOrder =  ActorEntity| Iten | Corpse deriving (Show, Ord, Eq)
 data Entity = Actor
             { _position       :: Coord
             , _char           :: String
-            , _entityAttr     :: AttrName
             , _name           :: String
             , _hp             :: Int
             , _maxHp          :: Int
@@ -68,7 +65,7 @@ data Entity = Actor
             , _renderOrder    :: RenderOrder
             , _isEnemy        :: Bool
             , _talkMessage    :: String
-            } deriving (Show)
+            } deriving (Show, Ord, Eq)
 makeLenses ''Entity
 
 data Dungeon = Dungeon
@@ -76,7 +73,7 @@ data Dungeon = Dungeon
           , _visible  :: Fov
           , _explored :: ExploredMap
           , _entities :: [Entity]
-          } deriving (Show)
+          } deriving (Show, Ord, Eq)
 makeLenses ''Dungeon
 
 dungeon :: TileMap -> [Entity] -> Dungeon
@@ -86,11 +83,10 @@ dungeon t e = Dungeon { _tileMap = t
                       , _entities = e
                       }
 
-actor :: Coord -> String -> AttrName -> String -> Int -> Int -> Int -> Bool -> Bool -> Bool -> RenderOrder -> Bool -> String -> Entity
-actor position' char' entityAttr' name' hp' defence' power' isAlive' blocksMovement' isPlayer' renderOrder' isEnemy' talkMessage' =
+actor :: Coord -> String -> String -> Int -> Int -> Int -> Bool -> Bool -> Bool -> RenderOrder -> Bool -> String -> Entity
+actor position' char' name' hp' defence' power' isAlive' blocksMovement' isPlayer' renderOrder' isEnemy' talkMessage' =
         Actor { _position = position'
               , _char = char'
-              , _entityAttr = entityAttr'
               , _name = name'
               , _hp = hp'
               , _maxHp = hp'
