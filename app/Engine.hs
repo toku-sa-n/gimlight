@@ -20,7 +20,7 @@ import           Linear.V2                      (V2)
 import           Log                            (MessageLog, addMessage,
                                                  addMessages)
 import qualified Log                            as L
-import           Scene                          (Scene, gameStartScene)
+import           Scene                          (Scene)
 import           Talking                        (TalkWith)
 
 data Engine = PlayerIsExploring
@@ -97,11 +97,7 @@ playerMaxHp e = getPlayerEntity (e ^?! dungeon) ^. maxHp
 
 initEngine :: Engine
 initEngine = do
-        HandlingScene
-                { _scene = gameStartScene
-                , _afterFinish =
                     PlayerIsExploring { _dungeon = initDungeon
                                     , _messageLog = foldr (addMessage . L.message) L.emptyLog ["Welcome to a roguelike game!"]
                                     , _isGameOver = False
                                     }
-                }

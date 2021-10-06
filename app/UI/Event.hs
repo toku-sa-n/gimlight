@@ -2,9 +2,40 @@ module UI.Event
     ( handleEvent
     ) where
 
-import           Engine   (Engine)
-import           Monomer  (AppEventResponse, WidgetEnv, WidgetNode)
-import           UI.Types (AppEvent)
+import           Control.Lens              ((^?!))
+import           Control.Monad             (unless)
+import           Control.Monad.Trans.State (execState, get)
+import           Engine                    (Engine (PlayerIsExploring),
+                                            completeThisTurn, isGameOver,
+                                            playerBumpAction)
+import           Linear.V2                 (V2 (V2))
+import           Monomer                   (AppEventResponse,
+                                            EventResponse (Model), KeyCode,
+                                            WidgetEnv, WidgetNode, keyDown,
+                                            keyLeft, keyRight, keyUp)
+import           UI.Types                  (AppEvent (AppInit, AppKeyboardInput))
 
 handleEvent :: WidgetEnv Engine AppEvent -> WidgetNode Engine AppEvent -> Engine -> AppEvent -> [AppEventResponse Engine AppEvent]
-handleEvent _ _ _ _ = []
+handleEvent _ _ engine evt = case evt of
+                                AppInit            -> []
+                                AppKeyboardInput k -> [Model $ handleKeyInput engine k]
+
+handleKeyInput :: Engine -> KeyCode -> Engine
+handleKeyInput e k
+    | k == keyRight = handlePlayerMove (V2 1 0) e
+    | k == keyLeft  = handlePlayerMove (V2 (-1) 0) e
+    | k == keyUp    = handlePlayerMove (V2 0 1) e
+    | k == keyDown  = handlePlayerMove (V2 0 (-1)) e
+    | otherwise = e
+
+handlePlayerMove :: V2 Int -> Engine -> Engine
+handlePlayerMove d e = flip execState e $ do
+    eng <- get
+    let finished = eng ^?! isGameOver
+    unless finished $ do
+        playerBumpAction d
+
+        eng' <- get
+        case eng' of
+            PlayerIsExploring {} -> completeThisTurn
+            _                    -> return ()

@@ -11,7 +11,6 @@
 module Dungeon.Types
     ( Dungeon
     , Entity
-    , RenderOrder(..)
     , Ai(..)
     , path
     , dungeon
@@ -21,7 +20,6 @@ module Dungeon.Types
     , explored
     , entities
     , position
-    , char
     , name
     , hp
     , maxHp
@@ -31,9 +29,9 @@ module Dungeon.Types
     , isAlive
     , blocksMovement
     , isPlayer
-    , renderOrder
     , isEnemy
     , talkMessage
+    , imagePath
     ) where
 
 import           Control.Lens (makeLenses)
@@ -48,11 +46,8 @@ newtype Ai = HostileEnemy
              } deriving (Show, Ord, Eq)
 makeLenses ''Ai
 
-data RenderOrder =  ActorEntity| Iten | Corpse deriving (Show, Ord, Eq)
-
 data Entity = Actor
             { _position       :: Coord
-            , _char           :: String
             , _name           :: String
             , _hp             :: Int
             , _maxHp          :: Int
@@ -62,9 +57,9 @@ data Entity = Actor
             , _isAlive        :: Bool
             , _blocksMovement :: Bool
             , _isPlayer       :: Bool
-            , _renderOrder    :: RenderOrder
             , _isEnemy        :: Bool
             , _talkMessage    :: String
+            , _imagePath      :: String
             } deriving (Show, Ord, Eq)
 makeLenses ''Entity
 
@@ -83,10 +78,9 @@ dungeon t e = Dungeon { _tileMap = t
                       , _entities = e
                       }
 
-actor :: Coord -> String -> String -> Int -> Int -> Int -> Bool -> Bool -> Bool -> RenderOrder -> Bool -> String -> Entity
-actor position' char' name' hp' defence' power' isAlive' blocksMovement' isPlayer' renderOrder' isEnemy' talkMessage' =
+actor :: Coord -> String -> Int -> Int -> Int -> Bool -> Bool -> Bool -> Bool -> String -> String -> Entity
+actor position' name' hp' defence' power' isAlive' blocksMovement' isPlayer' isEnemy' talkMessage' imagePath' =
         Actor { _position = position'
-              , _char = char'
               , _name = name'
               , _hp = hp'
               , _maxHp = hp'
@@ -96,9 +90,9 @@ actor position' char' name' hp' defence' power' isAlive' blocksMovement' isPlaye
               , _isAlive = isAlive'
               , _blocksMovement = blocksMovement'
               , _isPlayer = isPlayer'
-              , _renderOrder = renderOrder'
               , _isEnemy = isEnemy'
               , _talkMessage = talkMessage'
+              , _imagePath = imagePath'
               }
 
 hostileEnemy :: Ai

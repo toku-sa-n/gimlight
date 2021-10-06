@@ -6,7 +6,7 @@ import           Coord  (Coord)
 import           Entity (Entity, monster)
 
 orc :: Coord -> Entity
-orc c = monster c "o" "Orc" 10 0 3
+orc c = monster c "Orc" 10 0 3 "images/orc.png"
 
 troll :: Coord -> Entity
-troll c = monster c "T" "Troll" 16 1 4
+troll c = monster c "Troll" 16 1 4 "images/troll.png"
