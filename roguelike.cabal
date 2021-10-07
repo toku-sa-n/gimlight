@@ -25,8 +25,7 @@ executable roguelike
     main-is:          Main.hs
     ghc-options:      -threaded -Wall -Werror
 
-    other-modules:      UI
-                      , UI.Draw
+    other-modules:      UI.Draw
                       , UI.Draw.Map
                       , UI.Event
                       , UI.Types
