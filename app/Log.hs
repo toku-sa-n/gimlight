@@ -1,5 +1,3 @@
-{-# LANGUAGE TupleSections #-}
-
 module Log
     ( MessageLog
     , emptyLog
