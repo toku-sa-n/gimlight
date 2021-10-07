@@ -17,22 +17,24 @@ mapGrid engine = zstack (mapTiles:mapEntities engine) `styleBasic` [ width $ fro
                                                                    , height $ fromIntegral mapHeight
                                                                    ]
 
-mapTiles :: WidgetModel s => WidgetEvent e => WidgetNode s e
+mapTiles :: (WidgetModel s, WidgetEvent e) => WidgetNode s e
 mapTiles = box_ [alignLeft] $ vgrid (replicate tileRows rows) `styleBasic` styles
     where rows = hgrid $ replicate tileColumns $ image $ pack "images/grass.png"
           styles = [ width $ fromIntegral mapWidth
                    , height $ fromIntegral mapHeight]
-          tileRows = mapHeight `div` tileHeight
-          tileColumns = mapWidth `div` tileWidth
 
 mapEntities :: (WidgetModel s, WidgetEvent e) => Engine -> [WidgetNode s e]
 mapEntities (PlayerIsExploring d _ _) = map (\e -> image (pack $ e ^. imagePath) `styleBasic` [paddingL $ fromIntegral $ e ^. (position . _x) * tileWidth, paddingT $ fromIntegral $ mapHeight - ((e ^. (position . _y) + 1) * tileHeight)]) $ d ^. entities
 mapEntities _                         = undefined
 
 mapWidth, mapHeight :: Int
-mapWidth = 768
-mapHeight = 576
+mapWidth = tileWidth * tileColumns
+mapHeight = tileHeight * tileRows
 
 tileWidth, tileHeight :: Int
 tileWidth = 48
 tileHeight = 48
+
+tileColumns, tileRows :: Int
+tileColumns = 17
+tileRows = 9
