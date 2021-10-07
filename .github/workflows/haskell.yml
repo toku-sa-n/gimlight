@@ -29,6 +29,9 @@ jobs:
 
     - name: Install dependencies
       run: |
+        sudo apt update
+        sudo apt install libsdl2-dev libglew-dev
+
         cabal update
         cabal build --only-dependencies --enable-tests --enable-benchmarks
     - name: Build
