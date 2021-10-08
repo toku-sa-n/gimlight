@@ -63,7 +63,7 @@ mapEntities (PlayerIsExploring d _ _) = mapMaybe entityToImage $ d ^. entities
           isEntityDrawed e = let pos = entityPositionOnDisplay e
                              in V2 0 0 <= pos && pos <= topRightCoord d
 
-          entityToImage e = guard (isEntityDrawed e) >> return (image (pack $ e ^. DT.imagePath) `styleBasic` style e)
+          entityToImage e = guard (isEntityDrawed e) >> return (image (pack $ e ^. DT.walkingImagePath) `styleBasic` style e)
 mapEntities _                         = undefined
 
 topRightCoord :: Dungeon -> Coord
