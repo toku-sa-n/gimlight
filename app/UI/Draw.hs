@@ -23,14 +23,16 @@ import           Monomer               (CmbAlignLeft (alignLeft),
                                         CmbPaddingL (paddingL),
                                         CmbPaddingT (paddingT),
                                         CmbStyleBasic (styleBasic),
+                                        CmbTextColor (textColor),
+                                        CmbTextSize (textSize),
                                         CmbWidth (width), WidgetEnv,
                                         WidgetEvent, WidgetModel, WidgetNode,
                                         black, box_, filler, gray, hgrid,
                                         hstack, image, keyDown, keyLeft,
-                                        keyRight, keyUp, keystroke, label,
+                                        keyRight, keyUp, keystroke, label, red,
                                         vgrid, vstack, zstack)
 import qualified Monomer.Graphics.Lens as L
-import           Talking               (TalkWith, person)
+import           Talking               (TalkWith, message, person)
 import           UI.Types              (AppEvent (AppKeyboardInput))
 
 drawUI :: WidgetEnv Engine AppEvent -> Engine -> WidgetNode Engine AppEvent
@@ -83,7 +85,11 @@ mapEntities _                         = undefined
 
 talkingWindow :: TalkWith -> WidgetNode Engine AppEvent
 talkingWindow tw = hstack [ image (pack $ tw ^. (person . standingImagePath))
-                          , image (pack "images/talking_window.png")]
+                          , window
+                          ]
+    where window = zstack [ image (pack "images/talking_window.png")
+                          , label (pack $ tw ^. message) `styleBasic` [textColor red, textSize 16, paddingL 50]
+                          ]
 
 topRightCoord :: Dungeon -> Coord
 topRightCoord d = bottomLeftCoord d + mapWidthAndHeight d - V2 1 1
@@ -111,6 +117,5 @@ windowWidth, windowHeight :: Int
 windowWidth = 1280
 windowHeight = 720
 
--- standingImageWidth, standingImageHeight :: Int
+-- standingImageWidth :: Int
 -- standingImageWidth = 300
--- standingImageHeight = 600
