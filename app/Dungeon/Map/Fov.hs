@@ -19,9 +19,9 @@ initFov :: Fov
 initFov = emptyBoolMap
 
 calculateFov :: Coord -> BoolMap -> Fov
-calculateFov (V2 x0 y0) transparentMap =
-        foldl (flip (calculateLos transparentMap (V2 x0 y0))) emptyBoolMap
-            [V2 (x0 + x) (y0 + y) |
+calculateFov src transparentMap =
+        foldl (flip (calculateLos transparentMap src)) emptyBoolMap
+            [src + V2 x y |
             x <- [(-fovRadius) .. fovRadius],
             y <- [(-fovRadius) .. fovRadius]
             ]
