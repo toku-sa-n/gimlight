@@ -23,7 +23,7 @@ generateDungeon g = generateDungeonAccum [] [] (allWallTiles (V2 width height)) 
 
 generateDungeonAccum :: [Entity] -> [Room] -> TileMap -> Coord -> StdGen -> Int -> Int -> Int -> V2 Int -> (TileMap, [Entity], V2 Int, StdGen)
 generateDungeonAccum enemiesAcc _ d pos g 0 _ _ _ = (d, enemiesAcc, pos, g)
-generateDungeonAccum enemiesAcc acc dungeon playerPos g maxRooms roomMinSize roomMaxSize mapSize
+generateDungeonAccum enemiesAcc acc tileMap playerPos g maxRooms roomMinSize roomMaxSize mapSize
     = generateDungeonAccum newEnemiesAcc newAcc newDungeon newPlayerPos g''''' (maxRooms - 1) roomMinSize roomMaxSize mapSize
     where (roomWidth, g') = randomR (roomMinSize, roomMaxSize) g
           (roomHeight, g'') = randomR (roomMinSize, roomMaxSize) g'
@@ -34,10 +34,10 @@ generateDungeonAccum enemiesAcc acc dungeon playerPos g maxRooms roomMinSize roo
           (enemies, g''''') = placeEnemies g'''' room maxMonstersPerRoom
           (newEnemiesAcc, newAcc, newDungeon, newPlayerPos) = if usable
                                                    then if null acc
-                                                            then (enemies ++ enemiesAcc, room:acc, createRoom room dungeon, center room)
-                                                            else (enemies ++ enemiesAcc, room:acc, tunnelBetween (center room) (center $ head acc) $ createRoom room dungeon, center room)
-                                                   else (enemiesAcc, acc, dungeon, playerPos)
-          V2 width height = snd (bounds dungeon) + V2 1 1
+                                                            then (enemies ++ enemiesAcc, room:acc, createRoom room tileMap, center room)
+                                                            else (enemies ++ enemiesAcc, room:acc, tunnelBetween (center room) (center $ head acc) $ createRoom room tileMap, center room)
+                                                   else (enemiesAcc, acc, tileMap, playerPos)
+          V2 width height = snd (bounds tileMap) + V2 1 1
 
 createRoom :: Room -> TileMap -> TileMap
 createRoom room r
