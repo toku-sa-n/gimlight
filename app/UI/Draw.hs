@@ -17,7 +17,7 @@ import qualified Dungeon.Map.Tile      as MT
 import           Dungeon.Types         (Dungeon, entities, explored, position,
                                         standingImagePath, tileMap, visible)
 import qualified Dungeon.Types         as DT
-import           Engine                (Engine (PlayerIsExploring, Talking))
+import           Engine                (Engine (HandlingScene, PlayerIsExploring, Talking))
 import           Linear.V2             (V2 (V2), _x, _y)
 import           Monomer               (CmbAlignLeft (alignLeft),
                                         CmbBgColor (bgColor),
@@ -34,6 +34,7 @@ import           Monomer               (CmbAlignLeft (alignLeft),
                                         keyReturn, keyRight, keyUp, keystroke,
                                         label, red, vgrid, vstack, zstack)
 import qualified Monomer.Graphics.Lens as L
+import           Scene                 (backgroundImage, elements, text)
 import           Talking               (TalkWith, message, person)
 import           UI.Types              (AppEvent (AppKeyboardInput))
 
@@ -42,6 +43,9 @@ drawUI wenv (Talking with afterEngine) = withKeyEvents $ zstack [ drawUI wenv af
                                                                 , filler `styleBasic` [bgColor $ black & L.a .~ 0.5]
                                                                 , talkingWindow with
                                                                 ]
+drawUI _ (HandlingScene s _) = withKeyEvents $ zstack [ image (s ^. backgroundImage)
+                                                      , label $ text $ head $ s ^. elements
+                                                      ]
 drawUI _ engine = withKeyEvents $ vstack [ mapGrid engine
                                          , label $ pack "多分ここにログが表示される．"
                                          ] `styleBasic` [width 0]
