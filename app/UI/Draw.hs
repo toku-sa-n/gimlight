@@ -22,6 +22,7 @@ import           Linear.V2             (V2 (V2), _x, _y)
 import           Monomer               (CmbAlignLeft (alignLeft),
                                         CmbBgColor (bgColor),
                                         CmbHeight (height),
+                                        CmbMultiline (multiline),
                                         CmbPaddingL (paddingL),
                                         CmbPaddingT (paddingT),
                                         CmbStyleBasic (styleBasic),
@@ -32,7 +33,8 @@ import           Monomer               (CmbAlignLeft (alignLeft),
                                         black, box_, filler, gray, hgrid,
                                         hstack, image, keyDown, keyLeft,
                                         keyReturn, keyRight, keyUp, keystroke,
-                                        label, red, vgrid, vstack, zstack)
+                                        label, label_, red, vgrid, vstack,
+                                        zstack)
 import qualified Monomer.Graphics.Lens as L
 import           Scene                 (backgroundImage, elements, text)
 import           Talking               (TalkWith, message, person)
@@ -44,7 +46,7 @@ drawUI wenv (Talking with afterEngine) = withKeyEvents $ zstack [ drawUI wenv af
                                                                 , talkingWindow with
                                                                 ]
 drawUI _ (HandlingScene s _) = withKeyEvents $ zstack [ image (s ^. backgroundImage)
-                                                      , label $ text $ head $ s ^. elements
+                                                      , label_  (text $ head $ s ^. elements) [multiline] `styleBasic` [textColor black]
                                                       ]
 drawUI _ engine = withKeyEvents $ vstack [ mapGrid engine
                                          , label $ pack "多分ここにログが表示される．"
