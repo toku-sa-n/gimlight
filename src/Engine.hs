@@ -28,9 +28,9 @@ import           Scene                          (Scene, gameStartScene)
 import           Talking                        (TalkWith)
 
 data Engine = PlayerIsExploring
-          { _dungeon    :: Dungeon
-          , _messageLog :: MessageLog
-          , _isGameOver :: Bool
+          { _currentDungeon :: Dungeon
+          , _messageLog     :: MessageLog
+          , _isGameOver     :: Bool
           } | Talking
           { _talk         :: TalkWith
           , _afterTalking :: Engine
@@ -47,18 +47,18 @@ completeThisTurn = do
         handleEnemyTurns
 
         e <- get
-        let dg = e ^?! dungeon
+        let dg = e ^?! currentDungeon
 
         let (status, newD) = runState D.completeThisTurn dg
 
         isGameOver .= (status == DT.PlayerKilled)
 
-        dungeon .= newD
+        currentDungeon .= newD
 
 handleEnemyTurns :: State Engine ()
 handleEnemyTurns = do
         e <- get
-        let dg = e ^?! dungeon
+        let dg = e ^?! currentDungeon
 
         let xs = aliveEnemies dg
 
@@ -67,7 +67,7 @@ handleEnemyTurns = do
 handleEnemyTurn :: Coord -> State Engine ()
 handleEnemyTurn c = do
         e <- get
-        let dg = e ^?! dungeon
+        let dg = e ^?! currentDungeon
 
         let (messages, dg') = flip runState dg $ do
                 e' <- D.popActorAt c
@@ -76,12 +76,12 @@ handleEnemyTurn c = do
                     Nothing  -> error "No such enemy."
 
         messageLog %= addMessages messages
-        dungeon .= dg'
+        currentDungeon .= dg'
 
 playerBumpAction :: V2 Int -> State Engine ()
 playerBumpAction offset = do
         e <- get
-        let dg = e ^?! dungeon
+        let dg = e ^?! currentDungeon
 
         let (result, newDungeon) = flip runState dg $ do
                 e' <- D.popPlayer
@@ -90,16 +90,16 @@ playerBumpAction offset = do
         case result of
             LogReturned x -> do
                 messageLog %= addMessages x
-                dungeon .= newDungeon
+                currentDungeon .= newDungeon
             TalkStarted tw -> put $ Talking { _talk = tw
                                             , _afterTalking = e
                                             }
 
 playerCurrentHp :: Engine -> Int
-playerCurrentHp e = E.getHp $ getPlayerEntity (e ^?! dungeon)
+playerCurrentHp e = E.getHp $ getPlayerEntity (e ^?! currentDungeon)
 
 playerMaxHp :: Engine -> Int
-playerMaxHp e = getPlayerEntity (e ^?! dungeon) ^. maxHp
+playerMaxHp e = getPlayerEntity (e ^?! currentDungeon) ^. maxHp
 
 playerPosition :: Engine -> Coord
 playerPosition (PlayerIsExploring d _ _) = D.playerPosition d
@@ -117,7 +117,7 @@ newGameEngine :: Engine
 newGameEngine = HandlingScene { _scene = gameStartScene
                            , _afterFinish = initPlayerIsExploring
                            }
-    where initPlayerIsExploring = PlayerIsExploring { _dungeon = initDungeon
+    where initPlayerIsExploring = PlayerIsExploring { _currentDungeon = initDungeon
                                                     , _messageLog = foldr (addMessage . L.message) L.emptyLog ["Welcome to a roguelike game!"]
                                                     , _isGameOver = False
                                                     }
