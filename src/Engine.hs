@@ -4,12 +4,13 @@
 
 module Engine where
 
-import           Control.Lens                   (makeLenses, (%=), (.=), (^.),
-                                                 (^?!))
+import           Control.Lens                   (makeLenses, (%=), (%~), (&),
+                                                 (.=), (.~), (^.), (^?!))
 import           Control.Monad.Trans.State      (State, get)
 import           Control.Monad.Trans.State.Lazy (put, runState)
 import           Coord                          (Coord)
 import           Data.Binary                    (Binary)
+import           Data.List                      (find)
 import           Dungeon                        (Dungeon, aliveEnemies,
                                                  getPlayerEntity, initDungeon,
                                                  mapWidthAndHeight)
@@ -19,7 +20,8 @@ import           Dungeon.Entity.Behavior        (BumpResult (..), bumpAction,
                                                  enemyAction)
 import           Dungeon.Predefined.GlobalMap   (globalMap)
 import qualified Dungeon.Turn                   as DT
-import           Dungeon.Types                  (maxHp, position)
+import           Dungeon.Types                  (entities, isGlobalMap, maxHp,
+                                                 position, positionOnGlobalMap)
 import           GHC.Generics                   (Generic)
 import           Linear.V2                      (V2)
 import           Log                            (MessageLog, addMessage,
@@ -71,13 +73,16 @@ handleEnemyTurn c = do
         e <- get
         let dg = e ^?! currentDungeon
 
-        let (messages, dg') = flip runState dg $ do
+        let (result, dg') = flip runState dg $ do
                 e' <- D.popActorAt c
                 case e' of
                     Just e'' -> enemyAction e''
                     Nothing  -> error "No such enemy."
 
-        messageLog %= addMessages messages
+        messageLog %= addMessages (case result of
+                                      LogReturned m -> m
+                                      Ok            -> []
+                                      _             -> error "unreachable")
         currentDungeon .= dg'
 
 playerBumpAction :: V2 Int -> State Engine ()
@@ -96,6 +101,19 @@ playerBumpAction offset = do
             TalkStarted tw -> put $ Talking { _talk = tw
                                             , _afterTalking = e
                                             }
+            ExitToGlobalMap p -> do
+                otherDungeons %= (:) newDungeon
+                let newPosition = newDungeon ^. positionOnGlobalMap
+                let g = find (^. isGlobalMap) (e ^?! otherDungeons)
+                let newPlayer = p & position .~ case newPosition of
+                                                    Just pos -> pos
+                                                    Nothing  -> error "whooops."
+                currentDungeon .= case g of
+                                      Just g' -> g' & entities %~ (:) newPlayer
+                                      Nothing -> error "whoops."
+            Ok -> currentDungeon .= newDungeon
+
+
 
 playerCurrentHp :: Engine -> Int
 playerCurrentHp e = E.getHp $ getPlayerEntity (e ^?! currentDungeon)
