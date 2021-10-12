@@ -29,6 +29,7 @@ import           Talking                        (TalkWith)
 
 data Engine = PlayerIsExploring
           { _currentDungeon :: Dungeon
+          , _otherDungeons  :: [Dungeon]
           , _messageLog     :: MessageLog
           , _isGameOver     :: Bool
           } | Talking
@@ -102,13 +103,13 @@ playerMaxHp :: Engine -> Int
 playerMaxHp e = getPlayerEntity (e ^?! currentDungeon) ^. maxHp
 
 playerPosition :: Engine -> Coord
-playerPosition (PlayerIsExploring d _ _) = D.playerPosition d
-playerPosition (Talking _ e)             = playerPosition e
-playerPosition (HandlingScene _ e)       = playerPosition e
-playerPosition Title                     = error "unreachable."
+playerPosition (PlayerIsExploring d _ _ _) = D.playerPosition d
+playerPosition (Talking _ e)               = playerPosition e
+playerPosition (HandlingScene _ e)         = playerPosition e
+playerPosition Title                       = error "unreachable."
 
 currentMapWidthAndHeight :: Engine -> V2 Int
-currentMapWidthAndHeight (PlayerIsExploring d _ _) = mapWidthAndHeight d
+currentMapWidthAndHeight (PlayerIsExploring d _ _ _) = mapWidthAndHeight d
 currentMapWidthAndHeight (Talking _ e)             = currentMapWidthAndHeight e
 currentMapWidthAndHeight (HandlingScene _ e)       = currentMapWidthAndHeight e
 currentMapWidthAndHeight _                         = error "unreachable."
@@ -118,6 +119,7 @@ newGameEngine = HandlingScene { _scene = gameStartScene
                            , _afterFinish = initPlayerIsExploring
                            }
     where initPlayerIsExploring = PlayerIsExploring { _currentDungeon = initDungeon
+                                                    , _otherDungeons = []
                                                     , _messageLog = foldr (addMessage . L.message) L.emptyLog ["Welcome to a roguelike game!"]
                                                     , _isGameOver = False
                                                     }
