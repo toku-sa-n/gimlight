@@ -30,6 +30,7 @@ globalMap = dungeon (stringArrayToMap
     ])
     []
     Nothing
+    True
 
 stringArrayToMap :: [String] -> TileMap
 stringArrayToMap list = allWallTiles (V2 width height) // [(V2 x y, tile c) | (y, row) <- zip [0..] list, (x, c) <- zip [0..] row]
