@@ -10,7 +10,7 @@ import           Control.Monad.Trans.State      (State, get)
 import           Control.Monad.Trans.State.Lazy (put, runState)
 import           Coord                          (Coord)
 import           Data.Binary                    (Binary)
-import           Data.List                      (find)
+import           Data.List                      (find, findIndex)
 import           Dungeon                        (Dungeon, aliveEnemies,
                                                  getPlayerEntity, initDungeon,
                                                  mapWidthAndHeight)
@@ -132,6 +132,17 @@ currentMapWidthAndHeight (PlayerIsExploring d _ _ _) = mapWidthAndHeight d
 currentMapWidthAndHeight (Talking _ e)             = currentMapWidthAndHeight e
 currentMapWidthAndHeight (HandlingScene _ e)       = currentMapWidthAndHeight e
 currentMapWidthAndHeight _                         = error "unreachable."
+
+popDungeonAtPlayerPosition :: Engine -> (Maybe Dungeon, Engine)
+popDungeonAtPlayerPosition e = popDungeonAt (playerPosition e) e
+
+popDungeonAt :: Coord -> Engine -> (Maybe Dungeon, Engine)
+popDungeonAt p e = let xs = e ^. otherDungeons
+                   in case findIndex (\x -> x ^. positionOnGlobalMap == Just p) xs of
+                          Just x -> let d = xs !! x
+                                        newOtherDungeons = take x xs ++ drop (x + 1) xs
+                                    in (Just d, e & otherDungeons .~ newOtherDungeons)
+                          Nothing -> (Nothing, e)
 
 newGameEngine :: Engine
 newGameEngine = HandlingScene { _scene = gameStartScene
