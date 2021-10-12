@@ -17,6 +17,7 @@ import qualified Dungeon                        as D
 import qualified Dungeon.Entity                 as E
 import           Dungeon.Entity.Behavior        (BumpResult (..), bumpAction,
                                                  enemyAction)
+import           Dungeon.Predefined.GlobalMap   (globalMap)
 import qualified Dungeon.Turn                   as DT
 import           Dungeon.Types                  (maxHp, position)
 import           GHC.Generics                   (Generic)
@@ -119,7 +120,7 @@ newGameEngine = HandlingScene { _scene = gameStartScene
                            , _afterFinish = initPlayerIsExploring
                            }
     where initPlayerIsExploring = PlayerIsExploring { _currentDungeon = initDungeon
-                                                    , _otherDungeons = []
+                                                    , _otherDungeons = [globalMap]
                                                     , _messageLog = foldr (addMessage . L.message) L.emptyLog ["Welcome to a roguelike game!"]
                                                     , _isGameOver = False
                                                     }
