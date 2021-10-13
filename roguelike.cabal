@@ -11,33 +11,33 @@ executable roguelike
     main-is:          Main.hs
     ghc-options:      -threaded -Wall -Werror
 
-    other-modules:      UI.Draw
-                      , UI.Event
-                      , UI.Types
-                      , Engine
+    other-modules:      Coord
                       , Dungeon
                       , Dungeon.Entity
                       , Dungeon.Entity.Behavior
                       , Dungeon.Entity.Friendly
                       , Dungeon.Entity.Monsters
+                      , Dungeon.Generate
+                      , Dungeon.Generate.Room
                       , Dungeon.Map
-                      , Dungeon.Map.Tile
                       , Dungeon.Map.Bool
                       , Dungeon.Map.Explored
                       , Dungeon.Map.Fov
+                      , Dungeon.Map.Tile
+                      , Dungeon.PathFinder
                       , Dungeon.Predefined.Beaeve
                       , Dungeon.Predefined.GlobalMap
-                      , Dungeon.Types
                       , Dungeon.Size
-                      , Dungeon.Generate
-                      , Dungeon.Generate.Room
-                      , Dungeon.PathFinder
                       , Dungeon.Turn
-                      , Coord
+                      , Dungeon.Types
+                      , Engine
                       , Log
                       , Save
                       , Scene
                       , Talking
+                      , UI.Draw
+                      , UI.Event
+                      , UI.Types
 
     build-depends:      astar >= 0.3.0 && < 1
                       , array >= 0.5.4 && < 1
