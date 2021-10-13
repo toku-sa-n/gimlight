@@ -140,7 +140,6 @@ moveAction :: Entity -> V2 Int -> State Dungeon BumpResult
 moveAction src offset = state $ \d -> if isPositionInRange d $ (src ^. position) + offset
                                         then (Ok, execState (pushEntity $ updatePosition d src offset) d)
                                         else (ExitToGlobalMap src, d)
--- moveAction src offset = state $ \d -> ((), execState (pushEntity $ updatePosition d src offset) d)
 
 waitAction :: Entity -> State Dungeon ()
 waitAction = pushEntity
