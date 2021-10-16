@@ -12,9 +12,9 @@ import           Control.Monad.Trans.State.Lazy (put, runState)
 import           Coord                          (Coord)
 import           Data.Binary                    (Binary)
 import           Data.List                      (find, findIndex)
-import           Dungeon                        (Dungeon, aliveNpcs,
-                                                 getPlayerEntity, initDungeon,
-                                                 mapWidthAndHeight, popPlayer)
+import           Dungeon                        (Dungeon, getPlayerEntity,
+                                                 initDungeon, mapWidthAndHeight,
+                                                 npcs, popPlayer)
 import qualified Dungeon                        as D
 import           Dungeon.Entity                 (isMonster)
 import qualified Dungeon.Entity                 as E
@@ -69,7 +69,7 @@ handleNpcTurns = do
         e <- get
         let dg = e ^?! currentDungeon
 
-        let xs = aliveNpcs dg
+        let xs = npcs dg
 
         mapM_ (handleNpcTurn . (^. position)) xs
 

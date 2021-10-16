@@ -16,7 +16,6 @@ module Dungeon
     , walkableFloor
     , getPlayerEntity
     , enemyCoords
-    , aliveNpcs
     , mapWidthAndHeight
     , playerPosition
     , initialPlayerPositionCandidates
@@ -25,6 +24,7 @@ module Dungeon
     , isTown
     , actorAt
     , isPositionInDungeon
+    , npcs
     ) where
 
 import           Control.Lens                   ((%~), (&), (.=), (.~), (^.))
@@ -48,8 +48,8 @@ import qualified Dungeon.Turn                   as DT
 import           Dungeon.Types                  (Dungeon,
                                                  DungeonKind (GlobalMap, Town),
                                                  dungeon, dungeonKind, entities,
-                                                 explored, isAlive, position,
-                                                 tileMap, visible)
+                                                 explored, position, tileMap,
+                                                 visible)
 import           Linear.V2                      (V2 (..))
 
 completeThisTurn :: State Dungeon DT.Status
@@ -125,9 +125,6 @@ enemyCoords d = map (^. position) $ filter (not . isPlayer) $ d ^. entities
 
 isPlayerAlive :: Dungeon -> Bool
 isPlayerAlive d = isJust $ getPlayerEntity d
-
-aliveNpcs :: Dungeon -> [Entity]
-aliveNpcs d = filter (^. isAlive) $ npcs d
 
 actors :: Dungeon -> [Entity]
 actors d = filter isActor $ d ^. entities
