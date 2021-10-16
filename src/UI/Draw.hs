@@ -16,9 +16,9 @@ import           Data.Text             (append, pack)
 import           Dungeon               (mapWidthAndHeight, playerPosition)
 import           Dungeon.Entity        (getHp)
 import qualified Dungeon.Map.Tile      as MT
-import           Dungeon.Types         (Dungeon, entities, explored, maxHp,
-                                        position, standingImagePath, tileMap,
-                                        visible)
+import           Dungeon.Types         (Dungeon, defence, entities, explored,
+                                        maxHp, position, power,
+                                        standingImagePath, tileMap, visible)
 import qualified Dungeon.Types         as DT
 import           GameStatus            (GameStatus (HandlingScene, PlayerIsExploring, Talking, Title),
                                         getPlayerEntity, messageLogList)
@@ -123,8 +123,8 @@ statusGrid :: GameStatus -> WidgetNode GameStatus AppEvent
 statusGrid gs = vstack $ maybe []
     (\x -> [ label "Player"
            , label $ "HP: " `append` pack (show $ getHp x) `append` " / " `append` pack (show $ x ^. maxHp)
-           , label "ATK"
-           , label "DEF"
+           , label $ "ATK: " `append` pack (show $ x ^. power)
+           , label $ "DEF: " `append` pack (show $ x ^. defence)
            ]) $ getPlayerEntity gs
 
 talkingWindow :: TalkWith -> WidgetNode GameStatus AppEvent
