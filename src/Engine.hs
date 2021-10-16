@@ -78,7 +78,7 @@ handleNpcTurn c = do
         e <- get
         let dg = e ^?! currentDungeon
 
-        let ((_, l), dg') = flip runState dg $ do
+        let (l, dg') = flip runState dg $ do
                 e' <- D.popActorAt c
                 case e' of
                     Just e'' -> npcAction e''
