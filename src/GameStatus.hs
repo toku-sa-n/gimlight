@@ -3,7 +3,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE TemplateHaskell   #-}
 
-module Engine where
+module GameStatus where
 
 import           Control.Lens                   (makeLenses, (%=), (%~), (&),
                                                  (.=), (.~), (^.), (^?!))
@@ -35,23 +35,23 @@ import           Scene                          (Scene, gameStartScene)
 import           System.Random                  (getStdGen)
 import           Talking                        (TalkWith, talkWith)
 
-data Engine = PlayerIsExploring
+data GameStatus = PlayerIsExploring
           { _currentDungeon :: Dungeon
           , _otherDungeons  :: [Dungeon]
           , _messageLog     :: MessageLog
           , _isGameOver     :: Bool
           } | Talking
           { _talk         :: TalkWith
-          , _afterTalking :: Engine
+          , _afterTalking :: GameStatus
           } | HandlingScene
           { _scene       :: Scene
-          , _afterFinish :: Engine
+          , _afterFinish :: GameStatus
           } | Title
           deriving (Show, Ord, Eq, Generic)
-makeLenses ''Engine
-instance Binary Engine
+makeLenses ''GameStatus
+instance Binary GameStatus
 
-completeThisTurn :: State Engine ()
+completeThisTurn :: State GameStatus ()
 completeThisTurn = do
         handleNpcTurns
 
@@ -64,7 +64,7 @@ completeThisTurn = do
 
         currentDungeon .= newD
 
-handleNpcTurns :: State Engine ()
+handleNpcTurns :: State GameStatus ()
 handleNpcTurns = do
         e <- get
         let dg = e ^?! currentDungeon
@@ -73,7 +73,7 @@ handleNpcTurns = do
 
         mapM_ (handleNpcTurn . (^. position)) xs
 
-handleNpcTurn :: Coord -> State Engine ()
+handleNpcTurn :: Coord -> State GameStatus ()
 handleNpcTurn c = do
         e <- get
         let dg = e ^?! currentDungeon
@@ -87,7 +87,7 @@ handleNpcTurn c = do
         messageLog %= addMessages l
         currentDungeon .= dg'
 
-playerBumpAction :: V2 Int -> State Engine ()
+playerBumpAction :: V2 Int -> State GameStatus ()
 playerBumpAction offset = do
     engine <- get
 
@@ -125,40 +125,40 @@ playerBumpAction offset = do
                          Just g' -> g' & entities %~ (:) newPlayer
                          Nothing -> error "Global map not found."
 
-playerCurrentHp :: Engine -> Int
+playerCurrentHp :: GameStatus -> Int
 playerCurrentHp e = E.getHp $ getPlayerEntity (e ^?! currentDungeon)
 
-playerMaxHp :: Engine -> Int
+playerMaxHp :: GameStatus -> Int
 playerMaxHp e = getPlayerEntity (e ^?! currentDungeon) ^. maxHp
 
-playerPosition :: Engine -> Coord
+playerPosition :: GameStatus -> Coord
 playerPosition (PlayerIsExploring d _ _ _) = D.playerPosition d
 playerPosition (Talking _ e)               = playerPosition e
 playerPosition (HandlingScene _ e)         = playerPosition e
 playerPosition Title                       = error "unreachable."
 
-actorAt :: Coord -> Engine -> Maybe E.Entity
+actorAt :: Coord -> GameStatus -> Maybe E.Entity
 actorAt c (PlayerIsExploring d _ _ _) = D.actorAt c d
 actorAt c (Talking _ e)               = actorAt c e
 actorAt c (HandlingScene _ e)         = actorAt c e
 actorAt _ Title                       = error "We are in the title."
 
-isPositionInDungeon :: Coord -> Engine -> Bool
+isPositionInDungeon :: Coord -> GameStatus -> Bool
 isPositionInDungeon c (PlayerIsExploring d _ _ _) = D.isPositionInDungeon c d
 isPositionInDungeon c (Talking _ e)               = isPositionInDungeon c e
 isPositionInDungeon c (HandlingScene _ e)         = isPositionInDungeon c e
 isPositionInDungeon _ Title                       = error "We are in the title."
 
-currentMapWidthAndHeight :: Engine -> V2 Int
+currentMapWidthAndHeight :: GameStatus -> V2 Int
 currentMapWidthAndHeight (PlayerIsExploring d _ _ _) = mapWidthAndHeight d
 currentMapWidthAndHeight (Talking _ e)             = currentMapWidthAndHeight e
 currentMapWidthAndHeight (HandlingScene _ e)       = currentMapWidthAndHeight e
 currentMapWidthAndHeight _                         = error "unreachable."
 
-popDungeonAtPlayerPosition :: Engine -> (Maybe Dungeon, Engine)
+popDungeonAtPlayerPosition :: GameStatus -> (Maybe Dungeon, GameStatus)
 popDungeonAtPlayerPosition e = popDungeonAt (playerPosition e) e
 
-popDungeonAt :: Coord -> Engine -> (Maybe Dungeon, Engine)
+popDungeonAt :: Coord -> GameStatus -> (Maybe Dungeon, GameStatus)
 popDungeonAt p e = let xs = e ^. otherDungeons
                    in case findIndex (\x -> x ^. positionOnGlobalMap == Just p) xs of
                           Just x -> let d = xs !! x
@@ -166,14 +166,14 @@ popDungeonAt p e = let xs = e ^. otherDungeons
                                     in (Just d, e & otherDungeons .~ newOtherDungeons)
                           Nothing -> (Nothing, e)
 
-messageLogList :: Engine -> MessageLog
+messageLogList :: GameStatus -> MessageLog
 messageLogList (PlayerIsExploring _ _ l _) = l
 messageLogList (Talking _ e)               = messageLogList e
 messageLogList (HandlingScene _ e)         = messageLogList e
 messageLogList Title                       = error "no message log."
 
-newGameEngine :: IO Engine
-newGameEngine = do
+newGameGameStatus :: IO GameStatus
+newGameGameStatus = do
     g <- getStdGen
 
     let bats = batsDungeon g
