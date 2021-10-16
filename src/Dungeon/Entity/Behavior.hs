@@ -6,6 +6,7 @@ module Dungeon.Entity.Behavior
     , meleeAction
     , waitAction
     , npcAction
+    , moveAction
     , BumpResult(..)
     ) where
 
