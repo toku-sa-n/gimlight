@@ -53,9 +53,12 @@ drawUI _ Title = withKeyEvents $ vstack [ label "Gimlight" `styleBasic` [textSiz
                                         , label "[l] Load the savedata"
                                         , label "[q] Quit"
                                         ]
-drawUI _ gameStatus = withKeyEvents $ vstack [ mapGrid gameStatus
-                                         , messageLogArea gameStatus
-                                         ] `styleBasic` [width 0]
+drawUI _ gameStatus = withKeyEvents $ vstack [ statusAndMapGrid
+                                             , messageLogArea gameStatus
+                                             ] `styleBasic` [width 0]
+    where statusAndMapGrid = hstack [ statusGrid gameStatus `styleBasic` [width $ fromIntegral $ windowWidth - tileWidth * tileColumns]
+                                    , mapGrid gameStatus
+                                    ]
 
 withKeyEvents :: WidgetNode s AppEvent -> WidgetNode s AppEvent
 withKeyEvents =
@@ -113,6 +116,13 @@ mapEntities (PlayerIsExploring d _ _ _) = mapMaybe entityToImage $ d ^. entities
 
           entityToImage e = guard (isEntityDrawed e) >> return (image (e ^. DT.walkingImagePath) `styleBasic` style e)
 mapEntities _                         = undefined
+
+statusGrid :: GameStatus -> WidgetNode GameStatus AppEvent
+statusGrid _ = vstack [ label "Player"
+                      , label "HP"
+                      , label "ATK"
+                      , label "DEF"
+                      ]
 
 talkingWindow :: TalkWith -> WidgetNode GameStatus AppEvent
 talkingWindow tw = hstack [ image (tw ^. person . standingImagePath)
