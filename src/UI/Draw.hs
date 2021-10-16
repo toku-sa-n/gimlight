@@ -58,8 +58,8 @@ drawUI _ Title = withKeyEvents $ vstack [ label "Gimlight" `styleBasic` [textSiz
 drawUI _ gameStatus = withKeyEvents $ vstack [ statusAndMapGrid
                                              , messageLogArea gameStatus
                                              ] `styleBasic` [width 0]
-    where statusAndMapGrid = hstack [ statusGrid gameStatus `styleBasic` [width $ fromIntegral $ windowWidth - tileWidth * tileColumns]
-                                    , mapGrid gameStatus
+    where statusAndMapGrid = hstack [ mapGrid gameStatus
+                                    , statusGrid gameStatus `styleBasic` [width $ fromIntegral $ windowWidth - tileWidth * tileColumns]
                                     ]
 
 withKeyEvents :: WidgetNode s AppEvent -> WidgetNode s AppEvent
