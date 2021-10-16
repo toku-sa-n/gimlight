@@ -59,7 +59,7 @@ meleeAction offset src = do
 
 moveAction :: V2 Int -> Action
 moveAction offset src = state $ \d -> ([], result d)
-    where result d = if not (isPositionInRange d (src ^. position + offset)) && isTown d
+    where result d = if not (movable d (src ^. position + offset)) && isTown d
                         then execState (pushEntity src) d
                         else execState (pushEntity $ updatePosition d src offset) d
 
