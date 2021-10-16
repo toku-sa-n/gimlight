@@ -12,14 +12,16 @@ import           Control.Monad         (guard)
 import           Coord                 (Coord)
 import           Data.Array            ((!))
 import           Data.Maybe            (mapMaybe)
-import           Data.Text             (pack)
+import           Data.Text             (append, pack)
 import           Dungeon               (mapWidthAndHeight, playerPosition)
+import           Dungeon.Entity        (getHp)
 import qualified Dungeon.Map.Tile      as MT
-import           Dungeon.Types         (Dungeon, entities, explored, position,
-                                        standingImagePath, tileMap, visible)
+import           Dungeon.Types         (Dungeon, entities, explored, maxHp,
+                                        position, standingImagePath, tileMap,
+                                        visible)
 import qualified Dungeon.Types         as DT
 import           GameStatus            (GameStatus (HandlingScene, PlayerIsExploring, Talking, Title),
-                                        messageLogList)
+                                        getPlayerEntity, messageLogList)
 import           Linear.V2             (V2 (V2), _x, _y)
 import           Monomer               (CmbAlignLeft (alignLeft),
                                         CmbBgColor (bgColor),
@@ -118,11 +120,12 @@ mapEntities (PlayerIsExploring d _ _ _) = mapMaybe entityToImage $ d ^. entities
 mapEntities _                         = undefined
 
 statusGrid :: GameStatus -> WidgetNode GameStatus AppEvent
-statusGrid _ = vstack [ label "Player"
-                      , label "HP"
-                      , label "ATK"
-                      , label "DEF"
-                      ]
+statusGrid gs = vstack $ maybe []
+    (\x -> [ label "Player"
+           , label $ "HP: " `append` pack (show $ getHp x) `append` " / " `append` pack (show $ x ^. maxHp)
+           , label "ATK"
+           , label "DEF"
+           ]) $ getPlayerEntity gs
 
 talkingWindow :: TalkWith -> WidgetNode GameStatus AppEvent
 talkingWindow tw = hstack [ image (tw ^. person . standingImagePath)
