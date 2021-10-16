@@ -27,11 +27,11 @@ import           Scene                     (elements)
 import           UI.Types                  (AppEvent (AppInit, AppKeyboardInput, AppLoadFinished, AppSaveFinished))
 
 handleEvent :: WidgetEnv GameStatus AppEvent -> WidgetNode GameStatus AppEvent -> GameStatus -> AppEvent -> [AppEventResponse GameStatus AppEvent]
-handleEvent _ _ engine evt = case evt of
+handleEvent _ _ gameStatus evt = case evt of
                                 AppInit            -> []
                                 AppSaveFinished    -> []
                                 AppLoadFinished newGameStatus  -> [Model newGameStatus]
-                                AppKeyboardInput k -> handleKeyInput engine k
+                                AppKeyboardInput k -> handleKeyInput gameStatus k
 
 handleKeyInput :: GameStatus -> Text -> [AppEventResponse GameStatus AppEvent]
 handleKeyInput e@PlayerIsExploring{} k

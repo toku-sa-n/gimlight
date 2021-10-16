@@ -53,8 +53,8 @@ drawUI _ Title = withKeyEvents $ vstack [ label "Gimlight" `styleBasic` [textSiz
                                         , label "[l] Load the savedata"
                                         , label "[q] Quit"
                                         ]
-drawUI _ engine = withKeyEvents $ vstack [ mapGrid engine
-                                         , messageLogArea engine
+drawUI _ gameStatus = withKeyEvents $ vstack [ mapGrid gameStatus
+                                         , messageLogArea gameStatus
                                          ] `styleBasic` [width 0]
 
 withKeyEvents :: WidgetNode s AppEvent -> WidgetNode s AppEvent
@@ -73,7 +73,7 @@ withKeyEvents =
     ]
 
 mapGrid :: (WidgetModel s, WidgetEvent e) => GameStatus -> WidgetNode s e
-mapGrid engine = zstack (mapTiles engine:mapEntities engine) `styleBasic` [ width $ fromIntegral mapDrawingWidth
+mapGrid gameStatus = zstack (mapTiles gameStatus:mapEntities gameStatus) `styleBasic` [ width $ fromIntegral mapDrawingWidth
                                                                           , height $ fromIntegral mapDrawingHeight
                                                                           ]
 

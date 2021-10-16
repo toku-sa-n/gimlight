@@ -89,14 +89,14 @@ handleNpcTurn c = do
 
 playerBumpAction :: V2 Int -> State GameStatus ()
 playerBumpAction offset = do
-    engine <- get
+    gameStatus <- get
 
-    let destination = playerPosition engine + offset
+    let destination = playerPosition gameStatus + offset
 
-    case actorAt destination engine of
+    case actorAt destination gameStatus of
         Just actorAtDestination -> if isMonster actorAtDestination
             then do
-                let (msg, currentDungeon') = flip runState (engine ^?! currentDungeon) $ do
+                let (msg, currentDungeon') = flip runState (gameStatus ^?! currentDungeon) $ do
                         p <- popPlayer
                         meleeAction p offset
                 messageLog %= addMessages msg
@@ -104,19 +104,19 @@ playerBumpAction offset = do
             else
                 let tw = talkWith actorAtDestination $ actorAtDestination ^. talkMessage
                 in put $ Talking { _talk = tw
-                                 , _afterTalking = engine
+                                 , _afterTalking = gameStatus
                                  }
         Nothing                 ->
-            if isPositionInDungeon destination engine
+            if isPositionInDungeon destination gameStatus
                 then do
-                    let currentDungeon' = flip execState (engine ^?! currentDungeon) $ do
+                    let currentDungeon' = flip execState (gameStatus ^?! currentDungeon) $ do
                             p <- popPlayer
                             moveAction p offset
                     currentDungeon .= currentDungeon'
-                else let (p, currentDungeon') = runState popPlayer (engine ^?! currentDungeon)
+                else let (p, currentDungeon') = runState popPlayer (gameStatus ^?! currentDungeon)
                      in do
                      otherDungeons %= (:) currentDungeon'
-                     let g = find D.isGlobalMap $ engine ^?! otherDungeons
+                     let g = find D.isGlobalMap $ gameStatus ^?! otherDungeons
                          newPosition = currentDungeon' ^?! positionOnGlobalMap
                          newPlayer = p & position .~ case newPosition of
                              Just pos -> pos
