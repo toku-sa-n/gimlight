@@ -38,9 +38,13 @@ jobs:
       run: |
         sudo apt update
         sudo apt install libsdl2-dev libglew-dev
+      if: runner.os == 'Linux'
 
+    - name: Build dependencies
+      run: |
         cabal update
         cabal build --only-dependencies --enable-tests --enable-benchmarks
+
     - name: Build
       run: cabal build --enable-tests --enable-benchmarks all
     - name: Run tests
