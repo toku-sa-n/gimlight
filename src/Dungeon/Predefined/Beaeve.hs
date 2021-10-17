@@ -2,13 +2,13 @@ module Dungeon.Predefined.Beaeve
     ( beaeve
     ) where
 
-import           Data.Array              ((//))
-import           Dungeon                 (Dungeon, DungeonKind (Town), dungeon)
+import           Data.Array             ((//))
+import           Dungeon                (Dungeon, DungeonKind (Town), dungeon)
 import           Dungeon.Actor          (Actor)
 import           Dungeon.Actor.Friendly (electria)
-import           Dungeon.Map.Tile        (TileMap, allWallTiles, floorTile,
-                                          wallTile)
-import           Linear.V2               (V2 (V2))
+import           Dungeon.Map.Tile       (TileMap, allWallTiles, floorTile,
+                                         wallTile)
+import           Linear.V2              (V2 (V2))
 
 beaeve :: Actor -> Dungeon
 beaeve player = dungeon (stringArrayToMap

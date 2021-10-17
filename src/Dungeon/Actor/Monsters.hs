@@ -4,7 +4,7 @@ module Dungeon.Actor.Monsters
     ( orc
     , troll
     ) where
-import           Coord          (Coord)
+import           Coord         (Coord)
 import           Dungeon.Actor (Actor, monster)
 
 orc :: Coord -> Actor

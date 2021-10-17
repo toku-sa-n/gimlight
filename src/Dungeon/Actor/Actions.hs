@@ -14,10 +14,9 @@ import           Coord                     (Coord)
 import           Data.Array                ((!))
 import           Data.List                 (find)
 import           Data.Text                 (append, pack)
-import           Dungeon                   (Dungeon, actors,
-                                            mapWidthAndHeight, popActorAt,
-                                            pushActor, tileMap)
-import           Dungeon.Actor            (Actor, blocksMovement, defence,
+import           Dungeon                   (Dungeon, actors, mapWidthAndHeight,
+                                            popActorAt, pushActor, tileMap)
+import           Dungeon.Actor             (Actor, blocksMovement, defence,
                                             getHp, isPlayer, name, position,
                                             power, updateHp)
 import           Dungeon.Map.Tile          (walkable)

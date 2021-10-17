@@ -35,12 +35,12 @@ import           Dungeon                        (Dungeon, actors,
                                                  isTown, npcs, popPlayer,
                                                  positionOnGlobalMap, updateMap)
 import qualified Dungeon                        as D
-import           Dungeon.Actor                 (Actor, isMonster, position,
+import           Dungeon.Actor                  (Actor, isMonster, position,
                                                  talkMessage)
-import qualified Dungeon.Actor                 as E
-import           Dungeon.Actor.Actions         (Action, meleeAction,
+import qualified Dungeon.Actor                  as E
+import           Dungeon.Actor.Actions          (Action, meleeAction,
                                                  moveAction)
-import           Dungeon.Actor.Behavior        (npcAction)
+import           Dungeon.Actor.Behavior         (npcAction)
 import           Dungeon.Init                   (initDungeon)
 import           Dungeon.Predefined.BatsCave    (batsDungeon)
 import           Dungeon.Predefined.GlobalMap   (globalMap)

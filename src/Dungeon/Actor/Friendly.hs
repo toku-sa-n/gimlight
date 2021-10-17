@@ -4,9 +4,9 @@ module Dungeon.Actor.Friendly
     ( electria
     ) where
 
-import           Coord          (Coord)
-import           Data.Text      (Text)
-import           Dungeon.Actor (ActorKind (FriendlyNpc), Actor, actor)
+import           Coord         (Coord)
+import           Data.Text     (Text)
+import           Dungeon.Actor (Actor, ActorKind (FriendlyNpc), actor)
 
 electria :: Coord -> Actor
 electria position = friendly position "Electria" 1 1 1 "How's it going, Ruskell?" "images/electria.png" "images/sample_standing_picture.png"
