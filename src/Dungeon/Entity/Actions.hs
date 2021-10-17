@@ -59,9 +59,10 @@ meleeAction offset src = do
 
 moveAction :: V2 Int -> Action
 moveAction offset src = state $ \d -> result d
-    where result d = if not (movable d (src ^. position + offset))
-                            then (["That way is blocked."], execState (pushEntity src) d)
-                            else ([], execState (pushEntity $ updatePosition d src offset) d)
+    where result d = (\(x, y) -> (x, execState y d)) $ messageAndNewEntity d
+          messageAndNewEntity d = if not (movable d (src ^. position + offset))
+                                    then (["That way is blocked."], pushEntity src)
+                                    else ([], pushEntity $ updatePosition d src offset)
 
 waitAction :: Action
 waitAction e = do
