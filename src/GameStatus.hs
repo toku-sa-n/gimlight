@@ -96,19 +96,7 @@ playerBumpAction offset = do
                           Nothing -> error "The player is dead."
 
     case actorAt destination gameStatus of
-        Just actorAtDestination -> if isMonster actorAtDestination
-            then do
-                let ((msg, success), currentDungeon') = flip runState (gameStatus ^?! currentDungeon) $ do
-                        p <- popPlayer
-                        meleeAction offset p
-                messageLog %= addMessages msg
-                currentDungeon .= currentDungeon'
-                return success
-            else do
-                put $ Talking { _talk = talkWith actorAtDestination $ actorAtDestination ^. talkMessage
-                                 , _afterTalking = gameStatus
-                                 }
-                return True
+        Just actorAtDestination -> meleeOrTalk offset actorAtDestination
         Nothing                 ->
             if isPositionInDungeon destination gameStatus
                 then do
@@ -130,6 +118,25 @@ playerBumpAction offset = do
                          Just g' -> g' & entities %~ (:) newPlayer
                          Nothing -> error "Global map not found."
                      return True
+
+meleeOrTalk :: V2 Int -> Entity -> State GameStatus Bool
+meleeOrTalk offset target = do
+    gameStatus <- get
+
+    if isMonster target
+        then do
+            let ((msg, success), currentDungeon') = flip runState (gameStatus ^?! currentDungeon) $ do
+                    p <- popPlayer
+                    meleeAction offset p
+            messageLog %= addMessages msg
+            currentDungeon .= currentDungeon'
+            return success
+        else do
+            put $ Talking { _talk = talkWith target $ target ^. talkMessage
+                          , _afterTalking = gameStatus
+                          }
+            return True
+
 
 getPlayerEntity :: GameStatus -> Maybe Entity
 getPlayerEntity (PlayerIsExploring d _ _ _) = D.getPlayerEntity d
