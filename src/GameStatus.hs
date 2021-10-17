@@ -18,7 +18,8 @@ import           Dungeon                        (Dungeon, initDungeon,
 import qualified Dungeon                        as D
 import           Dungeon.Entity                 (isMonster)
 import qualified Dungeon.Entity                 as E
-import           Dungeon.Entity.Actions         (meleeAction, moveAction)
+import           Dungeon.Entity.Actions         (Action, meleeAction,
+                                                 moveAction)
 import           Dungeon.Entity.Behavior        (npcAction)
 import           Dungeon.Predefined.BatsCave    (batsDungeon)
 import           Dungeon.Predefined.GlobalMap   (globalMap)
@@ -99,13 +100,7 @@ playerBumpAction offset = do
         Just actorAtDestination -> meleeOrTalk offset actorAtDestination
         Nothing                 ->
             if isPositionInDungeon destination gameStatus
-                then do
-                    let ((msg, success), currentDungeon') = flip runState (gameStatus ^?! currentDungeon) $ do
-                            p <- popPlayer
-                            moveAction offset p
-                    messageLog %= addMessages msg
-                    currentDungeon .= currentDungeon'
-                    return success
+                then doAction $ moveAction offset
                 else let (p, currentDungeon') = runState popPlayer (gameStatus ^?! currentDungeon)
                      in do
                      otherDungeons %= (:) currentDungeon'
@@ -124,18 +119,23 @@ meleeOrTalk offset target = do
     gameStatus <- get
 
     if isMonster target
-        then do
-            let ((msg, success), currentDungeon') = flip runState (gameStatus ^?! currentDungeon) $ do
-                    p <- popPlayer
-                    meleeAction offset p
-            messageLog %= addMessages msg
-            currentDungeon .= currentDungeon'
-            return success
+        then doAction $ meleeAction offset
         else do
             put $ Talking { _talk = talkWith target $ target ^. talkMessage
                           , _afterTalking = gameStatus
                           }
             return True
+
+doAction :: Action -> State GameStatus Bool
+doAction action = do
+    gs <- get
+
+    let ((msg, success), currentDungeon') = flip runState (gs ^?! currentDungeon) $ do
+            p <- popPlayer
+            action p
+    messageLog %= addMessages msg
+    currentDungeon .= currentDungeon'
+    return success
 
 
 getPlayerEntity :: GameStatus -> Maybe Entity
