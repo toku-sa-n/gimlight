@@ -22,7 +22,7 @@ module GameStatus
     , title
     ) where
 
-import           Control.Lens                   (makeLenses, (%=), (%~), (&),
+import           Control.Lens                   (makeLensesFor, (%=), (%~), (&),
                                                  (&~), (.=), (.~), (^.), (^?!))
 import           Control.Monad                  (unless, when)
 import           Control.Monad.Trans.State      (State, execState, get)
@@ -32,8 +32,8 @@ import           Data.Binary                    (Binary)
 import           Data.List                      (find, findIndex)
 import           Dungeon                        (Dungeon, initDungeon,
                                                  initialPlayerPositionCandidates,
-                                                 isTown, mapWidthAndHeight,
-                                                 npcs, popPlayer, updateMap)
+                                                 isTown, npcs, popPlayer,
+                                                 updateMap)
 import qualified Dungeon                        as D
 import           Dungeon.Entity                 (isMonster)
 import qualified Dungeon.Entity                 as E
@@ -43,8 +43,8 @@ import           Dungeon.Entity.Behavior        (npcAction)
 import           Dungeon.Predefined.BatsCave    (batsDungeon)
 import           Dungeon.Predefined.GlobalMap   (globalMap)
 import qualified Dungeon.Turn                   as DT
-import           Dungeon.Types                  (Entity, entities, maxHp,
-                                                 position, positionOnGlobalMap,
+import           Dungeon.Types                  (Entity, entities, position,
+                                                 positionOnGlobalMap,
                                                  talkMessage)
 import           GHC.Generics                   (Generic)
 import           Linear.V2                      (V2)
@@ -69,7 +69,11 @@ data GameStatus = PlayerIsExploring
           , _afterFinish :: GameStatus
           } | Title
           deriving (Show, Ord, Eq, Generic)
-makeLenses ''GameStatus
+makeLensesFor [ ("_currentDungeon", "currentDungeon")
+              , ("_otherDungeons", "otherDungeons")
+              , ("_messageLog", "messageLog")
+              , ("_isGameOver", "isGameOver")
+              ] ''GameStatus
 instance Binary GameStatus
 
 handlePlayerMoving :: V2 Int -> State GameStatus ()
@@ -252,12 +256,6 @@ getPlayerEntity (Talking _ gs)              = GameStatus.getPlayerEntity gs
 getPlayerEntity (HandlingScene _ gs)        = GameStatus.getPlayerEntity gs
 getPlayerEntity Title                       = error "We are in the title."
 
-playerCurrentHp :: GameStatus -> Maybe Int
-playerCurrentHp gs = E.getHp <$> getPlayerEntity gs
-
-playerMaxHp :: GameStatus -> Maybe Int
-playerMaxHp gs = (^. maxHp) <$> getPlayerEntity gs
-
 playerPosition :: GameStatus -> Maybe Coord
 playerPosition (PlayerIsExploring d _ _ _) = D.playerPosition d
 playerPosition (Talking _ e)               = playerPosition e
@@ -275,12 +273,6 @@ isPositionInDungeon c (PlayerIsExploring d _ _ _) = D.isPositionInDungeon c d
 isPositionInDungeon c (Talking _ e)               = isPositionInDungeon c e
 isPositionInDungeon c (HandlingScene _ e)         = isPositionInDungeon c e
 isPositionInDungeon _ Title                       = error "We are in the title."
-
-currentMapWidthAndHeight :: GameStatus -> V2 Int
-currentMapWidthAndHeight (PlayerIsExploring d _ _ _) = mapWidthAndHeight d
-currentMapWidthAndHeight (Talking _ e)             = currentMapWidthAndHeight e
-currentMapWidthAndHeight (HandlingScene _ e)       = currentMapWidthAndHeight e
-currentMapWidthAndHeight _                         = error "unreachable."
 
 popDungeonAtPlayerPosition :: GameStatus -> (Maybe Dungeon, GameStatus)
 popDungeonAtPlayerPosition g = case playerPosition g of

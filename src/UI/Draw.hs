@@ -124,18 +124,18 @@ mapTiles e = box_ [alignLeft] $ vgrid rows `styleBasic` styles
 mapEntities :: (WidgetModel s, WidgetEvent e) => GameStatus -> [WidgetNode s e]
 mapEntities e = mapMaybe entityToImage $ d ^. entities
     where d = getCurrentDungeon e
-          leftPadding e = fromIntegral $ entityPositionOnDisplay e ^. _x * tileWidth
-          topPadding e = fromIntegral $ mapDrawingHeight - (entityPositionOnDisplay e ^. _y + 1) * tileHeight
+          leftPadding entity = fromIntegral $ entityPositionOnDisplay entity ^. _x * tileWidth
+          topPadding entity = fromIntegral $ mapDrawingHeight - (entityPositionOnDisplay entity ^. _y + 1) * tileHeight
 
-          style e = [paddingL $ leftPadding e, paddingT $ topPadding e]
+          style entity = [paddingL $ leftPadding entity, paddingT $ topPadding entity]
 
-          entityPositionOnDisplay e = e ^. position - bottomLeftCoord d
+          entityPositionOnDisplay entity = entity ^. position - bottomLeftCoord d
 
-          isEntityDrawed e = let pos = entityPositionOnDisplay e
-                                 isVisible = (d ^. visible) ! (e ^. position)
+          isEntityDrawed entity = let pos = entityPositionOnDisplay entity
+                                      isVisible = (d ^. visible) ! (entity ^. position)
                              in V2 0 0 <= pos && pos <= topRightCoord d && isVisible
 
-          entityToImage e = guard (isEntityDrawed e) >> return (image (e ^. DT.walkingImagePath) `styleBasic` style e)
+          entityToImage entity = guard (isEntityDrawed entity) >> return (image (entity ^. DT.walkingImagePath) `styleBasic` style entity)
 
 statusGrid :: GameStatus -> WidgetNode GameStatus AppEvent
 statusGrid gs = vstack $ maybe []

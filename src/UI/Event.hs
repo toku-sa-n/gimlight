@@ -4,13 +4,8 @@ module UI.Event
     ( handleEvent
     ) where
 
-import           Control.Lens              ((%=), (%~), (&), (&~), (.=), (.~),
-                                            (^.), (^?!))
-import           Control.Monad.Trans.State (execState, runState)
+import           Control.Monad.Trans.State (execState)
 import           Data.Text                 (Text)
-import           Dungeon                   (initialPlayerPositionCandidates,
-                                            popPlayer, updateMap)
-import           Dungeon.Types             (entities, position)
 import           GameStatus                (GameStatus,
                                             enterTownAtPlayerPosition,
                                             finishTalking, isHandlingScene,
@@ -24,14 +19,13 @@ import           Monomer                   (AppEventResponse,
                                             WidgetEnv, WidgetNode,
                                             exitApplication)
 import           Save                      (load, save)
-import           Scene                     (elements)
 import           UI.Types                  (AppEvent (AppInit, AppKeyboardInput, AppLoadFinished, AppSaveFinished))
 
 handleEvent :: WidgetEnv GameStatus AppEvent -> WidgetNode GameStatus AppEvent -> GameStatus -> AppEvent -> [AppEventResponse GameStatus AppEvent]
 handleEvent _ _ gameStatus evt = case evt of
                                 AppInit            -> []
                                 AppSaveFinished    -> []
-                                AppLoadFinished newGameStatus  -> [Model newGameStatus]
+                                AppLoadFinished ngs  -> [Model ngs]
                                 AppKeyboardInput k -> handleKeyInput gameStatus k
 
 handleKeyInput :: GameStatus -> Text -> [AppEventResponse GameStatus AppEvent]
