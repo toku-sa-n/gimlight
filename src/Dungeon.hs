@@ -33,6 +33,7 @@ module Dungeon
     , tileMap
     , visible
     , explored
+    , items
     ) where
 
 import           Control.Lens                   (makeLenses, (%~), (&), (.=),
@@ -48,6 +49,7 @@ import           Data.List                      (findIndex)
 import           Data.Maybe                     (isJust)
 import           Dungeon.Actor                  (Actor, isMonster, isPlayer,
                                                  position)
+import           Dungeon.Item                   (Item)
 import           Dungeon.Map.Bool               (BoolMap)
 import           Dungeon.Map.Explored           (ExploredMap, initExploredMap,
                                                  updateExploredMap)
@@ -65,17 +67,19 @@ data Dungeon = Dungeon
           , _visible             :: Fov
           , _explored            :: ExploredMap
           , _actors              :: [Actor]
+          , _items               :: [Item]
           , _positionOnGlobalMap :: Maybe Coord
           , _dungeonKind         :: DungeonKind
           } deriving (Show, Ord, Eq, Generic)
 makeLenses ''Dungeon
 instance Binary Dungeon
 
-dungeon :: TileMap -> [Actor] -> Maybe Coord -> DungeonKind -> Dungeon
-dungeon t e p d = Dungeon { _tileMap = t
+dungeon :: TileMap -> [Actor] -> [Item] -> Maybe Coord -> DungeonKind -> Dungeon
+dungeon t e i p d = Dungeon { _tileMap = t
                           , _visible = initFov widthAndHeight
                           , _explored = initExploredMap widthAndHeight
                           , _actors = e
+                          , _items = i
                           , _positionOnGlobalMap = p
                           , _dungeonKind = d
                           }
