@@ -87,7 +87,7 @@ handleNpcTurn c = do
         messageLog %= addMessages l
         currentDungeon .= dg'
 
-playerBumpAction :: V2 Int -> State GameStatus ()
+playerBumpAction :: V2 Int -> State GameStatus Bool
 playerBumpAction offset = do
     gameStatus <- get
 
@@ -98,24 +98,26 @@ playerBumpAction offset = do
     case actorAt destination gameStatus of
         Just actorAtDestination -> if isMonster actorAtDestination
             then do
-                let (msg, currentDungeon') = flip runState (gameStatus ^?! currentDungeon) $ do
+                let ((msg, success), currentDungeon') = flip runState (gameStatus ^?! currentDungeon) $ do
                         p <- popPlayer
                         meleeAction offset p
                 messageLog %= addMessages msg
                 currentDungeon .= currentDungeon'
-            else
-                let tw = talkWith actorAtDestination $ actorAtDestination ^. talkMessage
-                in put $ Talking { _talk = tw
+                return success
+            else do
+                put $ Talking { _talk = talkWith actorAtDestination $ actorAtDestination ^. talkMessage
                                  , _afterTalking = gameStatus
                                  }
+                return True
         Nothing                 ->
             if isPositionInDungeon destination gameStatus
                 then do
-                    let (msg, currentDungeon') = flip runState (gameStatus ^?! currentDungeon) $ do
+                    let ((msg, success), currentDungeon') = flip runState (gameStatus ^?! currentDungeon) $ do
                             p <- popPlayer
                             moveAction offset p
                     messageLog %= addMessages msg
                     currentDungeon .= currentDungeon'
+                    return success
                 else let (p, currentDungeon') = runState popPlayer (gameStatus ^?! currentDungeon)
                      in do
                      otherDungeons %= (:) currentDungeon'
@@ -127,6 +129,7 @@ playerBumpAction offset = do
                      currentDungeon .= case g of
                          Just g' -> g' & entities %~ (:) newPlayer
                          Nothing -> error "Global map not found."
+                     return True
 
 getPlayerEntity :: GameStatus -> Maybe Entity
 getPlayerEntity (PlayerIsExploring d _ _ _) = D.getPlayerEntity d
