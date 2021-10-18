@@ -75,7 +75,7 @@ exitDungeon = do
     pushDungeonAsOtherDungeons currentDungeon'
 
     let g = find isGlobalMap $ getOtherDungeons gs
-        newPosition = currentDungeon' ^?! positionOnGlobalMap
+        newPosition = currentDungeon' ^. positionOnGlobalMap
         newPlayer = p & position .~ case newPosition of
             Just pos -> pos
             Nothing  -> error "The new position is not specified."
