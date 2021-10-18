@@ -189,14 +189,16 @@ finishSelecting (SelectingItemToUse _ _ after) = after
 finishSelecting _ = error "We are not selecting anything."
 
 selectPrevItem :: GameStatus -> GameStatus
-selectPrevItem e@(SelectingItemToUse _ 0 _) = e
-selectPrevItem e@(SelectingItemToUse l n _) = e & selecting .~ newIndex
+selectPrevItem e@(SelectingItemToUse l n _)
+    | null l = e
+    | otherwise = e & selecting .~ newIndex
     where newIndex = (n - 1) `mod` length l
 selectPrevItem _ = error "We are not selecting anything."
 
 selectNextItem :: GameStatus -> GameStatus
-selectNextItem e@(SelectingItemToUse _ 0 _) = e
-selectNextItem e@(SelectingItemToUse l n _) = e & selecting .~ newIndex
+selectNextItem e@(SelectingItemToUse l n _)
+    | null l = e
+    | otherwise = e & selecting .~ newIndex
     where newIndex = (n + 1) `mod` length l
 selectNextItem _ = error "We are not selecting anything."
 
