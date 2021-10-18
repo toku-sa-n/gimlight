@@ -43,6 +43,7 @@ import           Dungeon.Actor.Actions          (Action, meleeAction,
                                                  moveAction, pickUpAction)
 import           Dungeon.Actor.Behavior         (npcAction)
 import           Dungeon.Init                   (initDungeon)
+import           Dungeon.Item                   (Item)
 import           Dungeon.Predefined.BatsCave    (batsDungeon)
 import           Dungeon.Predefined.GlobalMap   (globalMap)
 import qualified Dungeon.Turn                   as DT
@@ -67,6 +68,10 @@ data GameStatus = PlayerIsExploring
           } | HandlingScene
           { _scene       :: Scene
           , _afterFinish :: GameStatus
+          } | SelectingItemToUse
+          { _items          :: [Item]
+          , _selecting      :: Int
+          , _afterSelecting :: GameStatus
           } | Title
           deriving (Show, Ord, Eq, Generic)
 makeLensesFor [ ("_currentDungeon", "currentDungeon")
@@ -156,10 +161,11 @@ newGameStatus = do
         }
 
 getCurrentDungeon :: GameStatus -> Dungeon
-getCurrentDungeon (PlayerIsExploring d _ _ _) = d
-getCurrentDungeon (Talking _ after)           = getCurrentDungeon after
-getCurrentDungeon (HandlingScene _ after)     = getCurrentDungeon after
-getCurrentDungeon Title                       = error "We are in the title."
+getCurrentDungeon (PlayerIsExploring d _ _ _)    = d
+getCurrentDungeon (Talking _ after)              = getCurrentDungeon after
+getCurrentDungeon (HandlingScene _ after)        = getCurrentDungeon after
+getCurrentDungeon (SelectingItemToUse _ _ after) = getCurrentDungeon after
+getCurrentDungeon Title                          = error "We are in the title."
 
 destructTalking :: GameStatus -> (TalkWith, GameStatus)
 destructTalking (Talking tw after) = (tw, after)
@@ -170,10 +176,11 @@ destructHandlingScene (HandlingScene s after) = (s, after)
 destructHandlingScene _ = error "We are not handling a scene."
 
 messageLogList :: GameStatus -> MessageLog
-messageLogList (PlayerIsExploring _ _ l _) = l
-messageLogList (Talking _ e)               = messageLogList e
-messageLogList (HandlingScene _ e)         = messageLogList e
-messageLogList Title                       = error "no message log."
+messageLogList (PlayerIsExploring _ _ l _)    = l
+messageLogList (Talking _ e)                  = messageLogList e
+messageLogList (HandlingScene _ e)            = messageLogList e
+messageLogList (SelectingItemToUse _ _ after) = messageLogList after
+messageLogList Title                          = error "no message log."
 
 title :: GameStatus
 title = Title
@@ -267,24 +274,28 @@ getPlayerActor :: GameStatus -> Maybe Actor
 getPlayerActor (PlayerIsExploring d _ _ _) = D.getPlayerActor d
 getPlayerActor (Talking _ gs)              = GameStatus.getPlayerActor gs
 getPlayerActor (HandlingScene _ gs)        = GameStatus.getPlayerActor gs
+getPlayerActor (SelectingItemToUse _ _ gs) = GameStatus.getPlayerActor gs
 getPlayerActor Title                       = error "We are in the title."
 
 playerPosition :: GameStatus -> Maybe Coord
 playerPosition (PlayerIsExploring d _ _ _) = D.playerPosition d
 playerPosition (Talking _ e)               = playerPosition e
 playerPosition (HandlingScene _ e)         = playerPosition e
+playerPosition (SelectingItemToUse _ _ gs) = playerPosition gs
 playerPosition Title                       = error "unreachable."
 
 actorAt :: Coord -> GameStatus -> Maybe E.Actor
 actorAt c (PlayerIsExploring d _ _ _) = D.actorAt c d
 actorAt c (Talking _ e)               = actorAt c e
 actorAt c (HandlingScene _ e)         = actorAt c e
+actorAt c (SelectingItemToUse _ _ e)  = actorAt c e
 actorAt _ Title                       = error "We are in the title."
 
 isPositionInDungeon :: Coord -> GameStatus -> Bool
 isPositionInDungeon c (PlayerIsExploring d _ _ _) = D.isPositionInDungeon c d
 isPositionInDungeon c (Talking _ e)               = isPositionInDungeon c e
 isPositionInDungeon c (HandlingScene _ e)         = isPositionInDungeon c e
+isPositionInDungeon c (SelectingItemToUse _ _ e)  = isPositionInDungeon c e
 isPositionInDungeon _ Title                       = error "We are in the title."
 
 popDungeonAtPlayerPosition :: GameStatus -> (Maybe Dungeon, GameStatus)
