@@ -65,6 +65,7 @@ withKeyEvents =
     , "n"
     , "l"
     , "q"
+    , "g"
     , "Ctrl-s"
     , "Ctrl-l"
     ]

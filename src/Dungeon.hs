@@ -34,6 +34,7 @@ module Dungeon
     , visible
     , explored
     , items
+    , popItemAt
     ) where
 
 import           Control.Lens                   (makeLenses, (%~), (&), (.=),
@@ -47,9 +48,10 @@ import           Data.Binary                    (Binary)
 import           Data.Foldable                  (find)
 import           Data.List                      (findIndex)
 import           Data.Maybe                     (isJust)
-import           Dungeon.Actor                  (Actor, isMonster, isPlayer,
-                                                 position)
+import           Dungeon.Actor                  (Actor, isMonster, isPlayer)
+import qualified Dungeon.Actor                  as A
 import           Dungeon.Item                   (Item)
+import qualified Dungeon.Item                   as I
 import           Dungeon.Map.Bool               (BoolMap)
 import           Dungeon.Map.Explored           (ExploredMap, initExploredMap,
                                                  updateExploredMap)
@@ -111,17 +113,17 @@ updateFov = do
         p = getPlayerActor d
 
     case p of
-        Just p' -> visible .= calculateFov (p' ^. position) t
+        Just p' -> visible .= calculateFov (p' ^. A.position) t
         Nothing -> return ()
 
 playerPosition :: Dungeon -> Maybe Coord
-playerPosition d = (^. position) <$> getPlayerActor d
+playerPosition d = (^. A.position) <$> getPlayerActor d
 
 getPlayerActor :: Dungeon -> Maybe Actor
 getPlayerActor d = find isPlayer $ d ^. actors
 
 actorAt :: Coord -> Dungeon -> Maybe Actor
-actorAt c d = find (\x -> x ^. position == c) $ d ^. actors
+actorAt c d = find (\x -> x ^. A.position == c) $ d ^. actors
 
 pushActor :: Actor -> State Dungeon ()
 pushActor e = state $ \d -> ((), d & actors %~ (e :))
@@ -132,7 +134,7 @@ popPlayer = state $ \d -> case runState (popActorIf isPlayer) d of
                   (Nothing, _) -> error "No player actor."
 
 popActorAt :: Coord -> State Dungeon (Maybe Actor)
-popActorAt c = popActorIf (\x -> x ^. position == c)
+popActorAt c = popActorIf (\x -> x ^. A.position == c)
 
 popActorIf :: (Actor -> Bool) -> State Dungeon (Maybe Actor)
 popActorIf f = state $ \d ->
@@ -143,8 +145,20 @@ popActorIf f = state $ \d ->
                   in (Just actor, d & actors .~ newEntities)
         Nothing -> (Nothing, d)
 
+popItemAt :: Coord -> State Dungeon (Maybe Item)
+popItemAt c = popItemIf (\x -> x ^. I.position == c)
+
+popItemIf :: (Item -> Bool) -> State Dungeon (Maybe Item)
+popItemIf f = state $ \d ->
+    let xs = d ^. items
+    in case findIndex f xs of
+        Just x -> let item = xs !! x
+                      newItems = take x xs ++ drop (x + 1) xs
+                  in (Just item, d & items .~ newItems)
+        Nothing -> (Nothing, d)
+
 initialPlayerPositionCandidates :: Dungeon -> [Coord]
-initialPlayerPositionCandidates d = filter (\x -> x `notElem` map (^. position) (d ^. actors)) $
+initialPlayerPositionCandidates d = filter (\x -> x `notElem` map (^. A.position) (d ^. actors)) $
     map fst $ filter snd $ assocs $ walkableFloor d
 
 walkableFloor :: Dungeon -> BoolMap
@@ -154,7 +168,7 @@ transparentMap :: Dungeon -> BoolMap
 transparentMap d = fmap (^. transparent) (d ^. tileMap)
 
 enemyCoords :: Dungeon -> [Coord]
-enemyCoords d = map (^. position) $ filter (not . isPlayer) $ d ^. actors
+enemyCoords d = map (^. A.position) $ filter (not . isPlayer) $ d ^. actors
 
 isPlayerAlive :: Dungeon -> Bool
 isPlayerAlive d = isJust $ getPlayerActor d

@@ -4,10 +4,11 @@ module Dungeon.Actor.Actions
     ( meleeAction
     , moveAction
     , waitAction
+    , pickUpAction
     , Action
     ) where
 
-import           Control.Lens              ((&), (.~), (^.))
+import           Control.Lens              ((%~), (&), (.~), (^.))
 import           Control.Monad             (when)
 import           Control.Monad.Trans.State (State, execState, state)
 import           Coord                     (Coord)
@@ -15,9 +16,12 @@ import           Data.Array                ((!))
 import           Data.Maybe                (isNothing)
 import           Data.Text                 (append, pack)
 import           Dungeon                   (Dungeon, actorAt, mapWidthAndHeight,
-                                            popActorAt, pushActor, tileMap)
-import           Dungeon.Actor             (Actor, defence, getHp, isPlayer,
-                                            name, position, power, updateHp)
+                                            popActorAt, popItemAt, pushActor,
+                                            tileMap)
+import           Dungeon.Actor             (Actor, defence, getHp, inventory,
+                                            isPlayer, name, position, power,
+                                            updateHp)
+import qualified Dungeon.Item              as I
 import           Dungeon.Map.Tile          (walkable)
 import           Linear.V2                 (V2 (V2))
 import           Log                       (MessageLog, message)
@@ -66,6 +70,17 @@ waitAction :: Action
 waitAction e = do
         pushActor e
         return ([], True)
+
+pickUpAction :: Action
+pickUpAction e = do
+    item <- popItemAt (e ^. position)
+    case item of
+        Just x -> do
+            pushActor $ e & inventory %~ (:) x
+            return (["You got " `append` (x ^. I.name)], True)
+        Nothing -> do
+            pushActor e
+            return (["You got nothing."], False)
 
 updatePosition :: Dungeon -> Actor -> V2 Int -> Actor
 updatePosition d src offset

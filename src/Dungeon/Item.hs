@@ -5,6 +5,7 @@
 module Dungeon.Item
     ( Item
     , herb
+    , name
     , position
     , iconImagePath
     ) where
@@ -16,14 +17,16 @@ import           Data.Text    (Text)
 import           GHC.Generics (Generic)
 
 data Item = Item
-          { _position      :: Coord
+          { _name          :: Text
+          , _position      :: Coord
           , _iconImagePath :: Text
           } deriving (Show, Ord, Eq, Generic)
 makeLenses ''Item
 instance Binary Item
 
 item :: Coord -> Text -> Item
-item p ip = Item { _position = p
+item p ip = Item { _name = "Herb"
+                 , _position = p
                  , _iconImagePath = ip
                  }
 
