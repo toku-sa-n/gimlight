@@ -8,7 +8,7 @@ module Dungeon.Actor.Actions
     , Action
     ) where
 
-import           Control.Lens              ((%~), (&), (.~), (^.))
+import           Control.Lens              ((&), (.~), (^.))
 import           Control.Monad             (when)
 import           Control.Monad.Trans.State (State, execState, state)
 import           Coord                     (Coord)
@@ -17,10 +17,11 @@ import           Data.Maybe                (isNothing)
 import           Data.Text                 (append, pack)
 import           Dungeon                   (Dungeon, actorAt, mapWidthAndHeight,
                                             popActorAt, popItemAt, pushActor,
-                                            tileMap)
-import           Dungeon.Actor             (Actor, defence, getHp, inventory,
-                                            isPlayer, name, position, power,
-                                            updateHp)
+                                            pushItem, tileMap)
+import           Dungeon.Actor             (Actor, defence, getHp,
+                                            inventoryItems, isPlayer, name,
+                                            position, power, updateHp)
+import           Dungeon.Actor.Inventory   (addItem)
 import qualified Dungeon.Item              as I
 import           Dungeon.Map.Tile          (walkable)
 import           Linear.V2                 (V2 (V2))
@@ -76,8 +77,16 @@ pickUpAction e = do
     item <- popItemAt (e ^. position)
     case item of
         Just x -> do
-            pushActor $ e & inventory %~ (:) x
-            return (["You got " `append` (x ^. I.name)], True)
+            let currentItems = e ^. inventoryItems
+                newItems = addItem x currentItems
+            case newItems of
+                Just xs -> do
+                    pushActor $ e & inventoryItems .~ xs
+                    return (["You got " `append` (x ^. I.name)], True)
+                Nothing -> do
+                    pushActor e
+                    pushItem x
+                    return (["Your bag is full."], False)
         Nothing -> do
             pushActor e
             return (["You got nothing."], False)

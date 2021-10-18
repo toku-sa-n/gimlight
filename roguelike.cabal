@@ -17,6 +17,7 @@ executable roguelike
                       , Dungeon.Actor.Actions
                       , Dungeon.Actor.Behavior
                       , Dungeon.Actor.Friendly
+                      , Dungeon.Actor.Inventory
                       , Dungeon.Actor.Monsters
                       , Dungeon.Generate
                       , Dungeon.Generate.Room

@@ -35,6 +35,7 @@ module Dungeon
     , explored
     , items
     , popItemAt
+    , pushItem
     ) where
 
 import           Control.Lens                   (makeLenses, (%~), (&), (.=),
@@ -144,6 +145,9 @@ popActorIf f = state $ \d ->
                       newEntities = take x xs ++ drop (x + 1) xs
                   in (Just actor, d & actors .~ newEntities)
         Nothing -> (Nothing, d)
+
+pushItem :: Item -> State Dungeon ()
+pushItem i = state $ \d -> ((), d & items %~ (i :))
 
 popItemAt :: Coord -> State Dungeon (Maybe Item)
 popItemAt c = popItemIf (\x -> x ^. I.position == c)
