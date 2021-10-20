@@ -4,7 +4,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE TemplateHaskell   #-}
 
-module GameStatus
+module Game.Status
     ( GameStatus
     , isPlayerExploring
     , isPlayerTalking

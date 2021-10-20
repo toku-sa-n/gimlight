@@ -22,7 +22,7 @@ import qualified Dungeon.Actor         as A
 import           Dungeon.Item          (iconImagePath)
 import qualified Dungeon.Item          as I
 import qualified Dungeon.Map.Tile      as MT
-import           GameStatus            (GameStatus, destructHandlingScene,
+import           Game.Status           (GameStatus, destructHandlingScene,
                                         destructTalking, getCurrentDungeon,
                                         getItems, getPlayerActor,
                                         getSelectingIndex, isGameOver,

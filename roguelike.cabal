@@ -34,8 +34,8 @@ executable roguelike
                       , Dungeon.Predefined.GlobalMap
                       , Dungeon.Size
                       , Dungeon.Turn
-                      , GameStatus
-                      , GameStatus.Player
+                      , Game.Status
+                      , Game.Status.Player
                       , Log
                       , Save
                       , Scene

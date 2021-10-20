@@ -6,7 +6,7 @@ module UI.Event
 
 import           Control.Monad.Trans.State (execState)
 import           Data.Text                 (Text)
-import           GameStatus                (GameStatus,
+import           Game.Status               (GameStatus,
                                             enterTownAtPlayerPosition,
                                             finishSelecting, finishTalking,
                                             isHandlingScene, isPlayerExploring,
@@ -15,7 +15,7 @@ import           GameStatus                (GameStatus,
                                             newGameStatus,
                                             nextSceneElementOrFinish,
                                             selectNextItem, selectPrevItem)
-import qualified GameStatus.Player         as GSP
+import qualified Game.Status.Player        as GSP
 import           Linear.V2                 (V2 (V2))
 import           Monomer                   (AppEventResponse,
                                             EventResponse (Model, Task),

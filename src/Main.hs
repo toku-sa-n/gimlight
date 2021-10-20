@@ -2,14 +2,14 @@
 
 module Main (main) where
 
-import           GameStatus (title)
-import           Monomer    (MainWindowState (MainWindowNormal), appFontDef,
-                             appInitEvent, appTheme, appWindowResizable,
-                             appWindowState, appWindowTitle, darkTheme,
-                             startApp)
-import           UI.Draw    (drawUI, windowHeight, windowWidth)
-import qualified UI.Event   as E
-import           UI.Types   (AppEvent (..))
+import           Game.Status (title)
+import           Monomer     (MainWindowState (MainWindowNormal), appFontDef,
+                              appInitEvent, appTheme, appWindowResizable,
+                              appWindowState, appWindowTitle, darkTheme,
+                              startApp)
+import           UI.Draw     (drawUI, windowHeight, windowWidth)
+import qualified UI.Event    as E
+import           UI.Types    (AppEvent (..))
 
 main :: IO ()
 main = startApp model handleEvent buildUI config
