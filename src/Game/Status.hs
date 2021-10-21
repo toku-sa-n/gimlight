@@ -64,6 +64,7 @@ import           Dungeon.Predefined.BatsCave    (batsDungeon)
 import           Dungeon.Predefined.GlobalMap   (globalMap)
 import qualified Dungeon.Turn                   as DT
 import           GHC.Generics                   (Generic)
+import           Localization                   (multilingualText)
 import           Log                            (Message, MessageLog)
 import qualified Log                            as L
 import           Scene                          (Scene, elements,
@@ -187,7 +188,8 @@ newGameStatus = do
         initPlayerIsExploring = PlayerIsExploring
             { _currentDungeon = initDungeon
             , _otherDungeons = [globalMap, bats]
-            , _messageLog = foldr (L.addMessage . L.message) L.emptyLog ["Welcome to a roguelike game!"]
+            , _messageLog = foldr (L.addMessage . L.message) L.emptyLog
+                [multilingualText "Welcome to a roguelike game!" "ローグライクゲームへようこそ！"]
             }
     return HandlingScene
         { _scene = gameStartScene

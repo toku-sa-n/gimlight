@@ -101,7 +101,7 @@ drawSelectingItem gs = withKeyEvents $ vstack labels
           addAsterlist = zipWith (\idx x -> if idx == getSelectingIndex gs
                                                           then "* " `append` pack (show idx) `append` " " `append`x
                                                           else pack (show idx) `append` " " `append` x
-                                               ) [0..] itemNames
+                                               ) [0..] $ map (getLocalizedText gs) itemNames
           itemNames = map (^. I.name) $ getItems gs
 
 drawSelectingLanguage :: GameWidgetNode
@@ -202,7 +202,7 @@ talkingWindow tw = hstack [ image (tw ^. person . standingImagePath)
                           ]
 
 messageLogArea :: Game -> GameWidgetNode
-messageLogArea e = vstack $ fmap (\x -> label_ x [multiline]) $ take logRows $ getMessageLog e
+messageLogArea e = vstack $ fmap (\x -> label_ (getLocalizedText e x) [multiline] ) $ take logRows $ getMessageLog e
 
 topRightCoord :: Dungeon -> Coord
 topRightCoord d = bottomLeftCoord d + mapWidthAndHeight d - V2 1 1
