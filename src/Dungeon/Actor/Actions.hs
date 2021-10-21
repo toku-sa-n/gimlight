@@ -60,13 +60,18 @@ meleeAction offset src = do
                               pushActor x
                               return ([message $ noDamage src x ], True)
     where attackMessage from to =
-              multilingualText ((from ^. name) `append` " attacks " `append` (to ^. name))
-                               ((from ^. name) `append` "は" `append` (to ^. name) `append` "に攻撃")
+            mconcat [ from ^. name
+                    , multilingualText " attacks" "は"
+                    , to ^. name
+                    , multilingualText "" "に攻撃"
+                    ]
+
           damagedMessage from to damage =
+
               attackMessage from to <>
                 multilingualText (" for " `append` pack (show damage) `append` " hit points.")
                                  ("して" `append` pack (show damage) `append` "ポイントのダメージを与えた．")
-          deathMessage who = multilingualText ((who ^. name) `append` " is dead!") ((who ^. name) `append` "は死んだ．")
+          deathMessage who = (who ^. name) <> multilingualText " is dead!" "は死んだ．"
           noDamage from to = attackMessage from to `mappend`
                                 multilingualText " but does not damage." "したがダメージを受けなかった．"
 
@@ -109,8 +114,9 @@ consumeAction n e = do
         Just x -> do
             let healedActor = healHp newActor (x ^. healAmount)
             pushActor healedActor
-            return ( [multilingualText ((healedActor ^. name) `append` " healed " `append` pack (show (x ^. healAmount)))
-                                       ((healedActor ^. name) `append` "は" `append` pack (show (x ^. healAmount)) `append` "ポイント回復した．")]
+            return ( [(healedActor ^. name) <>
+                        multilingualText (" healed " `append` pack (show (x ^. healAmount)))
+                                         ("は" `append` pack (show (x ^. healAmount)) `append` "ポイント回復した．")]
                    , True)
         Nothing -> do
             pushActor newActor

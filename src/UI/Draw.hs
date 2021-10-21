@@ -86,7 +86,7 @@ withKeyEvents =
 drawTalking ::  GameWidgetEnv -> Game -> GameWidgetNode
 drawTalking wenv e = withKeyEvents $ zstack [ drawUI wenv afterGameStatus `styleBasic` [bgColor $ gray & L.a .~ 0.5]
                                             , filler `styleBasic` [bgColor $ black & L.a .~ 0.5]
-                                            , talkingWindow with
+                                            , talkingWindow e with
                                             ]
     where (with, afterGameStatus) = destructTalking e
 
@@ -198,12 +198,12 @@ statusGrid gs = vstack $ maybe []
            , label $ "DEF: " `append` pack (show $ x ^. defence)
            ]) $ getPlayerActor gs
 
-talkingWindow :: TalkWith -> GameWidgetNode
-talkingWindow tw = hstack [ image (tw ^. person . standingImagePath)
-                          , window
-                          ]
+talkingWindow :: Game -> TalkWith -> GameWidgetNode
+talkingWindow g tw = hstack [ image (tw ^. person . standingImagePath)
+                            , window
+                            ]
     where window = zstack [ image "images/talking_window.png"
-                          , label (tw ^. message) `styleBasic` [textColor red, textSize 16, paddingL 50]
+                          , label (getLocalizedText g (tw ^. message)) `styleBasic` [textColor red, textSize 16, paddingL 50]
                           ]
 
 messageLogArea :: Game -> GameWidgetNode
