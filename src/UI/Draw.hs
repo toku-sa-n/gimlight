@@ -194,9 +194,11 @@ statusGrid :: Game -> GameWidgetNode
 statusGrid gs = vstack $ maybe []
     (\x -> [ label "Player"
            , label $ "HP: " `append` pack (show $ getHp x) `append` " / " `append` pack (show $ x ^. maxHp)
-           , label $ "ATK: " `append` pack (show $ x ^. power)
-           , label $ "DEF: " `append` pack (show $ x ^. defence)
+           , label $ atk `append` pack (show $ x ^. power)
+           , label $ def `append` pack (show $ x ^. defence)
            ]) $ getPlayerActor gs
+    where atk = getLocalizedText gs $ multilingualText "ATK: " "攻撃: "
+          def = getLocalizedText gs $ multilingualText "DEF: " "防御: "
 
 talkingWindow :: Game -> TalkWith -> GameWidgetNode
 talkingWindow g tw = hstack [ image (tw ^. person . standingImagePath)
