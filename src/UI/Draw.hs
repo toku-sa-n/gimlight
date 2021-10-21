@@ -31,6 +31,7 @@ import           Game                  (Game, destructHandlingScene,
                                         isSelectingItemToUse, isSelectingLocale,
                                         isTitle)
 import           Linear.V2             (V2 (V2), _x, _y)
+import           Localization          (multilingualText)
 import           Monomer               (CmbAlignLeft (alignLeft),
                                         CmbBgColor (bgColor),
                                         CmbHeight (height),
@@ -57,7 +58,7 @@ drawUI wenv gs
     | isPlayerTalking gs = drawTalking wenv gs
     | isHandlingScene gs = drawHandlingScene gs
     | isSelectingItemToUse gs = drawSelectingItem gs
-    | isTitle gs = drawTitle
+    | isTitle gs = drawTitle gs
     | isGameOver gs = drawGameOver
     | isSelectingLocale gs = drawSelectingLanguage
     | otherwise = drawGameMap gs
@@ -105,17 +106,20 @@ drawSelectingItem gs = withKeyEvents $ vstack labels
           itemNames = map (^. I.name) $ getItems gs
 
 drawSelectingLanguage :: GameWidgetNode
-drawSelectingLanguage = withKeyEvents $ vstack [ label "Choose your language."
+drawSelectingLanguage = withKeyEvents $ vstack [ label "Choose your language. / 言語を選択してください．"
                                                , label "[e] English"
-                                               , label "[j] Japanese"
+                                               , label "[j] 日本語"
                                                ]
 
-drawTitle :: GameWidgetNode
-drawTitle = withKeyEvents $ vstack [ label "Gimlight" `styleBasic` [textSize 36]
-                                   , label "[n] New game"
-                                   , label "[l] Load the savedata"
-                                   , label "[q] Quit"
-                                   ]
+drawTitle :: Game -> GameWidgetNode
+drawTitle g = withKeyEvents $ vstack [ label "Gimlight" `styleBasic` [textSize 36]
+                                     , label $ "[n] " `append` getLocalizedText g newGame
+                                     , label $ "[l] " `append` getLocalizedText g loadGame
+                                     , label $ "[q] " `append` getLocalizedText g quitGame
+                                     ]
+    where newGame = multilingualText "New game" "新しく始める"
+          loadGame = multilingualText " Load the savedata" "セーブデータを読み込む"
+          quitGame = multilingualText "Quit" "終了する"
 
 drawGameOver :: GameWidgetNode
 drawGameOver = vstack [label "Game Over" `styleBasic` [textSize 72]]
