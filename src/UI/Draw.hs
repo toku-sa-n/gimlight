@@ -98,12 +98,13 @@ drawHandlingScene e = withKeyEvents $ zstack [ image (s ^. backgroundImage)
 
 drawSelectingItem :: Game -> GameWidgetNode
 drawSelectingItem gs = withKeyEvents $ vstack labels
-    where labels = label "Which Item do you use?":map label addAsterlist
+    where labels = label topLabel:map label addAsterlist
           addAsterlist = zipWith (\idx x -> if idx == getSelectingIndex gs
                                                           then "* " `append` pack (show idx) `append` " " `append`x
                                                           else pack (show idx) `append` " " `append` x
                                                ) [0..] $ map (getLocalizedText gs) itemNames
           itemNames = map (^. I.name) $ getItems gs
+          topLabel = getLocalizedText gs $ multilingualText "Which Item do you use?" "どのアイテムを使う？"
 
 drawSelectingLanguage :: GameWidgetNode
 drawSelectingLanguage = withKeyEvents $ vstack [ label "Choose your language. / 言語を選択してください．"
