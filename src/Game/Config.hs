@@ -5,6 +5,8 @@ module Game.Config
     ( Config
     , Language(..)
     , readConfigOrDefault
+    , writeConfig
+    , setLocale
     , getLocale
     ) where
 
@@ -34,8 +36,14 @@ tryReadConfig = do
             encodeFile configFilePath initConfig
             return Nothing
 
+writeConfig :: Config -> IO ()
+writeConfig = encodeFile configFilePath
+
 initConfig :: Config
 initConfig = Config { language = Nothing }
+
+setLocale :: Language -> Config -> Config
+setLocale l c = c { language = Just l }
 
 getLocale :: Config -> Maybe Language
 getLocale Config { language = l } = l

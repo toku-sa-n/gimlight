@@ -12,6 +12,7 @@ module Game.Status
     , isSelectingItemToUse
     , isTitle
     , isGameOver
+    , isSelectingLocale
     , completeThisTurn
     , nextSceneElementOrFinish
     , enterTownAtPlayerPosition
@@ -30,6 +31,7 @@ module Game.Status
     , getPlayerActor
     , messageLogList
     , title
+    , selectingLocale
     , talking
     , selectingItemToUse
     , addMessages
@@ -86,6 +88,7 @@ data GameStatus = PlayerIsExploring
           }
           | Title
           | GameOver
+          | SelectingLocale
           deriving (Show, Ord, Eq, Generic)
 makeLensesFor [ ("_currentDungeon", "currentDungeon")
               , ("_otherDungeons", "otherDungeons")
@@ -124,6 +127,10 @@ isTitle _     = False
 isGameOver :: GameStatus -> Bool
 isGameOver GameOver = True
 isGameOver _        = False
+
+isSelectingLocale :: GameStatus -> Bool
+isSelectingLocale SelectingLocale = True
+isSelectingLocale _               = False
 
 nextSceneElementOrFinish :: GameStatus -> GameStatus
 nextSceneElementOrFinish (HandlingScene s after) = if length (s ^. elements) == 1
@@ -232,6 +239,9 @@ talking tw gs = Talking { _talk = tw
 
 title :: GameStatus
 title = Title
+
+selectingLocale :: GameStatus
+selectingLocale = SelectingLocale
 
 completeThisTurn :: State GameStatus ()
 completeThisTurn = do

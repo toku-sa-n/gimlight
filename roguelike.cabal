@@ -38,6 +38,7 @@ executable roguelike
                       , Game.Config
                       , Game.Status
                       , Game.Status.Player
+                      , Localization
                       , Log
                       , Save
                       , Scene

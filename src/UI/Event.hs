@@ -4,26 +4,30 @@ module UI.Event
     ( handleEvent
     ) where
 
-import           Data.Text (Text)
-import           Game      (Game, finishSelecting, finishTalking,
-                            handlePlayerConsumingItem, handlePlayerEnteringTown,
-                            handlePlayerMoving, handlePlayerPickingUp,
-                            handlePlayerSelectingItemToUse, isHandlingScene,
-                            isPlayerExploring, isPlayerTalking,
-                            isSelectingItemToUse, isTitle, loadStatus,
-                            nextSceneElementOrFinish, saveStatus,
-                            selectNextItem, selectPrevItem, startNewGame)
-import           Linear.V2 (V2 (V2))
-import           Monomer   (AppEventResponse, EventResponse (Model, Task),
-                            WidgetEnv, WidgetNode, exitApplication)
-import           UI.Types  (AppEvent (AppInit, AppKeyboardInput, AppLoadFinished, AppSaveFinished))
+import           Data.Text   (Text)
+import           Game        (Game, finishSelecting, finishTalking,
+                              handlePlayerConsumingItem,
+                              handlePlayerEnteringTown, handlePlayerMoving,
+                              handlePlayerPickingUp,
+                              handlePlayerSelectingItemToUse, isHandlingScene,
+                              isPlayerExploring, isPlayerTalking,
+                              isSelectingItemToUse, isSelectingLocale, isTitle,
+                              loadStatus, nextSceneElementOrFinish, saveStatus,
+                              selectNextItem, selectPrevItem, setLocale,
+                              startNewGame)
+import           Game.Config (Language (English, Japanese))
+import           Linear.V2   (V2 (V2))
+import           Monomer     (AppEventResponse, EventResponse (Model, Task),
+                              WidgetEnv, WidgetNode, exitApplication)
+import           UI.Types    (AppEvent (AppInit, AppKeyboardInput, AppLoadFinished, AppSaveFinished))
 
 handleEvent :: WidgetEnv Game AppEvent -> WidgetNode Game AppEvent -> Game -> AppEvent -> [AppEventResponse Game AppEvent]
-handleEvent _ _ gameStatus evt = case evt of
-                                AppInit            -> []
-                                AppSaveFinished    -> []
-                                AppLoadFinished ngs  -> [Model ngs]
-                                AppKeyboardInput k -> handleKeyInput gameStatus k
+handleEvent _ _ gameStatus evt =
+    case evt of
+        AppInit             -> []
+        AppSaveFinished     -> []
+        AppLoadFinished ngs -> [Model ngs]
+        AppKeyboardInput k  -> handleKeyInput gameStatus k
 
 handleKeyInput :: Game -> Text -> [AppEventResponse Game AppEvent]
 handleKeyInput e k
@@ -32,6 +36,7 @@ handleKeyInput e k
     | isHandlingScene e = handleKeyInputDuringHandlingScene e k
     | isSelectingItemToUse e = handleKeyInputDuringSelectingItemToUse e k
     | isTitle e = handleKeyInputDuringTitle e k
+    | isSelectingLocale e = handleKeyInputDuringSelectingLanguage e k
     | otherwise = undefined
 
 handleKeyInputDuringExploring :: Game -> Text -> [AppEventResponse Game AppEvent]
@@ -70,4 +75,10 @@ handleKeyInputDuringTitle g k
     | k == "n" = [Task $ AppLoadFinished <$> startNewGame g]
     | k == "l" = [Task $ AppLoadFinished <$> loadStatus g]
     | k == "q" = [exitApplication]
+    | otherwise = []
+
+handleKeyInputDuringSelectingLanguage :: Game -> Text -> [AppEventResponse Game AppEvent]
+handleKeyInputDuringSelectingLanguage g k
+    | k == "e" = [Task $ AppLoadFinished <$> setLocale English g]
+    | k == "j" = [Task $ AppLoadFinished <$> setLocale Japanese g]
     | otherwise = []

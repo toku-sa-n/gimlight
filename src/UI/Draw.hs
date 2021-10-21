@@ -24,10 +24,12 @@ import qualified Dungeon.Item          as I
 import qualified Dungeon.Map.Tile      as MT
 import           Game                  (Game, destructHandlingScene,
                                         destructTalking, getCurrentDungeon,
-                                        getItems, getMessageLog, getPlayerActor,
+                                        getItems, getLocalizedText,
+                                        getMessageLog, getPlayerActor,
                                         getSelectingIndex, isGameOver,
                                         isHandlingScene, isPlayerTalking,
-                                        isSelectingItemToUse, isTitle)
+                                        isSelectingItemToUse, isSelectingLocale,
+                                        isTitle)
 import           Linear.V2             (V2 (V2), _x, _y)
 import           Monomer               (CmbAlignLeft (alignLeft),
                                         CmbBgColor (bgColor),
@@ -57,6 +59,7 @@ drawUI wenv gs
     | isSelectingItemToUse gs = drawSelectingItem gs
     | isTitle gs = drawTitle
     | isGameOver gs = drawGameOver
+    | isSelectingLocale gs = drawSelectingLanguage
     | otherwise = drawGameMap gs
 
 withKeyEvents :: WidgetNode s AppEvent -> WidgetNode s AppEvent
@@ -72,6 +75,8 @@ withKeyEvents =
     , "q"
     , "g"
     , "u"
+    , "e"
+    , "j"
     , "Ctrl-s"
     , "Ctrl-l"
     , "Esc"
@@ -86,7 +91,7 @@ drawTalking wenv e = withKeyEvents $ zstack [ drawUI wenv afterGameStatus `style
 
 drawHandlingScene :: Game -> GameWidgetNode
 drawHandlingScene e = withKeyEvents $ zstack [ image (s ^. backgroundImage)
-                                             , label_  (text $ head $ s ^. elements) [multiline] `styleBasic` [textColor black]
+                                             , label_  (getLocalizedText e $ text $ head $ s ^. elements) [multiline] `styleBasic` [textColor black]
                                              ]
     where (s, _) = destructHandlingScene e
 
@@ -98,6 +103,12 @@ drawSelectingItem gs = withKeyEvents $ vstack labels
                                                           else pack (show idx) `append` " " `append` x
                                                ) [0..] itemNames
           itemNames = map (^. I.name) $ getItems gs
+
+drawSelectingLanguage :: GameWidgetNode
+drawSelectingLanguage = withKeyEvents $ vstack [ label "Choose your language."
+                                               , label "[e] English"
+                                               , label "[j] Japanese"
+                                               ]
 
 drawTitle :: GameWidgetNode
 drawTitle = withKeyEvents $ vstack [ label "Gimlight" `styleBasic` [textSize 36]

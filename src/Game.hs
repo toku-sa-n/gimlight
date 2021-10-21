@@ -6,6 +6,7 @@ module Game
     , isSelectingItemToUse
     , isTitle
     , isGameOver
+    , isSelectingLocale
     , handlePlayerMoving
     , handlePlayerPickingUp
     , handlePlayerSelectingItemToUse
@@ -25,19 +26,26 @@ module Game
     , getCurrentDungeon
     , getPlayerActor
     , getMessageLog
+    , getLocalizedText
+    , setLocale
     , startNewGame
     , afterBooting
     ) where
 
 import           Control.Monad.Trans.State (execState)
+import           Data.Text                 (Text)
 import           Dungeon                   (Dungeon)
 import           Dungeon.Actor             (Actor)
 import           Dungeon.Item              (Item)
-import           Game.Config               (Config, readConfigOrDefault)
-import           Game.Status               (GameStatus, title)
+import           Game.Config               (Config, Language, getLocale,
+                                            readConfigOrDefault, writeConfig)
+import qualified Game.Config               as C
+import           Game.Status               (GameStatus, selectingLocale, title)
 import qualified Game.Status               as GS
 import qualified Game.Status.Player        as GSP
 import           Linear.V2                 (V2)
+import           Localization              (MultilingualText)
+import qualified Localization              as L
 import           Log                       (MessageLog)
 import qualified Save
 import           Scene                     (Scene)
@@ -65,6 +73,9 @@ isTitle Game { status = s } = GS.isTitle s
 
 isGameOver :: Game -> Bool
 isGameOver Game { status = s } = GS.isGameOver s
+
+isSelectingLocale :: Game -> Bool
+isSelectingLocale Game { status = s } = GS.isSelectingLocale s
 
 handlePlayerMoving :: V2 Int -> Game -> Game
 handlePlayerMoving offset g@Game { status = s } =
@@ -146,10 +157,27 @@ getPlayerActor Game { status = s } = GS.getPlayerActor s
 getMessageLog :: Game -> MessageLog
 getMessageLog Game { status = s } = GS.messageLogList s
 
+getLocalizedText :: Game -> MultilingualText -> Text
+getLocalizedText Game { config = c } = L.getLocalizedText c
+
+setLocale :: Language -> Game -> IO Game
+setLocale l g@Game { config = c } = do
+    let newConfig = C.setLocale l c
+
+    writeConfig newConfig
+
+    return $ g { status = title
+               , config = newConfig
+               }
+
 afterBooting :: IO Game
 afterBooting = do
     initConfig <- readConfigOrDefault
 
-    return Game { status = title
+    let initStatus = case getLocale initConfig of
+                         Just _  -> title
+                         Nothing -> selectingLocale
+
+    return Game { status = initStatus
                 , config = initConfig
                 }
