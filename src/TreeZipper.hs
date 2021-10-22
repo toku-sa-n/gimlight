@@ -1,4 +1,6 @@
+{-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE TupleSections #-}
+
 module TreeZipper
     ( TreeZipper
     , treeZipper
@@ -7,8 +9,9 @@ module TreeZipper
 
 import           Data.Foldable (find)
 import           Data.Tree     (Tree (Node, rootLabel, subForest))
+import           GHC.Generics  (Generic)
 
-data TreeCrumb a = TreeCrumb a [Tree a]
+data TreeCrumb a = TreeCrumb a [Tree a] deriving (Show, Ord, Eq, Generic)
 
 type TreeZipper a = (Tree a, [TreeCrumb a])
 
