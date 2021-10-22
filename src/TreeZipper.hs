@@ -1,9 +1,12 @@
+{-# LANGUAGE TupleSections #-}
 module TreeZipper
     ( TreeZipper
     , treeZipper
+    , goDownBy
     ) where
 
-import           Data.Tree (Tree)
+import           Data.Foldable (find)
+import           Data.Tree     (Tree (Node, rootLabel, subForest))
 
 data TreeCrumb a = TreeCrumb a [Tree a]
 
@@ -11,3 +14,7 @@ type TreeZipper a = (Tree a, [TreeCrumb a])
 
 treeZipper :: Tree a -> TreeZipper a
 treeZipper t = (t, [])
+
+goDownBy :: (a -> Bool) -> TreeZipper a -> Maybe (TreeZipper a)
+goDownBy f (Node { rootLabel = r, subForest = ts }, bs) =
+    (, TreeCrumb r ts:bs) <$> find (f . rootLabel)  ts
