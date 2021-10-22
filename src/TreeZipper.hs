@@ -4,6 +4,7 @@
 module TreeZipper
     ( TreeZipper
     , treeZipper
+    , getFocused
     , goDownBy
     ) where
 
@@ -17,6 +18,9 @@ type TreeZipper a = (Tree a, [TreeCrumb a])
 
 treeZipper :: Tree a -> TreeZipper a
 treeZipper t = (t, [])
+
+getFocused :: TreeZipper a -> a
+getFocused (t, _) = rootLabel t
 
 goDownBy :: (a -> Bool) -> TreeZipper a -> Maybe (TreeZipper a)
 goDownBy f (Node { rootLabel = r, subForest = ts }, bs) =
