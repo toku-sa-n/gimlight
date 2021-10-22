@@ -47,6 +47,7 @@ executable roguelike
                       , Save
                       , Scene
                       , Talking
+                      , TreeZipper
                       , UI.Draw
                       , UI.Event
                       , UI.Types
