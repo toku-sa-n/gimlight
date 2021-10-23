@@ -24,12 +24,12 @@ import qualified Dungeon.Item          as I
 import qualified Dungeon.Map.Tile      as MT
 import           Game                  (Game (Game, config, status),
                                         destructHandlingScene, destructTalking,
-                                        getCurrentDungeon, getItems,
-                                        getSelectingIndex, isGameOver,
+                                        getItems, getSelectingIndex, isGameOver,
                                         isHandlingScene, isPlayerTalking,
                                         isSelectingItemToUse, isSelectingLocale,
                                         isTitle)
-import           Game.Status           (getPlayerActor, messageLogList)
+import           Game.Status           (getCurrentDungeon, getPlayerActor,
+                                        messageLogList)
 import           Linear.V2             (V2 (V2), _x, _y)
 import           Localization          (getLocalizedText, multilingualText)
 import           Monomer               (CmbAlignLeft (alignLeft),
@@ -140,8 +140,8 @@ mapGrid gs = zstack (mapTiles gs:(mapItems gs ++ mapActors gs))
                  ]
 
 mapTiles :: Game ->  GameWidgetNode
-mapTiles e = box_ [alignLeft] $ vgrid rows `styleBasic` styles
-    where d = getCurrentDungeon e
+mapTiles Game { status = s } = box_ [alignLeft] $ vgrid rows `styleBasic` styles
+    where d = getCurrentDungeon s
           V2 bottomLeftX bottomLeftY = bottomLeftCoord d
           rows = [hgrid $ row y | y <- [bottomLeftY + tileRows - 1, bottomLeftY + tileRows - 2 .. bottomLeftY]]
           row y = [cell $ V2 x y | x <- [bottomLeftX .. bottomLeftX + tileColumns - 1]]
@@ -161,8 +161,8 @@ mapTiles e = box_ [alignLeft] $ vgrid rows `styleBasic` styles
                    , height $ fromIntegral mapDrawingHeight]
 
 mapActors :: Game -> [GameWidgetNode]
-mapActors e = mapMaybe actorToImage $ d ^. actors
-    where d = getCurrentDungeon e
+mapActors Game { status = s } = mapMaybe actorToImage $ d ^. actors
+    where d = getCurrentDungeon s
           leftPadding actor = fromIntegral $ actorPositionOnDisplay actor ^. _x * tileWidth
           topPadding actor = fromIntegral $ mapDrawingHeight - (actorPositionOnDisplay actor ^. _y + 1) * tileHeight
 
@@ -177,12 +177,12 @@ mapActors e = mapMaybe actorToImage $ d ^. actors
           actorToImage actor = guard (isActorDrawed actor) >> return (image (actor ^. walkingImagePath) `styleBasic` style actor)
 
 mapItems :: Game -> [GameWidgetNode]
-mapItems e = mapMaybe itemToImage $ d ^. items
+mapItems Game { status = s } = mapMaybe itemToImage $ d ^. items
     where itemToImage item = guard (isItemDrawed item) >> return (image (item ^. iconImagePath) `styleBasic` style item)
           isItemDrawed item = let pos = itemPositionOnDisplay item
                                   isVisible = (d ^. visible) ! (item ^. I.position)
                                 in V2 0 0 <= pos && pos <= topRightCoord d && isVisible
-          d = getCurrentDungeon e
+          d = getCurrentDungeon s
           leftPadding item = fromIntegral $ itemPositionOnDisplay item ^. _x * tileWidth
           topPadding item = fromIntegral $ mapDrawingHeight - (itemPositionOnDisplay item ^. _y + 1) * tileHeight
 

@@ -23,13 +23,11 @@ module Game
     , finishSelecting
     , destructTalking
     , destructHandlingScene
-    , getCurrentDungeon
     , startNewGame
     , afterBooting
     ) where
 
 import           Control.Monad.Trans.State (execState)
-import           Dungeon                   (Dungeon)
 import           Dungeon.Item              (Item)
 import           Game.Config               (Config, getLocale,
                                             readConfigOrDefault)
@@ -137,9 +135,6 @@ startNewGame Game { config = c } = do
     return Game { status = st
                 , config = c
                 }
-
-getCurrentDungeon :: Game -> Dungeon
-getCurrentDungeon Game { status = s } = GS.getCurrentDungeon s
 
 afterBooting :: IO Game
 afterBooting = do
