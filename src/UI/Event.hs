@@ -5,8 +5,8 @@ module UI.Event
     ) where
 
 import           Data.Text   (Text)
-import           Game        (Game (Game, config, status), finishSelecting,
-                              finishTalking, handlePlayerConsumingItem,
+import           Game        (Game (Game, config, status), finishTalking,
+                              handlePlayerConsumingItem,
                               handlePlayerEnteringTown, handlePlayerMoving,
                               handlePlayerPickingUp,
                               handlePlayerSelectingItemToUse, isHandlingScene,
@@ -15,7 +15,7 @@ import           Game        (Game (Game, config, status), finishSelecting,
                               loadStatus, nextSceneElementOrFinish, saveStatus,
                               selectNextItem, selectPrevItem)
 import           Game.Config (Language (English, Japanese), setLocale)
-import           Game.Status (newGameStatus)
+import           Game.Status (finishSelecting, newGameStatus)
 import           Linear.V2   (V2 (V2))
 import           Monomer     (AppEventResponse, EventResponse (Model, Task),
                               WidgetEnv, WidgetNode, exitApplication)
@@ -63,11 +63,11 @@ handleKeyInputDuringHandlingScene e k
     | otherwise = []
 
 handleKeyInputDuringSelectingItemToUse :: Game -> Text -> [AppEventResponse Game AppEvent]
-handleKeyInputDuringSelectingItemToUse e k
+handleKeyInputDuringSelectingItemToUse e@Game { status = s } k
     | k == "Up" = [Model $ selectPrevItem e]
     | k == "Down" = [Model $ selectNextItem e]
     | k == "Enter" = [Model $ handlePlayerConsumingItem e]
-    | k == "Esc" = [Model $ finishSelecting e]
+    | k == "Esc" = [Model $ e { status =  finishSelecting s }]
     | otherwise = []
 
 handleKeyInputDuringTitle :: Game -> Text -> [AppEventResponse Game AppEvent]

@@ -20,7 +20,6 @@ module Game
     , selectNextItem
     , getSelectingIndex
     , getItems
-    , finishSelecting
     , destructTalking
     , destructHandlingScene
     , afterBooting
@@ -122,10 +121,6 @@ getSelectingIndex Game { status = s } = GS.getSelectingIndex s
 
 getItems :: Game -> [Item]
 getItems Game { status = s } = GS.getItems s
-
-finishSelecting :: Game -> Game
-finishSelecting g@Game { status = s } =
-    g { status = GS.finishSelecting s }
 
 afterBooting :: IO Game
 afterBooting = do
