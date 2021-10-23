@@ -22,14 +22,12 @@ module Game
     , getItems
     , destructTalking
     , destructHandlingScene
-    , afterBooting
     ) where
 
 import           Control.Monad.Trans.State (execState)
 import           Dungeon.Item              (Item)
-import           Game.Config               (Config, getLocale,
-                                            readConfigOrDefault)
-import           Game.Status               (GameStatus, selectingLocale, title)
+import           Game.Config               (Config)
+import           Game.Status               (GameStatus)
 import qualified Game.Status               as GS
 import qualified Game.Status.Player        as GSP
 import           Linear.V2                 (V2)
@@ -121,15 +119,3 @@ getSelectingIndex Game { status = s } = GS.getSelectingIndex s
 
 getItems :: Game -> [Item]
 getItems Game { status = s } = GS.getItems s
-
-afterBooting :: IO Game
-afterBooting = do
-    initConfig <- readConfigOrDefault
-
-    let initStatus = case getLocale initConfig of
-                         Just _  -> title
-                         Nothing -> selectingLocale
-
-    return Game { status = initStatus
-                , config = initConfig
-                }
