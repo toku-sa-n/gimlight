@@ -12,7 +12,6 @@ module Game
     , handlePlayerSelectingItemToUse
     , handlePlayerEnteringTown
     , handlePlayerConsumingItem
-    , saveStatus
     ) where
 
 import           Control.Monad.Trans.State (execState)
@@ -21,7 +20,6 @@ import           Game.Status               (GameStatus)
 import qualified Game.Status               as GS
 import qualified Game.Status.Player        as GSP
 import           Linear.V2                 (V2)
-import qualified Save
 
 data Game = Game
           { status :: GameStatus
@@ -68,6 +66,3 @@ handlePlayerPickingUp g@Game { status = s } =
 handlePlayerConsumingItem :: Game -> Game
 handlePlayerConsumingItem g@Game { status = s } =
     g { status = execState GSP.handlePlayerConsumeItem s }
-
-saveStatus :: Game -> IO ()
-saveStatus Game { status = s } = Save.save s

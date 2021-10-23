@@ -11,8 +11,7 @@ import           Game        (Game (Game, config, status),
                               handlePlayerPickingUp,
                               handlePlayerSelectingItemToUse, isHandlingScene,
                               isPlayerExploring, isPlayerTalking,
-                              isSelectingItemToUse, isSelectingLocale, isTitle,
-                              saveStatus)
+                              isSelectingItemToUse, isSelectingLocale, isTitle)
 import           Game.Config (Language (English, Japanese), setLocale)
 import           Game.Status (finishSelecting, finishTalking, newGameStatus,
                               nextSceneElementOrFinish, selectNextItem,
@@ -20,7 +19,7 @@ import           Game.Status (finishSelecting, finishTalking, newGameStatus,
 import           Linear.V2   (V2 (V2))
 import           Monomer     (AppEventResponse, EventResponse (Model, Task),
                               WidgetEnv, WidgetNode, exitApplication)
-import           Save        (load)
+import           Save        (load, save)
 import           UI.Types    (AppEvent (AppInit, AppKeyboardInput, AppLoadFinished, AppSaveFinished))
 
 handleEvent :: WidgetEnv Game AppEvent -> WidgetNode Game AppEvent -> Game -> AppEvent -> [AppEventResponse Game AppEvent]
@@ -42,14 +41,14 @@ handleKeyInput e k
     | otherwise = undefined
 
 handleKeyInputDuringExploring :: Game -> Text -> [AppEventResponse Game AppEvent]
-handleKeyInputDuringExploring e k
+handleKeyInputDuringExploring e@Game { status = st } k
     | k == "Right" = [Model $ handlePlayerMoving (V2 1 0) e]
     | k == "Left"  = [Model $ handlePlayerMoving (V2 (-1) 0) e]
     | k == "Up"    = [Model $ handlePlayerMoving (V2 0 1) e]
     | k == "Down"  = [Model $ handlePlayerMoving (V2 0 (-1)) e]
     | k == "g" = [Model $ handlePlayerPickingUp e]
     | k == "u" = [Model $ handlePlayerSelectingItemToUse e]
-    | k == "Ctrl-s"     = [Task (saveStatus e >> return AppSaveFinished)]
+    | k == "Ctrl-s"     = [Task (save st >> return AppSaveFinished)]
     | k == "Ctrl-l"     = [Task $ do
                             s <- load
                             return $ AppLoadFinished e { status = s }]
