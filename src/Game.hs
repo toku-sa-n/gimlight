@@ -26,13 +26,11 @@ module Game
     , getCurrentDungeon
     , getPlayerActor
     , getMessageLog
-    , getLocalizedText
     , startNewGame
     , afterBooting
     ) where
 
 import           Control.Monad.Trans.State (execState)
-import           Data.Text                 (Text)
 import           Dungeon                   (Dungeon)
 import           Dungeon.Actor             (Actor)
 import           Dungeon.Item              (Item)
@@ -42,8 +40,6 @@ import           Game.Status               (GameStatus, selectingLocale, title)
 import qualified Game.Status               as GS
 import qualified Game.Status.Player        as GSP
 import           Linear.V2                 (V2)
-import           Localization              (MultilingualText)
-import qualified Localization              as L
 import           Log                       (MessageLog)
 import qualified Save
 import           Scene                     (Scene)
@@ -154,9 +150,6 @@ getPlayerActor Game { status = s } = GS.getPlayerActor s
 
 getMessageLog :: Game -> MessageLog
 getMessageLog Game { status = s } = GS.messageLogList s
-
-getLocalizedText :: Game -> MultilingualText -> Text
-getLocalizedText Game { config = c } = L.getLocalizedText c
 
 afterBooting :: IO Game
 afterBooting = do

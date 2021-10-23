@@ -22,16 +22,16 @@ import qualified Dungeon.Actor         as A
 import           Dungeon.Item          (iconImagePath)
 import qualified Dungeon.Item          as I
 import qualified Dungeon.Map.Tile      as MT
-import           Game                  (Game, destructHandlingScene,
-                                        destructTalking, getCurrentDungeon,
-                                        getItems, getLocalizedText,
+import           Game                  (Game (Game, config),
+                                        destructHandlingScene, destructTalking,
+                                        getCurrentDungeon, getItems,
                                         getMessageLog, getPlayerActor,
                                         getSelectingIndex, isGameOver,
                                         isHandlingScene, isPlayerTalking,
                                         isSelectingItemToUse, isSelectingLocale,
                                         isTitle)
 import           Linear.V2             (V2 (V2), _x, _y)
-import           Localization          (multilingualText)
+import           Localization          (getLocalizedText, multilingualText)
 import           Monomer               (CmbAlignLeft (alignLeft),
                                         CmbBgColor (bgColor),
                                         CmbHeight (height),
@@ -91,20 +91,20 @@ drawTalking wenv e = withKeyEvents $ zstack [ drawUI wenv afterGameStatus `style
     where (with, afterGameStatus) = destructTalking e
 
 drawHandlingScene :: Game -> GameWidgetNode
-drawHandlingScene e = withKeyEvents $ zstack [ image (s ^. backgroundImage)
-                                             , label_  (getLocalizedText e $ text $ head $ s ^. elements) [multiline] `styleBasic` [textColor black]
+drawHandlingScene e@Game { config = c } = withKeyEvents $ zstack [ image (s ^. backgroundImage)
+                                             , label_  (getLocalizedText c $ text $ head $ s ^. elements) [multiline] `styleBasic` [textColor black]
                                              ]
     where (s, _) = destructHandlingScene e
 
 drawSelectingItem :: Game -> GameWidgetNode
-drawSelectingItem gs = withKeyEvents $ vstack labels
+drawSelectingItem gs@Game { config = c } = withKeyEvents $ vstack labels
     where labels = label topLabel:map label addAsterlist
           addAsterlist = zipWith (\idx x -> if idx == getSelectingIndex gs
                                                           then "* " `append` pack (show idx) `append` " " `append`x
                                                           else pack (show idx) `append` " " `append` x
-                                               ) [0..] $ map (getLocalizedText gs) itemNames
+                                               ) [0..] $ map (getLocalizedText c) itemNames
           itemNames = map (^. I.name) $ getItems gs
-          topLabel = getLocalizedText gs $ multilingualText "Which Item do you use?" "どのアイテムを使う？"
+          topLabel = getLocalizedText c $ multilingualText "Which Item do you use?" "どのアイテムを使う？"
 
 drawSelectingLanguage :: GameWidgetNode
 drawSelectingLanguage = withKeyEvents $ vstack [ label "Choose your language. / 言語を選択してください．"
@@ -113,10 +113,10 @@ drawSelectingLanguage = withKeyEvents $ vstack [ label "Choose your language. / 
                                                ]
 
 drawTitle :: Game -> GameWidgetNode
-drawTitle g = withKeyEvents $ vstack [ label "Gimlight" `styleBasic` [textSize 36]
-                                     , label $ "[n] " `append` getLocalizedText g newGame
-                                     , label $ "[l] " `append` getLocalizedText g loadGame
-                                     , label $ "[q] " `append` getLocalizedText g quitGame
+drawTitle Game { config = c } = withKeyEvents $ vstack [ label "Gimlight" `styleBasic` [textSize 36]
+                                     , label $ "[n] " `append` getLocalizedText c newGame
+                                     , label $ "[l] " `append` getLocalizedText c loadGame
+                                     , label $ "[q] " `append` getLocalizedText c quitGame
                                      ]
     where newGame = multilingualText "New game" "新しく始める"
           loadGame = multilingualText " Load the savedata" "セーブデータを読み込む"
@@ -191,25 +191,25 @@ mapItems e = mapMaybe itemToImage $ d ^. items
           itemPositionOnDisplay item = item ^. I.position - bottomLeftCoord d
 
 statusGrid :: Game -> GameWidgetNode
-statusGrid gs = vstack $ maybe []
+statusGrid gs@Game { config = c } = vstack $ maybe []
     (\x -> [ label "Player"
            , label $ "HP: " `append` pack (show $ getHp x) `append` " / " `append` pack (show $ x ^. maxHp)
            , label $ atk `append` pack (show $ x ^. power)
            , label $ def `append` pack (show $ x ^. defence)
            ]) $ getPlayerActor gs
-    where atk = getLocalizedText gs $ multilingualText "ATK: " "攻撃: "
-          def = getLocalizedText gs $ multilingualText "DEF: " "防御: "
+    where atk = getLocalizedText c $ multilingualText "ATK: " "攻撃: "
+          def = getLocalizedText c $ multilingualText "DEF: " "防御: "
 
 talkingWindow :: Game -> TalkWith -> GameWidgetNode
-talkingWindow g tw = hstack [ image (tw ^. person . standingImagePath)
+talkingWindow Game { config = c } tw = hstack [ image (tw ^. person . standingImagePath)
                             , window
                             ]
     where window = zstack [ image "images/talking_window.png"
-                          , label (getLocalizedText g (tw ^. message)) `styleBasic` [textColor red, textSize 16, paddingL 50]
+                          , label (getLocalizedText c (tw ^. message)) `styleBasic` [textColor red, textSize 16, paddingL 50]
                           ]
 
 messageLogArea :: Game -> GameWidgetNode
-messageLogArea e = vstack $ fmap (\x -> label_ (getLocalizedText e x) [multiline] ) $ take logRows $ getMessageLog e
+messageLogArea e@Game { config = c } = vstack $ fmap (\x -> label_ (getLocalizedText c x) [multiline] ) $ take logRows $ getMessageLog e
 
 topRightCoord :: Dungeon -> Coord
 topRightCoord d = bottomLeftCoord d + mapWidthAndHeight d - V2 1 1
