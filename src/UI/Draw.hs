@@ -22,12 +22,11 @@ import qualified Dungeon.Actor         as A
 import           Dungeon.Item          (iconImagePath)
 import qualified Dungeon.Item          as I
 import qualified Dungeon.Map.Tile      as MT
-import           Game                  (Game (Game, config, status),
-                                        destructTalking, isGameOver,
+import           Game                  (Game (Game, config, status), isGameOver,
                                         isHandlingScene, isPlayerTalking,
                                         isSelectingItemToUse, isSelectingLocale,
                                         isTitle)
-import           Game.Status           (destructHandlingScene,
+import           Game.Status           (destructHandlingScene, destructTalking,
                                         getCurrentDungeon, getItems,
                                         getPlayerActor, getSelectingIndex,
                                         messageLogList)
@@ -85,11 +84,12 @@ withKeyEvents =
     ]
 
 drawTalking ::  GameWidgetEnv -> Game -> GameWidgetNode
-drawTalking wenv e = withKeyEvents $ zstack [ drawUI wenv afterGameStatus `styleBasic` [bgColor $ gray & L.a .~ 0.5]
-                                            , filler `styleBasic` [bgColor $ black & L.a .~ 0.5]
-                                            , talkingWindow e with
-                                            ]
-    where (with, afterGameStatus) = destructTalking e
+drawTalking wenv e@Game { status = s } =
+    withKeyEvents $ zstack [ drawUI wenv (e { status = afterGameStatus }) `styleBasic` [bgColor $ gray & L.a .~ 0.5]
+                           , filler `styleBasic` [bgColor $ black & L.a .~ 0.5]
+                           , talkingWindow e with
+                           ]
+    where (with, afterGameStatus) = destructTalking s
 
 drawHandlingScene :: Game -> GameWidgetNode
 drawHandlingScene Game { status = st, config = c } =
