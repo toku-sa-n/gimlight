@@ -7,7 +7,6 @@ module UI.Event
 import           Control.Monad.Trans.State (execState)
 import           Data.Text                 (Text)
 import           Game                      (Game (Game, config, status),
-                                            handlePlayerEnteringTown,
                                             handlePlayerMoving,
                                             handlePlayerSelectingItemToUse,
                                             isHandlingScene, isPlayerExploring,
@@ -16,7 +15,8 @@ import           Game                      (Game (Game, config, status),
                                             isSelectingLocale, isTitle)
 import           Game.Config               (Language (English, Japanese),
                                             setLocale)
-import           Game.Status               (finishSelecting, finishTalking,
+import           Game.Status               (enterTownAtPlayerPosition,
+                                            finishSelecting, finishTalking,
                                             newGameStatus,
                                             nextSceneElementOrFinish,
                                             selectNextItem, selectPrevItem)
@@ -60,7 +60,7 @@ handleKeyInputDuringExploring e@Game { status = st } k
     | k == "Ctrl-l"     = [Task $ do
                             s <- load
                             return $ AppLoadFinished e { status = s }]
-    | k == "Enter" = [Model $ handlePlayerEnteringTown e]
+    | k == "Enter" = [Model e { status = enterTownAtPlayerPosition st }]
     | otherwise = []
 
 handleKeyInputDuringTalking :: Game -> Text -> [AppEventResponse Game AppEvent]

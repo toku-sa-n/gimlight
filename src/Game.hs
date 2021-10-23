@@ -9,7 +9,6 @@ module Game
     , isSelectingLocale
     , handlePlayerMoving
     , handlePlayerSelectingItemToUse
-    , handlePlayerEnteringTown
     ) where
 
 import           Control.Monad.Trans.State (execState)
@@ -52,7 +51,3 @@ handlePlayerMoving offset g@Game { status = s } =
 handlePlayerSelectingItemToUse :: Game -> Game
 handlePlayerSelectingItemToUse g@Game { status = s } =
     g { status = GSP.handlePlayerSelectingItemToUse s }
-
-handlePlayerEnteringTown :: Game -> Game
-handlePlayerEnteringTown g@Game { status = s } =
-    g { status = GS.enterTownAtPlayerPosition s }
