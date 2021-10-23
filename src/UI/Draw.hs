@@ -22,14 +22,14 @@ import qualified Dungeon.Actor         as A
 import           Dungeon.Item          (iconImagePath)
 import qualified Dungeon.Item          as I
 import qualified Dungeon.Map.Tile      as MT
-import           Game                  (Game (Game, config),
+import           Game                  (Game (Game, config, status),
                                         destructHandlingScene, destructTalking,
                                         getCurrentDungeon, getItems,
-                                        getMessageLog, getPlayerActor,
-                                        getSelectingIndex, isGameOver,
-                                        isHandlingScene, isPlayerTalking,
-                                        isSelectingItemToUse, isSelectingLocale,
-                                        isTitle)
+                                        getPlayerActor, getSelectingIndex,
+                                        isGameOver, isHandlingScene,
+                                        isPlayerTalking, isSelectingItemToUse,
+                                        isSelectingLocale, isTitle)
+import           Game.Status           (messageLogList)
 import           Linear.V2             (V2 (V2), _x, _y)
 import           Localization          (getLocalizedText, multilingualText)
 import           Monomer               (CmbAlignLeft (alignLeft),
@@ -209,7 +209,8 @@ talkingWindow Game { config = c } tw = hstack [ image (tw ^. person . standingIm
                           ]
 
 messageLogArea :: Game -> GameWidgetNode
-messageLogArea e@Game { config = c } = vstack $ fmap (\x -> label_ (getLocalizedText c x) [multiline] ) $ take logRows $ getMessageLog e
+messageLogArea Game { status = s, config = c } =
+    vstack $ fmap (\x -> label_ (getLocalizedText c x) [multiline] ) $ take logRows $ messageLogList s
 
 topRightCoord :: Dungeon -> Coord
 topRightCoord d = bottomLeftCoord d + mapWidthAndHeight d - V2 1 1

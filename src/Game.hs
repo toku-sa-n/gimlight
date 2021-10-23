@@ -25,7 +25,6 @@ module Game
     , destructHandlingScene
     , getCurrentDungeon
     , getPlayerActor
-    , getMessageLog
     , startNewGame
     , afterBooting
     ) where
@@ -40,7 +39,6 @@ import           Game.Status               (GameStatus, selectingLocale, title)
 import qualified Game.Status               as GS
 import qualified Game.Status.Player        as GSP
 import           Linear.V2                 (V2)
-import           Log                       (MessageLog)
 import qualified Save
 import           Scene                     (Scene)
 import           Talking                   (TalkWith)
@@ -147,9 +145,6 @@ getCurrentDungeon Game { status = s } = GS.getCurrentDungeon s
 
 getPlayerActor :: Game -> Maybe Actor
 getPlayerActor Game { status = s } = GS.getPlayerActor s
-
-getMessageLog :: Game -> MessageLog
-getMessageLog Game { status = s } = GS.messageLogList s
 
 afterBooting :: IO Game
 afterBooting = do
