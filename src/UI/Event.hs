@@ -13,9 +13,9 @@ import           Game        (Game (Game, config, status), finishTalking,
                               isPlayerExploring, isPlayerTalking,
                               isSelectingItemToUse, isSelectingLocale, isTitle,
                               loadStatus, nextSceneElementOrFinish, saveStatus,
-                              selectNextItem, selectPrevItem)
+                              selectPrevItem)
 import           Game.Config (Language (English, Japanese), setLocale)
-import           Game.Status (finishSelecting, newGameStatus)
+import           Game.Status (finishSelecting, newGameStatus, selectNextItem)
 import           Linear.V2   (V2 (V2))
 import           Monomer     (AppEventResponse, EventResponse (Model, Task),
                               WidgetEnv, WidgetNode, exitApplication)
@@ -65,7 +65,7 @@ handleKeyInputDuringHandlingScene e k
 handleKeyInputDuringSelectingItemToUse :: Game -> Text -> [AppEventResponse Game AppEvent]
 handleKeyInputDuringSelectingItemToUse e@Game { status = s } k
     | k == "Up" = [Model $ selectPrevItem e]
-    | k == "Down" = [Model $ selectNextItem e]
+    | k == "Down" = [Model $ e { status = selectNextItem s }]
     | k == "Enter" = [Model $ handlePlayerConsumingItem e]
     | k == "Esc" = [Model $ e { status =  finishSelecting s }]
     | otherwise = []
