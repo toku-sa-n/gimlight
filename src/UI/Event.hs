@@ -11,7 +11,7 @@ import           Game                      (Game (Game, config, status),
                                             isPlayerTalking,
                                             isSelectingItemToUse, isTitle)
 import           Game.Config               (Language (English, Japanese),
-                                            setLocale)
+                                            setLocale, writeConfig)
 import           Game.Status               (enterTownAtPlayerPosition,
                                             finishSelecting, finishTalking,
                                             isSelectingLocale, newGameStatus,
@@ -98,6 +98,12 @@ handleKeyInputDuringTitle g k
 
 handleKeyInputDuringSelectingLanguage :: Game -> Text -> [AppEventResponse Game AppEvent]
 handleKeyInputDuringSelectingLanguage g@Game { config = c } k
-    | k == "e" = [Task $ return $ AppLoadFinished g { status = title, config = setLocale English c }]
-    | k == "j" = [Task $ return $ AppLoadFinished g { status = title, config = setLocale Japanese c }]
+    | k == "e" = [Task $ AppLoadFinished <$> updateConfig English]
+    | k == "j" = [Task $ AppLoadFinished <$> updateConfig Japanese]
     | otherwise = []
+    where updateConfig l = do
+            let newConfig = setLocale l c
+            writeConfig newConfig
+            return $ g { status = title,
+                    config = newConfig
+                    }
