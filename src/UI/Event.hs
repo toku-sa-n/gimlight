@@ -9,15 +9,15 @@ import           Data.Text                 (Text)
 import           Game                      (Game (Game, config, status),
                                             isHandlingScene, isPlayerExploring,
                                             isPlayerTalking,
-                                            isSelectingItemToUse,
-                                            isSelectingLocale, isTitle)
+                                            isSelectingItemToUse, isTitle)
 import           Game.Config               (Language (English, Japanese),
                                             setLocale)
 import           Game.Status               (enterTownAtPlayerPosition,
                                             finishSelecting, finishTalking,
-                                            newGameStatus,
+                                            isSelectingLocale, newGameStatus,
                                             nextSceneElementOrFinish,
-                                            selectNextItem, selectPrevItem)
+                                            selectNextItem, selectPrevItem,
+                                            title)
 import           Game.Status.Player        (handlePlayerConsumeItem,
                                             handlePlayerMoving,
                                             handlePlayerPickingUp,
@@ -39,13 +39,13 @@ handleEvent _ _ gameStatus evt =
         AppKeyboardInput k  -> handleKeyInput gameStatus k
 
 handleKeyInput :: Game -> Text -> [AppEventResponse Game AppEvent]
-handleKeyInput e k
+handleKeyInput e@Game { status = s } k
     | isPlayerExploring e = handleKeyInputDuringExploring e k
     | isPlayerTalking e = handleKeyInputDuringTalking e k
     | isHandlingScene e = handleKeyInputDuringHandlingScene e k
     | isSelectingItemToUse e = handleKeyInputDuringSelectingItemToUse e k
     | isTitle e = handleKeyInputDuringTitle e k
-    | isSelectingLocale e = handleKeyInputDuringSelectingLanguage e k
+    | isSelectingLocale s = handleKeyInputDuringSelectingLanguage e k
     | otherwise = undefined
 
 handleKeyInputDuringExploring :: Game -> Text -> [AppEventResponse Game AppEvent]
@@ -98,6 +98,6 @@ handleKeyInputDuringTitle g k
 
 handleKeyInputDuringSelectingLanguage :: Game -> Text -> [AppEventResponse Game AppEvent]
 handleKeyInputDuringSelectingLanguage g@Game { config = c } k
-    | k == "e" = [Task $ return $ AppLoadFinished g { config = setLocale English c }]
-    | k == "j" = [Task $ return $ AppLoadFinished g { config = setLocale Japanese c }]
+    | k == "e" = [Task $ return $ AppLoadFinished g { status = title, config = setLocale English c }]
+    | k == "j" = [Task $ return $ AppLoadFinished g { status = title, config = setLocale Japanese c }]
     | otherwise = []

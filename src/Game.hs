@@ -6,7 +6,6 @@ module Game
     , isSelectingItemToUse
     , isTitle
     , isGameOver
-    , isSelectingLocale
     ) where
 
 import           Game.Config (Config)
@@ -35,6 +34,3 @@ isTitle Game { status = s } = GS.isTitle s
 
 isGameOver :: Game -> Bool
 isGameOver Game { status = s } = GS.isGameOver s
-
-isSelectingLocale :: Game -> Bool
-isSelectingLocale Game { status = s } = GS.isSelectingLocale s

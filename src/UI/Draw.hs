@@ -24,12 +24,11 @@ import qualified Dungeon.Item          as I
 import qualified Dungeon.Map.Tile      as MT
 import           Game                  (Game (Game, config, status), isGameOver,
                                         isHandlingScene, isPlayerTalking,
-                                        isSelectingItemToUse, isSelectingLocale,
-                                        isTitle)
+                                        isSelectingItemToUse, isTitle)
 import           Game.Status           (destructHandlingScene, destructTalking,
                                         getCurrentDungeon, getItems,
                                         getPlayerActor, getSelectingIndex,
-                                        messageLogList)
+                                        isSelectingLocale, messageLogList)
 import           Linear.V2             (V2 (V2), _x, _y)
 import           Localization          (getLocalizedText, multilingualText)
 import           Monomer               (CmbAlignLeft (alignLeft),
@@ -54,13 +53,13 @@ type GameWidgetEnv = WidgetEnv Game AppEvent
 type GameWidgetNode = WidgetNode Game AppEvent
 
 drawUI :: GameWidgetEnv -> Game -> GameWidgetNode
-drawUI wenv gs
+drawUI wenv gs@Game { status = s }
     | isPlayerTalking gs = drawTalking wenv gs
     | isHandlingScene gs = drawHandlingScene gs
     | isSelectingItemToUse gs = drawSelectingItem gs
     | isTitle gs = drawTitle gs
     | isGameOver gs = drawGameOver
-    | isSelectingLocale gs = drawSelectingLanguage
+    | isSelectingLocale s = drawSelectingLanguage
     | otherwise = drawGameMap gs
 
 withKeyEvents :: WidgetNode s AppEvent -> WidgetNode s AppEvent
