@@ -14,7 +14,6 @@ module Game
     , handlePlayerConsumingItem
     , saveStatus
     , loadStatus
-    , finishTalking
     , destructTalking
     , destructHandlingScene
     ) where
@@ -91,7 +90,3 @@ destructTalking g@Game{ status = s } = (tw, g { status = afterStatus })
 destructHandlingScene :: Game -> (Scene, Game)
 destructHandlingScene g@Game { status = s } = (sc, g { status = afterScene })
     where (sc, afterScene) = GS.destructHandlingScene s
-
-finishTalking :: Game -> Game
-finishTalking g@Game { status = s } =
-    g { status = GS.finishTalking s }

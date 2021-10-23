@@ -5,7 +5,7 @@ module UI.Event
     ) where
 
 import           Data.Text   (Text)
-import           Game        (Game (Game, config, status), finishTalking,
+import           Game        (Game (Game, config, status),
                               handlePlayerConsumingItem,
                               handlePlayerEnteringTown, handlePlayerMoving,
                               handlePlayerPickingUp,
@@ -14,7 +14,7 @@ import           Game        (Game (Game, config, status), finishTalking,
                               isSelectingItemToUse, isSelectingLocale, isTitle,
                               loadStatus, saveStatus)
 import           Game.Config (Language (English, Japanese), setLocale)
-import           Game.Status (finishSelecting, newGameStatus,
+import           Game.Status (finishSelecting, finishTalking, newGameStatus,
                               nextSceneElementOrFinish, selectNextItem,
                               selectPrevItem)
 import           Linear.V2   (V2 (V2))
@@ -54,8 +54,8 @@ handleKeyInputDuringExploring e k
     | otherwise = []
 
 handleKeyInputDuringTalking :: Game -> Text -> [AppEventResponse Game AppEvent]
-handleKeyInputDuringTalking e k
-    | k == "Enter" = [Model $ finishTalking e]
+handleKeyInputDuringTalking e@Game { status = s } k
+    | k == "Enter" = [Model $ e { status = finishTalking s }]
     | otherwise = []
 
 handleKeyInputDuringHandlingScene :: Game -> Text -> [AppEventResponse Game AppEvent]
