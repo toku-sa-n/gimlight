@@ -18,7 +18,6 @@ module Game
     , nextSceneElementOrFinish
     , selectPrevItem
     , selectNextItem
-    , getSelectingIndex
     , destructTalking
     , destructHandlingScene
     ) where
@@ -111,6 +110,3 @@ selectPrevItem g@Game { status = s } =
 selectNextItem :: Game -> Game
 selectNextItem g@Game { status = s } =
     g { status = GS.selectNextItem s }
-
-getSelectingIndex :: Game -> Int
-getSelectingIndex Game { status = s } = GS.getSelectingIndex s
