@@ -24,14 +24,12 @@ module Game
     , destructTalking
     , destructHandlingScene
     , getCurrentDungeon
-    , getPlayerActor
     , startNewGame
     , afterBooting
     ) where
 
 import           Control.Monad.Trans.State (execState)
 import           Dungeon                   (Dungeon)
-import           Dungeon.Actor             (Actor)
 import           Dungeon.Item              (Item)
 import           Game.Config               (Config, getLocale,
                                             readConfigOrDefault)
@@ -142,9 +140,6 @@ startNewGame Game { config = c } = do
 
 getCurrentDungeon :: Game -> Dungeon
 getCurrentDungeon Game { status = s } = GS.getCurrentDungeon s
-
-getPlayerActor :: Game -> Maybe Actor
-getPlayerActor Game { status = s } = GS.getPlayerActor s
 
 afterBooting :: IO Game
 afterBooting = do

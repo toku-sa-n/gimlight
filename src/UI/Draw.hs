@@ -25,11 +25,11 @@ import qualified Dungeon.Map.Tile      as MT
 import           Game                  (Game (Game, config, status),
                                         destructHandlingScene, destructTalking,
                                         getCurrentDungeon, getItems,
-                                        getPlayerActor, getSelectingIndex,
-                                        isGameOver, isHandlingScene,
-                                        isPlayerTalking, isSelectingItemToUse,
-                                        isSelectingLocale, isTitle)
-import           Game.Status           (messageLogList)
+                                        getSelectingIndex, isGameOver,
+                                        isHandlingScene, isPlayerTalking,
+                                        isSelectingItemToUse, isSelectingLocale,
+                                        isTitle)
+import           Game.Status           (getPlayerActor, messageLogList)
 import           Linear.V2             (V2 (V2), _x, _y)
 import           Localization          (getLocalizedText, multilingualText)
 import           Monomer               (CmbAlignLeft (alignLeft),
@@ -191,12 +191,12 @@ mapItems e = mapMaybe itemToImage $ d ^. items
           itemPositionOnDisplay item = item ^. I.position - bottomLeftCoord d
 
 statusGrid :: Game -> GameWidgetNode
-statusGrid gs@Game { config = c } = vstack $ maybe []
+statusGrid Game { status = s, config = c } = vstack $ maybe []
     (\x -> [ label "Player"
            , label $ "HP: " `append` pack (show $ getHp x) `append` " / " `append` pack (show $ x ^. maxHp)
            , label $ atk `append` pack (show $ x ^. power)
            , label $ def `append` pack (show $ x ^. defence)
-           ]) $ getPlayerActor gs
+           ]) $ getPlayerActor s
     where atk = getLocalizedText c $ multilingualText "ATK: " "攻撃: "
           def = getLocalizedText c $ multilingualText "DEF: " "防御: "
 
