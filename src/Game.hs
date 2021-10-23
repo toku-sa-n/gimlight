@@ -8,7 +8,6 @@ module Game
     , isGameOver
     , isSelectingLocale
     , handlePlayerMoving
-    , handlePlayerSelectingItemToUse
     ) where
 
 import           Control.Monad.Trans.State (execState)
@@ -47,7 +46,3 @@ isSelectingLocale Game { status = s } = GS.isSelectingLocale s
 handlePlayerMoving :: V2 Int -> Game -> Game
 handlePlayerMoving offset g@Game { status = s } =
     g { status = flip execState s $ GSP.handlePlayerMoving offset }
-
-handlePlayerSelectingItemToUse :: Game -> Game
-handlePlayerSelectingItemToUse g@Game { status = s } =
-    g { status = GSP.handlePlayerSelectingItemToUse s }

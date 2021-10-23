@@ -7,10 +7,8 @@ module UI.Event
 import           Control.Monad.Trans.State (execState)
 import           Data.Text                 (Text)
 import           Game                      (Game (Game, config, status),
-                                            handlePlayerMoving,
-                                            handlePlayerSelectingItemToUse,
-                                            isHandlingScene, isPlayerExploring,
-                                            isPlayerTalking,
+                                            handlePlayerMoving, isHandlingScene,
+                                            isPlayerExploring, isPlayerTalking,
                                             isSelectingItemToUse,
                                             isSelectingLocale, isTitle)
 import           Game.Config               (Language (English, Japanese),
@@ -21,7 +19,8 @@ import           Game.Status               (enterTownAtPlayerPosition,
                                             nextSceneElementOrFinish,
                                             selectNextItem, selectPrevItem)
 import           Game.Status.Player        (handlePlayerConsumeItem,
-                                            handlePlayerPickingUp)
+                                            handlePlayerPickingUp,
+                                            handlePlayerSelectingItemToUse)
 import           Linear.V2                 (V2 (V2))
 import           Monomer                   (AppEventResponse,
                                             EventResponse (Model, Task),
@@ -55,7 +54,7 @@ handleKeyInputDuringExploring e@Game { status = st } k
     | k == "Up"    = [Model $ handlePlayerMoving (V2 0 1) e]
     | k == "Down"  = [Model $ handlePlayerMoving (V2 0 (-1)) e]
     | k == "g" = [Model e { status = execState handlePlayerPickingUp st}]
-    | k == "u" = [Model $ handlePlayerSelectingItemToUse e]
+    | k == "u" = [Model e { status = handlePlayerSelectingItemToUse st }]
     | k == "Ctrl-s"     = [Task (save st >> return AppSaveFinished)]
     | k == "Ctrl-l"     = [Task $ do
                             s <- load
