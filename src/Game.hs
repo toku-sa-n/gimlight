@@ -15,7 +15,6 @@ module Game
     , saveStatus
     , loadStatus
     , finishTalking
-    , nextSceneElementOrFinish
     , destructTalking
     , destructHandlingScene
     ) where
@@ -96,7 +95,3 @@ destructHandlingScene g@Game { status = s } = (sc, g { status = afterScene })
 finishTalking :: Game -> Game
 finishTalking g@Game { status = s } =
     g { status = GS.finishTalking s }
-
-nextSceneElementOrFinish :: Game -> Game
-nextSceneElementOrFinish g@Game { status = s } =
-    g { status = GS.nextSceneElementOrFinish s }
