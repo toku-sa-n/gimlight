@@ -23,11 +23,12 @@ import           Dungeon.Item          (iconImagePath)
 import qualified Dungeon.Item          as I
 import qualified Dungeon.Map.Tile      as MT
 import           Game                  (Game (Game, config, status),
-                                        destructHandlingScene, destructTalking,
-                                        isGameOver, isHandlingScene,
-                                        isPlayerTalking, isSelectingItemToUse,
-                                        isSelectingLocale, isTitle)
-import           Game.Status           (getCurrentDungeon, getItems,
+                                        destructTalking, isGameOver,
+                                        isHandlingScene, isPlayerTalking,
+                                        isSelectingItemToUse, isSelectingLocale,
+                                        isTitle)
+import           Game.Status           (destructHandlingScene,
+                                        getCurrentDungeon, getItems,
                                         getPlayerActor, getSelectingIndex,
                                         messageLogList)
 import           Linear.V2             (V2 (V2), _x, _y)
@@ -91,10 +92,11 @@ drawTalking wenv e = withKeyEvents $ zstack [ drawUI wenv afterGameStatus `style
     where (with, afterGameStatus) = destructTalking e
 
 drawHandlingScene :: Game -> GameWidgetNode
-drawHandlingScene e@Game { config = c } = withKeyEvents $ zstack [ image (s ^. backgroundImage)
-                                             , label_  (getLocalizedText c $ text $ head $ s ^. elements) [multiline] `styleBasic` [textColor black]
-                                             ]
-    where (s, _) = destructHandlingScene e
+drawHandlingScene Game { status = st, config = c } =
+    withKeyEvents $ zstack [ image (s ^. backgroundImage)
+                           , label_  (getLocalizedText c $ text $ head $ s ^. elements) [multiline] `styleBasic` [textColor black]
+                           ]
+    where (s, _) = destructHandlingScene st
 
 drawSelectingItem :: Game -> GameWidgetNode
 drawSelectingItem Game { status = s, config = c } = withKeyEvents $ vstack labels

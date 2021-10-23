@@ -15,7 +15,6 @@ module Game
     , saveStatus
     , loadStatus
     , destructTalking
-    , destructHandlingScene
     ) where
 
 import           Control.Monad.Trans.State (execState)
@@ -25,7 +24,6 @@ import qualified Game.Status               as GS
 import qualified Game.Status.Player        as GSP
 import           Linear.V2                 (V2)
 import qualified Save
-import           Scene                     (Scene)
 import           Talking                   (TalkWith)
 
 data Game = Game
@@ -86,7 +84,3 @@ loadStatus g = do
 destructTalking :: Game -> (TalkWith, Game)
 destructTalking g@Game{ status = s } = (tw, g { status = afterStatus })
     where (tw, afterStatus) = GS.destructTalking s
-
-destructHandlingScene :: Game -> (Scene, Game)
-destructHandlingScene g@Game { status = s } = (sc, g { status = afterScene })
-    where (sc, afterScene) = GS.destructHandlingScene s
