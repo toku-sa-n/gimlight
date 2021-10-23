@@ -9,7 +9,6 @@ import           Data.Text                 (Text)
 import           Game                      (Game (Game, config, status),
                                             handlePlayerEnteringTown,
                                             handlePlayerMoving,
-                                            handlePlayerPickingUp,
                                             handlePlayerSelectingItemToUse,
                                             isHandlingScene, isPlayerExploring,
                                             isPlayerTalking,
@@ -21,7 +20,8 @@ import           Game.Status               (finishSelecting, finishTalking,
                                             newGameStatus,
                                             nextSceneElementOrFinish,
                                             selectNextItem, selectPrevItem)
-import           Game.Status.Player        (handlePlayerConsumeItem)
+import           Game.Status.Player        (handlePlayerConsumeItem,
+                                            handlePlayerPickingUp)
 import           Linear.V2                 (V2 (V2))
 import           Monomer                   (AppEventResponse,
                                             EventResponse (Model, Task),
@@ -54,7 +54,7 @@ handleKeyInputDuringExploring e@Game { status = st } k
     | k == "Left"  = [Model $ handlePlayerMoving (V2 (-1) 0) e]
     | k == "Up"    = [Model $ handlePlayerMoving (V2 0 1) e]
     | k == "Down"  = [Model $ handlePlayerMoving (V2 0 (-1)) e]
-    | k == "g" = [Model $ handlePlayerPickingUp e]
+    | k == "g" = [Model e { status = execState handlePlayerPickingUp st}]
     | k == "u" = [Model $ handlePlayerSelectingItemToUse e]
     | k == "Ctrl-s"     = [Task (save st >> return AppSaveFinished)]
     | k == "Ctrl-l"     = [Task $ do

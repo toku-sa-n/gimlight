@@ -8,7 +8,6 @@ module Game
     , isGameOver
     , isSelectingLocale
     , handlePlayerMoving
-    , handlePlayerPickingUp
     , handlePlayerSelectingItemToUse
     , handlePlayerEnteringTown
     ) where
@@ -57,7 +56,3 @@ handlePlayerSelectingItemToUse g@Game { status = s } =
 handlePlayerEnteringTown :: Game -> Game
 handlePlayerEnteringTown g@Game { status = s } =
     g { status = GS.enterTownAtPlayerPosition s }
-
-handlePlayerPickingUp :: Game -> Game
-handlePlayerPickingUp g@Game { status = s } =
-    g { status = execState GSP.handlePlayerPickingUp s }
