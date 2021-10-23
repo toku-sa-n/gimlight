@@ -12,7 +12,7 @@ import           Game        (Game (Game, config, status),
                               handlePlayerSelectingItemToUse, isHandlingScene,
                               isPlayerExploring, isPlayerTalking,
                               isSelectingItemToUse, isSelectingLocale, isTitle,
-                              loadStatus, saveStatus)
+                              saveStatus)
 import           Game.Config (Language (English, Japanese), setLocale)
 import           Game.Status (finishSelecting, finishTalking, newGameStatus,
                               nextSceneElementOrFinish, selectNextItem,
@@ -20,6 +20,7 @@ import           Game.Status (finishSelecting, finishTalking, newGameStatus,
 import           Linear.V2   (V2 (V2))
 import           Monomer     (AppEventResponse, EventResponse (Model, Task),
                               WidgetEnv, WidgetNode, exitApplication)
+import           Save        (load)
 import           UI.Types    (AppEvent (AppInit, AppKeyboardInput, AppLoadFinished, AppSaveFinished))
 
 handleEvent :: WidgetEnv Game AppEvent -> WidgetNode Game AppEvent -> Game -> AppEvent -> [AppEventResponse Game AppEvent]
@@ -49,7 +50,9 @@ handleKeyInputDuringExploring e k
     | k == "g" = [Model $ handlePlayerPickingUp e]
     | k == "u" = [Model $ handlePlayerSelectingItemToUse e]
     | k == "Ctrl-s"     = [Task (saveStatus e >> return AppSaveFinished)]
-    | k == "Ctrl-l"     = [Task $ AppLoadFinished <$> loadStatus e]
+    | k == "Ctrl-l"     = [Task $ do
+                            s <- load
+                            return $ AppLoadFinished e { status = s }]
     | k == "Enter" = [Model $ handlePlayerEnteringTown e]
     | otherwise = []
 
@@ -74,7 +77,9 @@ handleKeyInputDuringSelectingItemToUse e@Game { status = s } k
 handleKeyInputDuringTitle :: Game -> Text -> [AppEventResponse Game AppEvent]
 handleKeyInputDuringTitle g k
     | k == "n" = [Task $ AppLoadFinished <$> startNewGame g]
-    | k == "l" = [Task $ AppLoadFinished <$> loadStatus g]
+    | k == "l" = [Task $ do
+                    s <- load
+                    return $ AppLoadFinished g { status = s }]
     | k == "q" = [exitApplication]
     | otherwise = []
     where startNewGame Game { config = c } =

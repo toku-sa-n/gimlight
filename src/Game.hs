@@ -13,7 +13,6 @@ module Game
     , handlePlayerEnteringTown
     , handlePlayerConsumingItem
     , saveStatus
-    , loadStatus
     ) where
 
 import           Control.Monad.Trans.State (execState)
@@ -72,9 +71,3 @@ handlePlayerConsumingItem g@Game { status = s } =
 
 saveStatus :: Game -> IO ()
 saveStatus Game { status = s } = Save.save s
-
-loadStatus :: Game -> IO Game
-loadStatus g = do
-    s <-Save.load
-
-    return g { status = s }
