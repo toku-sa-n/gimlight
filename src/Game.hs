@@ -11,7 +11,6 @@ module Game
     , handlePlayerPickingUp
     , handlePlayerSelectingItemToUse
     , handlePlayerEnteringTown
-    , handlePlayerConsumingItem
     ) where
 
 import           Control.Monad.Trans.State (execState)
@@ -62,7 +61,3 @@ handlePlayerEnteringTown g@Game { status = s } =
 handlePlayerPickingUp :: Game -> Game
 handlePlayerPickingUp g@Game { status = s } =
     g { status = execState GSP.handlePlayerPickingUp s }
-
-handlePlayerConsumingItem :: Game -> Game
-handlePlayerConsumingItem g@Game { status = s } =
-    g { status = execState GSP.handlePlayerConsumeItem s }

@@ -4,23 +4,31 @@ module UI.Event
     ( handleEvent
     ) where
 
-import           Data.Text   (Text)
-import           Game        (Game (Game, config, status),
-                              handlePlayerConsumingItem,
-                              handlePlayerEnteringTown, handlePlayerMoving,
-                              handlePlayerPickingUp,
-                              handlePlayerSelectingItemToUse, isHandlingScene,
-                              isPlayerExploring, isPlayerTalking,
-                              isSelectingItemToUse, isSelectingLocale, isTitle)
-import           Game.Config (Language (English, Japanese), setLocale)
-import           Game.Status (finishSelecting, finishTalking, newGameStatus,
-                              nextSceneElementOrFinish, selectNextItem,
-                              selectPrevItem)
-import           Linear.V2   (V2 (V2))
-import           Monomer     (AppEventResponse, EventResponse (Model, Task),
-                              WidgetEnv, WidgetNode, exitApplication)
-import           Save        (load, save)
-import           UI.Types    (AppEvent (AppInit, AppKeyboardInput, AppLoadFinished, AppSaveFinished))
+import           Control.Monad.Trans.State (execState)
+import           Data.Text                 (Text)
+import           Game                      (Game (Game, config, status),
+                                            handlePlayerEnteringTown,
+                                            handlePlayerMoving,
+                                            handlePlayerPickingUp,
+                                            handlePlayerSelectingItemToUse,
+                                            isHandlingScene, isPlayerExploring,
+                                            isPlayerTalking,
+                                            isSelectingItemToUse,
+                                            isSelectingLocale, isTitle)
+import           Game.Config               (Language (English, Japanese),
+                                            setLocale)
+import           Game.Status               (finishSelecting, finishTalking,
+                                            newGameStatus,
+                                            nextSceneElementOrFinish,
+                                            selectNextItem, selectPrevItem)
+import           Game.Status.Player        (handlePlayerConsumeItem)
+import           Linear.V2                 (V2 (V2))
+import           Monomer                   (AppEventResponse,
+                                            EventResponse (Model, Task),
+                                            WidgetEnv, WidgetNode,
+                                            exitApplication)
+import           Save                      (load, save)
+import           UI.Types                  (AppEvent (AppInit, AppKeyboardInput, AppLoadFinished, AppSaveFinished))
 
 handleEvent :: WidgetEnv Game AppEvent -> WidgetNode Game AppEvent -> Game -> AppEvent -> [AppEventResponse Game AppEvent]
 handleEvent _ _ gameStatus evt =
@@ -69,7 +77,7 @@ handleKeyInputDuringSelectingItemToUse :: Game -> Text -> [AppEventResponse Game
 handleKeyInputDuringSelectingItemToUse e@Game { status = s } k
     | k == "Up" = [Model $ e { status = selectPrevItem s }]
     | k == "Down" = [Model $ e { status = selectNextItem s }]
-    | k == "Enter" = [Model $ handlePlayerConsumingItem e]
+    | k == "Enter" = [Model $ e { status = execState handlePlayerConsumeItem s }]
     | k == "Esc" = [Model $ e { status =  finishSelecting s }]
     | otherwise = []
 
