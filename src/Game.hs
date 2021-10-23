@@ -1,5 +1,5 @@
 module Game
-    ( Game
+    ( Game(..)
     , isPlayerExploring
     , isPlayerTalking
     , isHandlingScene
