@@ -23,7 +23,6 @@ module Game
     , finishSelecting
     , destructTalking
     , destructHandlingScene
-    , startNewGame
     , afterBooting
     ) where
 
@@ -127,14 +126,6 @@ getItems Game { status = s } = GS.getItems s
 finishSelecting :: Game -> Game
 finishSelecting g@Game { status = s } =
     g { status = GS.finishSelecting s }
-
-startNewGame :: Game -> IO Game
-startNewGame Game { config = c } = do
-    st <- GS.newGameStatus
-
-    return Game { status = st
-                , config = c
-                }
 
 afterBooting :: IO Game
 afterBooting = do

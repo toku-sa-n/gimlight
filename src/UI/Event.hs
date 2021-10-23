@@ -5,7 +5,7 @@ module UI.Event
     ) where
 
 import           Data.Text   (Text)
-import           Game        (Game (Game, config), finishSelecting,
+import           Game        (Game (Game, config, status), finishSelecting,
                               finishTalking, handlePlayerConsumingItem,
                               handlePlayerEnteringTown, handlePlayerMoving,
                               handlePlayerPickingUp,
@@ -13,8 +13,9 @@ import           Game        (Game (Game, config), finishSelecting,
                               isPlayerExploring, isPlayerTalking,
                               isSelectingItemToUse, isSelectingLocale, isTitle,
                               loadStatus, nextSceneElementOrFinish, saveStatus,
-                              selectNextItem, selectPrevItem, startNewGame)
+                              selectNextItem, selectPrevItem)
 import           Game.Config (Language (English, Japanese), setLocale)
+import           Game.Status (newGameStatus)
 import           Linear.V2   (V2 (V2))
 import           Monomer     (AppEventResponse, EventResponse (Model, Task),
                               WidgetEnv, WidgetNode, exitApplication)
@@ -75,6 +76,12 @@ handleKeyInputDuringTitle g k
     | k == "l" = [Task $ AppLoadFinished <$> loadStatus g]
     | k == "q" = [exitApplication]
     | otherwise = []
+    where startNewGame Game { config = c } =
+            do
+                st <- newGameStatus
+                return Game { status = st
+                            , config = c
+                            }
 
 handleKeyInputDuringSelectingLanguage :: Game -> Text -> [AppEventResponse Game AppEvent]
 handleKeyInputDuringSelectingLanguage g@Game { config = c } k
