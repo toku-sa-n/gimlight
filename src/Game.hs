@@ -16,7 +16,6 @@ module Game
     , loadStatus
     , finishTalking
     , nextSceneElementOrFinish
-    , selectPrevItem
     , destructTalking
     , destructHandlingScene
     ) where
@@ -101,7 +100,3 @@ finishTalking g@Game { status = s } =
 nextSceneElementOrFinish :: Game -> Game
 nextSceneElementOrFinish g@Game { status = s } =
     g { status = GS.nextSceneElementOrFinish s }
-
-selectPrevItem :: Game -> Game
-selectPrevItem g@Game { status = s } =
-    g { status = GS.selectPrevItem s }
