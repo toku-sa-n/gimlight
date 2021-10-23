@@ -7,8 +7,8 @@ module UI.Event
 import           Control.Monad.Trans.State (execState)
 import           Data.Text                 (Text)
 import           Game                      (Game (Game, config, status),
-                                            handlePlayerMoving, isHandlingScene,
-                                            isPlayerExploring, isPlayerTalking,
+                                            isHandlingScene, isPlayerExploring,
+                                            isPlayerTalking,
                                             isSelectingItemToUse,
                                             isSelectingLocale, isTitle)
 import           Game.Config               (Language (English, Japanese),
@@ -19,6 +19,7 @@ import           Game.Status               (enterTownAtPlayerPosition,
                                             nextSceneElementOrFinish,
                                             selectNextItem, selectPrevItem)
 import           Game.Status.Player        (handlePlayerConsumeItem,
+                                            handlePlayerMoving,
                                             handlePlayerPickingUp,
                                             handlePlayerSelectingItemToUse)
 import           Linear.V2                 (V2 (V2))
@@ -49,10 +50,10 @@ handleKeyInput e k
 
 handleKeyInputDuringExploring :: Game -> Text -> [AppEventResponse Game AppEvent]
 handleKeyInputDuringExploring e@Game { status = st } k
-    | k == "Right" = [Model $ handlePlayerMoving (V2 1 0) e]
-    | k == "Left"  = [Model $ handlePlayerMoving (V2 (-1) 0) e]
-    | k == "Up"    = [Model $ handlePlayerMoving (V2 0 1) e]
-    | k == "Down"  = [Model $ handlePlayerMoving (V2 0 (-1)) e]
+    | k == "Right" = [Model $ e { status = execState (handlePlayerMoving (V2 1 0)) st }]
+    | k == "Left"  = [Model $ e { status = execState (handlePlayerMoving (V2 (-1) 0)) st }]
+    | k == "Up"    = [Model $ e { status = execState (handlePlayerMoving (V2 0 1)) st}]
+    | k == "Down"  = [Model $ e { status = execState (handlePlayerMoving (V2 0 (-1))) st}]
     | k == "g" = [Model e { status = execState handlePlayerPickingUp st}]
     | k == "u" = [Model e { status = handlePlayerSelectingItemToUse st }]
     | k == "Ctrl-s"     = [Task (save st >> return AppSaveFinished)]
