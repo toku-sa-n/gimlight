@@ -24,12 +24,12 @@ import qualified Dungeon.Item          as I
 import qualified Dungeon.Map.Tile      as MT
 import           Game                  (Game (Game, config, status),
                                         destructHandlingScene, destructTalking,
-                                        getItems, getSelectingIndex, isGameOver,
+                                        getSelectingIndex, isGameOver,
                                         isHandlingScene, isPlayerTalking,
                                         isSelectingItemToUse, isSelectingLocale,
                                         isTitle)
-import           Game.Status           (getCurrentDungeon, getPlayerActor,
-                                        messageLogList)
+import           Game.Status           (getCurrentDungeon, getItems,
+                                        getPlayerActor, messageLogList)
 import           Linear.V2             (V2 (V2), _x, _y)
 import           Localization          (getLocalizedText, multilingualText)
 import           Monomer               (CmbAlignLeft (alignLeft),
@@ -97,13 +97,13 @@ drawHandlingScene e@Game { config = c } = withKeyEvents $ zstack [ image (s ^. b
     where (s, _) = destructHandlingScene e
 
 drawSelectingItem :: Game -> GameWidgetNode
-drawSelectingItem gs@Game { config = c } = withKeyEvents $ vstack labels
+drawSelectingItem gs@Game { status = s, config = c } = withKeyEvents $ vstack labels
     where labels = label topLabel:map label addAsterlist
           addAsterlist = zipWith (\idx x -> if idx == getSelectingIndex gs
                                                           then "* " `append` pack (show idx) `append` " " `append`x
                                                           else pack (show idx) `append` " " `append` x
                                                ) [0..] $ map (getLocalizedText c) itemNames
-          itemNames = map (^. I.name) $ getItems gs
+          itemNames = map (^. I.name) $ getItems s
           topLabel = getLocalizedText c $ multilingualText "Which Item do you use?" "どのアイテムを使う？"
 
 drawSelectingLanguage :: GameWidgetNode

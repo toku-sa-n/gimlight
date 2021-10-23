@@ -19,13 +19,11 @@ module Game
     , selectPrevItem
     , selectNextItem
     , getSelectingIndex
-    , getItems
     , destructTalking
     , destructHandlingScene
     ) where
 
 import           Control.Monad.Trans.State (execState)
-import           Dungeon.Item              (Item)
 import           Game.Config               (Config)
 import           Game.Status               (GameStatus)
 import qualified Game.Status               as GS
@@ -116,6 +114,3 @@ selectNextItem g@Game { status = s } =
 
 getSelectingIndex :: Game -> Int
 getSelectingIndex Game { status = s } = GS.getSelectingIndex s
-
-getItems :: Game -> [Item]
-getItems Game { status = s } = GS.getItems s
