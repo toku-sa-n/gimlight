@@ -27,7 +27,6 @@ module Game
     , getPlayerActor
     , getMessageLog
     , getLocalizedText
-    , setLocale
     , startNewGame
     , afterBooting
     ) where
@@ -37,9 +36,8 @@ import           Data.Text                 (Text)
 import           Dungeon                   (Dungeon)
 import           Dungeon.Actor             (Actor)
 import           Dungeon.Item              (Item)
-import           Game.Config               (Config, Language, getLocale,
-                                            readConfigOrDefault, writeConfig)
-import qualified Game.Config               as C
+import           Game.Config               (Config, getLocale,
+                                            readConfigOrDefault)
 import           Game.Status               (GameStatus, selectingLocale, title)
 import qualified Game.Status               as GS
 import qualified Game.Status.Player        as GSP
@@ -159,16 +157,6 @@ getMessageLog Game { status = s } = GS.messageLogList s
 
 getLocalizedText :: Game -> MultilingualText -> Text
 getLocalizedText Game { config = c } = L.getLocalizedText c
-
-setLocale :: Language -> Game -> IO Game
-setLocale l g@Game { config = c } = do
-    let newConfig = C.setLocale l c
-
-    writeConfig newConfig
-
-    return $ g { status = title
-               , config = newConfig
-               }
 
 afterBooting :: IO Game
 afterBooting = do

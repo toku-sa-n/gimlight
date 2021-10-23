@@ -5,17 +5,16 @@ module UI.Event
     ) where
 
 import           Data.Text   (Text)
-import           Game        (Game, finishSelecting, finishTalking,
-                              handlePlayerConsumingItem,
+import           Game        (Game (Game, config), finishSelecting,
+                              finishTalking, handlePlayerConsumingItem,
                               handlePlayerEnteringTown, handlePlayerMoving,
                               handlePlayerPickingUp,
                               handlePlayerSelectingItemToUse, isHandlingScene,
                               isPlayerExploring, isPlayerTalking,
                               isSelectingItemToUse, isSelectingLocale, isTitle,
                               loadStatus, nextSceneElementOrFinish, saveStatus,
-                              selectNextItem, selectPrevItem, setLocale,
-                              startNewGame)
-import           Game.Config (Language (English, Japanese))
+                              selectNextItem, selectPrevItem, startNewGame)
+import           Game.Config (Language (English, Japanese), setLocale)
 import           Linear.V2   (V2 (V2))
 import           Monomer     (AppEventResponse, EventResponse (Model, Task),
                               WidgetEnv, WidgetNode, exitApplication)
@@ -78,7 +77,7 @@ handleKeyInputDuringTitle g k
     | otherwise = []
 
 handleKeyInputDuringSelectingLanguage :: Game -> Text -> [AppEventResponse Game AppEvent]
-handleKeyInputDuringSelectingLanguage g k
-    | k == "e" = [Task $ AppLoadFinished <$> setLocale English g]
-    | k == "j" = [Task $ AppLoadFinished <$> setLocale Japanese g]
+handleKeyInputDuringSelectingLanguage g@Game { config = c } k
+    | k == "e" = [Task $ return $ AppLoadFinished g { config = setLocale English c }]
+    | k == "j" = [Task $ return $ AppLoadFinished g { config = setLocale Japanese c }]
     | otherwise = []
