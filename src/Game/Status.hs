@@ -23,10 +23,8 @@ module Game.Status
     , newGameStatus
     , getCurrentDungeon
     , getOtherDungeons
-    , destructTalking
     ) where
 
-import           Data.Bifunctor                 (Bifunctor (second))
 import           Data.Binary                    (Binary)
 import           Dungeon                        (Dungeon)
 import           Dungeon.Init                   (initDungeon)
@@ -47,7 +45,6 @@ import           Localization                   (multilingualText)
 import qualified Log                            as L
 import           Scene                          (gameStartScene)
 import           System.Random                  (getStdGen)
-import           Talking                        (TalkWith)
 
 data GameStatus = Exploring ExploringHandler
                 | Talking TalkingHandler
@@ -141,7 +138,3 @@ getCurrentDungeon _              = error "Cannot get the current dungeon."
 getOtherDungeons :: GameStatus -> [Dungeon]
 getOtherDungeons (Exploring eh) = GSE.getOtherDungeons eh
 getOtherDungeons _              = error "Cannot get the non-active dungeons."
-
-destructTalking :: GameStatus -> (TalkWith, GameStatus)
-destructTalking (Talking th) = second Exploring $ GST.destructHandler th
-destructTalking _            = error "We are not in the talking."

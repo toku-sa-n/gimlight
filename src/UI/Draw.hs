@@ -26,7 +26,6 @@ import qualified Dungeon.Item                   as I
 import qualified Dungeon.Map.Tile               as MT
 import           Game                           (Game (Game, config, status))
 import           Game.Status                    (GameStatus (Exploring, HandlingScene, SelectingItemToUse, Talking),
-                                                 destructTalking,
                                                  getCurrentDungeon, getItems,
                                                  getSelectingIndex, isGameOver,
                                                  isHandlingScene,
@@ -34,8 +33,9 @@ import           Game.Status                    (GameStatus (Exploring, Handling
                                                  isSelectingItemToUse,
                                                  isSelectingLocale, isTitle)
 import           Game.Status.Exploring          (getMessageLog, getPlayerActor)
-import           Game.Status.Scene              (destructHandler)
+import qualified Game.Status.Scene              as GSS
 import           Game.Status.SelectingItemToUse (finishSelecting)
+import qualified Game.Status.Talking            as GST
 import           Linear.V2                      (V2 (V2), _x, _y)
 import           Localization                   (getLocalizedText,
                                                  multilingualText)
@@ -94,19 +94,20 @@ withKeyEvents =
     ]
 
 drawTalking ::  GameWidgetEnv -> Game -> GameWidgetNode
-drawTalking wenv e@Game { status = s } =
-    withKeyEvents $ zstack [ drawUI wenv (e { status = afterGameStatus }) `styleBasic` [bgColor $ gray & L.a .~ 0.5]
+drawTalking wenv e@Game { status = Talking th } =
+    withKeyEvents $ zstack [ drawUI wenv (e { status = Exploring afterGameStatus }) `styleBasic` [bgColor $ gray & L.a .~ 0.5]
                            , filler `styleBasic` [bgColor $ black & L.a .~ 0.5]
                            , talkingWindow e with
                            ]
-    where (with, afterGameStatus) = destructTalking s
+    where (with, afterGameStatus) = GST.destructHandler th
+drawTalking _ _ = error "We are not handling a talk event."
 
 drawHandlingScene :: Game -> GameWidgetNode
 drawHandlingScene Game { status = HandlingScene sh, config = c } =
     withKeyEvents $ zstack [ image (s ^. backgroundImage)
                            , label_  (getLocalizedText c $ text $ head $ s ^. elements) [multiline] `styleBasic` [textColor black]
                            ]
-    where (s, _) = destructHandler sh
+    where (s, _) = GSS.destructHandler sh
 drawHandlingScene _ = error "We are not handling a scene."
 
 drawSelectingItem :: Game -> GameWidgetNode
@@ -214,8 +215,8 @@ statusGrid Game { status = s, config = c } = vstack $ maybe []
           def = getLocalizedText c $ multilingualText "DEF: " "防御: "
           player st = case st of
                        Exploring eh -> getPlayerActor eh
-                       Talking _   -> player $ snd $ destructTalking st
-                       HandlingScene sh -> getPlayerActor $ snd $ destructHandler sh
+                       Talking th   -> getPlayerActor $ snd $ GST.destructHandler th
+                       HandlingScene sh -> getPlayerActor $ snd $ GSS.destructHandler sh
                        SelectingItemToUse i -> player $ Exploring $ finishSelecting i
                        _ -> error "No player entity."
 
@@ -232,8 +233,8 @@ messageLogArea Game { status = s, config = c } =
     vstack $ fmap (\x -> label_ (getLocalizedText c x) [multiline] ) $ take logRows $ ls s
     where ls st = case st of
                    Exploring eh     -> getMessageLog eh
-                   Talking _        -> ls $ snd $ destructTalking s
-                   HandlingScene sh -> getMessageLog $ snd $ destructHandler sh
+                   Talking th       -> getMessageLog $ snd $ GST.destructHandler th
+                   HandlingScene sh -> getMessageLog $ snd $ GSS.destructHandler sh
                    _                -> error "unable to print logs."
 
 topRightCoord :: Dungeon -> Coord
