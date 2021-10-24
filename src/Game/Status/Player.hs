@@ -1,4 +1,3 @@
-{-# LANGUAGE LambdaCase #-}
 module Game.Status.Player
     ( playerBumpAction
     , handlePlayerMoving
@@ -6,120 +5,91 @@ module Game.Status.Player
     , handlePlayerSelectingItemToUse
     , handlePlayerConsumeItem
     ) where
+
 import           Control.Lens                   ((^.))
-import           Control.Monad                  (unless, when)
-import           Control.Monad.Trans.State      (State, get, put, state)
+import           Data.Bifunctor                 (Bifunctor (second))
 import           Dungeon                        (isTown)
 import           Dungeon.Actor                  (Actor, isMonster, talkMessage)
 import qualified Dungeon.Actor                  as A
-import           Dungeon.Actor.Actions          (Action, consumeAction,
-                                                 meleeAction, moveAction,
-                                                 pickUpAction)
-import           Game.Status                    (GameStatus (Exploring, SelectingItemToUse),
-                                                 actorAt, completeThisTurn,
-                                                 finishSelecting,
+import           Dungeon.Actor.Actions          (consumeAction, meleeAction,
+                                                 moveAction, pickUpAction)
+import           Game.Status                    (GameStatus (Exploring, GameOver, SelectingItemToUse, Talking))
+import           Game.Status.Exploring          (ExploringHandler, actorAt,
+                                                 completeThisTurn, doAction,
                                                  getCurrentDungeon,
                                                  getPlayerActor,
-                                                 getSelectingIndex, isGameOver,
-                                                 isPlayerExploring,
-                                                 isPositionInDungeon,
-                                                 isSelectingListEmpty,
-                                                 playerPosition, talking)
+                                                 getPlayerPosition,
+                                                 isPositionInDungeon)
 import qualified Game.Status.Exploring          as GSE
-import           Game.Status.SelectingItemToUse (selectingItemToUseHandler)
+import           Game.Status.SelectingItemToUse (SelectingItemToUseHandler,
+                                                 finishSelecting,
+                                                 getSelectingIndex,
+                                                 selectingItemToUseHandler)
+import           Game.Status.Talking            (talkingHandler)
 import           Linear.V2                      (V2)
 import           Talking                        (talkWith)
 
-playerBumpAction :: V2 Int -> State GameStatus Bool
-playerBumpAction offset = do
-    gameStatus <- get
-
-    let destination = case playerPosition gameStatus of
+playerBumpAction :: V2 Int -> ExploringHandler -> (Bool, GameStatus)
+playerBumpAction offset eh =
+    let destination = case getPlayerPosition eh of
                           Just p  -> p + offset
                           Nothing -> error "The player is dead."
+        action = case actorAt destination eh of
+                     Just actorAtDestination -> meleeOrTalk offset actorAtDestination
+                     Nothing -> moveOrExitMap offset
+    in action eh
 
-    case actorAt destination gameStatus of
-        Just actorAtDestination -> meleeOrTalk offset actorAtDestination
-        Nothing                 -> moveOrExitMap offset
-
-meleeOrTalk :: V2 Int -> Actor -> State GameStatus Bool
-meleeOrTalk offset target = do
-    gameStatus <- get
-
+meleeOrTalk :: V2 Int -> Actor -> ExploringHandler -> (Bool, GameStatus)
+meleeOrTalk offset target eh =
     if isMonster target
-        then doAction $ meleeAction offset
-        else do
-            put $ talking (talkWith target $ target ^. talkMessage) gameStatus
-            return True
+        then second Exploring $ doAction (meleeAction offset) eh
+        else (True, Talking $ talkingHandler (talkWith target $ target ^. talkMessage) eh)
 
-moveOrExitMap :: V2 Int -> State GameStatus Bool
-moveOrExitMap offset = do
-    gameStatus <- get
-
-    let destination = case playerPosition gameStatus of
+moveOrExitMap :: V2 Int -> ExploringHandler -> (Bool, GameStatus)
+moveOrExitMap offset eh =
+    let destination = case getPlayerPosition eh of
                           Just p  -> p + offset
                           Nothing -> error "The player is dead."
+    in if isPositionInDungeon destination eh || not (isTown (getCurrentDungeon eh))
+        then second Exploring $ doAction (moveAction offset) eh
+        else (True, exitDungeon eh)
 
-    if isPositionInDungeon destination gameStatus || not (isTown (getCurrentDungeon gameStatus))
-        then doAction $ moveAction offset
-        else do
-            exitDungeon
-            return True
+exitDungeon :: ExploringHandler -> GameStatus
+exitDungeon eh =
+    case GSE.exitDungeon eh of
+        Just newEh -> Exploring newEh
+        Nothing    -> error "Failed to exit from the dungeon."
 
-exitDungeon :: State GameStatus ()
-exitDungeon = state $ \case
-    Exploring eh -> case GSE.exitDungeon eh of
-                        Just newEh -> ((), Exploring newEh)
-                        Nothing    -> error "Failed to exit from the dungeon."
-    _ -> undefined
+handlePlayerMoving :: V2 Int -> ExploringHandler -> GameStatus
+handlePlayerMoving offset gs =
+    let (isSuccess, newState) = playerBumpAction offset gs
+    in if isSuccess
+        then case newState of
+                 Exploring eh -> maybe GameOver Exploring (completeThisTurn eh)
+                 _            -> newState
+        else newState
 
-handlePlayerMoving :: V2 Int -> State GameStatus ()
-handlePlayerMoving offset = do
-    eng <- get
-    let finished = isGameOver eng
-    unless finished $ do
-        success <- playerBumpAction offset
+handlePlayerPickingUp :: ExploringHandler -> GameStatus
+handlePlayerPickingUp eh =
+    let (isSuccess, newHandler) = doAction pickUpAction eh
+    in if isSuccess
+        then maybe GameOver Exploring $ completeThisTurn newHandler
+        else Exploring newHandler
 
-        when success $ do
-            eng' <- get
-
-            when (isPlayerExploring eng') completeThisTurn
-
-handlePlayerPickingUp :: State GameStatus ()
-handlePlayerPickingUp = do
-    eng <- get
-    let finished = isGameOver eng
-    unless finished $ do
-        success <- doAction pickUpAction
-
-        when success $ do
-            eng' <- get
-            when (isPlayerExploring eng') completeThisTurn
-
-handlePlayerSelectingItemToUse :: GameStatus -> GameStatus
-handlePlayerSelectingItemToUse e@(Exploring eh) =
+handlePlayerSelectingItemToUse :: ExploringHandler -> GameStatus
+handlePlayerSelectingItemToUse eh =
     SelectingItemToUse $ selectingItemToUseHandler xs eh
     where xs = A.getItems p
-          p = case getPlayerActor e of
+          p = case getPlayerActor eh of
                 Just x  -> x
                 Nothing -> error "Player is dead."
-handlePlayerSelectingItemToUse _ = undefined
 
-handlePlayerConsumeItem :: State GameStatus ()
-handlePlayerConsumeItem = do
-    gs <- get
-
-    unless (isSelectingListEmpty gs) $ do
-        let n = getSelectingIndex gs
-
-        put $ finishSelecting gs
-
-        success <- doAction $ consumeAction n
-
-        when success $ do
-            completeThisTurn
-
-doAction :: Action -> State GameStatus Bool
-doAction action = state $ \case
-    Exploring eh -> (\(newEh, s) -> (s, Exploring newEh)) $ GSE.doAction action eh
-    _            -> undefined
+handlePlayerConsumeItem :: SelectingItemToUseHandler -> GameStatus
+handlePlayerConsumeItem sh =
+    case getSelectingIndex sh of
+        Just n ->
+            let (isSuccess, newHandler) = doAction (consumeAction n) $ finishSelecting sh
+            in if isSuccess
+                then maybe GameOver Exploring (completeThisTurn newHandler)
+                else Exploring newHandler
+        Nothing -> SelectingItemToUse sh
