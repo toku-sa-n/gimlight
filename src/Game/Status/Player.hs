@@ -72,7 +72,6 @@ handlePlayerMoving offset gs =
                  _            -> newState
         else newState
 
-
 handlePlayerPickingUp :: ExploringHandler -> GameStatus
 handlePlayerPickingUp eh =
     let (newHandler, isSuccess) = doAction pickUpAction eh
