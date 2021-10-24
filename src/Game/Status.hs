@@ -36,7 +36,6 @@ module Game.Status
     , playerPosition
     , isPositionInDungeon
     , pushDungeonAsOtherDungeons
-    , isSelectingListEmpty
     ) where
 
 import           Control.Monad.Trans.State      (State, state)
@@ -214,7 +213,3 @@ pushDungeonAsOtherDungeons d = state
     $ \case
         (Exploring eh) -> ((), Exploring $ GSE.pushDungeonAsOtherDungeons d eh)
         _              -> error "Cannot push a dungeon."
-
-isSelectingListEmpty :: GameStatus -> Bool
-isSelectingListEmpty (SelectingItemToUse sh) = GSSI.isSelectingListEmpty sh
-isSelectingListEmpty _ = error "We are not selecting anything."
