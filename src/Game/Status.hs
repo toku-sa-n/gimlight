@@ -16,7 +16,6 @@ module Game.Status
     , finishTalking
     , finishSelecting
     , selectPrevItem
-    , selectNextItem
     , newGameStatus
     ) where
 
@@ -98,10 +97,6 @@ finishSelecting _                       = error "We are not selecting anything."
 selectPrevItem :: GameStatus -> GameStatus
 selectPrevItem (SelectingItemToUse sh) = SelectingItemToUse $ GSSI.selectPrevItem sh
 selectPrevItem _                       = error "We are not selecting anything."
-
-selectNextItem :: GameStatus -> GameStatus
-selectNextItem (SelectingItemToUse sh) = SelectingItemToUse $ GSSI.selectNextItem sh
-selectNextItem _ = error "We are not selecting anything."
 
 newGameStatus :: IO GameStatus
 newGameStatus = do

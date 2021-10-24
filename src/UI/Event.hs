@@ -4,32 +4,34 @@ module UI.Event
     ( handleEvent
     ) where
 
-import           Control.Monad.Trans.State (execState)
-import           Data.Text                 (Text)
-import           Game                      (Game (Game, config, status))
-import           Game.Config               (Language (English, Japanese),
-                                            setLocale, writeConfig)
-import           Game.Status               (GameStatus (Title),
-                                            enterTownAtPlayerPosition,
-                                            finishSelecting, finishTalking,
-                                            isHandlingScene, isPlayerExploring,
-                                            isPlayerTalking,
-                                            isSelectingItemToUse,
-                                            isSelectingLocale, isTitle,
-                                            newGameStatus,
-                                            nextSceneElementOrFinish,
-                                            selectNextItem, selectPrevItem)
-import           Game.Status.Player        (handlePlayerConsumeItem,
-                                            handlePlayerMoving,
-                                            handlePlayerPickingUp,
-                                            handlePlayerSelectingItemToUse)
-import           Linear.V2                 (V2 (V2))
-import           Monomer                   (AppEventResponse,
-                                            EventResponse (Model, Task),
-                                            WidgetEnv, WidgetNode,
-                                            exitApplication)
-import           Save                      (load, save)
-import           UI.Types                  (AppEvent (AppInit, AppKeyboardInput, AppLoadFinished, AppSaveFinished))
+import           Control.Monad.Trans.State      (execState)
+import           Data.Text                      (Text)
+import           Game                           (Game (Game, config, status))
+import           Game.Config                    (Language (English, Japanese),
+                                                 setLocale, writeConfig)
+import           Game.Status                    (GameStatus (SelectingItemToUse, Title),
+                                                 enterTownAtPlayerPosition,
+                                                 finishSelecting, finishTalking,
+                                                 isHandlingScene,
+                                                 isPlayerExploring,
+                                                 isPlayerTalking,
+                                                 isSelectingItemToUse,
+                                                 isSelectingLocale, isTitle,
+                                                 newGameStatus,
+                                                 nextSceneElementOrFinish,
+                                                 selectPrevItem)
+import           Game.Status.Player             (handlePlayerConsumeItem,
+                                                 handlePlayerMoving,
+                                                 handlePlayerPickingUp,
+                                                 handlePlayerSelectingItemToUse)
+import           Game.Status.SelectingItemToUse (selectNextItem)
+import           Linear.V2                      (V2 (V2))
+import           Monomer                        (AppEventResponse,
+                                                 EventResponse (Model, Task),
+                                                 WidgetEnv, WidgetNode,
+                                                 exitApplication)
+import           Save                           (load, save)
+import           UI.Types                       (AppEvent (AppInit, AppKeyboardInput, AppLoadFinished, AppSaveFinished))
 
 handleEvent :: WidgetEnv Game AppEvent -> WidgetNode Game AppEvent -> Game -> AppEvent -> [AppEventResponse Game AppEvent]
 handleEvent _ _ gameStatus evt =
@@ -75,12 +77,13 @@ handleKeyInputDuringHandlingScene e@Game { status = s } k
     | otherwise = []
 
 handleKeyInputDuringSelectingItemToUse :: Game -> Text -> [AppEventResponse Game AppEvent]
-handleKeyInputDuringSelectingItemToUse e@Game { status = s } k
+handleKeyInputDuringSelectingItemToUse e@Game { status = s@(SelectingItemToUse sh) } k
     | k == "Up" = [Model $ e { status = selectPrevItem s }]
-    | k == "Down" = [Model $ e { status = selectNextItem s }]
+    | k == "Down" = [Model $ e { status = SelectingItemToUse $ selectNextItem sh }]
     | k == "Enter" = [Model $ e { status = execState handlePlayerConsumeItem s }]
     | k == "Esc" = [Model $ e { status =  finishSelecting s }]
     | otherwise = []
+handleKeyInputDuringSelectingItemToUse _ _ = error "We are not selecting an item."
 
 handleKeyInputDuringTitle :: Game -> Text -> [AppEventResponse Game AppEvent]
 handleKeyInputDuringTitle g k
