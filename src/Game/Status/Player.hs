@@ -43,7 +43,10 @@ playerBumpAction offset = do
 
             case actorAt destination eh of
                 Just actorAtDestination -> meleeOrTalk offset actorAtDestination
-                Nothing                 -> moveOrExitMap offset
+                Nothing                 -> let (isSuccess, newState) = moveOrExitMap offset eh
+                                           in do
+                                               put newState
+                                               return isSuccess
         _ -> error "The player is not exploring."
 
 meleeOrTalk :: V2 Int -> Actor -> State GameStatus Bool
@@ -62,25 +65,15 @@ meleeOrTalk offset target = do
                     return True
         _ -> error "We are not exploring."
 
-moveOrExitMap :: V2 Int -> State GameStatus Bool
-moveOrExitMap offset = do
-    gameStatus <- get
-
-    case gameStatus of
-        Exploring eh -> do
-            let destination = case getPlayerPosition eh of
-                                Just p  -> p + offset
-                                Nothing -> error "The player is dead."
-
-            if isPositionInDungeon destination eh || not (isTown (getCurrentDungeon eh))
-                then let (newStatus, isSuccess) = doAction (moveAction offset) eh
-                     in do
-                         put $ Exploring newStatus
-                         return isSuccess
-                else do
-                    put $ exitDungeon eh
-                    return True
-        _ -> error "The player is not exploring."
+moveOrExitMap :: V2 Int -> ExploringHandler -> (Bool, GameStatus)
+moveOrExitMap offset eh =
+    let destination = case getPlayerPosition eh of
+                          Just p  -> p + offset
+                          Nothing -> error "The player is dead."
+    in if isPositionInDungeon destination eh || not (isTown (getCurrentDungeon eh))
+        then let (newStatus, isSuccess) = doAction (moveAction offset) eh
+             in (isSuccess, Exploring newStatus)
+        else (True, exitDungeon eh)
 
 exitDungeon :: ExploringHandler -> GameStatus
 exitDungeon eh =
