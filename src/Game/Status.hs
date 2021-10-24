@@ -26,7 +26,6 @@ module Game.Status
     , destructTalking
     , destructHandlingScene
     , messageLogList
-    , talking
     , addMessages
     ) where
 
@@ -46,7 +45,7 @@ import           Game.Status.Scene              (SceneHandler, sceneHandler)
 import qualified Game.Status.Scene              as GSS
 import           Game.Status.SelectingItemToUse (SelectingItemToUseHandler)
 import qualified Game.Status.SelectingItemToUse as GSSI
-import           Game.Status.Talking            (TalkingHandler, talkingHandler)
+import           Game.Status.Talking            (TalkingHandler)
 import qualified Game.Status.Talking            as GST
 import           Localization                   (multilingualText)
 import           Log                            (Message, MessageLog)
@@ -165,7 +164,3 @@ addMessages m = state
     $ \case
         (Exploring eh) -> ((), Exploring $ GSE.addMessages m eh)
         _              -> error "Cannot add messages."
-
-talking :: TalkWith -> GameStatus -> GameStatus
-talking tw (Exploring eh) = Talking $ talkingHandler tw eh
-talking _ _               = undefined

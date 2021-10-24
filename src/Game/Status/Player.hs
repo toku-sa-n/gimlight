@@ -15,17 +15,17 @@ import qualified Dungeon.Actor                  as A
 import           Dungeon.Actor.Actions          (Action, consumeAction,
                                                  meleeAction, moveAction,
                                                  pickUpAction)
-import           Game.Status                    (GameStatus (Exploring, GameOver, SelectingItemToUse),
+import           Game.Status                    (GameStatus (Exploring, GameOver, SelectingItemToUse, Talking),
                                                  finishSelecting,
                                                  getCurrentDungeon,
-                                                 getSelectingIndex, isGameOver,
-                                                 talking)
+                                                 getSelectingIndex, isGameOver)
 import           Game.Status.Exploring          (actorAt, completeThisTurn,
                                                  getPlayerActor,
                                                  getPlayerPosition,
                                                  isPositionInDungeon)
 import qualified Game.Status.Exploring          as GSE
 import           Game.Status.SelectingItemToUse (selectingItemToUseHandler)
+import           Game.Status.Talking            (talkingHandler)
 import           Linear.V2                      (V2)
 import           Talking                        (talkWith)
 
@@ -48,11 +48,14 @@ meleeOrTalk :: V2 Int -> Actor -> State GameStatus Bool
 meleeOrTalk offset target = do
     gameStatus <- get
 
-    if isMonster target
-        then doAction $ meleeAction offset
-        else do
-            put $ talking (talkWith target $ target ^. talkMessage) gameStatus
-            return True
+    case gameStatus of
+        Exploring eh ->
+            if isMonster target
+                then doAction $ meleeAction offset
+                else do
+                    put $ Talking $ talkingHandler (talkWith target $ target ^. talkMessage) eh
+                    return True
+        _ -> error "We are not exploring."
 
 moveOrExitMap :: V2 Int -> State GameStatus Bool
 moveOrExitMap offset = do
