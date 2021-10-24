@@ -2,7 +2,6 @@ module Game
     ( Game(..)
     , isPlayerExploring
     , isPlayerTalking
-    , isHandlingScene
     ) where
 
 import           Game.Config (Config)
@@ -19,6 +18,3 @@ isPlayerExploring Game { status = s } = GS.isPlayerExploring s
 
 isPlayerTalking :: Game -> Bool
 isPlayerTalking Game { status = s } = GS.isPlayerTalking s
-
-isHandlingScene :: Game -> Bool
-isHandlingScene Game { status = s } = GS.isHandlingScene s

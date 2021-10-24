@@ -23,13 +23,13 @@ import           Dungeon.Item          (iconImagePath)
 import qualified Dungeon.Item          as I
 import qualified Dungeon.Map.Tile      as MT
 import           Game                  (Game (Game, config, status),
-                                        isHandlingScene, isPlayerTalking)
+                                        isPlayerTalking)
 import           Game.Status           (destructHandlingScene, destructTalking,
                                         getCurrentDungeon, getItems,
                                         getPlayerActor, getSelectingIndex,
-                                        isGameOver, isSelectingItemToUse,
-                                        isSelectingLocale, isTitle,
-                                        messageLogList)
+                                        isGameOver, isHandlingScene,
+                                        isSelectingItemToUse, isSelectingLocale,
+                                        isTitle, messageLogList)
 import           Linear.V2             (V2 (V2), _x, _y)
 import           Localization          (getLocalizedText, multilingualText)
 import           Monomer               (CmbAlignLeft (alignLeft),
@@ -56,7 +56,7 @@ type GameWidgetNode = WidgetNode Game AppEvent
 drawUI :: GameWidgetEnv -> Game -> GameWidgetNode
 drawUI wenv gs@Game { status = s }
     | isPlayerTalking gs = drawTalking wenv gs
-    | isHandlingScene gs = drawHandlingScene gs
+    | isHandlingScene s = drawHandlingScene gs
     | isSelectingItemToUse s = drawSelectingItem gs
     | isTitle s = drawTitle gs
     | isGameOver s = drawGameOver
