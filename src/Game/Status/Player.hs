@@ -43,7 +43,7 @@ playerBumpAction offset eh =
 meleeOrTalk :: V2 Int -> Actor -> ExploringHandler -> (Bool, GameStatus)
 meleeOrTalk offset target eh =
     if isMonster target
-        then let (newState, isSuccess) = doAction (meleeAction offset) eh
+        then let (isSuccess, newState) = doAction (meleeAction offset) eh
              in (isSuccess, Exploring newState)
         else (True, Talking $ talkingHandler (talkWith target $ target ^. talkMessage) eh)
 
@@ -53,7 +53,7 @@ moveOrExitMap offset eh =
                           Just p  -> p + offset
                           Nothing -> error "The player is dead."
     in if isPositionInDungeon destination eh || not (isTown (getCurrentDungeon eh))
-        then let (newStatus, isSuccess) = doAction (moveAction offset) eh
+        then let (isSuccess, newStatus) = doAction (moveAction offset) eh
              in (isSuccess, Exploring newStatus)
         else (True, exitDungeon eh)
 
@@ -74,7 +74,7 @@ handlePlayerMoving offset gs =
 
 handlePlayerPickingUp :: ExploringHandler -> GameStatus
 handlePlayerPickingUp eh =
-    let (newHandler, isSuccess) = doAction pickUpAction eh
+    let (isSuccess, newHandler) = doAction pickUpAction eh
     in if isSuccess
         then maybe GameOver Exploring $ completeThisTurn newHandler
         else Exploring newHandler
@@ -91,7 +91,7 @@ handlePlayerConsumeItem :: SelectingItemToUseHandler -> GameStatus
 handlePlayerConsumeItem sh =
     case getSelectingIndex sh of
         Just n ->
-            let (newHandler, isSuccess) = doAction (consumeAction n) $ finishSelecting sh
+            let (isSuccess, newHandler) = doAction (consumeAction n) $ finishSelecting sh
             in if isSuccess
                 then maybe GameOver Exploring (completeThisTurn newHandler)
                 else Exploring newHandler
