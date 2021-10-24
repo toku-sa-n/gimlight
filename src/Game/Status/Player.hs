@@ -1,5 +1,3 @@
-{-# LANGUAGE LambdaCase #-}
-
 module Game.Status.Player
     ( playerBumpAction
     , handlePlayerMoving
