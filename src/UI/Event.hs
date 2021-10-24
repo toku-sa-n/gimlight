@@ -9,12 +9,7 @@ import           Data.Text                      (Text)
 import           Game                           (Game (Game, config, status))
 import           Game.Config                    (Language (English, Japanese),
                                                  setLocale, writeConfig)
-import           Game.Status                    (GameStatus (Exploring, HandlingScene, SelectingItemToUse, Talking, Title),
-                                                 isHandlingScene,
-                                                 isPlayerExploring,
-                                                 isPlayerTalking,
-                                                 isSelectingItemToUse,
-                                                 isSelectingLocale, isTitle,
+import           Game.Status                    (GameStatus (Exploring, GameOver, HandlingScene, SelectingItemToUse, SelectingLocale, Talking, Title),
                                                  newGameStatus)
 import           Game.Status.Exploring          (enterTownAtPlayerPosition)
 import           Game.Status.Player             (handlePlayerConsumeItem,
@@ -42,14 +37,16 @@ handleEvent _ _ gameStatus evt =
         AppKeyboardInput k  -> handleKeyInput gameStatus k
 
 handleKeyInput :: Game -> Text -> [AppEventResponse Game AppEvent]
-handleKeyInput e@Game { status = s } k
-    | isPlayerExploring s = handleKeyInputDuringExploring e k
-    | isPlayerTalking s = handleKeyInputDuringTalking e k
-    | isHandlingScene s = handleKeyInputDuringHandlingScene e k
-    | isSelectingItemToUse s = handleKeyInputDuringSelectingItemToUse e k
-    | isTitle s = handleKeyInputDuringTitle e k
-    | isSelectingLocale s = handleKeyInputDuringSelectingLanguage e k
-    | otherwise = undefined
+handleKeyInput e@Game { status = s } k =
+    case s of
+        Exploring _          -> handleKeyInputDuringExploring e k
+        Talking _            -> handleKeyInputDuringTalking e k
+        HandlingScene _      -> handleKeyInputDuringHandlingScene e k
+        SelectingItemToUse _ -> handleKeyInputDuringSelectingItemToUse e k
+        Title                -> handleKeyInputDuringTitle e k
+        SelectingLocale      -> handleKeyInputDuringSelectingLanguage e k
+        GameOver             -> []
+
 
 handleKeyInputDuringExploring :: Game -> Text -> [AppEventResponse Game AppEvent]
 handleKeyInputDuringExploring e@Game { status = st@(Exploring eh) } k

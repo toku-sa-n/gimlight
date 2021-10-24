@@ -4,13 +4,6 @@
 
 module Game.Status
     ( GameStatus(..)
-    , isPlayerExploring
-    , isPlayerTalking
-    , isHandlingScene
-    , isSelectingItemToUse
-    , isTitle
-    , isGameOver
-    , isSelectingLocale
     , newGameStatus
     ) where
 
@@ -38,34 +31,6 @@ data GameStatus = Exploring ExploringHandler
                 | SelectingLocale
                 deriving (Show, Ord, Eq, Generic)
 instance Binary GameStatus
-
-isPlayerExploring :: GameStatus -> Bool
-isPlayerExploring Exploring{} = True
-isPlayerExploring _           = False
-
-isPlayerTalking :: GameStatus -> Bool
-isPlayerTalking Talking{} = True
-isPlayerTalking _         = False
-
-isHandlingScene :: GameStatus -> Bool
-isHandlingScene HandlingScene{} = True
-isHandlingScene _               = False
-
-isSelectingItemToUse :: GameStatus -> Bool
-isSelectingItemToUse SelectingItemToUse{} = True
-isSelectingItemToUse _                    = False
-
-isTitle :: GameStatus -> Bool
-isTitle Title = True
-isTitle _     = False
-
-isGameOver :: GameStatus -> Bool
-isGameOver GameOver = True
-isGameOver _        = False
-
-isSelectingLocale :: GameStatus -> Bool
-isSelectingLocale SelectingLocale = True
-isSelectingLocale _               = False
 
 newGameStatus :: IO GameStatus
 newGameStatus = do

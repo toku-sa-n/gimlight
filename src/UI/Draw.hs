@@ -25,11 +25,7 @@ import           Dungeon.Item                   (iconImagePath)
 import qualified Dungeon.Item                   as I
 import qualified Dungeon.Map.Tile               as MT
 import           Game                           (Game (Game, config, status))
-import           Game.Status                    (GameStatus (Exploring, HandlingScene, SelectingItemToUse, Talking),
-                                                 isGameOver, isHandlingScene,
-                                                 isPlayerTalking,
-                                                 isSelectingItemToUse,
-                                                 isSelectingLocale, isTitle)
+import           Game.Status                    (GameStatus (Exploring, GameOver, HandlingScene, SelectingItemToUse, SelectingLocale, Talking, Title))
 import           Game.Status.Exploring          (getCurrentDungeon,
                                                  getMessageLog, getPlayerActor)
 import qualified Game.Status.Scene              as GSS
@@ -64,14 +60,15 @@ type GameWidgetEnv = WidgetEnv Game AppEvent
 type GameWidgetNode = WidgetNode Game AppEvent
 
 drawUI :: GameWidgetEnv -> Game -> GameWidgetNode
-drawUI wenv gs@Game { status = s }
-    | isPlayerTalking s = drawTalking wenv gs
-    | isHandlingScene s = drawHandlingScene gs
-    | isSelectingItemToUse s = drawSelectingItem gs
-    | isTitle s = drawTitle gs
-    | isGameOver s = drawGameOver
-    | isSelectingLocale s = drawSelectingLanguage
-    | otherwise = drawGameMap gs
+drawUI wenv gs@Game { status = s } =
+    case s of
+        Exploring _          -> drawGameMap gs
+        Talking _            -> drawTalking wenv gs
+        HandlingScene _      -> drawHandlingScene gs
+        SelectingItemToUse _ -> drawSelectingItem gs
+        Title                -> drawTitle gs
+        GameOver             -> drawGameOver
+        SelectingLocale      -> drawSelectingLanguage
 
 withKeyEvents :: WidgetNode s AppEvent -> WidgetNode s AppEvent
 withKeyEvents =

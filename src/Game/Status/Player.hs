@@ -7,7 +7,7 @@ module Game.Status.Player
     , handlePlayerConsumeItem
     ) where
 import           Control.Lens                   ((^.))
-import           Control.Monad                  (unless, when)
+import           Control.Monad                  (when)
 import           Control.Monad.Trans.State      (State, get, put, state)
 import           Dungeon                        (isTown)
 import           Dungeon.Actor                  (Actor, isMonster, talkMessage)
@@ -15,8 +15,7 @@ import qualified Dungeon.Actor                  as A
 import           Dungeon.Actor.Actions          (Action, consumeAction,
                                                  meleeAction, moveAction,
                                                  pickUpAction)
-import           Game.Status                    (GameStatus (Exploring, GameOver, SelectingItemToUse, Talking),
-                                                 isGameOver)
+import           Game.Status                    (GameStatus (Exploring, GameOver, SelectingItemToUse, Talking))
 import           Game.Status.Exploring          (actorAt, completeThisTurn,
                                                  getCurrentDungeon,
                                                  getPlayerActor,
@@ -85,35 +84,39 @@ exitDungeon = state $ \case
 handlePlayerMoving :: V2 Int -> State GameStatus ()
 handlePlayerMoving offset = do
     eng <- get
-    let finished = isGameOver eng
-    unless finished $ do
-        success <- playerBumpAction offset
 
-        when success $ do
-            eng' <- get
+    case eng of
+        GameOver -> return ()
+        _ -> do
+            success <- playerBumpAction offset
 
-            case eng' of
-                Exploring eh -> case completeThisTurn eh of
-                                    Just afterEh -> put $ Exploring afterEh
-                                    Nothing      -> put GameOver
-                _            -> return ()
+            when success $ do
+                eng' <- get
+
+                case eng' of
+                    Exploring eh -> case completeThisTurn eh of
+                                        Just afterEh -> put $ Exploring afterEh
+                                        Nothing      -> put GameOver
+                    _            -> return ()
 
 
 handlePlayerPickingUp :: State GameStatus ()
 handlePlayerPickingUp = do
     eng <- get
-    let finished = isGameOver eng
-    unless finished $ do
-        success <- doAction pickUpAction
 
-        when success $ do
-            eng' <- get
+    case eng of
+        GameOver -> return ()
+        _ -> do
+            success <- doAction pickUpAction
 
-            case eng' of
-                Exploring eh -> case completeThisTurn eh of
-                                    Just afterEh -> put $ Exploring afterEh
-                                    Nothing      -> put GameOver
-                _ -> return ()
+            when success $ do
+                eng' <- get
+
+                case eng' of
+                    Exploring eh -> case completeThisTurn eh of
+                                        Just afterEh -> put $ Exploring afterEh
+                                        Nothing      -> put GameOver
+                    _ -> return ()
 
 handlePlayerSelectingItemToUse :: GameStatus -> GameStatus
 handlePlayerSelectingItemToUse (Exploring eh) =
