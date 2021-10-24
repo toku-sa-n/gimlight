@@ -53,7 +53,7 @@ handleKeyInputDuringExploring e@Game { status = st@(Exploring eh) } k
     | k == "Left"  = [Model $ e { status = handlePlayerMoving (V2 (-1) 0) st }]
     | k == "Up"    = [Model $ e { status = handlePlayerMoving (V2 0 1) st}]
     | k == "Down"  = [Model $ e { status = handlePlayerMoving (V2 0 (-1)) st}]
-    | k == "g" = [Model e { status = handlePlayerPickingUp st }]
+    | k == "g" = [Model e { status = handlePlayerPickingUp eh }]
     | k == "u" = [Model e { status = handlePlayerSelectingItemToUse eh }]
     | k == "Ctrl-s"     = [Task (save st >> return AppSaveFinished)]
     | k == "Ctrl-l"     = [Task $ do

@@ -98,13 +98,12 @@ handlePlayerMoving offset gs =
         else newState
 
 
-handlePlayerPickingUp :: GameStatus -> GameStatus
-handlePlayerPickingUp (Exploring eh) =
+handlePlayerPickingUp :: ExploringHandler -> GameStatus
+handlePlayerPickingUp eh =
     let (newHandler, isSuccess) = doAction pickUpAction eh
     in if isSuccess
         then maybe GameOver Exploring $ completeThisTurn newHandler
         else Exploring newHandler
-handlePlayerPickingUp _ = error "We are not exploring a dungeon."
 
 handlePlayerSelectingItemToUse :: ExploringHandler -> GameStatus
 handlePlayerSelectingItemToUse eh =
