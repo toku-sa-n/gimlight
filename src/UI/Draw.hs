@@ -26,7 +26,6 @@ import qualified Dungeon.Item                   as I
 import qualified Dungeon.Map.Tile               as MT
 import           Game                           (Game (Game, config, status))
 import           Game.Status                    (GameStatus (Exploring, HandlingScene, SelectingItemToUse, Talking),
-                                                 destructHandlingScene,
                                                  destructTalking,
                                                  getCurrentDungeon, getItems,
                                                  getSelectingIndex, isGameOver,
@@ -35,6 +34,7 @@ import           Game.Status                    (GameStatus (Exploring, Handling
                                                  isSelectingItemToUse,
                                                  isSelectingLocale, isTitle)
 import           Game.Status.Exploring          (getMessageLog, getPlayerActor)
+import           Game.Status.Scene              (destructHandler)
 import           Game.Status.SelectingItemToUse (finishSelecting)
 import           Linear.V2                      (V2 (V2), _x, _y)
 import           Localization                   (getLocalizedText,
@@ -102,11 +102,12 @@ drawTalking wenv e@Game { status = s } =
     where (with, afterGameStatus) = destructTalking s
 
 drawHandlingScene :: Game -> GameWidgetNode
-drawHandlingScene Game { status = st, config = c } =
+drawHandlingScene Game { status = HandlingScene sh, config = c } =
     withKeyEvents $ zstack [ image (s ^. backgroundImage)
                            , label_  (getLocalizedText c $ text $ head $ s ^. elements) [multiline] `styleBasic` [textColor black]
                            ]
-    where (s, _) = destructHandlingScene st
+    where (s, _) = destructHandler sh
+drawHandlingScene _ = error "We are not handling a scene."
 
 drawSelectingItem :: Game -> GameWidgetNode
 drawSelectingItem Game { status = s, config = c } = withKeyEvents $ vstack labels
@@ -214,7 +215,7 @@ statusGrid Game { status = s, config = c } = vstack $ maybe []
           player st = case st of
                        Exploring eh -> getPlayerActor eh
                        Talking _   -> player $ snd $ destructTalking st
-                       HandlingScene _ -> player $ snd $ destructHandlingScene st
+                       HandlingScene sh -> getPlayerActor $ snd $ destructHandler sh
                        SelectingItemToUse i -> player $ Exploring $ finishSelecting i
                        _ -> error "No player entity."
 
@@ -230,10 +231,10 @@ messageLogArea :: Game -> GameWidgetNode
 messageLogArea Game { status = s, config = c } =
     vstack $ fmap (\x -> label_ (getLocalizedText c x) [multiline] ) $ take logRows $ ls s
     where ls st = case st of
-                   Exploring eh    -> getMessageLog eh
-                   Talking _       -> ls $ snd $ destructTalking s
-                   HandlingScene _ -> ls $ snd $ destructHandlingScene st
-                   _               -> error "unable to print logs."
+                   Exploring eh     -> getMessageLog eh
+                   Talking _        -> ls $ snd $ destructTalking s
+                   HandlingScene sh -> getMessageLog $ snd $ destructHandler sh
+                   _                -> error "unable to print logs."
 
 topRightCoord :: Dungeon -> Coord
 topRightCoord d = bottomLeftCoord d + mapWidthAndHeight d - V2 1 1

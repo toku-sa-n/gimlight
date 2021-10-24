@@ -24,7 +24,6 @@ module Game.Status
     , getCurrentDungeon
     , getOtherDungeons
     , destructTalking
-    , destructHandlingScene
     ) where
 
 import           Data.Bifunctor                 (Bifunctor (second))
@@ -46,7 +45,7 @@ import           Game.Status.Talking            (TalkingHandler)
 import qualified Game.Status.Talking            as GST
 import           Localization                   (multilingualText)
 import qualified Log                            as L
-import           Scene                          (Scene, gameStartScene)
+import           Scene                          (gameStartScene)
 import           System.Random                  (getStdGen)
 import           Talking                        (TalkWith)
 
@@ -146,7 +145,3 @@ getOtherDungeons _              = error "Cannot get the non-active dungeons."
 destructTalking :: GameStatus -> (TalkWith, GameStatus)
 destructTalking (Talking th) = second Exploring $ GST.destructHandler th
 destructTalking _            = error "We are not in the talking."
-
-destructHandlingScene :: GameStatus -> (Scene, GameStatus)
-destructHandlingScene (HandlingScene sh) = second Exploring $ GSS.destructHandler sh
-destructHandlingScene _                  = error "We are not handling a scene."
