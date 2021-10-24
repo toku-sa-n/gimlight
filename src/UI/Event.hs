@@ -6,13 +6,13 @@ module UI.Event
 
 import           Control.Monad.Trans.State (execState)
 import           Data.Text                 (Text)
-import           Game                      (Game (Game, config, status),
-                                            isPlayerExploring)
+import           Game                      (Game (Game, config, status))
 import           Game.Config               (Language (English, Japanese),
                                             setLocale, writeConfig)
 import           Game.Status               (enterTownAtPlayerPosition,
                                             finishSelecting, finishTalking,
-                                            isHandlingScene, isPlayerTalking,
+                                            isHandlingScene, isPlayerExploring,
+                                            isPlayerTalking,
                                             isSelectingItemToUse,
                                             isSelectingLocale, isTitle,
                                             newGameStatus,
@@ -41,7 +41,7 @@ handleEvent _ _ gameStatus evt =
 
 handleKeyInput :: Game -> Text -> [AppEventResponse Game AppEvent]
 handleKeyInput e@Game { status = s } k
-    | isPlayerExploring e = handleKeyInputDuringExploring e k
+    | isPlayerExploring s = handleKeyInputDuringExploring e k
     | isPlayerTalking s = handleKeyInputDuringTalking e k
     | isHandlingScene s = handleKeyInputDuringHandlingScene e k
     | isSelectingItemToUse s = handleKeyInputDuringSelectingItemToUse e k
