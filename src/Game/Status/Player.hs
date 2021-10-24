@@ -22,8 +22,8 @@ import           Game.Status                    (GameStatus (Exploring, Selectin
                                                  getPlayerActor,
                                                  getSelectingIndex, isGameOver,
                                                  isPlayerExploring,
-                                                 isPositionInDungeon,
                                                  playerPosition, talking)
+import           Game.Status.Exploring          (isPositionInDungeon)
 import qualified Game.Status.Exploring          as GSE
 import           Game.Status.SelectingItemToUse (selectingItemToUseHandler)
 import           Linear.V2                      (V2)
@@ -55,15 +55,18 @@ moveOrExitMap :: V2 Int -> State GameStatus Bool
 moveOrExitMap offset = do
     gameStatus <- get
 
-    let destination = case playerPosition gameStatus of
-                          Just p  -> p + offset
-                          Nothing -> error "The player is dead."
+    case gameStatus of
+        Exploring eh -> do
+            let destination = case playerPosition gameStatus of
+                                Just p  -> p + offset
+                                Nothing -> error "The player is dead."
 
-    if isPositionInDungeon destination gameStatus || not (isTown (getCurrentDungeon gameStatus))
-        then doAction $ moveAction offset
-        else do
-            exitDungeon
-            return True
+            if isPositionInDungeon destination eh || not (isTown (getCurrentDungeon gameStatus))
+                then doAction $ moveAction offset
+                else do
+                    exitDungeon
+                    return True
+        _ -> error "The player is not exploring."
 
 exitDungeon :: State GameStatus ()
 exitDungeon = state $ \case
