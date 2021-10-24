@@ -9,10 +9,9 @@ import           Data.Text                      (Text)
 import           Game                           (Game (Game, config, status))
 import           Game.Config                    (Language (English, Japanese),
                                                  setLocale, writeConfig)
-import           Game.Status                    (GameStatus (SelectingItemToUse, Title),
+import           Game.Status                    (GameStatus (Exploring, SelectingItemToUse, Title),
                                                  enterTownAtPlayerPosition,
-                                                 finishSelecting, finishTalking,
-                                                 isHandlingScene,
+                                                 finishTalking, isHandlingScene,
                                                  isPlayerExploring,
                                                  isPlayerTalking,
                                                  isSelectingItemToUse,
@@ -23,7 +22,8 @@ import           Game.Status.Player             (handlePlayerConsumeItem,
                                                  handlePlayerMoving,
                                                  handlePlayerPickingUp,
                                                  handlePlayerSelectingItemToUse)
-import           Game.Status.SelectingItemToUse (selectNextItem, selectPrevItem)
+import           Game.Status.SelectingItemToUse (finishSelecting,
+                                                 selectNextItem, selectPrevItem)
 import           Linear.V2                      (V2 (V2))
 import           Monomer                        (AppEventResponse,
                                                  EventResponse (Model, Task),
@@ -80,7 +80,7 @@ handleKeyInputDuringSelectingItemToUse e@Game { status = s@(SelectingItemToUse s
     | k == "Up" = [Model $ e { status = SelectingItemToUse $ selectPrevItem sh }]
     | k == "Down" = [Model $ e { status = SelectingItemToUse $ selectNextItem sh }]
     | k == "Enter" = [Model $ e { status = execState handlePlayerConsumeItem s }]
-    | k == "Esc" = [Model $ e { status =  finishSelecting s }]
+    | k == "Esc" = [Model $ e { status = Exploring $ finishSelecting sh }]
     | otherwise = []
 handleKeyInputDuringSelectingItemToUse _ _ = error "We are not selecting an item."
 

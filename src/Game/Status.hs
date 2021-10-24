@@ -14,7 +14,6 @@ module Game.Status
     , nextSceneElementOrFinish
     , enterTownAtPlayerPosition
     , finishTalking
-    , finishSelecting
     , newGameStatus
     ) where
 
@@ -29,7 +28,6 @@ import qualified Game.Status.Exploring          as GSE
 import           Game.Status.Scene              (SceneHandler, sceneHandler)
 import qualified Game.Status.Scene              as GSS
 import           Game.Status.SelectingItemToUse (SelectingItemToUseHandler)
-import qualified Game.Status.SelectingItemToUse as GSSI
 import           Game.Status.Talking            (TalkingHandler)
 import qualified Game.Status.Talking            as GST
 import           Localization                   (multilingualText)
@@ -88,10 +86,6 @@ enterTownAtPlayerPosition _ = undefined
 finishTalking :: GameStatus -> GameStatus
 finishTalking (Talking th) = Exploring $ GST.finishTalking th
 finishTalking _            = error "We are not in the talking."
-
-finishSelecting :: GameStatus -> GameStatus
-finishSelecting (SelectingItemToUse sh) = Exploring $ GSSI.finishSelecting sh
-finishSelecting _                       = error "We are not selecting anything."
 
 newGameStatus :: IO GameStatus
 newGameStatus = do

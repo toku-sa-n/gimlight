@@ -16,14 +16,15 @@ import           Dungeon.Actor.Actions          (Action, consumeAction,
                                                  meleeAction, moveAction,
                                                  pickUpAction)
 import           Game.Status                    (GameStatus (Exploring, GameOver, SelectingItemToUse, Talking),
-                                                 finishSelecting, isGameOver)
+                                                 isGameOver)
 import           Game.Status.Exploring          (actorAt, completeThisTurn,
                                                  getCurrentDungeon,
                                                  getPlayerActor,
                                                  getPlayerPosition,
                                                  isPositionInDungeon)
 import qualified Game.Status.Exploring          as GSE
-import           Game.Status.SelectingItemToUse (getSelectingIndex,
+import           Game.Status.SelectingItemToUse (finishSelecting,
+                                                 getSelectingIndex,
                                                  selectingItemToUseHandler)
 import           Game.Status.Talking            (talkingHandler)
 import           Linear.V2                      (V2)
@@ -131,7 +132,7 @@ handlePlayerConsumeItem = do
         SelectingItemToUse sh -> do
             case getSelectingIndex sh of
                 Just n -> do
-                    put $ finishSelecting gs
+                    put $ Exploring $ finishSelecting sh
 
                     success <- doAction $ consumeAction n
 
