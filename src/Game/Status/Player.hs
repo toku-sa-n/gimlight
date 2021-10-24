@@ -9,6 +9,7 @@ module Game.Status.Player
     ) where
 
 import           Control.Lens                   ((^.))
+import           Data.Bifunctor                 (Bifunctor (second))
 import           Dungeon                        (isTown)
 import           Dungeon.Actor                  (Actor, isMonster, talkMessage)
 import qualified Dungeon.Actor                  as A
@@ -43,8 +44,7 @@ playerBumpAction offset eh =
 meleeOrTalk :: V2 Int -> Actor -> ExploringHandler -> (Bool, GameStatus)
 meleeOrTalk offset target eh =
     if isMonster target
-        then let (isSuccess, newState) = doAction (meleeAction offset) eh
-             in (isSuccess, Exploring newState)
+        then second Exploring $ doAction (meleeAction offset) eh
         else (True, Talking $ talkingHandler (talkWith target $ target ^. talkMessage) eh)
 
 moveOrExitMap :: V2 Int -> ExploringHandler -> (Bool, GameStatus)
@@ -53,8 +53,7 @@ moveOrExitMap offset eh =
                           Just p  -> p + offset
                           Nothing -> error "The player is dead."
     in if isPositionInDungeon destination eh || not (isTown (getCurrentDungeon eh))
-        then let (isSuccess, newStatus) = doAction (moveAction offset) eh
-             in (isSuccess, Exploring newStatus)
+        then second Exploring $ doAction (moveAction offset) eh
         else (True, exitDungeon eh)
 
 exitDungeon :: ExploringHandler -> GameStatus
