@@ -15,8 +15,9 @@ import qualified Dungeon.Actor                  as A
 import           Dungeon.Actor.Actions          (consumeAction, meleeAction,
                                                  moveAction, pickUpAction)
 import           Game.Status                    (GameStatus (Exploring, GameOver, SelectingItemToUse, Talking))
-import           Game.Status.Exploring          (actorAt, completeThisTurn,
-                                                 doAction, getCurrentDungeon,
+import           Game.Status.Exploring          (ExploringHandler, actorAt,
+                                                 completeThisTurn, doAction,
+                                                 getCurrentDungeon,
                                                  getPlayerActor,
                                                  getPlayerPosition,
                                                  isPositionInDungeon)
@@ -105,14 +106,13 @@ handlePlayerPickingUp (Exploring eh) =
         else Exploring newHandler
 handlePlayerPickingUp _ = error "We are not exploring a dungeon."
 
-handlePlayerSelectingItemToUse :: GameStatus -> GameStatus
-handlePlayerSelectingItemToUse (Exploring eh) =
+handlePlayerSelectingItemToUse :: ExploringHandler -> GameStatus
+handlePlayerSelectingItemToUse eh =
     SelectingItemToUse $ selectingItemToUseHandler xs eh
     where xs = A.getItems p
           p = case getPlayerActor eh of
                 Just x  -> x
                 Nothing -> error "Player is dead."
-handlePlayerSelectingItemToUse _ = undefined
 
 handlePlayerConsumeItem :: SelectingItemToUseHandler -> GameStatus
 handlePlayerConsumeItem sh =
