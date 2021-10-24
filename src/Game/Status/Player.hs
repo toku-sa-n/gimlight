@@ -17,7 +17,8 @@ import           Dungeon.Actor.Actions          (Action, consumeAction,
                                                  meleeAction, moveAction,
                                                  pickUpAction)
 import           Game.Status                    (GameStatus (Exploring, GameOver, SelectingItemToUse, Talking))
-import           Game.Status.Exploring          (actorAt, completeThisTurn,
+import           Game.Status.Exploring          (ExploringHandler, actorAt,
+                                                 completeThisTurn,
                                                  getCurrentDungeon,
                                                  getPlayerActor,
                                                  getPlayerPosition,
@@ -52,7 +53,7 @@ meleeOrTalk offset target = do
     case gameStatus of
         Exploring eh ->
             if isMonster target
-                then let (newStatus, isSuccess) = doAction (meleeAction offset) gameStatus
+                then let (newStatus, isSuccess) = doAction (meleeAction offset) eh
                      in do
                          put newStatus
                          return isSuccess
@@ -72,7 +73,7 @@ moveOrExitMap offset = do
                                 Nothing -> error "The player is dead."
 
             if isPositionInDungeon destination eh || not (isTown (getCurrentDungeon eh))
-                then let (newStatus, isSuccess) = doAction (moveAction offset) gameStatus
+                then let (newStatus, isSuccess) = doAction (moveAction offset) eh
                      in do
                          put newStatus
                          return isSuccess
@@ -99,13 +100,14 @@ handlePlayerMoving offset gs =
 
 
 handlePlayerPickingUp :: GameStatus -> GameStatus
-handlePlayerPickingUp gs =
-    let (newStatus, isSuccess) = doAction pickUpAction gs
+handlePlayerPickingUp (Exploring eh) =
+    let (newStatus, isSuccess) = doAction pickUpAction eh
     in if isSuccess
         then case newStatus of
-                 Exploring eh -> maybe GameOver Exploring $ completeThisTurn eh
+                 Exploring eh' -> maybe GameOver Exploring $ completeThisTurn eh'
                  _            -> newStatus
         else newStatus
+handlePlayerPickingUp _ = error "We are not exploring a dungeon."
 
 handlePlayerSelectingItemToUse :: GameStatus -> GameStatus
 handlePlayerSelectingItemToUse (Exploring eh) =
@@ -120,7 +122,7 @@ handlePlayerConsumeItem :: GameStatus -> GameStatus
 handlePlayerConsumeItem (SelectingItemToUse sh) =
     case getSelectingIndex sh of
         Just n ->
-            let (newStatus, isSuccess) = doAction (consumeAction n) $ Exploring $ finishSelecting sh
+            let (newStatus, isSuccess) = doAction (consumeAction n) $ finishSelecting sh
             in if isSuccess
                 then case newStatus of
                          Exploring eh -> maybe GameOver Exploring (completeThisTurn eh)
@@ -129,7 +131,6 @@ handlePlayerConsumeItem (SelectingItemToUse sh) =
         Nothing -> SelectingItemToUse sh
 handlePlayerConsumeItem _ = error "We are not selecting an item."
 
-doAction :: Action -> GameStatus -> (GameStatus, Bool)
-doAction action (Exploring eh) =
+doAction :: Action -> ExploringHandler -> (GameStatus, Bool)
+doAction action eh =
     first Exploring $ GSE.doAction action eh
-doAction _ _ = error "We are not exploring a dungeon."
