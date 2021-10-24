@@ -22,7 +22,6 @@ module Game.Status
     , getSelectingIndex
     , newGameStatus
     , getCurrentDungeon
-    , getOtherDungeons
     ) where
 
 import           Data.Binary                    (Binary)
@@ -134,7 +133,3 @@ newGameStatus = do
 getCurrentDungeon :: GameStatus -> Dungeon
 getCurrentDungeon (Exploring eh) = GSE.getCurrentDungeon eh
 getCurrentDungeon _              = error "Cannot get the current dungeon."
-
-getOtherDungeons :: GameStatus -> [Dungeon]
-getOtherDungeons (Exploring eh) = GSE.getOtherDungeons eh
-getOtherDungeons _              = error "Cannot get the non-active dungeons."
