@@ -134,31 +134,18 @@ handlePlayerSelectingItemToUse (Exploring eh) =
                 Nothing -> error "Player is dead."
 handlePlayerSelectingItemToUse _ = undefined
 
-handlePlayerConsumeItem :: State GameStatus ()
-handlePlayerConsumeItem = do
-    gs <- get
-
-    case gs of
-        SelectingItemToUse sh -> do
-            case getSelectingIndex sh of
-                Just n -> do
-                    put $ Exploring $ finishSelecting sh
-
-                    gs' <- get
-                    let (newStatus, isSuccess) = doAction (consumeAction n) gs'
-
-                    put newStatus
-
-                    when isSuccess $ do
-                        gs'' <- get
-
-                        case gs'' of
-                            Exploring eh -> case completeThisTurn eh of
-                                Just afterEh -> put $ Exploring afterEh
-                                Nothing      -> put GameOver
-                            _ -> return ()
-                Nothing -> return ()
-        _ -> error "We are not selecting an item."
+handlePlayerConsumeItem :: GameStatus -> GameStatus
+handlePlayerConsumeItem (SelectingItemToUse sh) =
+    case getSelectingIndex sh of
+        Just n ->
+            let (newStatus, isSuccess) = doAction (consumeAction n) $ Exploring $ finishSelecting sh
+            in if isSuccess
+                then case newStatus of
+                         Exploring eh -> maybe GameOver Exploring (completeThisTurn eh)
+                         _ -> newStatus
+                else newStatus
+        Nothing -> SelectingItemToUse sh
+handlePlayerConsumeItem _ = error "We are not selecting an item."
 
 doAction :: Action -> GameStatus -> (GameStatus, Bool)
 doAction action (Exploring eh) =

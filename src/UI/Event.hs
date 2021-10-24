@@ -83,7 +83,7 @@ handleKeyInputDuringSelectingItemToUse :: Game -> Text -> [AppEventResponse Game
 handleKeyInputDuringSelectingItemToUse e@Game { status = s@(SelectingItemToUse sh) } k
     | k == "Up" = [Model $ e { status = SelectingItemToUse $ selectPrevItem sh }]
     | k == "Down" = [Model $ e { status = SelectingItemToUse $ selectNextItem sh }]
-    | k == "Enter" = [Model $ e { status = execState handlePlayerConsumeItem s }]
+    | k == "Enter" = [Model $ e { status = handlePlayerConsumeItem s }]
     | k == "Esc" = [Model $ e { status = Exploring $ finishSelecting sh }]
     | otherwise = []
 handleKeyInputDuringSelectingItemToUse _ _ = error "We are not selecting an item."
