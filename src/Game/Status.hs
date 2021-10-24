@@ -135,7 +135,7 @@ getItems :: GameStatus -> [Item]
 getItems (SelectingItemToUse sh) = GSSI.getItems sh
 getItems _                       = error "We are not selecting anything."
 
-getSelectingIndex :: GameStatus -> Int
+getSelectingIndex :: GameStatus -> Maybe Int
 getSelectingIndex (SelectingItemToUse sh) = GSSI.getSelectingIndex sh
 getSelectingIndex _ = error "We are not selecting anything."
 

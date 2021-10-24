@@ -30,8 +30,9 @@ selectingItemToUseHandler is = SelectingItemToUseHandler is 0
 getItems :: SelectingItemToUseHandler -> [Item]
 getItems SelectingItemToUseHandler { items = is } = is
 
-getSelectingIndex :: SelectingItemToUseHandler -> Int
-getSelectingIndex SelectingItemToUseHandler { selecting = n } = n
+getSelectingIndex :: SelectingItemToUseHandler -> Maybe Int
+getSelectingIndex SelectingItemToUseHandler { items = is, selecting = n } =
+    if null is then Nothing else Just n
 
 isSelectingListEmpty :: SelectingItemToUseHandler -> Bool
 isSelectingListEmpty SelectingItemToUseHandler { items = is } = null is
