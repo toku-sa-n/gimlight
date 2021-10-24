@@ -9,17 +9,14 @@ module Game.Status.Player
 import           Control.Lens                   ((^.))
 import           Control.Monad.Trans.State      (State, get, put, runState,
                                                  state)
-import           Data.Bifunctor                 (Bifunctor (first))
 import           Dungeon                        (isTown)
 import           Dungeon.Actor                  (Actor, isMonster, talkMessage)
 import qualified Dungeon.Actor                  as A
-import           Dungeon.Actor.Actions          (Action, consumeAction,
-                                                 meleeAction, moveAction,
-                                                 pickUpAction)
+import           Dungeon.Actor.Actions          (consumeAction, meleeAction,
+                                                 moveAction, pickUpAction)
 import           Game.Status                    (GameStatus (Exploring, GameOver, SelectingItemToUse, Talking))
-import           Game.Status.Exploring          (ExploringHandler, actorAt,
-                                                 completeThisTurn,
-                                                 getCurrentDungeon,
+import           Game.Status.Exploring          (actorAt, completeThisTurn,
+                                                 doAction, getCurrentDungeon,
                                                  getPlayerActor,
                                                  getPlayerPosition,
                                                  isPositionInDungeon)
@@ -55,7 +52,7 @@ meleeOrTalk offset target = do
             if isMonster target
                 then let (newStatus, isSuccess) = doAction (meleeAction offset) eh
                      in do
-                         put newStatus
+                         put $ Exploring newStatus
                          return isSuccess
                 else do
                     put $ Talking $ talkingHandler (talkWith target $ target ^. talkMessage) eh
@@ -75,7 +72,7 @@ moveOrExitMap offset = do
             if isPositionInDungeon destination eh || not (isTown (getCurrentDungeon eh))
                 then let (newStatus, isSuccess) = doAction (moveAction offset) eh
                      in do
-                         put newStatus
+                         put $ Exploring newStatus
                          return isSuccess
                 else do
                     exitDungeon
@@ -101,12 +98,10 @@ handlePlayerMoving offset gs =
 
 handlePlayerPickingUp :: GameStatus -> GameStatus
 handlePlayerPickingUp (Exploring eh) =
-    let (newStatus, isSuccess) = doAction pickUpAction eh
+    let (newHandler, isSuccess) = doAction pickUpAction eh
     in if isSuccess
-        then case newStatus of
-                 Exploring eh' -> maybe GameOver Exploring $ completeThisTurn eh'
-                 _            -> newStatus
-        else newStatus
+        then maybe GameOver Exploring $ completeThisTurn newHandler
+        else Exploring newHandler
 handlePlayerPickingUp _ = error "We are not exploring a dungeon."
 
 handlePlayerSelectingItemToUse :: GameStatus -> GameStatus
@@ -122,15 +117,9 @@ handlePlayerConsumeItem :: GameStatus -> GameStatus
 handlePlayerConsumeItem (SelectingItemToUse sh) =
     case getSelectingIndex sh of
         Just n ->
-            let (newStatus, isSuccess) = doAction (consumeAction n) $ finishSelecting sh
+            let (newHandler, isSuccess) = doAction (consumeAction n) $ finishSelecting sh
             in if isSuccess
-                then case newStatus of
-                         Exploring eh -> maybe GameOver Exploring (completeThisTurn eh)
-                         _ -> newStatus
-                else newStatus
+                then maybe GameOver Exploring (completeThisTurn newHandler)
+                else Exploring newHandler
         Nothing -> SelectingItemToUse sh
 handlePlayerConsumeItem _ = error "We are not selecting an item."
-
-doAction :: Action -> ExploringHandler -> (GameStatus, Bool)
-doAction action eh =
-    first Exploring $ GSE.doAction action eh
