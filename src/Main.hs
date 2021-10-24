@@ -4,7 +4,7 @@ module Main (main) where
 
 import           Game        (Game (Game, config, status))
 import           Game.Config (getLocale, readConfigOrDefault)
-import           Game.Status (selectingLocale, title)
+import           Game.Status (GameStatus (SelectingLocale), title)
 import           Monomer     (MainWindowState (MainWindowNormal), appFontDef,
                               appInitEvent, appTheme, appWindowResizable,
                               appWindowState, appWindowTitle, darkTheme,
@@ -23,7 +23,7 @@ main = do
             initConfig <- readConfigOrDefault
             let initStatus = case getLocale initConfig of
                                  Just _  -> title
-                                 Nothing -> selectingLocale
+                                 Nothing -> SelectingLocale
             return Game { status = initStatus
                         , config = initConfig
                         }

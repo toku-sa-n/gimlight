@@ -27,7 +27,6 @@ module Game.Status
     , destructHandlingScene
     , messageLogList
     , title
-    , selectingLocale
     , talking
     , addMessages
     ) where
@@ -174,6 +173,3 @@ talking _ _               = undefined
 
 title :: GameStatus
 title = Title
-
-selectingLocale :: GameStatus
-selectingLocale = SelectingLocale
