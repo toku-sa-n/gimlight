@@ -32,11 +32,9 @@ module Game.Status
     , selectingLocale
     , talking
     , addMessages
-    , playerPosition
     ) where
 
 import           Control.Monad.Trans.State      (State, state)
-import           Coord                          (Coord)
 import           Data.Bifunctor                 (Bifunctor (second))
 import           Data.Binary                    (Binary)
 import           Dungeon                        (Dungeon)
@@ -191,7 +189,3 @@ completeThisTurn = state $ \case
 getPlayerActor :: GameStatus -> Maybe Actor
 getPlayerActor (Exploring eh) = GSE.getPlayerActor eh
 getPlayerActor _              = error "Cannot get the player data."
-
-playerPosition :: GameStatus -> Maybe Coord
-playerPosition (Exploring eh) = GSE.getPlayerPosition eh
-playerPosition _              = error "Cannot get the player position."

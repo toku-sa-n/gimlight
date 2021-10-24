@@ -21,9 +21,9 @@ import           Game.Status                    (GameStatus (Exploring, Selectin
                                                  getCurrentDungeon,
                                                  getPlayerActor,
                                                  getSelectingIndex, isGameOver,
-                                                 isPlayerExploring,
-                                                 playerPosition, talking)
-import           Game.Status.Exploring          (actorAt, isPositionInDungeon)
+                                                 isPlayerExploring, talking)
+import           Game.Status.Exploring          (actorAt, getPlayerPosition,
+                                                 isPositionInDungeon)
 import qualified Game.Status.Exploring          as GSE
 import           Game.Status.SelectingItemToUse (selectingItemToUseHandler)
 import           Linear.V2                      (V2)
@@ -35,7 +35,7 @@ playerBumpAction offset = do
 
     case gameStatus of
         Exploring eh -> do
-            let destination = case playerPosition gameStatus of
+            let destination = case getPlayerPosition eh of
                                 Just p  -> p + offset
                                 Nothing -> error "The player is dead."
 
@@ -60,7 +60,7 @@ moveOrExitMap offset = do
 
     case gameStatus of
         Exploring eh -> do
-            let destination = case playerPosition gameStatus of
+            let destination = case getPlayerPosition eh of
                                 Just p  -> p + offset
                                 Nothing -> error "The player is dead."
 
