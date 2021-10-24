@@ -24,11 +24,11 @@ import qualified Dungeon.Item          as I
 import qualified Dungeon.Map.Tile      as MT
 import           Game                  (Game (Game, config, status),
                                         isHandlingScene, isPlayerTalking,
-                                        isSelectingItemToUse, isTitle)
+                                        isSelectingItemToUse)
 import           Game.Status           (destructHandlingScene, destructTalking,
                                         getCurrentDungeon, getItems,
                                         getPlayerActor, getSelectingIndex,
-                                        isGameOver, isSelectingLocale,
+                                        isGameOver, isSelectingLocale, isTitle,
                                         messageLogList)
 import           Linear.V2             (V2 (V2), _x, _y)
 import           Localization          (getLocalizedText, multilingualText)
@@ -58,7 +58,7 @@ drawUI wenv gs@Game { status = s }
     | isPlayerTalking gs = drawTalking wenv gs
     | isHandlingScene gs = drawHandlingScene gs
     | isSelectingItemToUse gs = drawSelectingItem gs
-    | isTitle gs = drawTitle gs
+    | isTitle s = drawTitle gs
     | isGameOver s = drawGameOver
     | isSelectingLocale s = drawSelectingLanguage
     | otherwise = drawGameMap gs

@@ -9,12 +9,13 @@ import           Data.Text                 (Text)
 import           Game                      (Game (Game, config, status),
                                             isHandlingScene, isPlayerExploring,
                                             isPlayerTalking,
-                                            isSelectingItemToUse, isTitle)
+                                            isSelectingItemToUse)
 import           Game.Config               (Language (English, Japanese),
                                             setLocale, writeConfig)
 import           Game.Status               (enterTownAtPlayerPosition,
                                             finishSelecting, finishTalking,
-                                            isSelectingLocale, newGameStatus,
+                                            isSelectingLocale, isTitle,
+                                            newGameStatus,
                                             nextSceneElementOrFinish,
                                             selectNextItem, selectPrevItem,
                                             title)
@@ -44,7 +45,7 @@ handleKeyInput e@Game { status = s } k
     | isPlayerTalking e = handleKeyInputDuringTalking e k
     | isHandlingScene e = handleKeyInputDuringHandlingScene e k
     | isSelectingItemToUse e = handleKeyInputDuringSelectingItemToUse e k
-    | isTitle e = handleKeyInputDuringTitle e k
+    | isTitle s = handleKeyInputDuringTitle e k
     | isSelectingLocale s = handleKeyInputDuringSelectingLanguage e k
     | otherwise = undefined
 
