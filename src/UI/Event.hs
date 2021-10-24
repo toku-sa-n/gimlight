@@ -49,10 +49,10 @@ handleKeyInput e@Game { status = s } k =
 
 handleKeyInputDuringExploring :: Game -> Text -> [AppEventResponse Game AppEvent]
 handleKeyInputDuringExploring e@Game { status = st@(Exploring eh) } k
-    | k == "Right" = [Model $ e { status = handlePlayerMoving (V2 1 0) st }]
-    | k == "Left"  = [Model $ e { status = handlePlayerMoving (V2 (-1) 0) st }]
-    | k == "Up"    = [Model $ e { status = handlePlayerMoving (V2 0 1) st}]
-    | k == "Down"  = [Model $ e { status = handlePlayerMoving (V2 0 (-1)) st}]
+    | k == "Right" = [Model $ e { status = handlePlayerMoving (V2 1 0) eh }]
+    | k == "Left"  = [Model $ e { status = handlePlayerMoving (V2 (-1) 0) eh }]
+    | k == "Up"    = [Model $ e { status = handlePlayerMoving (V2 0 1) eh}]
+    | k == "Down"  = [Model $ e { status = handlePlayerMoving (V2 0 (-1)) eh}]
     | k == "g" = [Model e { status = handlePlayerPickingUp eh }]
     | k == "u" = [Model e { status = handlePlayerSelectingItemToUse eh }]
     | k == "Ctrl-s"     = [Task (save st >> return AppSaveFinished)]

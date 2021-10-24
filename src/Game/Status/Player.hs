@@ -9,7 +9,6 @@ module Game.Status.Player
     ) where
 
 import           Control.Lens                   ((^.))
-import           Control.Monad.Trans.State      (State, get, put, runState)
 import           Dungeon                        (isTown)
 import           Dungeon.Actor                  (Actor, isMonster, talkMessage)
 import qualified Dungeon.Actor                  as A
@@ -31,26 +30,15 @@ import           Game.Status.Talking            (talkingHandler)
 import           Linear.V2                      (V2)
 import           Talking                        (talkWith)
 
-playerBumpAction :: V2 Int -> State GameStatus Bool
-playerBumpAction offset = do
-    gameStatus <- get
-
-    case gameStatus of
-        Exploring eh -> do
-            let destination = case getPlayerPosition eh of
-                                Just p  -> p + offset
-                                Nothing -> error "The player is dead."
-
-            case actorAt destination eh of
-                Just actorAtDestination -> let (isSuccess, newState) = meleeOrTalk offset actorAtDestination eh
-                                           in do
-                                               put newState
-                                               return isSuccess
-                Nothing                 -> let (isSuccess, newState) = moveOrExitMap offset eh
-                                           in do
-                                               put newState
-                                               return isSuccess
-        _ -> error "The player is not exploring."
+playerBumpAction :: V2 Int -> ExploringHandler -> (Bool, GameStatus)
+playerBumpAction offset eh =
+    let destination = case getPlayerPosition eh of
+                          Just p  -> p + offset
+                          Nothing -> error "The player is dead."
+        action = case actorAt destination eh of
+                     Just actorAtDestination -> meleeOrTalk offset actorAtDestination
+                     Nothing -> moveOrExitMap offset
+    in action eh
 
 meleeOrTalk :: V2 Int -> Actor -> ExploringHandler -> (Bool, GameStatus)
 meleeOrTalk offset target eh =
@@ -75,9 +63,9 @@ exitDungeon eh =
         Just newEh -> Exploring newEh
         Nothing    -> error "Failed to exit from the dungeon."
 
-handlePlayerMoving :: V2 Int -> GameStatus -> GameStatus
+handlePlayerMoving :: V2 Int -> ExploringHandler -> GameStatus
 handlePlayerMoving offset gs =
-    let (isSuccess, newState) = runState (playerBumpAction offset) gs
+    let (isSuccess, newState) = playerBumpAction offset gs
     in if isSuccess
         then case newState of
                  Exploring eh -> maybe GameOver Exploring (completeThisTurn eh)
