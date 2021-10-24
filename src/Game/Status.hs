@@ -4,7 +4,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module Game.Status
-    ( GameStatus(Exploring, SelectingItemToUse)
+    ( GameStatus(..)
     , isPlayerExploring
     , isPlayerTalking
     , isHandlingScene
@@ -26,7 +26,6 @@ module Game.Status
     , getOtherDungeons
     , destructTalking
     , destructHandlingScene
-    , getPlayerActor
     , messageLogList
     , title
     , selectingLocale
@@ -38,7 +37,6 @@ import           Control.Monad.Trans.State      (State, state)
 import           Data.Bifunctor                 (Bifunctor (second))
 import           Data.Binary                    (Binary)
 import           Dungeon                        (Dungeon)
-import           Dungeon.Actor                  (Actor)
 import           Dungeon.Init                   (initDungeon)
 import           Dungeon.Item                   (Item)
 import           Dungeon.Predefined.BatsCave    (batsDungeon)
@@ -185,7 +183,3 @@ completeThisTurn :: State GameStatus ()
 completeThisTurn = state $ \case
     Exploring eh -> ((), maybe GameOver Exploring (GSE.completeThisTurn eh))
     _            -> undefined
-
-getPlayerActor :: GameStatus -> Maybe Actor
-getPlayerActor (Exploring eh) = GSE.getPlayerActor eh
-getPlayerActor _              = error "Cannot get the player data."

@@ -19,10 +19,10 @@ import           Game.Status                    (GameStatus (Exploring, Selectin
                                                  completeThisTurn,
                                                  finishSelecting,
                                                  getCurrentDungeon,
-                                                 getPlayerActor,
                                                  getSelectingIndex, isGameOver,
                                                  isPlayerExploring, talking)
-import           Game.Status.Exploring          (actorAt, getPlayerPosition,
+import           Game.Status.Exploring          (actorAt, getPlayerActor,
+                                                 getPlayerPosition,
                                                  isPositionInDungeon)
 import qualified Game.Status.Exploring          as GSE
 import           Game.Status.SelectingItemToUse (selectingItemToUseHandler)
@@ -102,10 +102,10 @@ handlePlayerPickingUp = do
             when (isPlayerExploring eng') completeThisTurn
 
 handlePlayerSelectingItemToUse :: GameStatus -> GameStatus
-handlePlayerSelectingItemToUse e@(Exploring eh) =
+handlePlayerSelectingItemToUse (Exploring eh) =
     SelectingItemToUse $ selectingItemToUseHandler xs eh
     where xs = A.getItems p
-          p = case getPlayerActor e of
+          p = case getPlayerActor eh of
                 Just x  -> x
                 Nothing -> error "Player is dead."
 handlePlayerSelectingItemToUse _ = undefined

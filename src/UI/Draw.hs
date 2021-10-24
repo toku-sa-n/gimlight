@@ -7,48 +7,59 @@ module UI.Draw
     , tileColumns
     , tileRows
     ) where
-import           Control.Lens          ((&), (.~), (^.))
-import           Control.Monad         (guard)
-import           Coord                 (Coord)
-import           Data.Array            ((!))
-import           Data.Maybe            (mapMaybe)
-import           Data.Text             (append, pack)
-import           Dungeon               (Dungeon, actors, explored, items,
-                                        mapWidthAndHeight, playerPosition,
-                                        tileMap, visible)
-import           Dungeon.Actor         (defence, getHp, maxHp, power,
-                                        standingImagePath, walkingImagePath)
-import qualified Dungeon.Actor         as A
-import           Dungeon.Item          (iconImagePath)
-import qualified Dungeon.Item          as I
-import qualified Dungeon.Map.Tile      as MT
-import           Game                  (Game (Game, config, status))
-import           Game.Status           (destructHandlingScene, destructTalking,
-                                        getCurrentDungeon, getItems,
-                                        getPlayerActor, getSelectingIndex,
-                                        isGameOver, isHandlingScene,
-                                        isPlayerTalking, isSelectingItemToUse,
-                                        isSelectingLocale, isTitle,
-                                        messageLogList)
-import           Linear.V2             (V2 (V2), _x, _y)
-import           Localization          (getLocalizedText, multilingualText)
-import           Monomer               (CmbAlignLeft (alignLeft),
-                                        CmbBgColor (bgColor),
-                                        CmbHeight (height),
-                                        CmbMultiline (multiline),
-                                        CmbPaddingL (paddingL),
-                                        CmbPaddingT (paddingT),
-                                        CmbStyleBasic (styleBasic),
-                                        CmbTextColor (textColor),
-                                        CmbTextSize (textSize),
-                                        CmbWidth (width), WidgetEnv, WidgetNode,
-                                        black, box_, filler, gray, hgrid,
-                                        hstack, image, keystroke, label, label_,
-                                        red, vgrid, vstack, zstack)
-import qualified Monomer.Graphics.Lens as L
-import           Scene                 (backgroundImage, elements, text)
-import           Talking               (TalkWith, message, person)
-import           UI.Types              (AppEvent (AppKeyboardInput))
+import           Control.Lens                   ((&), (.~), (^.))
+import           Control.Monad                  (guard)
+import           Coord                          (Coord)
+import           Data.Array                     ((!))
+import           Data.Maybe                     (mapMaybe)
+import           Data.Text                      (append, pack)
+import           Dungeon                        (Dungeon, actors, explored,
+                                                 items, mapWidthAndHeight,
+                                                 playerPosition, tileMap,
+                                                 visible)
+import           Dungeon.Actor                  (defence, getHp, maxHp, power,
+                                                 standingImagePath,
+                                                 walkingImagePath)
+import qualified Dungeon.Actor                  as A
+import           Dungeon.Item                   (iconImagePath)
+import qualified Dungeon.Item                   as I
+import qualified Dungeon.Map.Tile               as MT
+import           Game                           (Game (Game, config, status))
+import           Game.Status                    (GameStatus (Exploring, HandlingScene, SelectingItemToUse, Talking),
+                                                 destructHandlingScene,
+                                                 destructTalking,
+                                                 getCurrentDungeon, getItems,
+                                                 getSelectingIndex, isGameOver,
+                                                 isHandlingScene,
+                                                 isPlayerTalking,
+                                                 isSelectingItemToUse,
+                                                 isSelectingLocale, isTitle,
+                                                 messageLogList)
+import           Game.Status.Exploring          (getPlayerActor)
+import           Game.Status.SelectingItemToUse (finishSelecting)
+import           Linear.V2                      (V2 (V2), _x, _y)
+import           Localization                   (getLocalizedText,
+                                                 multilingualText)
+import           Monomer                        (CmbAlignLeft (alignLeft),
+                                                 CmbBgColor (bgColor),
+                                                 CmbHeight (height),
+                                                 CmbMultiline (multiline),
+                                                 CmbPaddingL (paddingL),
+                                                 CmbPaddingT (paddingT),
+                                                 CmbStyleBasic (styleBasic),
+                                                 CmbTextColor (textColor),
+                                                 CmbTextSize (textSize),
+                                                 CmbWidth (width), WidgetEnv,
+                                                 WidgetNode, black, box_,
+                                                 filler, gray, hgrid, hstack,
+                                                 image, keystroke, label,
+                                                 label_, red, vgrid, vstack,
+                                                 zstack)
+import qualified Monomer.Graphics.Lens          as L
+import           Scene                          (backgroundImage, elements,
+                                                 text)
+import           Talking                        (TalkWith, message, person)
+import           UI.Types                       (AppEvent (AppKeyboardInput))
 
 type GameWidgetEnv = WidgetEnv Game AppEvent
 type GameWidgetNode = WidgetNode Game AppEvent
@@ -198,9 +209,15 @@ statusGrid Game { status = s, config = c } = vstack $ maybe []
            , label $ "HP: " `append` pack (show $ getHp x) `append` " / " `append` pack (show $ x ^. maxHp)
            , label $ atk `append` pack (show $ x ^. power)
            , label $ def `append` pack (show $ x ^. defence)
-           ]) $ getPlayerActor s
+           ]) $ player s
     where atk = getLocalizedText c $ multilingualText "ATK: " "攻撃: "
           def = getLocalizedText c $ multilingualText "DEF: " "防御: "
+          player st = case st of
+                       Exploring eh -> getPlayerActor eh
+                       Talking _   -> player $ snd $ destructTalking st
+                       HandlingScene _ -> player $ snd $ destructHandlingScene st
+                       SelectingItemToUse i -> player $ Exploring $ finishSelecting i
+                       _ -> error "No player entity."
 
 talkingWindow :: Game -> TalkWith -> GameWidgetNode
 talkingWindow Game { config = c } tw = hstack [ image (tw ^. person . standingImagePath)
