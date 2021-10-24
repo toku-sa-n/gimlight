@@ -12,7 +12,6 @@ module Game.Status
     , isTitle
     , isGameOver
     , isSelectingLocale
-    , completeThisTurn
     , nextSceneElementOrFinish
     , enterTownAtPlayerPosition
     , finishTalking
@@ -178,8 +177,3 @@ title = Title
 
 selectingLocale :: GameStatus
 selectingLocale = SelectingLocale
-
-completeThisTurn :: State GameStatus ()
-completeThisTurn = state $ \case
-    Exploring eh -> ((), maybe GameOver Exploring (GSE.completeThisTurn eh))
-    _            -> undefined

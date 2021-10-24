@@ -15,13 +15,13 @@ import qualified Dungeon.Actor                  as A
 import           Dungeon.Actor.Actions          (Action, consumeAction,
                                                  meleeAction, moveAction,
                                                  pickUpAction)
-import           Game.Status                    (GameStatus (Exploring, SelectingItemToUse),
-                                                 completeThisTurn,
+import           Game.Status                    (GameStatus (Exploring, GameOver, SelectingItemToUse),
                                                  finishSelecting,
                                                  getCurrentDungeon,
                                                  getSelectingIndex, isGameOver,
-                                                 isPlayerExploring, talking)
-import           Game.Status.Exploring          (actorAt, getPlayerActor,
+                                                 talking)
+import           Game.Status.Exploring          (actorAt, completeThisTurn,
+                                                 getPlayerActor,
                                                  getPlayerPosition,
                                                  isPositionInDungeon)
 import qualified Game.Status.Exploring          as GSE
@@ -88,7 +88,12 @@ handlePlayerMoving offset = do
         when success $ do
             eng' <- get
 
-            when (isPlayerExploring eng') completeThisTurn
+            case eng' of
+                Exploring eh -> case completeThisTurn eh of
+                                    Just afterEh -> put $ Exploring afterEh
+                                    Nothing      -> put GameOver
+                _            -> return ()
+
 
 handlePlayerPickingUp :: State GameStatus ()
 handlePlayerPickingUp = do
@@ -99,7 +104,12 @@ handlePlayerPickingUp = do
 
         when success $ do
             eng' <- get
-            when (isPlayerExploring eng') completeThisTurn
+
+            case eng' of
+                Exploring eh -> case completeThisTurn eh of
+                                    Just afterEh -> put $ Exploring afterEh
+                                    Nothing      -> put GameOver
+                _ -> return ()
 
 handlePlayerSelectingItemToUse :: GameStatus -> GameStatus
 handlePlayerSelectingItemToUse (Exploring eh) =
@@ -121,7 +131,13 @@ handlePlayerConsumeItem = do
             success <- doAction $ consumeAction n
 
             when success $ do
-                completeThisTurn
+                gs' <- get
+
+                case gs' of
+                    Exploring eh -> case completeThisTurn eh of
+                        Just afterEh -> put $ Exploring afterEh
+                        Nothing      -> put GameOver
+                    _ -> return ()
         Nothing -> return ()
 
 doAction :: Action -> State GameStatus Bool
