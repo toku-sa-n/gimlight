@@ -26,15 +26,14 @@ import qualified Dungeon.Item                   as I
 import qualified Dungeon.Map.Tile               as MT
 import           Game                           (Game (Game, config, status))
 import           Game.Status                    (GameStatus (Exploring, HandlingScene, SelectingItemToUse, Talking),
-                                                 getItems, isGameOver,
-                                                 isHandlingScene,
+                                                 isGameOver, isHandlingScene,
                                                  isPlayerTalking,
                                                  isSelectingItemToUse,
                                                  isSelectingLocale, isTitle)
 import           Game.Status.Exploring          (getCurrentDungeon,
                                                  getMessageLog, getPlayerActor)
 import qualified Game.Status.Scene              as GSS
-import           Game.Status.SelectingItemToUse (finishSelecting,
+import           Game.Status.SelectingItemToUse (finishSelecting, getItems,
                                                  getSelectingIndex)
 import qualified Game.Status.Talking            as GST
 import           Linear.V2                      (V2 (V2), _x, _y)
@@ -112,13 +111,13 @@ drawHandlingScene Game { status = HandlingScene sh, config = c } =
 drawHandlingScene _ = error "We are not handling a scene."
 
 drawSelectingItem :: Game -> GameWidgetNode
-drawSelectingItem Game { status = s@(SelectingItemToUse sh), config = c } = withKeyEvents $ vstack labels
+drawSelectingItem Game { status = SelectingItemToUse sh, config = c } = withKeyEvents $ vstack labels
     where labels = label topLabel:map label addAsterlist
           addAsterlist = zipWith (\idx x -> if Just idx == getSelectingIndex sh
                                                 then "* " `append` pack (show idx) `append` " " `append`x
                                                 else pack (show idx) `append` " " `append` x
                                                ) [0..] $ map (getLocalizedText c) itemNames
-          itemNames = map (^. I.name) $ getItems s
+          itemNames = map (^. I.name) $ getItems sh
           topLabel = getLocalizedText c $ multilingualText "Which Item do you use?" "どのアイテムを使う？"
 drawSelectingItem _ = error "We are not selecting an item."
 

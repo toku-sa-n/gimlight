@@ -18,13 +18,11 @@ module Game.Status
     , finishSelecting
     , selectPrevItem
     , selectNextItem
-    , getItems
     , newGameStatus
     ) where
 
 import           Data.Binary                    (Binary)
 import           Dungeon.Init                   (initDungeon)
-import           Dungeon.Item                   (Item)
 import           Dungeon.Predefined.BatsCave    (batsDungeon)
 import           Dungeon.Predefined.GlobalMap   (globalMap)
 import           GHC.Generics                   (Generic)
@@ -105,10 +103,6 @@ selectPrevItem _                       = error "We are not selecting anything."
 selectNextItem :: GameStatus -> GameStatus
 selectNextItem (SelectingItemToUse sh) = SelectingItemToUse $ GSSI.selectNextItem sh
 selectNextItem _ = error "We are not selecting anything."
-
-getItems :: GameStatus -> [Item]
-getItems (SelectingItemToUse sh) = GSSI.getItems sh
-getItems _                       = error "We are not selecting anything."
 
 newGameStatus :: IO GameStatus
 newGameStatus = do
