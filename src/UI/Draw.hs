@@ -33,9 +33,8 @@ import           Game.Status                    (GameStatus (Exploring, Handling
                                                  isHandlingScene,
                                                  isPlayerTalking,
                                                  isSelectingItemToUse,
-                                                 isSelectingLocale, isTitle,
-                                                 messageLogList)
-import           Game.Status.Exploring          (getPlayerActor)
+                                                 isSelectingLocale, isTitle)
+import           Game.Status.Exploring          (getMessageLog, getPlayerActor)
 import           Game.Status.SelectingItemToUse (finishSelecting)
 import           Linear.V2                      (V2 (V2), _x, _y)
 import           Localization                   (getLocalizedText,
@@ -229,7 +228,12 @@ talkingWindow Game { config = c } tw = hstack [ image (tw ^. person . standingIm
 
 messageLogArea :: Game -> GameWidgetNode
 messageLogArea Game { status = s, config = c } =
-    vstack $ fmap (\x -> label_ (getLocalizedText c x) [multiline] ) $ take logRows $ messageLogList s
+    vstack $ fmap (\x -> label_ (getLocalizedText c x) [multiline] ) $ take logRows $ ls s
+    where ls st = case st of
+                   Exploring eh    -> getMessageLog eh
+                   Talking _       -> ls $ snd $ destructTalking s
+                   HandlingScene _ -> ls $ snd $ destructHandlingScene st
+                   _               -> error "unable to print logs."
 
 topRightCoord :: Dungeon -> Coord
 topRightCoord d = bottomLeftCoord d + mapWidthAndHeight d - V2 1 1

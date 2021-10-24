@@ -25,7 +25,6 @@ module Game.Status
     , getOtherDungeons
     , destructTalking
     , destructHandlingScene
-    , messageLogList
     ) where
 
 import           Data.Bifunctor                 (Bifunctor (second))
@@ -46,7 +45,6 @@ import qualified Game.Status.SelectingItemToUse as GSSI
 import           Game.Status.Talking            (TalkingHandler)
 import qualified Game.Status.Talking            as GST
 import           Localization                   (multilingualText)
-import           Log                            (MessageLog)
 import qualified Log                            as L
 import           Scene                          (Scene, gameStartScene)
 import           System.Random                  (getStdGen)
@@ -152,7 +150,3 @@ destructTalking _            = error "We are not in the talking."
 destructHandlingScene :: GameStatus -> (Scene, GameStatus)
 destructHandlingScene (HandlingScene sh) = second Exploring $ GSS.destructHandler sh
 destructHandlingScene _                  = error "We are not handling a scene."
-
-messageLogList :: GameStatus -> MessageLog
-messageLogList (Exploring eh) = GSE.getMessageLog eh
-messageLogList _              = error "Cannot get the message log list."
