@@ -26,7 +26,6 @@ module Game.Status
     , destructTalking
     , destructHandlingScene
     , messageLogList
-    , title
     , talking
     , addMessages
     ) where
@@ -170,6 +169,3 @@ addMessages m = state
 talking :: TalkWith -> GameStatus -> GameStatus
 talking tw (Exploring eh) = Talking $ talkingHandler tw eh
 talking _ _               = undefined
-
-title :: GameStatus
-title = Title

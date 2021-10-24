@@ -9,7 +9,8 @@ import           Data.Text                 (Text)
 import           Game                      (Game (Game, config, status))
 import           Game.Config               (Language (English, Japanese),
                                             setLocale, writeConfig)
-import           Game.Status               (enterTownAtPlayerPosition,
+import           Game.Status               (GameStatus (Title),
+                                            enterTownAtPlayerPosition,
                                             finishSelecting, finishTalking,
                                             isHandlingScene, isPlayerExploring,
                                             isPlayerTalking,
@@ -17,8 +18,7 @@ import           Game.Status               (enterTownAtPlayerPosition,
                                             isSelectingLocale, isTitle,
                                             newGameStatus,
                                             nextSceneElementOrFinish,
-                                            selectNextItem, selectPrevItem,
-                                            title)
+                                            selectNextItem, selectPrevItem)
 import           Game.Status.Player        (handlePlayerConsumeItem,
                                             handlePlayerMoving,
                                             handlePlayerPickingUp,
@@ -105,6 +105,6 @@ handleKeyInputDuringSelectingLanguage g@Game { config = c } k
     where updateConfig l = do
             let newConfig = setLocale l c
             writeConfig newConfig
-            return $ g { status = title,
-                    config = newConfig
-                    }
+            return $ g { status = Title
+                       , config = newConfig
+                       }
