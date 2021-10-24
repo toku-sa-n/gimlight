@@ -11,7 +11,6 @@ module Game.Status
     , isTitle
     , isGameOver
     , isSelectingLocale
-    , nextSceneElementOrFinish
     , newGameStatus
     ) where
 
@@ -23,7 +22,6 @@ import           GHC.Generics                   (Generic)
 import           Game.Status.Exploring          (ExploringHandler,
                                                  exploringHandler)
 import           Game.Status.Scene              (SceneHandler, sceneHandler)
-import qualified Game.Status.Scene              as GSS
 import           Game.Status.SelectingItemToUse (SelectingItemToUseHandler)
 import           Game.Status.Talking            (TalkingHandler)
 import           Localization                   (multilingualText)
@@ -68,12 +66,6 @@ isGameOver _        = False
 isSelectingLocale :: GameStatus -> Bool
 isSelectingLocale SelectingLocale = True
 isSelectingLocale _               = False
-
-nextSceneElementOrFinish :: GameStatus -> GameStatus
-nextSceneElementOrFinish (HandlingScene sh) = case GSS.nextSceneOrFinish sh of
-    Right newSh -> HandlingScene newSh
-    Left after  -> Exploring after
-nextSceneElementOrFinish _                   = error "We are not handling a scene."
 
 newGameStatus :: IO GameStatus
 newGameStatus = do

@@ -9,19 +9,19 @@ import           Data.Text                      (Text)
 import           Game                           (Game (Game, config, status))
 import           Game.Config                    (Language (English, Japanese),
                                                  setLocale, writeConfig)
-import           Game.Status                    (GameStatus (Exploring, SelectingItemToUse, Talking, Title),
+import           Game.Status                    (GameStatus (Exploring, HandlingScene, SelectingItemToUse, Talking, Title),
                                                  isHandlingScene,
                                                  isPlayerExploring,
                                                  isPlayerTalking,
                                                  isSelectingItemToUse,
                                                  isSelectingLocale, isTitle,
-                                                 newGameStatus,
-                                                 nextSceneElementOrFinish)
+                                                 newGameStatus)
 import           Game.Status.Exploring          (enterTownAtPlayerPosition)
 import           Game.Status.Player             (handlePlayerConsumeItem,
                                                  handlePlayerMoving,
                                                  handlePlayerPickingUp,
                                                  handlePlayerSelectingItemToUse)
+import           Game.Status.Scene              (nextSceneOrFinish)
 import           Game.Status.SelectingItemToUse (finishSelecting,
                                                  selectNextItem, selectPrevItem)
 import           Game.Status.Talking            (finishTalking)
@@ -74,9 +74,13 @@ handleKeyInputDuringTalking e@Game { status = Talking th } k
 handleKeyInputDuringTalking _ _ = error "We are not talking."
 
 handleKeyInputDuringHandlingScene :: Game -> Text -> [AppEventResponse Game AppEvent]
-handleKeyInputDuringHandlingScene e@Game { status = s } k
-    | k == "Enter" = [Model $ e { status = nextSceneElementOrFinish s }]
+handleKeyInputDuringHandlingScene e@Game { status = HandlingScene sh } k
+    | k == "Enter" = [Model $ e { status = nextStatus }]
     | otherwise = []
+    where nextStatus = case nextSceneOrFinish sh of
+                           Right r -> HandlingScene r
+                           Left l  -> Exploring l
+handleKeyInputDuringHandlingScene _ _ = error "We are not handling a scene."
 
 handleKeyInputDuringSelectingItemToUse :: Game -> Text -> [AppEventResponse Game AppEvent]
 handleKeyInputDuringSelectingItemToUse e@Game { status = s@(SelectingItemToUse sh) } k
