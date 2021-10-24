@@ -7,8 +7,7 @@ module Game.Status.Player
     , handlePlayerConsumeItem
     ) where
 import           Control.Lens                   ((^.))
-import           Control.Monad.Trans.State      (State, get, put, runState,
-                                                 state)
+import           Control.Monad.Trans.State      (State, get, put, runState)
 import           Dungeon                        (isTown)
 import           Dungeon.Actor                  (Actor, isMonster, talkMessage)
 import qualified Dungeon.Actor                  as A
@@ -77,16 +76,15 @@ moveOrExitMap offset = do
                          put $ Exploring newStatus
                          return isSuccess
                 else do
-                    exitDungeon
+                    put $ exitDungeon eh
                     return True
         _ -> error "The player is not exploring."
 
-exitDungeon :: State GameStatus ()
-exitDungeon = state $ \case
-    Exploring eh -> case GSE.exitDungeon eh of
-                        Just newEh -> ((), Exploring newEh)
-                        Nothing    -> error "Failed to exit from the dungeon."
-    _ -> undefined
+exitDungeon :: ExploringHandler -> GameStatus
+exitDungeon eh =
+    case GSE.exitDungeon eh of
+        Just newEh -> Exploring newEh
+        Nothing    -> error "Failed to exit from the dungeon."
 
 handlePlayerMoving :: V2 Int -> GameStatus -> GameStatus
 handlePlayerMoving offset gs =
