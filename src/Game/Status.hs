@@ -13,7 +13,6 @@ module Game.Status
     , isSelectingLocale
     , nextSceneElementOrFinish
     , enterTownAtPlayerPosition
-    , finishTalking
     , newGameStatus
     ) where
 
@@ -29,7 +28,6 @@ import           Game.Status.Scene              (SceneHandler, sceneHandler)
 import qualified Game.Status.Scene              as GSS
 import           Game.Status.SelectingItemToUse (SelectingItemToUseHandler)
 import           Game.Status.Talking            (TalkingHandler)
-import qualified Game.Status.Talking            as GST
 import           Localization                   (multilingualText)
 import qualified Log                            as L
 import           Scene                          (gameStartScene)
@@ -82,10 +80,6 @@ nextSceneElementOrFinish _                   = error "We are not handling a scen
 enterTownAtPlayerPosition :: GameStatus -> GameStatus
 enterTownAtPlayerPosition (Exploring eh) = Exploring $ GSE.enterTownAtPlayerPosition eh
 enterTownAtPlayerPosition _ = undefined
-
-finishTalking :: GameStatus -> GameStatus
-finishTalking (Talking th) = Exploring $ GST.finishTalking th
-finishTalking _            = error "We are not in the talking."
 
 newGameStatus :: IO GameStatus
 newGameStatus = do

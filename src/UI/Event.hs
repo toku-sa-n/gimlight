@@ -9,9 +9,9 @@ import           Data.Text                      (Text)
 import           Game                           (Game (Game, config, status))
 import           Game.Config                    (Language (English, Japanese),
                                                  setLocale, writeConfig)
-import           Game.Status                    (GameStatus (Exploring, SelectingItemToUse, Title),
+import           Game.Status                    (GameStatus (Exploring, SelectingItemToUse, Talking, Title),
                                                  enterTownAtPlayerPosition,
-                                                 finishTalking, isHandlingScene,
+                                                 isHandlingScene,
                                                  isPlayerExploring,
                                                  isPlayerTalking,
                                                  isSelectingItemToUse,
@@ -24,6 +24,7 @@ import           Game.Status.Player             (handlePlayerConsumeItem,
                                                  handlePlayerSelectingItemToUse)
 import           Game.Status.SelectingItemToUse (finishSelecting,
                                                  selectNextItem, selectPrevItem)
+import           Game.Status.Talking            (finishTalking)
 import           Linear.V2                      (V2 (V2))
 import           Monomer                        (AppEventResponse,
                                                  EventResponse (Model, Task),
@@ -66,9 +67,10 @@ handleKeyInputDuringExploring e@Game { status = st } k
     | otherwise = []
 
 handleKeyInputDuringTalking :: Game -> Text -> [AppEventResponse Game AppEvent]
-handleKeyInputDuringTalking e@Game { status = s } k
-    | k == "Enter" = [Model $ e { status = finishTalking s }]
+handleKeyInputDuringTalking e@Game { status = Talking th } k
+    | k == "Enter" = [Model $ e { status = Exploring $ finishTalking th }]
     | otherwise = []
+handleKeyInputDuringTalking _ _ = error "We are not talking."
 
 handleKeyInputDuringHandlingScene :: Game -> Text -> [AppEventResponse Game AppEvent]
 handleKeyInputDuringHandlingScene e@Game { status = s } k
