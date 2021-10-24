@@ -26,10 +26,8 @@ module Game.Status
     , destructTalking
     , destructHandlingScene
     , messageLogList
-    , addMessages
     ) where
 
-import           Control.Monad.Trans.State      (State, state)
 import           Data.Bifunctor                 (Bifunctor (second))
 import           Data.Binary                    (Binary)
 import           Dungeon                        (Dungeon)
@@ -48,7 +46,7 @@ import qualified Game.Status.SelectingItemToUse as GSSI
 import           Game.Status.Talking            (TalkingHandler)
 import qualified Game.Status.Talking            as GST
 import           Localization                   (multilingualText)
-import           Log                            (Message, MessageLog)
+import           Log                            (MessageLog)
 import qualified Log                            as L
 import           Scene                          (Scene, gameStartScene)
 import           System.Random                  (getStdGen)
@@ -158,9 +156,3 @@ destructHandlingScene _                  = error "We are not handling a scene."
 messageLogList :: GameStatus -> MessageLog
 messageLogList (Exploring eh) = GSE.getMessageLog eh
 messageLogList _              = error "Cannot get the message log list."
-
-addMessages :: [Message] -> State GameStatus ()
-addMessages m = state
-    $ \case
-        (Exploring eh) -> ((), Exploring $ GSE.addMessages m eh)
-        _              -> error "Cannot add messages."
