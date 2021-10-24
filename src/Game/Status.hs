@@ -12,7 +12,6 @@ module Game.Status
     , isGameOver
     , isSelectingLocale
     , nextSceneElementOrFinish
-    , enterTownAtPlayerPosition
     , newGameStatus
     ) where
 
@@ -23,7 +22,6 @@ import           Dungeon.Predefined.GlobalMap   (globalMap)
 import           GHC.Generics                   (Generic)
 import           Game.Status.Exploring          (ExploringHandler,
                                                  exploringHandler)
-import qualified Game.Status.Exploring          as GSE
 import           Game.Status.Scene              (SceneHandler, sceneHandler)
 import qualified Game.Status.Scene              as GSS
 import           Game.Status.SelectingItemToUse (SelectingItemToUseHandler)
@@ -76,10 +74,6 @@ nextSceneElementOrFinish (HandlingScene sh) = case GSS.nextSceneOrFinish sh of
     Right newSh -> HandlingScene newSh
     Left after  -> Exploring after
 nextSceneElementOrFinish _                   = error "We are not handling a scene."
-
-enterTownAtPlayerPosition :: GameStatus -> GameStatus
-enterTownAtPlayerPosition (Exploring eh) = Exploring $ GSE.enterTownAtPlayerPosition eh
-enterTownAtPlayerPosition _ = undefined
 
 newGameStatus :: IO GameStatus
 newGameStatus = do

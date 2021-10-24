@@ -10,7 +10,6 @@ import           Game                           (Game (Game, config, status))
 import           Game.Config                    (Language (English, Japanese),
                                                  setLocale, writeConfig)
 import           Game.Status                    (GameStatus (Exploring, SelectingItemToUse, Talking, Title),
-                                                 enterTownAtPlayerPosition,
                                                  isHandlingScene,
                                                  isPlayerExploring,
                                                  isPlayerTalking,
@@ -18,6 +17,7 @@ import           Game.Status                    (GameStatus (Exploring, Selectin
                                                  isSelectingLocale, isTitle,
                                                  newGameStatus,
                                                  nextSceneElementOrFinish)
+import           Game.Status.Exploring          (enterTownAtPlayerPosition)
 import           Game.Status.Player             (handlePlayerConsumeItem,
                                                  handlePlayerMoving,
                                                  handlePlayerPickingUp,
@@ -52,7 +52,7 @@ handleKeyInput e@Game { status = s } k
     | otherwise = undefined
 
 handleKeyInputDuringExploring :: Game -> Text -> [AppEventResponse Game AppEvent]
-handleKeyInputDuringExploring e@Game { status = st } k
+handleKeyInputDuringExploring e@Game { status = st@(Exploring eh) } k
     | k == "Right" = [Model $ e { status = execState (handlePlayerMoving (V2 1 0)) st }]
     | k == "Left"  = [Model $ e { status = execState (handlePlayerMoving (V2 (-1) 0)) st }]
     | k == "Up"    = [Model $ e { status = execState (handlePlayerMoving (V2 0 1)) st}]
@@ -63,8 +63,9 @@ handleKeyInputDuringExploring e@Game { status = st } k
     | k == "Ctrl-l"     = [Task $ do
                             s <- load
                             return $ AppLoadFinished e { status = s }]
-    | k == "Enter" = [Model e { status = enterTownAtPlayerPosition st }]
+    | k == "Enter" = [Model e { status = Exploring $ enterTownAtPlayerPosition eh }]
     | otherwise = []
+handleKeyInputDuringExploring _ _ = error "We are not exploring."
 
 handleKeyInputDuringTalking :: Game -> Text -> [AppEventResponse Game AppEvent]
 handleKeyInputDuringTalking e@Game { status = Talking th } k
