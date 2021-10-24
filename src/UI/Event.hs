@@ -79,10 +79,10 @@ handleKeyInputDuringHandlingScene e@Game { status = HandlingScene sh } k
 handleKeyInputDuringHandlingScene _ _ = error "We are not handling a scene."
 
 handleKeyInputDuringSelectingItemToUse :: Game -> Text -> [AppEventResponse Game AppEvent]
-handleKeyInputDuringSelectingItemToUse e@Game { status = s@(SelectingItemToUse sh) } k
+handleKeyInputDuringSelectingItemToUse e@Game { status = SelectingItemToUse sh } k
     | k == "Up" = [Model $ e { status = SelectingItemToUse $ selectPrevItem sh }]
     | k == "Down" = [Model $ e { status = SelectingItemToUse $ selectNextItem sh }]
-    | k == "Enter" = [Model $ e { status = handlePlayerConsumeItem s }]
+    | k == "Enter" = [Model $ e { status = handlePlayerConsumeItem sh }]
     | k == "Esc" = [Model $ e { status = Exploring $ finishSelecting sh }]
     | otherwise = []
 handleKeyInputDuringSelectingItemToUse _ _ = error "We are not selecting an item."

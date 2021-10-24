@@ -21,7 +21,8 @@ import           Game.Status.Exploring          (actorAt, completeThisTurn,
                                                  getPlayerPosition,
                                                  isPositionInDungeon)
 import qualified Game.Status.Exploring          as GSE
-import           Game.Status.SelectingItemToUse (finishSelecting,
+import           Game.Status.SelectingItemToUse (SelectingItemToUseHandler,
+                                                 finishSelecting,
                                                  getSelectingIndex,
                                                  selectingItemToUseHandler)
 import           Game.Status.Talking            (talkingHandler)
@@ -113,8 +114,8 @@ handlePlayerSelectingItemToUse (Exploring eh) =
                 Nothing -> error "Player is dead."
 handlePlayerSelectingItemToUse _ = undefined
 
-handlePlayerConsumeItem :: GameStatus -> GameStatus
-handlePlayerConsumeItem (SelectingItemToUse sh) =
+handlePlayerConsumeItem :: SelectingItemToUseHandler -> GameStatus
+handlePlayerConsumeItem sh =
     case getSelectingIndex sh of
         Just n ->
             let (newHandler, isSuccess) = doAction (consumeAction n) $ finishSelecting sh
@@ -122,4 +123,3 @@ handlePlayerConsumeItem (SelectingItemToUse sh) =
                 then maybe GameOver Exploring (completeThisTurn newHandler)
                 else Exploring newHandler
         Nothing -> SelectingItemToUse sh
-handlePlayerConsumeItem _ = error "We are not selecting an item."
