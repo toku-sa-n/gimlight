@@ -8,12 +8,12 @@ import           Control.Monad.Trans.State (execState)
 import           Data.Text                 (Text)
 import           Game                      (Game (Game, config, status),
                                             isHandlingScene, isPlayerExploring,
-                                            isPlayerTalking,
-                                            isSelectingItemToUse)
+                                            isPlayerTalking)
 import           Game.Config               (Language (English, Japanese),
                                             setLocale, writeConfig)
 import           Game.Status               (enterTownAtPlayerPosition,
                                             finishSelecting, finishTalking,
+                                            isSelectingItemToUse,
                                             isSelectingLocale, isTitle,
                                             newGameStatus,
                                             nextSceneElementOrFinish,
@@ -44,7 +44,7 @@ handleKeyInput e@Game { status = s } k
     | isPlayerExploring e = handleKeyInputDuringExploring e k
     | isPlayerTalking e = handleKeyInputDuringTalking e k
     | isHandlingScene e = handleKeyInputDuringHandlingScene e k
-    | isSelectingItemToUse e = handleKeyInputDuringSelectingItemToUse e k
+    | isSelectingItemToUse s = handleKeyInputDuringSelectingItemToUse e k
     | isTitle s = handleKeyInputDuringTitle e k
     | isSelectingLocale s = handleKeyInputDuringSelectingLanguage e k
     | otherwise = undefined

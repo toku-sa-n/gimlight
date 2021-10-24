@@ -3,7 +3,6 @@ module Game
     , isPlayerExploring
     , isPlayerTalking
     , isHandlingScene
-    , isSelectingItemToUse
     ) where
 
 import           Game.Config (Config)
@@ -23,6 +22,3 @@ isPlayerTalking Game { status = s } = GS.isPlayerTalking s
 
 isHandlingScene :: Game -> Bool
 isHandlingScene Game { status = s } = GS.isHandlingScene s
-
-isSelectingItemToUse :: Game -> Bool
-isSelectingItemToUse Game { status = s } = GS.isSelectingItemToUse s
