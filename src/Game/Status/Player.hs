@@ -42,28 +42,22 @@ playerBumpAction offset = do
                                 Nothing -> error "The player is dead."
 
             case actorAt destination eh of
-                Just actorAtDestination -> meleeOrTalk offset actorAtDestination
+                Just actorAtDestination -> let (isSuccess, newState) = meleeOrTalk offset actorAtDestination eh
+                                           in do
+                                               put newState
+                                               return isSuccess
                 Nothing                 -> let (isSuccess, newState) = moveOrExitMap offset eh
                                            in do
                                                put newState
                                                return isSuccess
         _ -> error "The player is not exploring."
 
-meleeOrTalk :: V2 Int -> Actor -> State GameStatus Bool
-meleeOrTalk offset target = do
-    gameStatus <- get
-
-    case gameStatus of
-        Exploring eh ->
-            if isMonster target
-                then let (newStatus, isSuccess) = doAction (meleeAction offset) eh
-                     in do
-                         put $ Exploring newStatus
-                         return isSuccess
-                else do
-                    put $ Talking $ talkingHandler (talkWith target $ target ^. talkMessage) eh
-                    return True
-        _ -> error "We are not exploring."
+meleeOrTalk :: V2 Int -> Actor -> ExploringHandler -> (Bool, GameStatus)
+meleeOrTalk offset target eh =
+    if isMonster target
+        then let (newState, isSuccess) = doAction (meleeAction offset) eh
+             in (isSuccess, Exploring newState)
+        else (True, Talking $ talkingHandler (talkWith target $ target ^. talkMessage) eh)
 
 moveOrExitMap :: V2 Int -> ExploringHandler -> (Bool, GameStatus)
 moveOrExitMap offset eh =
