@@ -7,8 +7,8 @@ module Game.Status.Player
     , handlePlayerConsumeItem
     ) where
 import           Control.Lens                   ((^.))
-import           Control.Monad                  (when)
-import           Control.Monad.Trans.State      (State, get, put, state)
+import           Control.Monad.Trans.State      (State, get, put, runState,
+                                                 state)
 import           Data.Bifunctor                 (Bifunctor (first))
 import           Dungeon                        (isTown)
 import           Dungeon.Actor                  (Actor, isMonster, talkMessage)
@@ -88,23 +88,14 @@ exitDungeon = state $ \case
                         Nothing    -> error "Failed to exit from the dungeon."
     _ -> undefined
 
-handlePlayerMoving :: V2 Int -> State GameStatus ()
-handlePlayerMoving offset = do
-    eng <- get
-
-    case eng of
-        GameOver -> return ()
-        _ -> do
-            success <- playerBumpAction offset
-
-            when success $ do
-                eng' <- get
-
-                case eng' of
-                    Exploring eh -> case completeThisTurn eh of
-                                        Just afterEh -> put $ Exploring afterEh
-                                        Nothing      -> put GameOver
-                    _            -> return ()
+handlePlayerMoving :: V2 Int -> GameStatus -> GameStatus
+handlePlayerMoving offset gs =
+    let (isSuccess, newState) = runState (playerBumpAction offset) gs
+    in if isSuccess
+        then case newState of
+                 Exploring eh -> maybe GameOver Exploring (completeThisTurn eh)
+                 _            -> newState
+        else newState
 
 
 handlePlayerPickingUp :: GameStatus -> GameStatus

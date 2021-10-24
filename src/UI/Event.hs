@@ -4,7 +4,6 @@ module UI.Event
     ( handleEvent
     ) where
 
-import           Control.Monad.Trans.State      (execState)
 import           Data.Text                      (Text)
 import           Game                           (Game (Game, config, status))
 import           Game.Config                    (Language (English, Japanese),
@@ -50,10 +49,10 @@ handleKeyInput e@Game { status = s } k =
 
 handleKeyInputDuringExploring :: Game -> Text -> [AppEventResponse Game AppEvent]
 handleKeyInputDuringExploring e@Game { status = st@(Exploring eh) } k
-    | k == "Right" = [Model $ e { status = execState (handlePlayerMoving (V2 1 0)) st }]
-    | k == "Left"  = [Model $ e { status = execState (handlePlayerMoving (V2 (-1) 0)) st }]
-    | k == "Up"    = [Model $ e { status = execState (handlePlayerMoving (V2 0 1)) st}]
-    | k == "Down"  = [Model $ e { status = execState (handlePlayerMoving (V2 0 (-1))) st}]
+    | k == "Right" = [Model $ e { status = handlePlayerMoving (V2 1 0) st }]
+    | k == "Left"  = [Model $ e { status = handlePlayerMoving (V2 (-1) 0) st }]
+    | k == "Up"    = [Model $ e { status = handlePlayerMoving (V2 0 1) st}]
+    | k == "Down"  = [Model $ e { status = handlePlayerMoving (V2 0 (-1)) st}]
     | k == "g" = [Model e { status = handlePlayerPickingUp st }]
     | k == "u" = [Model e { status = handlePlayerSelectingItemToUse st }]
     | k == "Ctrl-s"     = [Task (save st >> return AppSaveFinished)]
