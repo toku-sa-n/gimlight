@@ -26,13 +26,13 @@ import qualified Dungeon.Item                   as I
 import qualified Dungeon.Map.Tile               as MT
 import           Game                           (Game (Game, config, status))
 import           Game.Status                    (GameStatus (Exploring, HandlingScene, SelectingItemToUse, Talking),
-                                                 getCurrentDungeon, getItems,
-                                                 getSelectingIndex, isGameOver,
-                                                 isHandlingScene,
+                                                 getItems, getSelectingIndex,
+                                                 isGameOver, isHandlingScene,
                                                  isPlayerTalking,
                                                  isSelectingItemToUse,
                                                  isSelectingLocale, isTitle)
-import           Game.Status.Exploring          (getMessageLog, getPlayerActor)
+import           Game.Status.Exploring          (getCurrentDungeon,
+                                                 getMessageLog, getPlayerActor)
 import qualified Game.Status.Scene              as GSS
 import           Game.Status.SelectingItemToUse (finishSelecting)
 import qualified Game.Status.Talking            as GST
@@ -155,7 +155,7 @@ mapGrid gs = zstack (mapTiles gs:(mapItems gs ++ mapActors gs))
 
 mapTiles :: Game ->  GameWidgetNode
 mapTiles Game { status = s } = box_ [alignLeft] $ vgrid rows `styleBasic` styles
-    where d = getCurrentDungeon s
+    where d = getCurrentDungeon $ eh s
           V2 bottomLeftX bottomLeftY = bottomLeftCoord d
           rows = [hgrid $ row y | y <- [bottomLeftY + tileRows - 1, bottomLeftY + tileRows - 2 .. bottomLeftY]]
           row y = [cell $ V2 x y | x <- [bottomLeftX .. bottomLeftX + tileColumns - 1]]
@@ -173,10 +173,15 @@ mapTiles Game { status = s } = box_ [alignLeft] $ vgrid rows `styleBasic` styles
 
           styles = [ width $ fromIntegral mapDrawingWidth
                    , height $ fromIntegral mapDrawingHeight]
+          eh st = case st of
+                      Exploring e      -> e
+                      Talking th       -> snd $ GST.destructHandler th
+                      HandlingScene sh -> snd $ GSS.destructHandler sh
+                      _                -> error "unreachable."
 
 mapActors :: Game -> [GameWidgetNode]
 mapActors Game { status = s } = mapMaybe actorToImage $ d ^. actors
-    where d = getCurrentDungeon s
+    where d = getCurrentDungeon $ eh s
           leftPadding actor = fromIntegral $ actorPositionOnDisplay actor ^. _x * tileWidth
           topPadding actor = fromIntegral $ mapDrawingHeight - (actorPositionOnDisplay actor ^. _y + 1) * tileHeight
 
@@ -189,6 +194,11 @@ mapActors Game { status = s } = mapMaybe actorToImage $ d ^. actors
                                 in V2 0 0 <= pos && pos <= topRightCoord d && isVisible
 
           actorToImage actor = guard (isActorDrawed actor) >> return (image (actor ^. walkingImagePath) `styleBasic` style actor)
+          eh st = case st of
+                      Exploring e      -> e
+                      Talking th       -> snd $ GST.destructHandler th
+                      HandlingScene sh -> snd $ GSS.destructHandler sh
+                      _                -> error "unreachable."
 
 mapItems :: Game -> [GameWidgetNode]
 mapItems Game { status = s } = mapMaybe itemToImage $ d ^. items
@@ -196,13 +206,18 @@ mapItems Game { status = s } = mapMaybe itemToImage $ d ^. items
           isItemDrawed item = let pos = itemPositionOnDisplay item
                                   isVisible = (d ^. visible) ! (item ^. I.position)
                                 in V2 0 0 <= pos && pos <= topRightCoord d && isVisible
-          d = getCurrentDungeon s
+          d = getCurrentDungeon $ eh s
           leftPadding item = fromIntegral $ itemPositionOnDisplay item ^. _x * tileWidth
           topPadding item = fromIntegral $ mapDrawingHeight - (itemPositionOnDisplay item ^. _y + 1) * tileHeight
 
           style item = [paddingL $ leftPadding item, paddingT $ topPadding item]
 
           itemPositionOnDisplay item = item ^. I.position - bottomLeftCoord d
+          eh st = case st of
+                      Exploring e      -> e
+                      Talking th       -> snd $ GST.destructHandler th
+                      HandlingScene sh -> snd $ GSS.destructHandler sh
+                      _                -> error "unreachable."
 
 statusGrid :: Game -> GameWidgetNode
 statusGrid Game { status = s, config = c } = vstack $ maybe []

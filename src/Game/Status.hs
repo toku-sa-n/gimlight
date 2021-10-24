@@ -21,11 +21,9 @@ module Game.Status
     , getItems
     , getSelectingIndex
     , newGameStatus
-    , getCurrentDungeon
     ) where
 
 import           Data.Binary                    (Binary)
-import           Dungeon                        (Dungeon)
 import           Dungeon.Init                   (initDungeon)
 import           Dungeon.Item                   (Item)
 import           Dungeon.Predefined.BatsCave    (batsDungeon)
@@ -129,7 +127,3 @@ newGameStatus = do
                 [multilingualText "Welcome to a roguelike game!" "ローグライクゲームへようこそ！"]
 
     return $ HandlingScene $ sceneHandler gameStartScene initExploring
-
-getCurrentDungeon :: GameStatus -> Dungeon
-getCurrentDungeon (Exploring eh) = GSE.getCurrentDungeon eh
-getCurrentDungeon _              = error "Cannot get the current dungeon."

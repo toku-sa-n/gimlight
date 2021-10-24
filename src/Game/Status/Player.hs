@@ -17,9 +17,9 @@ import           Dungeon.Actor.Actions          (Action, consumeAction,
                                                  pickUpAction)
 import           Game.Status                    (GameStatus (Exploring, GameOver, SelectingItemToUse, Talking),
                                                  finishSelecting,
-                                                 getCurrentDungeon,
                                                  getSelectingIndex, isGameOver)
 import           Game.Status.Exploring          (actorAt, completeThisTurn,
+                                                 getCurrentDungeon,
                                                  getPlayerActor,
                                                  getPlayerPosition,
                                                  isPositionInDungeon)
@@ -67,7 +67,7 @@ moveOrExitMap offset = do
                                 Just p  -> p + offset
                                 Nothing -> error "The player is dead."
 
-            if isPositionInDungeon destination eh || not (isTown (getCurrentDungeon gameStatus))
+            if isPositionInDungeon destination eh || not (isTown (getCurrentDungeon eh))
                 then doAction $ moveAction offset
                 else do
                     exitDungeon
