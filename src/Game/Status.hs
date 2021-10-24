@@ -35,7 +35,6 @@ module Game.Status
     , actorAt
     , playerPosition
     , isPositionInDungeon
-    , pushDungeonAsOtherDungeons
     ) where
 
 import           Control.Monad.Trans.State      (State, state)
@@ -207,9 +206,3 @@ actorAt _ _              = error "Cannot get the actor data"
 isPositionInDungeon :: Coord -> GameStatus -> Bool
 isPositionInDungeon c (Exploring eh) = GSE.isPositionInDungeon c eh
 isPositionInDungeon _ _              = error "Cannot access to a dungeon."
-
-pushDungeonAsOtherDungeons :: Dungeon -> State GameStatus ()
-pushDungeonAsOtherDungeons d = state
-    $ \case
-        (Exploring eh) -> ((), Exploring $ GSE.pushDungeonAsOtherDungeons d eh)
-        _              -> error "Cannot push a dungeon."
