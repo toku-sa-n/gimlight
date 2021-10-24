@@ -16,15 +16,15 @@ import           Dungeon.Actor.Actions          (Action, consumeAction,
                                                  meleeAction, moveAction,
                                                  pickUpAction)
 import           Game.Status                    (GameStatus (Exploring, GameOver, SelectingItemToUse, Talking),
-                                                 finishSelecting,
-                                                 getSelectingIndex, isGameOver)
+                                                 finishSelecting, isGameOver)
 import           Game.Status.Exploring          (actorAt, completeThisTurn,
                                                  getCurrentDungeon,
                                                  getPlayerActor,
                                                  getPlayerPosition,
                                                  isPositionInDungeon)
 import qualified Game.Status.Exploring          as GSE
-import           Game.Status.SelectingItemToUse (selectingItemToUseHandler)
+import           Game.Status.SelectingItemToUse (getSelectingIndex,
+                                                 selectingItemToUseHandler)
 import           Game.Status.Talking            (talkingHandler)
 import           Linear.V2                      (V2)
 import           Talking                        (talkWith)
@@ -127,21 +127,24 @@ handlePlayerConsumeItem :: State GameStatus ()
 handlePlayerConsumeItem = do
     gs <- get
 
-    case getSelectingIndex gs of
-        Just n -> do
-            put $ finishSelecting gs
+    case gs of
+        SelectingItemToUse sh -> do
+            case getSelectingIndex sh of
+                Just n -> do
+                    put $ finishSelecting gs
 
-            success <- doAction $ consumeAction n
+                    success <- doAction $ consumeAction n
 
-            when success $ do
-                gs' <- get
+                    when success $ do
+                        gs' <- get
 
-                case gs' of
-                    Exploring eh -> case completeThisTurn eh of
-                        Just afterEh -> put $ Exploring afterEh
-                        Nothing      -> put GameOver
-                    _ -> return ()
-        Nothing -> return ()
+                        case gs' of
+                            Exploring eh -> case completeThisTurn eh of
+                                Just afterEh -> put $ Exploring afterEh
+                                Nothing      -> put GameOver
+                            _ -> return ()
+                Nothing -> return ()
+        _ -> error "We are not selecting an item."
 
 doAction :: Action -> State GameStatus Bool
 doAction action = state $ \case
