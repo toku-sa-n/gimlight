@@ -1,4 +1,5 @@
 {-# LANGUAGE LambdaCase #-}
+
 module Game.Status.Player
     ( playerBumpAction
     , handlePlayerMoving
@@ -6,6 +7,7 @@ module Game.Status.Player
     , handlePlayerSelectingItemToUse
     , handlePlayerConsumeItem
     ) where
+
 import           Control.Lens                   ((^.))
 import           Control.Monad.Trans.State      (State, get, put, runState)
 import           Dungeon                        (isTown)
