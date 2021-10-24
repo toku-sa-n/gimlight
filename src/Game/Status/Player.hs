@@ -107,23 +107,14 @@ handlePlayerMoving offset = do
                     _            -> return ()
 
 
-handlePlayerPickingUp :: State GameStatus ()
-handlePlayerPickingUp = do
-    eng <- get
-
-    case eng of
-        GameOver -> return ()
-        _ -> let (newStatus, isSuccess) = doAction pickUpAction eng
-             in do
-                put newStatus
-                when isSuccess $ do
-                    eng' <- get
-
-                    case eng' of
-                        Exploring eh -> case completeThisTurn eh of
-                                            Just afterEh -> put $ Exploring afterEh
-                                            Nothing      -> put GameOver
-                        _ -> return ()
+handlePlayerPickingUp :: GameStatus -> GameStatus
+handlePlayerPickingUp gs =
+    let (newStatus, isSuccess) = doAction pickUpAction gs
+    in if isSuccess
+        then case newStatus of
+                 Exploring eh -> maybe GameOver Exploring $ completeThisTurn eh
+                 _            -> newStatus
+        else newStatus
 
 handlePlayerSelectingItemToUse :: GameStatus -> GameStatus
 handlePlayerSelectingItemToUse (Exploring eh) =
