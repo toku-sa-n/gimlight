@@ -16,14 +16,14 @@ import           Dungeon.Actor.Actions          (Action, consumeAction,
                                                  meleeAction, moveAction,
                                                  pickUpAction)
 import           Game.Status                    (GameStatus (Exploring, SelectingItemToUse),
-                                                 actorAt, completeThisTurn,
+                                                 completeThisTurn,
                                                  finishSelecting,
                                                  getCurrentDungeon,
                                                  getPlayerActor,
                                                  getSelectingIndex, isGameOver,
                                                  isPlayerExploring,
                                                  playerPosition, talking)
-import           Game.Status.Exploring          (isPositionInDungeon)
+import           Game.Status.Exploring          (actorAt, isPositionInDungeon)
 import qualified Game.Status.Exploring          as GSE
 import           Game.Status.SelectingItemToUse (selectingItemToUseHandler)
 import           Linear.V2                      (V2)
@@ -33,13 +33,16 @@ playerBumpAction :: V2 Int -> State GameStatus Bool
 playerBumpAction offset = do
     gameStatus <- get
 
-    let destination = case playerPosition gameStatus of
-                          Just p  -> p + offset
-                          Nothing -> error "The player is dead."
+    case gameStatus of
+        Exploring eh -> do
+            let destination = case playerPosition gameStatus of
+                                Just p  -> p + offset
+                                Nothing -> error "The player is dead."
 
-    case actorAt destination gameStatus of
-        Just actorAtDestination -> meleeOrTalk offset actorAtDestination
-        Nothing                 -> moveOrExitMap offset
+            case actorAt destination eh of
+                Just actorAtDestination -> meleeOrTalk offset actorAtDestination
+                Nothing                 -> moveOrExitMap offset
+        _ -> error "The player is not exploring."
 
 meleeOrTalk :: V2 Int -> Actor -> State GameStatus Bool
 meleeOrTalk offset target = do

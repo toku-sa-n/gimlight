@@ -32,7 +32,6 @@ module Game.Status
     , selectingLocale
     , talking
     , addMessages
-    , actorAt
     , playerPosition
     ) where
 
@@ -42,7 +41,6 @@ import           Data.Bifunctor                 (Bifunctor (second))
 import           Data.Binary                    (Binary)
 import           Dungeon                        (Dungeon)
 import           Dungeon.Actor                  (Actor)
-import qualified Dungeon.Actor                  as E
 import           Dungeon.Init                   (initDungeon)
 import           Dungeon.Item                   (Item)
 import           Dungeon.Predefined.BatsCave    (batsDungeon)
@@ -197,7 +195,3 @@ getPlayerActor _              = error "Cannot get the player data."
 playerPosition :: GameStatus -> Maybe Coord
 playerPosition (Exploring eh) = GSE.getPlayerPosition eh
 playerPosition _              = error "Cannot get the player position."
-
-actorAt :: Coord -> GameStatus -> Maybe E.Actor
-actorAt c (Exploring eh) = GSE.actorAt c eh
-actorAt _ _              = error "Cannot get the actor data"
