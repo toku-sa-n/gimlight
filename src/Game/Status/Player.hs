@@ -9,6 +9,7 @@ module Game.Status.Player
 import           Control.Lens                   ((^.))
 import           Control.Monad                  (when)
 import           Control.Monad.Trans.State      (State, get, put, state)
+import           Data.Bifunctor                 (Bifunctor (first))
 import           Dungeon                        (isTown)
 import           Dungeon.Actor                  (Actor, isMonster, talkMessage)
 import qualified Dungeon.Actor                  as A
@@ -51,7 +52,10 @@ meleeOrTalk offset target = do
     case gameStatus of
         Exploring eh ->
             if isMonster target
-                then doAction $ meleeAction offset
+                then let (newStatus, isSuccess) = doAction (meleeAction offset) gameStatus
+                     in do
+                         put newStatus
+                         return isSuccess
                 else do
                     put $ Talking $ talkingHandler (talkWith target $ target ^. talkMessage) eh
                     return True
@@ -68,7 +72,10 @@ moveOrExitMap offset = do
                                 Nothing -> error "The player is dead."
 
             if isPositionInDungeon destination eh || not (isTown (getCurrentDungeon eh))
-                then doAction $ moveAction offset
+                then let (newStatus, isSuccess) = doAction (moveAction offset) gameStatus
+                     in do
+                         put newStatus
+                         return isSuccess
                 else do
                     exitDungeon
                     return True
@@ -106,17 +113,17 @@ handlePlayerPickingUp = do
 
     case eng of
         GameOver -> return ()
-        _ -> do
-            success <- doAction pickUpAction
+        _ -> let (newStatus, isSuccess) = doAction pickUpAction eng
+             in do
+                put newStatus
+                when isSuccess $ do
+                    eng' <- get
 
-            when success $ do
-                eng' <- get
-
-                case eng' of
-                    Exploring eh -> case completeThisTurn eh of
-                                        Just afterEh -> put $ Exploring afterEh
-                                        Nothing      -> put GameOver
-                    _ -> return ()
+                    case eng' of
+                        Exploring eh -> case completeThisTurn eh of
+                                            Just afterEh -> put $ Exploring afterEh
+                                            Nothing      -> put GameOver
+                        _ -> return ()
 
 handlePlayerSelectingItemToUse :: GameStatus -> GameStatus
 handlePlayerSelectingItemToUse (Exploring eh) =
@@ -137,12 +144,15 @@ handlePlayerConsumeItem = do
                 Just n -> do
                     put $ Exploring $ finishSelecting sh
 
-                    success <- doAction $ consumeAction n
+                    gs' <- get
+                    let (newStatus, isSuccess) = doAction (consumeAction n) gs'
 
-                    when success $ do
-                        gs' <- get
+                    put newStatus
 
-                        case gs' of
+                    when isSuccess $ do
+                        gs'' <- get
+
+                        case gs'' of
                             Exploring eh -> case completeThisTurn eh of
                                 Just afterEh -> put $ Exploring afterEh
                                 Nothing      -> put GameOver
@@ -150,7 +160,7 @@ handlePlayerConsumeItem = do
                 Nothing -> return ()
         _ -> error "We are not selecting an item."
 
-doAction :: Action -> State GameStatus Bool
-doAction action = state $ \case
-    Exploring eh -> (\(newEh, s) -> (s, Exploring newEh)) $ GSE.doAction action eh
-    _            -> undefined
+doAction :: Action -> GameStatus -> (GameStatus, Bool)
+doAction action (Exploring eh) =
+    first Exploring $ GSE.doAction action eh
+doAction _ _ = error "We are not exploring a dungeon."
