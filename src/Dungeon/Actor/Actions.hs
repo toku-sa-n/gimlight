@@ -96,7 +96,9 @@ waitAction e = do
 
 pickUpAction :: Action
 pickUpAction e = do
-    item <- popItemAt (e ^. position)
+    dg <- get
+    let (item, dg') = popItemAt (e ^. position) dg
+    put dg'
     case item of
         Just x -> do
             let currentItems = e ^. inventoryItems

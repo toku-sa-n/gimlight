@@ -42,27 +42,26 @@ module Dungeon
     , ascendingStairs
     ) where
 
-import           Control.Lens              (makeLenses, (%~), (&), (.~), (^.))
-import           Control.Monad.Trans.State (State, state)
-import           Coord                     (Coord)
-import           Data.Array.Base           (IArray (bounds), assocs)
-import           Data.Binary               (Binary)
-import           Data.Foldable             (find)
-import           Data.List                 (findIndex)
-import           Data.Maybe                (isJust)
-import           Dungeon.Actor             (Actor, isMonster, isPlayer)
-import qualified Dungeon.Actor             as A
-import           Dungeon.Item              (Item)
-import qualified Dungeon.Item              as I
-import           Dungeon.Map.Bool          (BoolMap)
-import           Dungeon.Map.Explored      (ExploredMap, initExploredMap,
-                                            updateExploredMap)
-import           Dungeon.Map.Fov           (Fov, calculateFov, initFov)
-import           Dungeon.Map.Tile          (TileMap, transparent, walkable)
-import           Dungeon.Stairs            (StairsPair (StairsPair))
-import qualified Dungeon.Turn              as DT
-import           GHC.Generics              (Generic)
-import           Linear.V2                 (V2 (..))
+import           Control.Lens         (makeLenses, (%~), (&), (.~), (^.))
+import           Coord                (Coord)
+import           Data.Array.Base      (IArray (bounds), assocs)
+import           Data.Binary          (Binary)
+import           Data.Foldable        (find)
+import           Data.List            (findIndex)
+import           Data.Maybe           (isJust)
+import           Dungeon.Actor        (Actor, isMonster, isPlayer)
+import qualified Dungeon.Actor        as A
+import           Dungeon.Item         (Item)
+import qualified Dungeon.Item         as I
+import           Dungeon.Map.Bool     (BoolMap)
+import           Dungeon.Map.Explored (ExploredMap, initExploredMap,
+                                       updateExploredMap)
+import           Dungeon.Map.Fov      (Fov, calculateFov, initFov)
+import           Dungeon.Map.Tile     (TileMap, transparent, walkable)
+import           Dungeon.Stairs       (StairsPair (StairsPair))
+import qualified Dungeon.Turn         as DT
+import           GHC.Generics         (Generic)
+import           Linear.V2            (V2 (..))
 
 data DungeonKind = Town | DungeonType | GlobalMap deriving (Show, Ord, Eq, Generic)
 instance Binary DungeonKind
@@ -161,11 +160,11 @@ popActorIf f d =
 pushItem :: Item -> Dungeon -> Dungeon
 pushItem i d = d & items %~ (i :)
 
-popItemAt :: Coord -> State Dungeon (Maybe Item)
+popItemAt :: Coord -> Dungeon -> (Maybe Item, Dungeon)
 popItemAt c = popItemIf (\x -> x ^. I.position == c)
 
-popItemIf :: (Item -> Bool) -> State Dungeon (Maybe Item)
-popItemIf f = state $ \d ->
+popItemIf :: (Item -> Bool) -> Dungeon -> (Maybe Item, Dungeon)
+popItemIf f d =
     let xs = d ^. items
     in case findIndex f xs of
         Just x -> let item = xs !! x
