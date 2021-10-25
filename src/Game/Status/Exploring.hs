@@ -20,11 +20,11 @@ import           Control.Lens              ((%~), (&), (.~), (^.))
 import           Control.Monad.Trans.State (evalState, execState, runState)
 import           Coord                     (Coord)
 import           Data.Binary               (Binary)
+import           Data.Foldable             (find)
 import           Data.Maybe                (fromMaybe)
-import           Dungeon                   (Dungeon, actors,
-                                            initialPlayerPositionCandidates,
-                                            npcs, popPlayer,
-                                            positionOnParentMap, updateMap)
+import           Dungeon                   (Dungeon, actors, npcs, popPlayer,
+                                            positionOnParentMap, stairs,
+                                            updateMap)
 import qualified Dungeon                   as D
 import           Dungeon.Actor             (Actor, position)
 import           Dungeon.Actor.Actions     (Action)
@@ -53,7 +53,7 @@ descendStairsAtPlayerPosition eh@ExploringHandler{ dungeons = ds } =
           player = evalState popPlayer $ getFocused ds
           newPlayer = fmap (\x -> player & position .~ x) newPosition
           zipperFocusingNextDungeon = goDownBy (\x -> x ^. positionOnParentMap == Just (player ^. position)) zipperWithoutPlayer
-          newPosition = fmap (head . initialPlayerPositionCandidates . getFocused) zipperFocusingNextDungeon
+          newPosition = snd <$> find (\(from, _) -> from == player ^. position) (getFocused ds ^. stairs)
           newZipper = case (zipperFocusingNextDungeon, newPlayer) of
                           (Just g, Just p) -> Just $ modify (\d -> execState updateMap $ d & actors %~ (:) p) g
                           _ -> Nothing

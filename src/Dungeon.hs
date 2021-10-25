@@ -37,7 +37,7 @@ module Dungeon
     , popItemAt
     , pushItem
     , stairs
-    , addStairs
+    , addDescendingStairs
     ) where
 
 import           Control.Lens                   (makeLenses, (%~), (&), (.=),
@@ -92,10 +92,10 @@ dungeon t e i ss d = Dungeon { _tileMap = t
                           }
     where widthAndHeight = snd (bounds t) + V2 1 1
 
-addStairs :: (Coord, Coord) -> (Dungeon, Dungeon) -> (Dungeon, Dungeon)
-addStairs (from, to) (parent@Dungeon { _stairs = ss }, child@Dungeon { _positionOnParentMap = Nothing } ) =
+addDescendingStairs :: (Coord, Coord) -> (Dungeon, Dungeon) -> (Dungeon, Dungeon)
+addDescendingStairs (from, to) (parent@Dungeon { _stairs = ss }, child@Dungeon { _positionOnParentMap = Nothing } ) =
     (parent { _stairs = (from, to):ss }, child { _positionOnParentMap = Just from })
-addStairs _ _ = error "The child's position in the parent map is already set."
+addDescendingStairs _ _ = error "The child's position in the parent map is already set."
 
 completeThisTurn :: State Dungeon DT.Status
 completeThisTurn = do
