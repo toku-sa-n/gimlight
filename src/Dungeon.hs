@@ -141,8 +141,8 @@ actorAt c d = find (\x -> x ^. A.position == c) $ d ^. actors
 pushActor :: Actor -> Dungeon -> Dungeon
 pushActor e d = d & actors %~ (e :)
 
-popPlayer :: State Dungeon Actor
-popPlayer = state $ \d -> case runState (popActorIf isPlayer) d of
+popPlayer :: Dungeon -> (Actor, Dungeon)
+popPlayer d = case runState (popActorIf isPlayer) d of
                   (Just x, d') -> (x, d')
                   (Nothing, _) -> error "No player actor."
 

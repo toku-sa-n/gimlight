@@ -18,7 +18,8 @@ module Game.Status.Exploring
     ) where
 
 import           Control.Lens              ((%~), (&), (.~), (^.))
-import           Control.Monad.Trans.State (evalState, execState, runState)
+import           Control.Monad.Trans.State (evalState, execState, get, put,
+                                            runState)
 import           Coord                     (Coord)
 import           Data.Binary               (Binary)
 import           Data.Foldable             (find)
@@ -72,14 +73,14 @@ descendStairsAtPlayerPosition eh@ExploringHandler{ dungeons = ds } =
                           _ -> Nothing
 
 popPlayerFromZipper :: TreeZipper Dungeon -> (Actor, TreeZipper Dungeon)
-popPlayerFromZipper z = (evalState popPlayer $ getFocused z, modify (execState popPlayer) z)
+popPlayerFromZipper z = (fst $ popPlayer $ getFocused z, modify (snd . popPlayer) z)
 
 exitDungeon :: ExploringHandler -> Maybe ExploringHandler
 exitDungeon eh@ExploringHandler { dungeons = ds } =
     fmap (\ds' -> eh { dungeons = ds' }) newZipper
-    where zipperWithoutPlayer = modify (execState popPlayer) ds
+    where zipperWithoutPlayer = modify (snd . popPlayer) ds
           currentDungeon = getFocused ds
-          player = evalState popPlayer currentDungeon
+          player = fst $ popPlayer currentDungeon
           newPosition = currentDungeon ^. positionOnParentMap
           newPlayer = fmap (\x -> player & position .~ x) newPosition
           zipperFocusingGlobalMap = goUp zipperWithoutPlayer
@@ -91,7 +92,9 @@ doAction :: Action -> ExploringHandler -> (Bool, ExploringHandler)
 doAction action eh@ExploringHandler { dungeons = ds } = (isSuccess, newHandler)
     where currentDungeon = getFocused ds
           ((newLogs, isSuccess), newCurrentDungeon) = flip runState currentDungeon $ do
-              p <- popPlayer
+              d <- get
+              let (p, dungeonWithoutPlayer) = popPlayer d
+              put dungeonWithoutPlayer
               action p
           handlerWithNewLog = addMessages newLogs eh
           newHandler = handlerWithNewLog { dungeons = modify (const newCurrentDungeon) ds }
