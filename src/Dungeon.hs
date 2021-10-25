@@ -43,7 +43,7 @@ module Dungeon
     ) where
 
 import           Control.Lens              (makeLenses, (%~), (&), (.~), (^.))
-import           Control.Monad.Trans.State (State, runState, state)
+import           Control.Monad.Trans.State (State, state)
 import           Coord                     (Coord)
 import           Data.Array.Base           (IArray (bounds), assocs)
 import           Data.Binary               (Binary)
@@ -142,15 +142,15 @@ pushActor :: Actor -> Dungeon -> Dungeon
 pushActor e d = d & actors %~ (e :)
 
 popPlayer :: Dungeon -> (Actor, Dungeon)
-popPlayer d = case runState (popActorIf isPlayer) d of
+popPlayer d = case popActorIf isPlayer d of
                   (Just x, d') -> (x, d')
                   (Nothing, _) -> error "No player actor."
 
 popActorAt :: Coord -> Dungeon -> (Maybe Actor, Dungeon)
-popActorAt c = runState $ popActorIf (\x -> x ^. A.position == c)
+popActorAt c = popActorIf (\x -> x ^. A.position == c)
 
-popActorIf :: (Actor -> Bool) -> State Dungeon (Maybe Actor)
-popActorIf f = state $ \d ->
+popActorIf :: (Actor -> Bool) -> Dungeon -> (Maybe Actor, Dungeon)
+popActorIf f d =
     let xs = d ^. actors
     in case findIndex f xs of
         Just x -> let actor = xs !! x
