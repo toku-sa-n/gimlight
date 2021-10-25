@@ -37,7 +37,9 @@ meleeAction offset src = do
     let pos = src ^. position
         dest = pos + offset
 
-    target <- popActorAt dest
+    dg <- get
+    let (target, dg') = popActorAt dest dg
+    put dg'
 
     case target of
         Nothing -> do

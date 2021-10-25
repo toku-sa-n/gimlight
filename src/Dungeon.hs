@@ -146,8 +146,8 @@ popPlayer d = case runState (popActorIf isPlayer) d of
                   (Just x, d') -> (x, d')
                   (Nothing, _) -> error "No player actor."
 
-popActorAt :: Coord -> State Dungeon (Maybe Actor)
-popActorAt c = popActorIf (\x -> x ^. A.position == c)
+popActorAt :: Coord -> Dungeon -> (Maybe Actor, Dungeon)
+popActorAt c = runState $ popActorIf (\x -> x ^. A.position == c)
 
 popActorIf :: (Actor -> Bool) -> State Dungeon (Maybe Actor)
 popActorIf f = state $ \d ->

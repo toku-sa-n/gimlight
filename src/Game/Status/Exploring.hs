@@ -18,8 +18,7 @@ module Game.Status.Exploring
     ) where
 
 import           Control.Lens              ((%~), (&), (.~), (^.))
-import           Control.Monad.Trans.State (evalState, execState, get, put,
-                                            runState)
+import           Control.Monad.Trans.State (get, put, runState)
 import           Coord                     (Coord)
 import           Data.Binary               (Binary)
 import           Data.Foldable             (find)
@@ -112,8 +111,8 @@ handleNpcTurns eh = foldl (\acc x -> handleNpcTurn (x ^. position) acc) eh $ npc
 
 handleNpcTurn :: Coord -> ExploringHandler -> ExploringHandler
 handleNpcTurn c eh@ExploringHandler { dungeons = ds } = newHandler
-    where dungeonsWithoutTheActor = modify (execState $ D.popActorAt c) ds
-          theActor = evalState (D.popActorAt c) $ getFocused ds
+    where dungeonsWithoutTheActor = modify (snd . D.popActorAt c) ds
+          theActor = fst . D.popActorAt c $ getFocused ds
           newHandler = case theActor of
                            Just x ->
                             let (generatedLog, newCurrentDungeon) =
