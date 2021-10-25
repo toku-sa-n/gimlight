@@ -48,7 +48,7 @@ newGameStatus = do
             addStairs (V2 9 6, stairsPosition) (gm, bats)
 
         (initGm, beaeveWithParentMap) =
-            addStairs (V2 3 16, V2 (-1) (-1)) (gmWithBatsStairs, beaeve)
+            addStairs (V2 3 16, V2 5 5) (gmWithBatsStairs, beaeve)
 
         dungeonTree = Node { rootLabel = initGm
                            , subForest = [ Node { rootLabel = batsWithParentMap
