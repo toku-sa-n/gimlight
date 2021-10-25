@@ -8,7 +8,4 @@ import           Dungeon.Predefined.Beaeve (beaeve)
 import           Linear.V2                 (V2 (V2))
 
 initDungeon :: Dungeon
-initDungeon =
-        let p = player $ V2 5 5
-            d = beaeve p
-        in updateMap d
+initDungeon = updateMap $ beaeve $ player $ V2 5 5
