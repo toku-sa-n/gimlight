@@ -3,6 +3,7 @@
 module Game.Status.Exploring
     ( ExploringHandler
     , exploringHandler
+    , ascendStairsAtPlayerPosition
     , descendStairsAtPlayerPosition
     , exitDungeon
     , doAction
@@ -22,14 +23,14 @@ import           Coord                     (Coord)
 import           Data.Binary               (Binary)
 import           Data.Foldable             (find)
 import           Data.Maybe                (fromMaybe)
-import           Dungeon                   (Dungeon, actors, descendingStairs,
-                                            npcs, popPlayer,
+import           Dungeon                   (Dungeon, actors, ascendingStairs,
+                                            descendingStairs, npcs, popPlayer,
                                             positionOnParentMap, updateMap)
 import qualified Dungeon                   as D
 import           Dungeon.Actor             (Actor, position)
 import           Dungeon.Actor.Actions     (Action)
 import           Dungeon.Actor.Behavior    (npcAction)
-import           Dungeon.Stairs            (StairsPair (StairsPair, downStairs))
+import           Dungeon.Stairs            (StairsPair (StairsPair, downStairs, upStairs))
 import           Dungeon.Turn              (Status (PlayerKilled))
 import           GHC.Generics              (Generic)
 import           Log                       (Message, MessageLog)
@@ -46,6 +47,20 @@ instance Binary ExploringHandler
 
 exploringHandler :: TreeZipper Dungeon -> MessageLog -> ExploringHandler
 exploringHandler = ExploringHandler
+
+ascendStairsAtPlayerPosition :: ExploringHandler -> ExploringHandler
+ascendStairsAtPlayerPosition eh@ExploringHandler { dungeons = ds } =
+        eh { dungeons = newZipper }
+    where ascendable = (downStairs <$> getFocused ds ^. ascendingStairs) == Just (player ^. position)
+          zipperWithoutPlayer = modify (execState popPlayer) ds
+          player = evalState popPlayer $ getFocused ds
+          newPlayer = fmap (\x -> player & position .~ x) newPosition
+          zipperFocusingNextDungeon = goUp zipperWithoutPlayer
+          newPosition = upStairs <$> getFocused ds ^. ascendingStairs
+          newZipper = case (zipperFocusingNextDungeon, newPlayer, ascendable) of
+                          (Just g, Just p, True) ->
+                                modify (\d -> execState updateMap $ d & actors %~ (:) p) g
+                          _ -> ds
 
 descendStairsAtPlayerPosition :: ExploringHandler -> ExploringHandler
 descendStairsAtPlayerPosition eh@ExploringHandler{ dungeons = ds } =

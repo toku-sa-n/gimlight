@@ -82,7 +82,7 @@ data Dungeon = Dungeon
           -- `_positionOnParentMap` For example, towns have a `Just`
           -- `_positionOnParentMap` but they do not have ascending stairs
           -- to the global map.
-          , _ascendingStairs     :: Maybe Coord
+          , _ascendingStairs     :: Maybe StairsPair
           , _descendingStairs    :: [StairsPair]
           , _dungeonKind         :: DungeonKind
           } deriving (Show, Ord, Eq, Generic)
@@ -104,10 +104,10 @@ dungeon t e i ss d = Dungeon { _tileMap = t
 
 addAscendingAndDescendingStiars :: StairsPair -> (Dungeon, Dungeon) -> (Dungeon, Dungeon)
 addAscendingAndDescendingStiars
-    sp@(StairsPair upper lower)
+    sp@(StairsPair upper _)
     ( parent@Dungeon { _descendingStairs = ss }
     , child@Dungeon { _ascendingStairs = Nothing, _positionOnParentMap = Nothing }) =
-    (parent { _descendingStairs = sp: ss }, child { _ascendingStairs = Just lower, _positionOnParentMap = Just upper })
+    (parent { _descendingStairs = sp: ss }, child { _ascendingStairs = Just sp, _positionOnParentMap = Just upper })
 addAscendingAndDescendingStiars _ _ = error "The child's position and the ascending stairs are already set."
 
 addDescendingStairs :: StairsPair -> (Dungeon, Dungeon) -> (Dungeon, Dungeon)
