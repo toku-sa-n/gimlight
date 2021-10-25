@@ -11,7 +11,7 @@ module Dungeon.Actor.Actions
 
 import           Control.Lens              ((&), (.~), (^.))
 import           Control.Monad             (when)
-import           Control.Monad.Trans.State (State, execState, state)
+import           Control.Monad.Trans.State (State, get, put, state)
 import           Coord                     (Coord)
 import           Data.Array                ((!))
 import           Data.Maybe                (isNothing)
@@ -41,7 +41,8 @@ meleeAction offset src = do
 
     case target of
         Nothing -> do
-            pushActor src
+            d <- get
+            put $ pushActor src d
             return ([], False)
         Just x -> let damage = src ^. power - x ^. defence
                   in if damage > 0
@@ -50,14 +51,17 @@ meleeAction offset src = do
                               newActor = updateHp x newHp
                               messages = if newHp <= 0 then [damagedMessage src x damage, deathMessage x] else [damagedMessage src x damage]
 
-                          pushActor src
+                          d <- get
+                          put $ pushActor src d
 
-                          when (newHp > 0) $ pushActor newActor
+                          when (newHp > 0) $ do
+                            d' <- get
+                            put $ pushActor newActor d'
 
                           return (fmap message messages, True)
                       else do
-                              pushActor src
-                              pushActor x
+                              d' <- get
+                              put $ pushActor x $ pushActor src d'
                               return ([message $ noDamage src x ], True)
     where attackMessage from to =
             mconcat [ from ^. name
@@ -77,14 +81,15 @@ meleeAction offset src = do
 
 moveAction :: V2 Int -> Action
 moveAction offset src = state $ \d -> result d
-    where result d = (\(x, y) -> (x, execState y d)) $ messageAndNewActor d
+    where result d = messageAndNewActor d
           messageAndNewActor d = if not (movable d (src ^. position + offset))
-                                    then (([multilingualText "That way is blocked." "その方向には進めない．"], False), pushActor src)
-                                    else (([], True), pushActor $ updatePosition d src offset)
+                                    then (([multilingualText "That way is blocked." "その方向には進めない．"], False), pushActor src d)
+                                    else (([], True), pushActor (updatePosition d src offset) d)
 
 waitAction :: Action
 waitAction e = do
-        pushActor e
+        d <- get
+        put $ pushActor e d
         return ([], True)
 
 pickUpAction :: Action
@@ -96,14 +101,17 @@ pickUpAction e = do
                 newItems = addItem x currentItems
             case newItems of
                 Just xs -> do
-                    pushActor $ e & inventoryItems .~ xs
+                    d <- get
+                    put $ pushActor (e & inventoryItems .~ xs) d
                     return ([multilingualText "You got " "アイテムを入手した：" <> (x ^. I.name)], True)
                 Nothing -> do
-                    pushActor e
+                    d <- get
+                    put $ pushActor e d
                     pushItem x
                     return ([multilingualText "Your bag is full." "バッグは一杯だ．"], False)
         Nothing -> do
-            pushActor e
+            d <- get
+            put $ pushActor e d
             return ([multilingualText "You got nothing." "あなたは無を入手した．"], False)
 
 consumeAction :: Int -> Action
@@ -113,13 +121,15 @@ consumeAction n e = do
     case item of
         Just x -> do
             let healedActor = healHp newActor (x ^. healAmount)
-            pushActor healedActor
+            d <- get
+            put $ pushActor healedActor d
             return ( [(healedActor ^. name) <>
                         multilingualText (" healed " `append` pack (show (x ^. healAmount)))
                                          ("は" `append` pack (show (x ^. healAmount)) `append` "ポイント回復した．")]
                    , True)
         Nothing -> do
-            pushActor newActor
+            d <- get
+            put $ pushActor newActor d
             return ([multilingualText "What do you consume?" "何を使う？"], False)
 
 updatePosition :: Dungeon -> Actor -> V2 Int -> Actor

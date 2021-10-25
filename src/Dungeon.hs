@@ -138,8 +138,8 @@ getPlayerActor d = find isPlayer $ d ^. actors
 actorAt :: Coord -> Dungeon -> Maybe Actor
 actorAt c d = find (\x -> x ^. A.position == c) $ d ^. actors
 
-pushActor :: Actor -> State Dungeon ()
-pushActor e = state $ \d -> ((), d & actors %~ (e :))
+pushActor :: Actor -> Dungeon -> Dungeon
+pushActor e d = d & actors %~ (e :)
 
 popPlayer :: State Dungeon Actor
 popPlayer = state $ \d -> case runState (popActorIf isPlayer) d of
