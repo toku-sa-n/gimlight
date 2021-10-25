@@ -36,7 +36,7 @@ module Dungeon
     , items
     , popItemAt
     , pushItem
-    , stairs
+    , descendingStairs
     , addDescendingStairs
     ) where
 
@@ -74,7 +74,7 @@ data Dungeon = Dungeon
           , _actors              :: [Actor]
           , _items               :: [Item]
           , _positionOnParentMap :: Maybe Coord
-          , _stairs              :: [(Coord, Coord)]
+          , _descendingStairs    :: [(Coord, Coord)]
           , _dungeonKind         :: DungeonKind
           } deriving (Show, Ord, Eq, Generic)
 makeLenses ''Dungeon
@@ -87,14 +87,14 @@ dungeon t e i ss d = Dungeon { _tileMap = t
                           , _actors = e
                           , _items = i
                           , _positionOnParentMap = Nothing
-                          , _stairs = ss
+                          , _descendingStairs = ss
                           , _dungeonKind = d
                           }
     where widthAndHeight = snd (bounds t) + V2 1 1
 
 addDescendingStairs :: (Coord, Coord) -> (Dungeon, Dungeon) -> (Dungeon, Dungeon)
-addDescendingStairs (from, to) (parent@Dungeon { _stairs = ss }, child@Dungeon { _positionOnParentMap = Nothing } ) =
-    (parent { _stairs = (from, to):ss }, child { _positionOnParentMap = Just from })
+addDescendingStairs (from, to) (parent@Dungeon { _descendingStairs = ss }, child@Dungeon { _positionOnParentMap = Nothing } ) =
+    (parent { _descendingStairs = (from, to):ss }, child { _positionOnParentMap = Just from })
 addDescendingStairs _ _ = error "The child's position in the parent map is already set."
 
 completeThisTurn :: State Dungeon DT.Status

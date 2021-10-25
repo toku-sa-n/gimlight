@@ -22,9 +22,9 @@ import           Coord                     (Coord)
 import           Data.Binary               (Binary)
 import           Data.Foldable             (find)
 import           Data.Maybe                (fromMaybe)
-import           Dungeon                   (Dungeon, actors, npcs, popPlayer,
-                                            positionOnParentMap, stairs,
-                                            updateMap)
+import           Dungeon                   (Dungeon, actors, descendingStairs,
+                                            npcs, popPlayer,
+                                            positionOnParentMap, updateMap)
 import qualified Dungeon                   as D
 import           Dungeon.Actor             (Actor, position)
 import           Dungeon.Actor.Actions     (Action)
@@ -53,7 +53,7 @@ descendStairsAtPlayerPosition eh@ExploringHandler{ dungeons = ds } =
           player = evalState popPlayer $ getFocused ds
           newPlayer = fmap (\x -> player & position .~ x) newPosition
           zipperFocusingNextDungeon = goDownBy (\x -> x ^. positionOnParentMap == Just (player ^. position)) zipperWithoutPlayer
-          newPosition = snd <$> find (\(from, _) -> from == player ^. position) (getFocused ds ^. stairs)
+          newPosition = snd <$> find (\(from, _) -> from == player ^. position) (getFocused ds ^. descendingStairs)
           newZipper = case (zipperFocusingNextDungeon, newPlayer) of
                           (Just g, Just p) -> Just $ modify (\d -> execState updateMap $ d & actors %~ (:) p) g
                           _ -> Nothing
