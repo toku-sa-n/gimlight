@@ -44,9 +44,8 @@ module Dungeon
 
 import           Control.Lens                   (makeLenses, (%~), (&), (.=),
                                                  (.~), (^.))
-import           Control.Lens.Getter            (use)
 import           Control.Monad.Trans.State      (State, runState, state)
-import           Control.Monad.Trans.State.Lazy (get)
+import           Control.Monad.Trans.State.Lazy (get, put)
 import           Coord                          (Coord)
 import           Data.Array.Base                (IArray (bounds), assocs)
 import           Data.Binary                    (Binary)
@@ -123,15 +122,12 @@ completeThisTurn = do
 
 updateMap :: State Dungeon ()
 updateMap = do
-        updateExplored
+        d <- get
+        put $ updateExplored d
         updateFov
 
-updateExplored :: State Dungeon ()
-updateExplored = do
-        v <- use visible
-        e <- use explored
-
-        explored .= updateExploredMap e v
+updateExplored :: Dungeon -> Dungeon
+updateExplored d = d & explored .~ updateExploredMap (d ^. visible) (d ^. explored)
 
 updateFov :: State Dungeon ()
 updateFov = do
