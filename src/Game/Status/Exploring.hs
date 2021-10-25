@@ -24,7 +24,7 @@ import           Data.Maybe                (fromMaybe)
 import           Dungeon                   (Dungeon, actors,
                                             initialPlayerPositionCandidates,
                                             npcs, popPlayer,
-                                            positionOnGlobalMap, updateMap)
+                                            positionOnParentMap, updateMap)
 import qualified Dungeon                   as D
 import           Dungeon.Actor             (Actor, position)
 import           Dungeon.Actor.Actions     (Action)
@@ -52,7 +52,7 @@ enterTownAtPlayerPosition eh@ExploringHandler{ dungeons = ds } =
     where zipperWithoutPlayer = modify (execState popPlayer) ds
           player = evalState popPlayer $ getFocused ds
           newPlayer = fmap (\x -> player & position .~ x) newPosition
-          zipperFocusingNextDungeon = goDownBy (\x -> x ^. positionOnGlobalMap == Just (player ^. position)) zipperWithoutPlayer
+          zipperFocusingNextDungeon = goDownBy (\x -> x ^. positionOnParentMap == Just (player ^. position)) zipperWithoutPlayer
           newPosition = fmap (head . initialPlayerPositionCandidates . getFocused) zipperFocusingNextDungeon
           newZipper = case (zipperFocusingNextDungeon, newPlayer) of
                           (Just g, Just p) -> Just $ modify (\d -> execState updateMap $ d & actors %~ (:) p) g
@@ -64,7 +64,7 @@ exitDungeon eh@ExploringHandler { dungeons = ds } =
     where zipperWithoutPlayer = modify (execState popPlayer) ds
           currentDungeon = getFocused ds
           player = evalState popPlayer currentDungeon
-          newPosition = currentDungeon ^. positionOnGlobalMap
+          newPosition = currentDungeon ^. positionOnParentMap
           newPlayer = fmap (\x -> player & position .~ x) newPosition
           zipperFocusingGlobalMap = goUp zipperWithoutPlayer
           newZipper = case (zipperFocusingGlobalMap, newPlayer) of

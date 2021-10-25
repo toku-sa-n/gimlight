@@ -27,7 +27,7 @@ module Dungeon
     , actorAt
     , isPositionInDungeon
     , npcs
-    , positionOnGlobalMap
+    , positionOnParentMap
     , DungeonKind(..)
     , actors
     , tileMap
@@ -71,7 +71,7 @@ data Dungeon = Dungeon
           , _explored            :: ExploredMap
           , _actors              :: [Actor]
           , _items               :: [Item]
-          , _positionOnGlobalMap :: Maybe Coord
+          , _positionOnParentMap :: Maybe Coord
           , _dungeonKind         :: DungeonKind
           } deriving (Show, Ord, Eq, Generic)
 makeLenses ''Dungeon
@@ -83,7 +83,7 @@ dungeon t e i p d = Dungeon { _tileMap = t
                           , _explored = initExploredMap widthAndHeight
                           , _actors = e
                           , _items = i
-                          , _positionOnGlobalMap = p
+                          , _positionOnParentMap = p
                           , _dungeonKind = d
                           }
     where widthAndHeight = snd (bounds t) + V2 1 1
