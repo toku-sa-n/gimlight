@@ -38,6 +38,7 @@ module Dungeon
     , pushItem
     , descendingStairs
     , addDescendingStairs
+    , ascendingStairs
     ) where
 
 import           Control.Lens                   (makeLenses, (%~), (&), (.=),
@@ -75,6 +76,12 @@ data Dungeon = Dungeon
           , _actors              :: [Actor]
           , _items               :: [Item]
           , _positionOnParentMap :: Maybe Coord
+
+          -- Do not integrate `_ascendingStairs` with
+          -- `_positionOnParentMap` For example, towns have a `Just`
+          -- `_positionOnParentMap` but they do not have ascending stairs
+          -- to the global map.
+          , _ascendingStairs     :: Maybe Coord
           , _descendingStairs    :: [StairsPair]
           , _dungeonKind         :: DungeonKind
           } deriving (Show, Ord, Eq, Generic)
@@ -88,6 +95,7 @@ dungeon t e i ss d = Dungeon { _tileMap = t
                              , _actors = e
                              , _items = i
                              , _positionOnParentMap = Nothing
+                             , _ascendingStairs = Nothing
                              , _descendingStairs = ss
                              , _dungeonKind = d
                              }
