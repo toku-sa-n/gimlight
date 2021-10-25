@@ -31,7 +31,6 @@ beaeve player = dungeon (stringArrayToMap
     , electria $ V2 4 5
     ]
     []
-    []
     Town
 
 stringArrayToMap :: [String] -> TileMap

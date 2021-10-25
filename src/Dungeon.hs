@@ -89,17 +89,17 @@ data Dungeon = Dungeon
 makeLenses ''Dungeon
 instance Binary Dungeon
 
-dungeon :: TileMap -> [Actor] -> [Item] -> [StairsPair] -> DungeonKind -> Dungeon
-dungeon t e i ss d = Dungeon { _tileMap = t
-                             , _visible = initFov widthAndHeight
-                             , _explored = initExploredMap widthAndHeight
-                             , _actors = e
-                             , _items = i
-                             , _positionOnParentMap = Nothing
-                             , _ascendingStairs = Nothing
-                             , _descendingStairs = ss
-                             , _dungeonKind = d
-                             }
+dungeon :: TileMap -> [Actor] -> [Item] -> DungeonKind -> Dungeon
+dungeon t e i d = Dungeon { _tileMap = t
+                          , _visible = initFov widthAndHeight
+                          , _explored = initExploredMap widthAndHeight
+                          , _actors = e
+                          , _items = i
+                          , _positionOnParentMap = Nothing
+                          , _ascendingStairs = Nothing
+                          , _descendingStairs = []
+                          , _dungeonKind = d
+                          }
     where widthAndHeight = snd (bounds t) + V2 1 1
 
 addAscendingAndDescendingStiars :: StairsPair -> (Dungeon, Dungeon) -> (Dungeon, Dungeon)
