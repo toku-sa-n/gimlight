@@ -116,11 +116,6 @@ completeThisTurn :: Dungeon -> (DT.Status, Dungeon)
 completeThisTurn d = (result, updatedMap)
     where result = if isPlayerAlive updatedMap then DT.Success else DT.PlayerKilled
           updatedMap = updateMap d
--- completeThisTurn = do
---         d <- get
---         put $ updateMap d
---         d' <- get
---         return $ if isPlayerAlive d' then DT.Success else DT.PlayerKilled
 
 updateMap :: Dungeon -> Dungeon
 updateMap = updateFov . updateExplored
