@@ -10,7 +10,7 @@ import           Game.Config                    (Language (English, Japanese),
                                                  setLocale, writeConfig)
 import           Game.Status                    (GameStatus (Exploring, GameOver, HandlingScene, SelectingItemToUse, SelectingLocale, Talking, Title),
                                                  newGameStatus)
-import           Game.Status.Exploring          (enterTownAtPlayerPosition)
+import           Game.Status.Exploring          (descendStairsAtPlayerPosition)
 import           Game.Status.Player             (handlePlayerConsumeItem,
                                                  handlePlayerMoving,
                                                  handlePlayerPickingUp,
@@ -59,7 +59,7 @@ handleKeyInputDuringExploring e@Game { status = st@(Exploring eh) } k
     | k == "Ctrl-l"     = [Task $ do
                             s <- load
                             return $ AppLoadFinished e { status = s }]
-    | k == "Shift-." = [Model e { status = Exploring $ enterTownAtPlayerPosition eh }]
+    | k == "Shift-." = [Model e { status = Exploring $ descendStairsAtPlayerPosition eh }]
     | otherwise = []
 handleKeyInputDuringExploring _ _ = error "We are not exploring."
 

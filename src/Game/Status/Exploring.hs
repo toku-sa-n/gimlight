@@ -3,7 +3,7 @@
 module Game.Status.Exploring
     ( ExploringHandler
     , exploringHandler
-    , enterTownAtPlayerPosition
+    , descendStairsAtPlayerPosition
     , exitDungeon
     , doAction
     , completeThisTurn
@@ -46,8 +46,8 @@ instance Binary ExploringHandler
 exploringHandler :: TreeZipper Dungeon -> MessageLog -> ExploringHandler
 exploringHandler = ExploringHandler
 
-enterTownAtPlayerPosition :: ExploringHandler -> ExploringHandler
-enterTownAtPlayerPosition eh@ExploringHandler{ dungeons = ds } =
+descendStairsAtPlayerPosition :: ExploringHandler -> ExploringHandler
+descendStairsAtPlayerPosition eh@ExploringHandler{ dungeons = ds } =
     eh { dungeons = fromMaybe ds newZipper }
     where zipperWithoutPlayer = modify (execState popPlayer) ds
           player = evalState popPlayer $ getFocused ds
