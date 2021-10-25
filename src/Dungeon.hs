@@ -158,8 +158,8 @@ popActorIf f d =
                   in (Just actor, d & actors .~ newEntities)
         Nothing -> (Nothing, d)
 
-pushItem :: Item -> State Dungeon ()
-pushItem i = state $ \d -> ((), d & items %~ (i :))
+pushItem :: Item -> Dungeon -> Dungeon
+pushItem i d = d & items %~ (i :)
 
 popItemAt :: Coord -> State Dungeon (Maybe Item)
 popItemAt c = popItemIf (\x -> x ^. I.position == c)

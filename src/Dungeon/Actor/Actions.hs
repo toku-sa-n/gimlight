@@ -108,8 +108,7 @@ pickUpAction e = do
                     return ([multilingualText "You got " "アイテムを入手した：" <> (x ^. I.name)], True)
                 Nothing -> do
                     d <- get
-                    put $ pushActor e d
-                    pushItem x
+                    put $ pushItem x $ pushActor e d
                     return ([multilingualText "Your bag is full." "バッグは一杯だ．"], False)
         Nothing -> do
             d <- get
