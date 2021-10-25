@@ -60,6 +60,7 @@ import           Dungeon.Map.Explored           (ExploredMap, initExploredMap,
                                                  updateExploredMap)
 import           Dungeon.Map.Fov                (Fov, calculateFov, initFov)
 import           Dungeon.Map.Tile               (TileMap, transparent, walkable)
+import           Dungeon.Stairs                 (StairsPair (StairsPair))
 import qualified Dungeon.Turn                   as DT
 import           GHC.Generics                   (Generic)
 import           Linear.V2                      (V2 (..))
@@ -74,13 +75,13 @@ data Dungeon = Dungeon
           , _actors              :: [Actor]
           , _items               :: [Item]
           , _positionOnParentMap :: Maybe Coord
-          , _descendingStairs    :: [(Coord, Coord)]
+          , _descendingStairs    :: [StairsPair]
           , _dungeonKind         :: DungeonKind
           } deriving (Show, Ord, Eq, Generic)
 makeLenses ''Dungeon
 instance Binary Dungeon
 
-dungeon :: TileMap -> [Actor] -> [Item] -> [(Coord, Coord)] -> DungeonKind -> Dungeon
+dungeon :: TileMap -> [Actor] -> [Item] -> [StairsPair] -> DungeonKind -> Dungeon
 dungeon t e i ss d = Dungeon { _tileMap = t
                           , _visible = initFov widthAndHeight
                           , _explored = initExploredMap widthAndHeight
@@ -94,7 +95,7 @@ dungeon t e i ss d = Dungeon { _tileMap = t
 
 addDescendingStairs :: (Coord, Coord) -> (Dungeon, Dungeon) -> (Dungeon, Dungeon)
 addDescendingStairs (from, to) (parent@Dungeon { _descendingStairs = ss }, child@Dungeon { _positionOnParentMap = Nothing } ) =
-    (parent { _descendingStairs = (from, to):ss }, child { _positionOnParentMap = Just from })
+    (parent { _descendingStairs = StairsPair from to:ss }, child { _positionOnParentMap = Just from })
 addDescendingStairs _ _ = error "The child's position in the parent map is already set."
 
 completeThisTurn :: State Dungeon DT.Status

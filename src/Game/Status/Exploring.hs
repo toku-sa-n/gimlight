@@ -29,6 +29,7 @@ import qualified Dungeon                   as D
 import           Dungeon.Actor             (Actor, position)
 import           Dungeon.Actor.Actions     (Action)
 import           Dungeon.Actor.Behavior    (npcAction)
+import           Dungeon.Stairs            (StairsPair (StairsPair, downStairs))
 import           Dungeon.Turn              (Status (PlayerKilled))
 import           GHC.Generics              (Generic)
 import           Log                       (Message, MessageLog)
@@ -53,7 +54,7 @@ descendStairsAtPlayerPosition eh@ExploringHandler{ dungeons = ds } =
           player = evalState popPlayer $ getFocused ds
           newPlayer = fmap (\x -> player & position .~ x) newPosition
           zipperFocusingNextDungeon = goDownBy (\x -> x ^. positionOnParentMap == Just (player ^. position)) zipperWithoutPlayer
-          newPosition = snd <$> find (\(from, _) -> from == player ^. position) (getFocused ds ^. descendingStairs)
+          newPosition = downStairs <$> find (\(StairsPair from _) -> from == player ^. position) (getFocused ds ^. descendingStairs)
           newZipper = case (zipperFocusingNextDungeon, newPlayer) of
                           (Just g, Just p) -> Just $ modify (\d -> execState updateMap $ d & actors %~ (:) p) g
                           _ -> Nothing
