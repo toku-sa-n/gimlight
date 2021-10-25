@@ -102,7 +102,7 @@ completeThisTurn eh =
         then Nothing
         else Just handlerAfterNpcTurns { dungeons = modify (const newCurrentDungeon) $ dungeons handlerAfterNpcTurns }
     where handlerAfterNpcTurns = handleNpcTurns eh
-          (status, newCurrentDungeon) = runState D.completeThisTurn $ getFocused $ dungeons handlerAfterNpcTurns
+          (status, newCurrentDungeon) = D.completeThisTurn $ getFocused $ dungeons handlerAfterNpcTurns
 
 handleNpcTurns :: ExploringHandler -> ExploringHandler
 handleNpcTurns eh = foldl (\acc x -> handleNpcTurn (x ^. position) acc) eh $ npcs $ getCurrentDungeon eh
