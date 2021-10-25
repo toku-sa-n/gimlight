@@ -37,6 +37,7 @@ module Dungeon
     , popItemAt
     , pushItem
     , descendingStairs
+    , addAscendingAndDescendingStiars
     , addDescendingStairs
     , ascendingStairs
     ) where
@@ -100,6 +101,14 @@ dungeon t e i ss d = Dungeon { _tileMap = t
                              , _dungeonKind = d
                              }
     where widthAndHeight = snd (bounds t) + V2 1 1
+
+addAscendingAndDescendingStiars :: StairsPair -> (Dungeon, Dungeon) -> (Dungeon, Dungeon)
+addAscendingAndDescendingStiars
+    sp@(StairsPair upper lower)
+    ( parent@Dungeon { _descendingStairs = ss }
+    , child@Dungeon { _ascendingStairs = Nothing, _positionOnParentMap = Nothing }) =
+    (parent { _descendingStairs = sp: ss }, child { _ascendingStairs = Just lower, _positionOnParentMap = Just upper })
+addAscendingAndDescendingStiars _ _ = error "The child's position and the ascending stairs are already set."
 
 addDescendingStairs :: StairsPair -> (Dungeon, Dungeon) -> (Dungeon, Dungeon)
 addDescendingStairs sp@(StairsPair upper _) (parent@Dungeon { _descendingStairs = ss }, child@Dungeon { _positionOnParentMap = Nothing } ) =

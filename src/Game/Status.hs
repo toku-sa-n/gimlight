@@ -9,7 +9,8 @@ module Game.Status
 
 import           Data.Binary                    (Binary)
 import           Data.Tree                      (Tree (Node, rootLabel, subForest))
-import           Dungeon                        (addDescendingStairs)
+import           Dungeon                        (addAscendingAndDescendingStiars,
+                                                 addDescendingStairs)
 import           Dungeon.Init                   (initDungeon)
 import           Dungeon.Predefined.BatsCave    (batsDungeon)
 import           Dungeon.Predefined.GlobalMap   (globalMap)
@@ -46,7 +47,7 @@ newGameStatus = do
         gm = globalMap
 
         (gmWithBatsStairs, batsWithParentMap) =
-            addDescendingStairs (StairsPair (V2 9 6) stairsPosition) (gm, bats)
+            addAscendingAndDescendingStiars (StairsPair (V2 9 6) stairsPosition) (gm, bats)
 
         (initGm, beaeveWithParentMap) =
             addDescendingStairs (StairsPair (V2 3 16) (V2 5 5)) (gmWithBatsStairs, beaeve)
