@@ -13,6 +13,7 @@ import           Dungeon                        (addDescendingStairs)
 import           Dungeon.Init                   (initDungeon)
 import           Dungeon.Predefined.BatsCave    (batsDungeon)
 import           Dungeon.Predefined.GlobalMap   (globalMap)
+import           Dungeon.Stairs                 (StairsPair (StairsPair))
 import           GHC.Generics                   (Generic)
 import           Game.Status.Exploring          (ExploringHandler,
                                                  exploringHandler)
@@ -45,10 +46,10 @@ newGameStatus = do
         gm = globalMap
 
         (gmWithBatsStairs, batsWithParentMap) =
-            addDescendingStairs (V2 9 6, stairsPosition) (gm, bats)
+            addDescendingStairs (StairsPair (V2 9 6) stairsPosition) (gm, bats)
 
         (initGm, beaeveWithParentMap) =
-            addDescendingStairs (V2 3 16, V2 5 5) (gmWithBatsStairs, beaeve)
+            addDescendingStairs (StairsPair (V2 3 16) (V2 5 5)) (gmWithBatsStairs, beaeve)
 
         dungeonTree = Node { rootLabel = initGm
                            , subForest = [ Node { rootLabel = batsWithParentMap

@@ -93,9 +93,9 @@ dungeon t e i ss d = Dungeon { _tileMap = t
                           }
     where widthAndHeight = snd (bounds t) + V2 1 1
 
-addDescendingStairs :: (Coord, Coord) -> (Dungeon, Dungeon) -> (Dungeon, Dungeon)
-addDescendingStairs (from, to) (parent@Dungeon { _descendingStairs = ss }, child@Dungeon { _positionOnParentMap = Nothing } ) =
-    (parent { _descendingStairs = StairsPair from to:ss }, child { _positionOnParentMap = Just from })
+addDescendingStairs :: StairsPair -> (Dungeon, Dungeon) -> (Dungeon, Dungeon)
+addDescendingStairs sp@(StairsPair upper _) (parent@Dungeon { _descendingStairs = ss }, child@Dungeon { _positionOnParentMap = Nothing } ) =
+    (parent { _descendingStairs = sp:ss }, child { _positionOnParentMap = Just upper })
 addDescendingStairs _ _ = error "The child's position in the parent map is already set."
 
 completeThisTurn :: State Dungeon DT.Status
