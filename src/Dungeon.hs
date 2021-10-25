@@ -116,14 +116,13 @@ addDescendingStairs _ _ = error "The child's position in the parent map is alrea
 
 completeThisTurn :: State Dungeon DT.Status
 completeThisTurn = do
-        updateMap
         d <- get
-        return $ if isPlayerAlive d then DT.Success else DT.PlayerKilled
+        put $ updateMap d
+        d' <- get
+        return $ if isPlayerAlive d' then DT.Success else DT.PlayerKilled
 
-updateMap :: State Dungeon ()
-updateMap = do
-        d <- get
-        put $ updateFov $ updateExplored d
+updateMap :: Dungeon -> Dungeon
+updateMap = updateFov . updateExplored
 
 updateExplored :: Dungeon -> Dungeon
 updateExplored d = d & explored .~ updateExploredMap (d ^. visible) (d ^. explored)
