@@ -51,10 +51,9 @@ exploringHandler = ExploringHandler
 ascendStairsAtPlayerPosition :: ExploringHandler -> ExploringHandler
 ascendStairsAtPlayerPosition eh@ExploringHandler { dungeons = ds } =
         eh { dungeons = newZipper }
-    where ascendable = (downStairs <$> getFocused ds ^. ascendingStairs) == Just (player ^. position)
-          zipperWithoutPlayer = modify (execState popPlayer) ds
-          player = evalState popPlayer $ getFocused ds
+    where (player, zipperWithoutPlayer) = popPlayerFromZipper ds
           newPlayer = fmap (\x -> player & position .~ x) newPosition
+          ascendable = (downStairs <$> getFocused ds ^. ascendingStairs) == Just (player ^. position)
           zipperFocusingNextDungeon = goUp zipperWithoutPlayer
           newPosition = upStairs <$> getFocused ds ^. ascendingStairs
           newZipper = case (zipperFocusingNextDungeon, newPlayer, ascendable) of
@@ -65,14 +64,16 @@ ascendStairsAtPlayerPosition eh@ExploringHandler { dungeons = ds } =
 descendStairsAtPlayerPosition :: ExploringHandler -> ExploringHandler
 descendStairsAtPlayerPosition eh@ExploringHandler{ dungeons = ds } =
     eh { dungeons = fromMaybe ds newZipper }
-    where zipperWithoutPlayer = modify (execState popPlayer) ds
-          player = evalState popPlayer $ getFocused ds
+    where (player, zipperWithoutPlayer) = popPlayerFromZipper ds
           newPlayer = fmap (\x -> player & position .~ x) newPosition
           zipperFocusingNextDungeon = goDownBy (\x -> x ^. positionOnParentMap == Just (player ^. position)) zipperWithoutPlayer
           newPosition = downStairs <$> find (\(StairsPair from _) -> from == player ^. position) (getFocused ds ^. descendingStairs)
           newZipper = case (zipperFocusingNextDungeon, newPlayer) of
                           (Just g, Just p) -> Just $ modify (\d -> execState updateMap $ d & actors %~ (:) p) g
                           _ -> Nothing
+
+popPlayerFromZipper :: TreeZipper Dungeon -> (Actor, TreeZipper Dungeon)
+popPlayerFromZipper z = (evalState popPlayer $ getFocused z, modify (execState popPlayer) z)
 
 exitDungeon :: ExploringHandler -> Maybe ExploringHandler
 exitDungeon eh@ExploringHandler { dungeons = ds } =
