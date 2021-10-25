@@ -42,8 +42,8 @@ module Dungeon
     , ascendingStairs
     ) where
 
-import           Control.Lens                   (makeLenses, (%~), (&), (.=),
-                                                 (.~), (^.))
+import           Control.Lens                   (makeLenses, (%~), (&), (.~),
+                                                 (^.))
 import           Control.Monad.Trans.State      (State, runState, state)
 import           Control.Monad.Trans.State.Lazy (get, put)
 import           Coord                          (Coord)
@@ -123,22 +123,16 @@ completeThisTurn = do
 updateMap :: State Dungeon ()
 updateMap = do
         d <- get
-        put $ updateExplored d
-        updateFov
+        put $ updateFov $ updateExplored d
 
 updateExplored :: Dungeon -> Dungeon
 updateExplored d = d & explored .~ updateExploredMap (d ^. visible) (d ^. explored)
 
-updateFov :: State Dungeon ()
-updateFov = do
-    d <- get
-
-    let t = transparentMap d
-        p = getPlayerActor d
-
-    case p of
-        Just p' -> visible .= calculateFov (p' ^. A.position) t
-        Nothing -> return ()
+updateFov :: Dungeon -> Dungeon
+updateFov d =
+    case getPlayerActor d of
+        Just p  -> d & visible .~ calculateFov (p ^. A.position) (transparentMap d)
+        Nothing -> d
 
 playerPosition :: Dungeon -> Maybe Coord
 playerPosition d = (^. A.position) <$> getPlayerActor d
