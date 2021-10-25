@@ -30,7 +30,6 @@ globalMap = dungeon (stringArrayToMap
     ])
     []
     []
-    Nothing
     []
     GlobalMap
 
