@@ -32,6 +32,7 @@ beaeve player = dungeon (stringArrayToMap
     ]
     []
     (Just (V2 3 16))
+    []
     Town
 
 stringArrayToMap :: [String] -> TileMap

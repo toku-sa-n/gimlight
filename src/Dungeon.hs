@@ -36,6 +36,7 @@ module Dungeon
     , items
     , popItemAt
     , pushItem
+    , stairs
     ) where
 
 import           Control.Lens                   (makeLenses, (%~), (&), (.=),
@@ -72,18 +73,20 @@ data Dungeon = Dungeon
           , _actors              :: [Actor]
           , _items               :: [Item]
           , _positionOnParentMap :: Maybe Coord
+          , _stairs              :: [(Coord, Coord)]
           , _dungeonKind         :: DungeonKind
           } deriving (Show, Ord, Eq, Generic)
 makeLenses ''Dungeon
 instance Binary Dungeon
 
-dungeon :: TileMap -> [Actor] -> [Item] -> Maybe Coord -> DungeonKind -> Dungeon
-dungeon t e i p d = Dungeon { _tileMap = t
+dungeon :: TileMap -> [Actor] -> [Item] -> Maybe Coord -> [(Coord, Coord)] -> DungeonKind -> Dungeon
+dungeon t e i p ss d = Dungeon { _tileMap = t
                           , _visible = initFov widthAndHeight
                           , _explored = initExploredMap widthAndHeight
                           , _actors = e
                           , _items = i
                           , _positionOnParentMap = p
+                          , _stairs = ss
                           , _dungeonKind = d
                           }
     where widthAndHeight = snd (bounds t) + V2 1 1
