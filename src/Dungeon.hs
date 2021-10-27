@@ -177,10 +177,9 @@ popItemIf f d =
         Nothing -> (Nothing, d)
 
 stairsPositionCandidates :: Dungeon -> [Coord]
-stairsPositionCandidates d =
-    filter (not . isStairsOnPosition) $
-    map fst $ filter snd $ assocs $ walkableFloor d
-    where isStairsOnPosition c = isUpStairsPosition c || isDownStairsPosition c
+stairsPositionCandidates d = filter (not . isStairsOnPosition) $ walkableCoords d
+    where walkableCoords = map fst . filter snd . assocs . walkableFloor
+          isStairsOnPosition c = isUpStairsPosition c || isDownStairsPosition c
           isUpStairsPosition c = (downStairs <$> (d ^. ascendingStairs)) == Just c
           isDownStairsPosition c = c `elem` map upStairs (d ^. descendingStairs)
 
