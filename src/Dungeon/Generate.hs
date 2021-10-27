@@ -21,7 +21,6 @@ import           Dungeon.Size           (maxSize, minSize)
 import           Linear.V2              (V2 (..), _x, _y)
 import           System.Random          (Random (randomR), StdGen, random)
 
--- generateDungeon :: StdGen -> Int -> Int -> Int -> V2 Int -> (TileMap, [Actor], [Item], V2 Int, StdGen)
 generateDungeon :: StdGen -> Int -> Int -> Int -> V2 Int -> (Dungeon, Coord, StdGen)
 generateDungeon g maxRooms roomMinSize roomMaxSize mapSize = (dungeon (tiles // [(enterPosition, upstairs)]) actors items DungeonType, enterPosition, g''')
     where (tiles, actors, items, enterPosition, g''') =
