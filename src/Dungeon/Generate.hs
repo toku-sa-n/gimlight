@@ -19,7 +19,7 @@ import           Dungeon.Generate.Room  (Room (..), center,
 import           Dungeon.Item           (Item, herb)
 import qualified Dungeon.Item           as I
 import           Dungeon.Map.Tile       (TileMap, allWallTiles, downStairs,
-                                         floorTile, upstairs)
+                                         floorTile, upStairs)
 import           Dungeon.Size           (maxSize, minSize)
 import           Dungeon.Stairs         (StairsPair (StairsPair))
 import           Linear.V2              (V2 (..), _x, _y)
@@ -60,7 +60,7 @@ newStairsPosition g d = (candidates !! index, g')
           (index, g') = randomR (0, length candidates - 1) g
 
 generateDungeon :: StdGen -> Int -> Int -> Int -> V2 Int -> (Dungeon, Coord, StdGen)
-generateDungeon g maxRooms roomMinSize roomMaxSize mapSize = (dungeon (tiles // [(enterPosition, upstairs)]) actors items DungeonType, enterPosition, g''')
+generateDungeon g maxRooms roomMinSize roomMaxSize mapSize = (dungeon (tiles // [(enterPosition, upStairs)]) actors items DungeonType, enterPosition, g''')
     where (tiles, actors, items, enterPosition, g''') =
             generateDungeonAccum [] [] [] (allWallTiles (V2 width height)) (V2 0 0) g'' maxRooms roomMinSize roomMaxSize mapSize
           (width, g') = randomR (minSize, maxSize) g
