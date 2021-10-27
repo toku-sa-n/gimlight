@@ -9,6 +9,7 @@
 
 module Dungeon
     ( Dungeon
+    , changeTile
     , dungeon
     , completeThisTurn
     , popPlayer
@@ -20,6 +21,7 @@ module Dungeon
     , enemyCoords
     , mapWidthAndHeight
     , playerPosition
+    , stairsPositionCandidates
     , updateMap
     , isGlobalMap
     , isTown
@@ -43,7 +45,7 @@ module Dungeon
 
 import           Control.Lens         (makeLenses, (%~), (&), (.~), (^.))
 import           Coord                (Coord)
-import           Data.Array.Base      (IArray (bounds), assocs)
+import           Data.Array.Base      (IArray (bounds), assocs, (//))
 import           Data.Binary          (Binary)
 import           Data.Foldable        (find)
 import           Data.List            (findIndex)
@@ -56,8 +58,8 @@ import           Dungeon.Map.Bool     (BoolMap)
 import           Dungeon.Map.Explored (ExploredMap, initExploredMap,
                                        updateExploredMap)
 import           Dungeon.Map.Fov      (Fov, calculateFov, initFov)
-import           Dungeon.Map.Tile     (TileMap, transparent, walkable)
-import           Dungeon.Stairs       (StairsPair (StairsPair))
+import           Dungeon.Map.Tile     (Tile, TileMap, transparent, walkable)
+import           Dungeon.Stairs       (StairsPair (StairsPair, downStairs, upStairs))
 import qualified Dungeon.Turn         as DT
 import           GHC.Generics         (Generic)
 import           Linear.V2            (V2 (..))
@@ -83,6 +85,10 @@ data Dungeon = Dungeon
           } deriving (Show, Ord, Eq, Generic)
 makeLenses ''Dungeon
 instance Binary Dungeon
+
+changeTile :: Coord -> Tile -> Dungeon -> Dungeon
+changeTile c t d@Dungeon { _tileMap = tm } =
+    d { _tileMap = tm // [(c, t)] }
 
 dungeon :: TileMap -> [Actor] -> [Item] -> DungeonKind -> Dungeon
 dungeon t e i d = Dungeon { _tileMap = t
@@ -170,6 +176,13 @@ popItemIf f d =
                       newItems = take x xs ++ drop (x + 1) xs
                   in (Just item, d & items .~ newItems)
         Nothing -> (Nothing, d)
+
+stairsPositionCandidates :: Dungeon -> [Coord]
+stairsPositionCandidates d =
+    filter (\x -> not (isUpStairsPosition x) && not (isDownStairsPosition x)) $
+    map fst $ filter snd $ assocs $ walkableFloor d
+    where isUpStairsPosition c = (downStairs <$> (d ^. ascendingStairs)) == Just c
+          isDownStairsPosition c = c `elem` map upStairs (d ^. descendingStairs)
 
 walkableFloor :: Dungeon -> BoolMap
 walkableFloor d = fmap (^. walkable) (d ^. tileMap)

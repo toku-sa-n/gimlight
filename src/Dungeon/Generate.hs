@@ -1,12 +1,15 @@
 module Dungeon.Generate
-    ( generateDungeon
+    ( generateMultipleFloorsDungeon
     ) where
 
 import           Control.Lens           ((^.))
 import           Coord                  (Coord)
 import           Data.Array             (bounds, (//))
+import           Data.Tree              (Tree (Node, rootLabel, subForest))
 import           Dungeon                (Dungeon, DungeonKind (DungeonType),
-                                         dungeon)
+                                         addAscendingAndDescendingStiars,
+                                         changeTile, dungeon,
+                                         stairsPositionCandidates)
 import           Dungeon.Actor          (Actor)
 import qualified Dungeon.Actor          as A
 import           Dungeon.Actor.Monsters (orc, troll)
@@ -15,11 +18,40 @@ import           Dungeon.Generate.Room  (Room (..), center,
                                          roomFromWidthHeight, roomOverlaps)
 import           Dungeon.Item           (Item, herb)
 import qualified Dungeon.Item           as I
-import           Dungeon.Map.Tile       (TileMap, allWallTiles, floorTile,
-                                         upstairs)
+import           Dungeon.Map.Tile       (TileMap, allWallTiles, downStairs,
+                                         floorTile, upstairs)
 import           Dungeon.Size           (maxSize, minSize)
+import           Dungeon.Stairs         (StairsPair (StairsPair))
 import           Linear.V2              (V2 (..), _x, _y)
 import           System.Random          (Random (randomR), StdGen, random)
+import           TreeZipper             (TreeZipper, appendNode, getFocused,
+                                         goDownBy, goToRoot, modify, treeZipper)
+
+generateMultipleFloorsDungeon :: StdGen -> Int -> Int -> Int -> Int -> V2 Int -> (TreeZipper Dungeon, Coord, StdGen)
+generateMultipleFloorsDungeon g floorsNum maxRooms roomMinSize roomMaxSize mapSize =
+    (goToRoot dungeonZipper, ascendingStairsInFirstFloor, g'')
+    where (firstFloor, ascendingStairsInFirstFloor, g') = generateDungeon g maxRooms roomMinSize roomMaxSize mapSize
+          treeWithFirstFloor = Node { rootLabel = firstFloor
+                                    , subForest = []
+                                    }
+          zipperWithFirstFloor = treeZipper treeWithFirstFloor
+          (dungeonZipper, g'') = foldl (\acc _ -> uncurry generateDungeonAndAppend acc maxRooms roomMinSize roomMaxSize mapSize) (zipperWithFirstFloor, g') [1 .. floorsNum - 1]
+
+generateDungeonAndAppend :: TreeZipper Dungeon -> StdGen -> Int -> Int -> Int -> V2 Int -> (TreeZipper Dungeon, StdGen)
+generateDungeonAndAppend zipper g maxRooms roomMinSize roomMaxSize mapSize =
+    (zipperFocusingNext, g')
+    where (generatedDungeon, lowerStairsPosition, g') = generateDungeon g maxRooms roomMinSize roomMaxSize mapSize
+
+          upperStairsPosition = head $ stairsPositionCandidates $ getFocused zipper
+
+          (newUpperDungeon, newLowerDungeon) =
+            addAscendingAndDescendingStiars (StairsPair upperStairsPosition lowerStairsPosition) (getFocused zipper, generatedDungeon)
+
+          newZipper = appendNode newLowerDungeon $ modify (changeTile upperStairsPosition downStairs) $  modify (const newUpperDungeon) zipper
+
+          zipperFocusingNext = case goDownBy (== newLowerDungeon) newZipper of
+                                   Just x  -> x
+                                   Nothing -> error "unreachable."
 
 generateDungeon :: StdGen -> Int -> Int -> Int -> V2 Int -> (Dungeon, Coord, StdGen)
 generateDungeon g maxRooms roomMinSize roomMaxSize mapSize = (dungeon (tiles // [(enterPosition, upstairs)]) actors items DungeonType, enterPosition, g''')

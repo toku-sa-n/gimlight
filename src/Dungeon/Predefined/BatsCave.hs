@@ -4,10 +4,11 @@ module Dungeon.Predefined.BatsCave
 
 import           Coord            (Coord)
 import           Dungeon          (Dungeon)
-import           Dungeon.Generate (generateDungeon)
+import           Dungeon.Generate (generateMultipleFloorsDungeon)
 import           Linear.V2        (V2 (V2))
 import           System.Random    (StdGen)
+import           TreeZipper       (TreeZipper)
 
-batsDungeon :: StdGen -> (Coord, Dungeon)
+batsDungeon :: StdGen -> (Coord, TreeZipper Dungeon)
 batsDungeon g = (pos, d)
-    where (d, pos, _) = generateDungeon g 10 5 8 (V2 50 50)
+    where (d, pos, _) = generateMultipleFloorsDungeon g 3 10 5 8 (V2 50 50)

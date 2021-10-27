@@ -4,12 +4,14 @@
 module TreeZipper
     ( TreeZipper
     , treeZipper
+    , getTree
     , getFocused
     , modify
     , goToRoot
     , goUp
     , goDownBy
     , appendNode
+    , appendTree
     ) where
 
 import           Data.Binary   (Binary)
@@ -25,6 +27,9 @@ type TreeZipper a = (Tree a, [TreeCrumb a])
 
 treeZipper :: Tree a -> TreeZipper a
 treeZipper t = (t, [])
+
+getTree :: TreeZipper a -> Tree a
+getTree z = fst $ goToRoot z
 
 getFocused :: TreeZipper a -> a
 getFocused (t, _) = rootLabel t
@@ -50,3 +55,7 @@ appendNode n (z@Node { subForest = ts }, bs) =
     where newNode = Node { rootLabel = n
                          , subForest = []
                          }
+
+appendTree :: Tree a -> TreeZipper a -> TreeZipper a
+appendTree tree (z@Node { subForest = ts }, bs) =
+    (z { subForest = tree:ts }, bs)

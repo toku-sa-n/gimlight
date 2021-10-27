@@ -26,7 +26,9 @@ import           Localization                   (multilingualText)
 import qualified Log                            as L
 import           Scene                          (gameStartScene)
 import           System.Random                  (getStdGen)
-import           TreeZipper                     (goDownBy, treeZipper)
+import           TreeZipper                     (appendTree, getFocused,
+                                                 getTree, goDownBy, modify,
+                                                 treeZipper)
 
 data GameStatus = Exploring ExploringHandler
                 | Talking TalkingHandler
@@ -47,21 +49,20 @@ newGameStatus = do
         gm = globalMap
 
         (gmWithBatsStairs, batsWithParentMap) =
-            addAscendingAndDescendingStiars (StairsPair (V2 9 6) stairsPosition) (gm, bats)
+            addAscendingAndDescendingStiars (StairsPair (V2 9 6) stairsPosition) (gm, getFocused bats)
+
+        batsTreeWithParentMap = modify (const batsWithParentMap) bats
 
         (initGm, beaeveWithParentMap) =
             addDescendingStairs (StairsPair (V2 3 16) (V2 5 5)) (gmWithBatsStairs, beaeve)
 
         dungeonTree = Node { rootLabel = initGm
-                           , subForest = [ Node { rootLabel = batsWithParentMap
-                                                , subForest = []
-                                                }
-                                         , Node { rootLabel = beaeveWithParentMap
+                           , subForest = [ Node { rootLabel = beaeveWithParentMap
                                                 , subForest = []
                                                 }
                                          ]
                            }
-        zipper = treeZipper dungeonTree
+        zipper = appendTree (getTree batsTreeWithParentMap) $ treeZipper dungeonTree
         initZipper = case goDownBy (== beaeveWithParentMap) zipper of
                          Just x  -> x
                          Nothing -> error "Unreachable."
