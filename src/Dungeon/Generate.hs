@@ -35,7 +35,8 @@ generateMultipleFloorsDungeon g floorsNum maxRooms roomMinSize roomMaxSize mapSi
                                     , subForest = []
                                     }
           zipperWithFirstFloor = treeZipper treeWithFirstFloor
-          (dungeonZipper, g'') = foldl (\acc _ -> uncurry generateDungeonAndAppend acc maxRooms roomMinSize roomMaxSize mapSize) (zipperWithFirstFloor, g') [1 .. floorsNum - 1]
+          (dungeonZipper, g'') =
+            foldl (\acc _ -> uncurry generateDungeonAndAppend acc maxRooms roomMinSize roomMaxSize mapSize) (zipperWithFirstFloor, g') [1 .. floorsNum - 1]
 
 generateDungeonAndAppend :: TreeZipper Dungeon -> StdGen -> Int -> Int -> Int -> V2 Int -> (TreeZipper Dungeon, StdGen)
 generateDungeonAndAppend zipper g maxRooms roomMinSize roomMaxSize mapSize =
