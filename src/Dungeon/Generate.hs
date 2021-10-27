@@ -25,11 +25,12 @@ import           Dungeon.Stairs         (StairsPair (StairsPair))
 import           Linear.V2              (V2 (..), _x, _y)
 import           System.Random          (Random (randomR), StdGen, random)
 import           TreeZipper             (TreeZipper, appendNode, getFocused,
-                                         goDownBy, goToRoot, modify, treeZipper)
+                                         getTree, goDownBy, goToRoot, modify,
+                                         treeZipper)
 
-generateMultipleFloorsDungeon :: StdGen -> Int -> Int -> Int -> Int -> V2 Int -> (TreeZipper Dungeon, Coord, StdGen)
+generateMultipleFloorsDungeon :: StdGen -> Int -> Int -> Int -> Int -> V2 Int -> (Tree Dungeon, Coord, StdGen)
 generateMultipleFloorsDungeon g floorsNum maxRooms roomMinSize roomMaxSize mapSize =
-    (goToRoot dungeonZipper, ascendingStairsInFirstFloor, g'')
+    (getTree $ goToRoot dungeonZipper, ascendingStairsInFirstFloor, g'')
     where (firstFloor, ascendingStairsInFirstFloor, g') = generateDungeon g maxRooms roomMinSize roomMaxSize mapSize
           treeWithFirstFloor = Node { rootLabel = firstFloor
                                     , subForest = []
