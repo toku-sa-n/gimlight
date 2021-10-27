@@ -40,10 +40,10 @@ generateMultipleFloorsDungeon g floorsNum maxRooms roomMinSize roomMaxSize mapSi
 
 generateDungeonAndAppend :: TreeZipper Dungeon -> StdGen -> Int -> Int -> Int -> V2 Int -> (TreeZipper Dungeon, StdGen)
 generateDungeonAndAppend zipper g maxRooms roomMinSize roomMaxSize mapSize =
-    (zipperFocusingNext, g')
+    (zipperFocusingNext, g'')
     where (generatedDungeon, lowerStairsPosition, g') = generateDungeon g maxRooms roomMinSize roomMaxSize mapSize
 
-          upperStairsPosition = head $ stairsPositionCandidates $ getFocused zipper
+          (upperStairsPosition, g'') = newStairsPosition g' $ getFocused zipper
 
           (newUpperDungeon, newLowerDungeon) =
             addAscendingAndDescendingStiars (StairsPair upperStairsPosition lowerStairsPosition) (getFocused zipper, generatedDungeon)
@@ -53,6 +53,11 @@ generateDungeonAndAppend zipper g maxRooms roomMinSize roomMaxSize mapSize =
           zipperFocusingNext = case goDownBy (== newLowerDungeon) newZipper of
                                    Just x  -> x
                                    Nothing -> error "unreachable."
+
+newStairsPosition :: StdGen -> Dungeon -> (Coord, StdGen)
+newStairsPosition g d = (candidates !! index, g')
+    where candidates = stairsPositionCandidates d
+          (index, g') = randomR (0, length candidates - 1) g
 
 generateDungeon :: StdGen -> Int -> Int -> Int -> V2 Int -> (Dungeon, Coord, StdGen)
 generateDungeon g maxRooms roomMinSize roomMaxSize mapSize = (dungeon (tiles // [(enterPosition, upstairs)]) actors items DungeonType, enterPosition, g''')
