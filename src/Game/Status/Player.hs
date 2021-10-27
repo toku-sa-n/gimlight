@@ -11,7 +11,7 @@ import           Data.Bifunctor                 (Bifunctor (second))
 import           Dungeon                        (isTown)
 import           Dungeon.Actor                  (Actor, isMonster, talkMessage)
 import qualified Dungeon.Actor                  as A
-import           Dungeon.Actor.Actions          (consumeAction)
+import           Dungeon.Actor.Actions.Consume  (consumeAction)
 import           Dungeon.Actor.Actions.Melee    (meleeAction)
 import           Dungeon.Actor.Actions.Move     (moveAction)
 import           Dungeon.Actor.Actions.PickUp   (pickUpAction)
