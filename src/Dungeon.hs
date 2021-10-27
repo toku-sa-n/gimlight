@@ -100,8 +100,7 @@ dungeon t e i d = Dungeon { _tileMap = t
     where widthAndHeight = snd (bounds t) + V2 1 1
 
 changeTile :: Coord -> Tile -> Dungeon -> Dungeon
-changeTile c t d@Dungeon { _tileMap = tm } =
-    d { _tileMap = tm // [(c, t)] }
+changeTile c t d = d & tileMap %~ (\x -> x // [(c, t)])
 
 addAscendingAndDescendingStiars :: StairsPair -> (Dungeon, Dungeon) -> (Dungeon, Dungeon)
 addAscendingAndDescendingStiars
