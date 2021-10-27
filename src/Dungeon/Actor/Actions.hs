@@ -1,8 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module Dungeon.Actor.Actions
-    ( waitAction
-    , pickUpAction
+    ( pickUpAction
     , consumeAction
     , Action
     ) where
@@ -20,9 +19,6 @@ import           Localization            (multilingualText)
 import           Log                     (MessageLog)
 
 type Action = Actor -> Dungeon -> ((MessageLog, Bool), Dungeon)
-
-waitAction :: Action
-waitAction e d = (([], True), pushActor e d)
 
 pickUpAction :: Action
 pickUpAction e d =
