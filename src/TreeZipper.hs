@@ -4,7 +4,7 @@
 module TreeZipper
     ( TreeZipper
     , treeZipper
-    , getTree
+    , goToRootAndGetTree
     , getFocused
     , modify
     , goToRoot
@@ -28,8 +28,8 @@ type TreeZipper a = (Tree a, [TreeCrumb a])
 treeZipper :: Tree a -> TreeZipper a
 treeZipper t = (t, [])
 
-getTree :: TreeZipper a -> Tree a
-getTree z = fst $ goToRoot z
+goToRootAndGetTree :: TreeZipper a -> Tree a
+goToRootAndGetTree z = fst $ goToRoot z
 
 getFocused :: TreeZipper a -> a
 getFocused (t, _) = rootLabel t
