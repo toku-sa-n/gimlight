@@ -6,6 +6,7 @@ module TreeZipper
     , treeZipper
     , getFocused
     , modify
+    , goToRoot
     , goUp
     , goDownBy
     , appendNode
@@ -30,6 +31,9 @@ getFocused (t, _) = rootLabel t
 
 modify :: (a -> a) -> TreeZipper a -> TreeZipper a
 modify f (n@Node { rootLabel = r }, bs) = (n { rootLabel = f r }, bs)
+
+goToRoot :: TreeZipper a -> TreeZipper a
+goToRoot z = maybe z goToRoot (goUp z)
 
 goUp :: TreeZipper a -> Maybe (TreeZipper a)
 goUp (Node { rootLabel = r, subForest = fs }, TreeCrumb newRootLabel newSubForest:bs) =
