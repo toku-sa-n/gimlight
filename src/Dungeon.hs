@@ -9,8 +9,8 @@
 
 module Dungeon
     ( Dungeon
-    , changeTile
     , dungeon
+    , changeTile
     , completeThisTurn
     , popPlayer
     , popActorAt
