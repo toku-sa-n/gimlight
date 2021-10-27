@@ -1,39 +1,19 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module Dungeon.Actor.Actions
-    ( pickUpAction
-    , consumeAction
+    ( consumeAction
     , Action
     ) where
 
-import           Control.Lens            ((&), (.~), (^.))
-import           Data.Text               (append, pack)
-import           Dungeon                 (Dungeon, popItemAt, pushActor,
-                                          pushItem)
-import           Dungeon.Actor           (Actor, healHp, inventoryItems, name,
-                                          position, removeNthItem)
-import           Dungeon.Actor.Inventory (addItem)
-import           Dungeon.Item            (healAmount)
-import qualified Dungeon.Item            as I
-import           Localization            (multilingualText)
-import           Log                     (MessageLog)
+import           Control.Lens  ((^.))
+import           Data.Text     (append, pack)
+import           Dungeon       (Dungeon, pushActor)
+import           Dungeon.Actor (Actor, healHp, name, removeNthItem)
+import           Dungeon.Item  (healAmount)
+import           Localization  (multilingualText)
+import           Log           (MessageLog)
 
 type Action = Actor -> Dungeon -> ((MessageLog, Bool), Dungeon)
-
-pickUpAction :: Action
-pickUpAction e d =
-    case item of
-        Just x ->
-            case addItem x (e ^. inventoryItems) of
-                Just xs ->
-                    (
-                        ([multilingualText "You got " "アイテムを入手しました：" <> (x ^. I.name)], True),
-                        pushActor (e & inventoryItems .~ xs) dungeonAfterPickingUp
-                    )
-                Nothing ->
-                    (([multilingualText "Your bag is full." "バッグは一杯だ．"], False), pushItem x $ pushActor e dungeonAfterPickingUp)
-        Nothing -> (([multilingualText "You got nothing." "あなたは無を手に入れた．"], False), pushActor e dungeonAfterPickingUp)
-    where (item, dungeonAfterPickingUp) = popItemAt (e ^. position) d
 
 consumeAction :: Int -> Action
 consumeAction n e d =

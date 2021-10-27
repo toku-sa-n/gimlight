@@ -17,6 +17,7 @@ executable roguelike
                       , Dungeon.Actor.Actions
                       , Dungeon.Actor.Actions.Melee
                       , Dungeon.Actor.Actions.Move
+                      , Dungeon.Actor.Actions.PickUp
                       , Dungeon.Actor.Actions.Wait
                       , Dungeon.Actor.Behavior
                       , Dungeon.Actor.Friendly
