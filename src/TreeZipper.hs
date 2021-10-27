@@ -8,6 +8,7 @@ module TreeZipper
     , modify
     , goUp
     , goDownBy
+    , appendNode
     ) where
 
 import           Data.Binary   (Binary)
@@ -38,3 +39,10 @@ goUp (_, []) = Nothing
 goDownBy :: (a -> Bool) -> TreeZipper a -> Maybe (TreeZipper a)
 goDownBy f (Node { rootLabel = r, subForest = ts }, bs) =
     (, TreeCrumb r ts:bs) <$> find (f . rootLabel)  ts
+
+appendNode :: a -> TreeZipper a -> TreeZipper a
+appendNode n (z@Node { subForest = ts }, bs) =
+    (z { subForest = newNode:ts }, bs)
+    where newNode = Node { rootLabel = n
+                         , subForest = []
+                         }
