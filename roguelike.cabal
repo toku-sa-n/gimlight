@@ -15,6 +15,7 @@ executable roguelike
                       , Dungeon
                       , Dungeon.Actor
                       , Dungeon.Actor.Actions
+                      , Dungeon.Actor.Actions.Melee
                       , Dungeon.Actor.Behavior
                       , Dungeon.Actor.Friendly
                       , Dungeon.Actor.Inventory

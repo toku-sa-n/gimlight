@@ -4,16 +4,17 @@ module Dungeon.Actor.Behavior
     ( npcAction
     ) where
 
-import           Control.Lens          ((&), (.~), (^.))
-import           Data.Bifunctor        (Bifunctor (first))
-import           Data.Maybe            (fromMaybe)
-import           Dungeon               (Dungeon, getPlayerActor)
-import           Dungeon.Actor         (Actor, pathToDestination, position)
-import           Dungeon.Actor.Actions (Action, meleeAction, moveAction,
-                                        waitAction)
-import           Dungeon.PathFinder    (getPathTo)
-import           Linear.V2             (V2 (V2))
-import           Log                   (MessageLog)
+import           Control.Lens                ((&), (.~), (^.))
+import           Data.Bifunctor              (Bifunctor (first))
+import           Data.Maybe                  (fromMaybe)
+import           Dungeon                     (Dungeon, getPlayerActor)
+import           Dungeon.Actor               (Actor, pathToDestination,
+                                              position)
+import           Dungeon.Actor.Actions       (Action, moveAction, waitAction)
+import           Dungeon.Actor.Actions.Melee (meleeAction)
+import           Dungeon.PathFinder          (getPathTo)
+import           Linear.V2                   (V2 (V2))
+import           Log                         (MessageLog)
 
 npcAction :: Actor -> Dungeon -> (MessageLog, Dungeon)
 npcAction e d = first fst result
