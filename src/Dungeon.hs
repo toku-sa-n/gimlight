@@ -20,7 +20,6 @@ module Dungeon
     , enemyCoords
     , mapWidthAndHeight
     , playerPosition
-    , initialPlayerPositionCandidates
     , updateMap
     , isGlobalMap
     , isTown
@@ -171,10 +170,6 @@ popItemIf f d =
                       newItems = take x xs ++ drop (x + 1) xs
                   in (Just item, d & items .~ newItems)
         Nothing -> (Nothing, d)
-
-initialPlayerPositionCandidates :: Dungeon -> [Coord]
-initialPlayerPositionCandidates d = filter (\x -> x `notElem` map (^. A.position) (d ^. actors)) $
-    map fst $ filter snd $ assocs $ walkableFloor d
 
 walkableFloor :: Dungeon -> BoolMap
 walkableFloor d = fmap (^. walkable) (d ^. tileMap)
