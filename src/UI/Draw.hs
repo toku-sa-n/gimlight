@@ -54,6 +54,7 @@ import qualified Monomer.Graphics.Lens          as L
 import           Scene                          (backgroundImage, elements,
                                                  text)
 import           Talking                        (TalkWith, message, person)
+import           TextShow                       (TextShow (showt))
 import           UI.Types                       (AppEvent (AppKeyboardInput))
 
 type GameWidgetEnv = WidgetEnv Game AppEvent
@@ -223,8 +224,8 @@ statusGrid :: Game -> GameWidgetNode
 statusGrid Game { status = s, config = c } = vstack $ maybe []
     (\x -> [ label "Player"
            , label $ "HP: " `append` pack (show $ getHp x) `append` " / " `append` pack (show $ getMaxHp x)
-           , label $ atk `append` pack (show $ getPower x)
-           , label $ def `append` pack (show $ getDefence x)
+           , label $ atk `append` showt (getPower x)
+           , label $ def `append` showt (getDefence x)
            ]) $ player s
     where atk = getLocalizedText c $ multilingualText "ATK: " "攻撃: "
           def = getLocalizedText c $ multilingualText "DEF: " "防御: "
