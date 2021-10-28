@@ -7,6 +7,7 @@ module UI.Draw
     , tileColumns
     , tileRows
     ) where
+
 import           Control.Lens                   ((&), (.~), (^.))
 import           Control.Monad                  (guard)
 import           Coord                          (Coord)
