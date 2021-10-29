@@ -44,21 +44,18 @@ import           Monomer                        (CmbAlignLeft (alignLeft),
                                                  CmbStyleBasic (styleBasic),
                                                  CmbTextColor (textColor),
                                                  CmbTextSize (textSize),
-                                                 CmbWidth (width), WidgetEnv,
-                                                 WidgetNode, black, box_,
-                                                 filler, gray, hgrid, hstack,
-                                                 image, keystroke, label,
-                                                 label_, red, vgrid, vstack,
-                                                 zstack)
+                                                 CmbWidth (width), WidgetNode,
+                                                 black, box_, filler, gray,
+                                                 hgrid, hstack, image,
+                                                 keystroke, label, label_, red,
+                                                 vgrid, vstack, zstack)
 import qualified Monomer.Graphics.Lens          as L
 import           Scene                          (backgroundImage, elements,
                                                  text)
 import           Talking                        (TalkWith, message, person)
 import           TextShow                       (TextShow (showt))
-import           UI.Types                       (AppEvent (AppKeyboardInput))
-
-type GameWidgetEnv = WidgetEnv Game AppEvent
-type GameWidgetNode = WidgetNode Game AppEvent
+import           UI.Types                       (AppEvent (AppKeyboardInput),
+                                                 GameWidgetEnv, GameWidgetNode)
 
 drawUI :: GameWidgetEnv -> Game -> GameWidgetNode
 drawUI wenv gs@Game { status = s } =
