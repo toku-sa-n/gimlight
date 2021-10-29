@@ -58,6 +58,7 @@ executable roguelike
                       , TreeZipper
                       , UI.Draw
                       , UI.Draw.KeyEvent
+                      , UI.Draw.Config
                       , UI.Event
                       , UI.Types
 

@@ -2,10 +2,6 @@
 
 module UI.Draw
     ( drawUI
-    , windowWidth
-    , windowHeight
-    , tileColumns
-    , tileRows
     ) where
 
 import           Control.Lens                   ((&), (.~), (^.))
@@ -53,6 +49,9 @@ import           Scene                          (backgroundImage, elements,
                                                  text)
 import           Talking                        (TalkWith, message, person)
 import           TextShow                       (TextShow (showt))
+import           UI.Draw.Config                 (logRows, tileColumns,
+                                                 tileHeight, tileRows,
+                                                 tileWidth, windowWidth)
 import           UI.Draw.KeyEvent               (withKeyEvents)
 import           UI.Types                       (GameWidgetEnv, GameWidgetNode)
 
@@ -240,18 +239,3 @@ bottomLeftCoord d = V2 x y
 mapDrawingWidth, mapDrawingHeight :: Int
 mapDrawingWidth = tileWidth * tileColumns
 mapDrawingHeight = tileHeight * tileRows
-
-tileWidth, tileHeight :: Int
-tileWidth = 48
-tileHeight = 48
-
-tileColumns, tileRows :: Int
-tileColumns = 23
-tileRows = 13
-
-logRows :: Int
-logRows = 5
-
-windowWidth, windowHeight :: Int
-windowWidth = 1280
-windowHeight = 720
