@@ -42,8 +42,8 @@ import           UI.Types              (GameWidgetNode)
 
 drawExploring :: ExploringHandler -> Config -> GameWidgetNode
 drawExploring eh c = withKeyEvents $ vstack [ statusAndMapGrid
-                                          , messageLogArea eh c
-                                          ]
+                                            , messageLogArea eh c
+                                            ]
     where statusAndMapGrid = hstack [ mapGrid eh
                                     , statusGrid eh c `styleBasic` [width $ fromIntegral $ windowWidth - tileWidth * tileColumns]
                                     ]
