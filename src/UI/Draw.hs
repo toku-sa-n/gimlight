@@ -18,7 +18,7 @@ drawUI _ gs@Game { status = s, config = c } =
     case s of
         Exploring eh         -> drawExploring eh c
         Talking th           -> drawTalking th c
-        HandlingScene _      -> drawScene gs
+        HandlingScene hs     -> drawScene hs c
         SelectingItemToUse _ -> drawSelectingItem gs
         Title                -> drawTitle gs
         GameOver             -> drawGameOver
