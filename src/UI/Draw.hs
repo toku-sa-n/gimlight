@@ -19,6 +19,7 @@ import           UI.Draw.Exploring              (drawExploring)
 import           UI.Draw.KeyEvent               (withKeyEvents)
 import           UI.Draw.Scene                  (drawScene)
 import           UI.Draw.Talking                (drawTalking)
+import           UI.Draw.Title                  (drawTitle)
 import           UI.Types                       (GameWidgetEnv, GameWidgetNode)
 
 drawUI :: GameWidgetEnv -> Game -> GameWidgetNode
@@ -48,16 +49,6 @@ drawSelectingLanguage = withKeyEvents $ vstack [ label "Choose your language. / 
                                                , label "[e] English"
                                                , label "[j] 日本語"
                                                ]
-
-drawTitle :: Game -> GameWidgetNode
-drawTitle Game { config = c } = withKeyEvents $ vstack [ label "Gimlight" `styleBasic` [textSize 36]
-                                     , label $ "[n] " <> getLocalizedText c newGame
-                                     , label $ "[l] " <> getLocalizedText c loadGame
-                                     , label $ "[q] " <> getLocalizedText c quitGame
-                                     ]
-    where newGame = multilingualText "New game" "新しく始める"
-          loadGame = multilingualText " Load the savedata" "セーブデータを読み込む"
-          quitGame = multilingualText "Quit" "終了する"
 
 drawGameOver :: GameWidgetNode
 drawGameOver = vstack [label "Game Over" `styleBasic` [textSize 72]]
