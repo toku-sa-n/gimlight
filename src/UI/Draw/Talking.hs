@@ -7,7 +7,7 @@ module UI.Draw.Talking
 import           Control.Lens        ((&), (.~), (^.))
 import           Dungeon.Actor       (standingImagePath)
 import           Game                (Game (Game, config, status))
-import           Game.Status         (GameStatus (Exploring, Talking))
+import           Game.Status         (GameStatus (Talking))
 import           Game.Status.Talking (destructHandler)
 import           Localization        (getLocalizedText)
 import           Monomer             (CmbBgColor (bgColor),
@@ -23,8 +23,8 @@ import           UI.Draw.KeyEvent    (withKeyEvents)
 import           UI.Types            (GameWidgetNode)
 
 drawTalking ::  Game -> GameWidgetNode
-drawTalking e@Game { status = Talking th } =
-    withKeyEvents $ zstack [ drawExploring (e { status = Exploring afterGameStatus }) `styleBasic` [bgColor $ gray & L.a .~ 0.5]
+drawTalking e@Game { status = Talking th, config = c } =
+    withKeyEvents $ zstack [ drawExploring afterGameStatus c `styleBasic` [bgColor $ gray & L.a .~ 0.5]
                            , filler `styleBasic` [bgColor $ black & L.a .~ 0.5]
                            , talkingWindow e with
                            ]

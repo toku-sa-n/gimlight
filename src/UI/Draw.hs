@@ -2,7 +2,7 @@ module UI.Draw
     ( drawUI
     ) where
 
-import           Game                    (Game (Game, status))
+import           Game                    (Game (Game, config, status))
 import           Game.Status             (GameStatus (Exploring, GameOver, HandlingScene, SelectingItemToUse, SelectingLocale, Talking, Title))
 import           UI.Draw.Exploring       (drawExploring)
 import           UI.Draw.GameOver        (drawGameOver)
@@ -14,9 +14,9 @@ import           UI.Draw.Title           (drawTitle)
 import           UI.Types                (GameWidgetEnv, GameWidgetNode)
 
 drawUI :: GameWidgetEnv -> Game -> GameWidgetNode
-drawUI _ gs@Game { status = s } =
+drawUI _ gs@Game { status = s, config = c } =
     case s of
-        Exploring _          -> drawExploring gs
+        Exploring eh         -> drawExploring eh c
         Talking _            -> drawTalking gs
         HandlingScene _      -> drawScene gs
         SelectingItemToUse _ -> drawSelectingItem gs
