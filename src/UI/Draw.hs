@@ -1,5 +1,3 @@
-{-# LANGUAGE OverloadedStrings #-}
-
 module UI.Draw
     ( drawUI
     ) where
