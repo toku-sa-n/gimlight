@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module Localization.Texts.Item
+module Localization.Texts.Items
     ( herb
     ) where
 

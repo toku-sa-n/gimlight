@@ -53,7 +53,7 @@ executable roguelike
                       , Localization
                       , Localization.Texts
                       , Localization.Texts.Actors
-                      , Localization.Texts.Item
+                      , Localization.Texts.Items
                       , Localization.Texts.Scene
                       , Localization.Texts.SelectingItem
                       , Localization.Texts.Status

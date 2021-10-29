@@ -11,13 +11,13 @@ module Dungeon.Item
     , healAmount
     ) where
 
-import           Control.Lens            (makeLenses)
-import           Coord                   (Coord)
-import           Data.Binary             (Binary)
-import           Data.Text               (Text)
-import           GHC.Generics            (Generic)
-import           Localization            (MultilingualText)
-import qualified Localization.Texts.Item as T
+import           Control.Lens       (makeLenses)
+import           Coord              (Coord)
+import           Data.Binary        (Binary)
+import           Data.Text          (Text)
+import           GHC.Generics       (Generic)
+import           Localization       (MultilingualText)
+import qualified Localization.Texts as T
 
 data Item = Item
           { _name          :: MultilingualText
