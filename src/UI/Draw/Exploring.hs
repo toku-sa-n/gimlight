@@ -63,11 +63,11 @@ statusGrid :: ExploringHandler -> Config -> GameWidgetNode
 statusGrid eh c = vstack $ maybe []
     (\x -> [ label "Player"
            , label $ "HP: " <> showt (getHp x) <> " / " <> showt (getMaxHp x)
-           , label $ atk <> showt (getPower x)
-           , label $ def <> showt (getDefence x)
+           , label $ atk <> ": " <> showt (getPower x)
+           , label $ def <> ": " <> showt (getDefence x)
            ]) $ getPlayerActor eh
     where atk = getLocalizedText c T.attack
-          def = getLocalizedText c T.attack
+          def = getLocalizedText c T.defence
 
 mapTiles :: ExploringHandler -> GameWidgetNode
 mapTiles eh = box_ [alignLeft] $ vgrid rows `styleBasic` styles
