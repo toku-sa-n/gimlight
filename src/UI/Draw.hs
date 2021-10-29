@@ -17,6 +17,7 @@ import           UI.Draw.Exploring              (drawExploring)
 import           UI.Draw.GameOver               (drawGameOver)
 import           UI.Draw.KeyEvent               (withKeyEvents)
 import           UI.Draw.Scene                  (drawScene)
+import           UI.Draw.SelectingLocale        (drawSelectingLocale)
 import           UI.Draw.Talking                (drawTalking)
 import           UI.Draw.Title                  (drawTitle)
 import           UI.Types                       (GameWidgetEnv, GameWidgetNode)
@@ -30,7 +31,7 @@ drawUI _ gs@Game { status = s } =
         SelectingItemToUse _ -> drawSelectingItem gs
         Title                -> drawTitle gs
         GameOver             -> drawGameOver
-        SelectingLocale      -> drawSelectingLanguage
+        SelectingLocale      -> drawSelectingLocale
 
 drawSelectingItem :: Game -> GameWidgetNode
 drawSelectingItem Game { status = SelectingItemToUse sh, config = c } = withKeyEvents $ vstack labels
@@ -42,9 +43,3 @@ drawSelectingItem Game { status = SelectingItemToUse sh, config = c } = withKeyE
           itemNames = map (^. I.name) $ getItems sh
           topLabel = getLocalizedText c $ multilingualText "Which Item do you use?" "どのアイテムを使う？"
 drawSelectingItem _ = error "We are not selecting an item."
-
-drawSelectingLanguage :: GameWidgetNode
-drawSelectingLanguage = withKeyEvents $ vstack [ label "Choose your language. / 言語を選択してください．"
-                                               , label "[e] English"
-                                               , label "[j] 日本語"
-                                               ]
