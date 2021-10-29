@@ -7,6 +7,10 @@ module Localization.Texts.Actions
     , bagIsFull
     , whatToUse
     , healed
+    , damagedMessage
+    , deathMessage
+    , attackMessage
+    , noDamageMessage
     ) where
 
 import           Localization (MultilingualText, multilingualText)
@@ -36,6 +40,26 @@ healed who amount =
     where amount'' = multilingualText amount' amount'
           amount' = showt amount
 
-
 whatToUse :: MultilingualText
 whatToUse = multilingualText "What do you consume" "何を使う？"
+
+damagedMessage :: MultilingualText -> MultilingualText -> Int -> MultilingualText
+damagedMessage from to damage =
+    attackMessage from to <>
+        multilingualText (" for " <> showt damage <> " hit points.")
+                         ("して" <> showt damage <> "ポイントのダメージを与えた．")
+
+deathMessage :: MultilingualText -> MultilingualText
+deathMessage who = who <> multilingualText " is dead!" "は死んだ．"
+
+attackMessage :: MultilingualText -> MultilingualText -> MultilingualText
+attackMessage from to =
+    mconcat [ from
+            , multilingualText " attacks " "は"
+            , to
+            , multilingualText "" "に攻撃"
+            ]
+
+noDamageMessage :: MultilingualText -> MultilingualText -> MultilingualText
+noDamageMessage from to = attackMessage from to `mappend`
+                    multilingualText " but does not damage." "したがダメージを受けなかった．"
