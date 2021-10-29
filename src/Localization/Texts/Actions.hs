@@ -5,9 +5,12 @@ module Localization.Texts.Actions
     , youGotItem
     , youGotNohing
     , bagIsFull
+    , whatToUse
+    , healed
     ) where
 
 import           Localization (MultilingualText, multilingualText)
+import           TextShow     (TextShow (showt))
 
 youCannotMoveThere :: MultilingualText
 youCannotMoveThere = multilingualText "That way is blocked." "その方向には進めない．"
@@ -23,3 +26,16 @@ youGotNohing = multilingualText "You got nothing." "あなたは無を入手し�
 
 bagIsFull :: MultilingualText
 bagIsFull = multilingualText "Your bag is full." "バッグは一杯だ．"
+
+healed :: MultilingualText -> Int -> MultilingualText
+healed who amount =
+    who
+    <> multilingualText " healed " "は"
+    <> amount''
+    <> multilingualText " point." "ポイント回復した．"
+    where amount'' = multilingualText amount' amount'
+          amount' = showt amount
+
+
+whatToUse :: MultilingualText
+whatToUse = multilingualText "What do you consume" "何を使う？"
