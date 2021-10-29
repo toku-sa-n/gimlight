@@ -59,6 +59,7 @@ executable roguelike
                       , UI.Draw
                       , UI.Draw.Config
                       , UI.Draw.Exploring
+                      , UI.Draw.GameOver
                       , UI.Draw.KeyEvent
                       , UI.Draw.Scene
                       , UI.Draw.Talking

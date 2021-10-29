@@ -11,11 +11,10 @@ import           Game.Status                    (GameStatus (Exploring, GameOver
 import           Game.Status.SelectingItemToUse (getItems, getSelectingIndex)
 import           Localization                   (getLocalizedText,
                                                  multilingualText)
-import           Monomer                        (CmbStyleBasic (styleBasic),
-                                                 CmbTextSize (textSize), label,
-                                                 vstack)
+import           Monomer                        (label, vstack)
 import           TextShow                       (TextShow (showt))
 import           UI.Draw.Exploring              (drawExploring)
+import           UI.Draw.GameOver               (drawGameOver)
 import           UI.Draw.KeyEvent               (withKeyEvents)
 import           UI.Draw.Scene                  (drawScene)
 import           UI.Draw.Talking                (drawTalking)
@@ -49,6 +48,3 @@ drawSelectingLanguage = withKeyEvents $ vstack [ label "Choose your language. / 
                                                , label "[e] English"
                                                , label "[j] 日本語"
                                                ]
-
-drawGameOver :: GameWidgetNode
-drawGameOver = vstack [label "Game Over" `styleBasic` [textSize 72]]
