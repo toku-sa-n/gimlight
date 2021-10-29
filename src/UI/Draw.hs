@@ -44,18 +44,17 @@ import           Monomer                        (CmbAlignLeft (alignLeft),
                                                  CmbStyleBasic (styleBasic),
                                                  CmbTextColor (textColor),
                                                  CmbTextSize (textSize),
-                                                 CmbWidth (width), WidgetNode,
-                                                 black, box_, filler, gray,
-                                                 hgrid, hstack, image,
-                                                 keystroke, label, label_, red,
+                                                 CmbWidth (width), black, box_,
+                                                 filler, gray, hgrid, hstack,
+                                                 image, label, label_, red,
                                                  vgrid, vstack, zstack)
 import qualified Monomer.Graphics.Lens          as L
 import           Scene                          (backgroundImage, elements,
                                                  text)
 import           Talking                        (TalkWith, message, person)
 import           TextShow                       (TextShow (showt))
-import           UI.Types                       (AppEvent (AppKeyboardInput),
-                                                 GameWidgetEnv, GameWidgetNode)
+import           UI.Draw.KeyEvent               (withKeyEvents)
+import           UI.Types                       (GameWidgetEnv, GameWidgetNode)
 
 drawUI :: GameWidgetEnv -> Game -> GameWidgetNode
 drawUI wenv gs@Game { status = s } =
@@ -67,28 +66,6 @@ drawUI wenv gs@Game { status = s } =
         Title                -> drawTitle gs
         GameOver             -> drawGameOver
         SelectingLocale      -> drawSelectingLanguage
-
-withKeyEvents :: WidgetNode s AppEvent -> WidgetNode s AppEvent
-withKeyEvents =
-    keystroke $ map (\x -> (x, AppKeyboardInput x))
-    [ "Up"
-    , "Down"
-    , "Right"
-    , "Left"
-    , "Enter"
-    , "Shift-."
-    , "Shift-,"
-    , "n"
-    , "l"
-    , "q"
-    , "g"
-    , "u"
-    , "e"
-    , "j"
-    , "Ctrl-s"
-    , "Ctrl-l"
-    , "Esc"
-    ]
 
 drawTalking ::  GameWidgetEnv -> Game -> GameWidgetNode
 drawTalking wenv e@Game { status = Talking th } =
