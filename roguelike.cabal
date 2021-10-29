@@ -60,6 +60,7 @@ executable roguelike
                       , UI.Draw.Config
                       , UI.Draw.Exploring
                       , UI.Draw.KeyEvent
+                      , UI.Draw.Scene
                       , UI.Draw.Talking
                       , UI.Event
                       , UI.Types

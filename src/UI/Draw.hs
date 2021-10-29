@@ -8,21 +8,16 @@ import           Control.Lens                   ((^.))
 import qualified Dungeon.Item                   as I
 import           Game                           (Game (Game, config, status))
 import           Game.Status                    (GameStatus (Exploring, GameOver, HandlingScene, SelectingItemToUse, SelectingLocale, Talking, Title))
-import qualified Game.Status.Scene              as GSS
 import           Game.Status.SelectingItemToUse (getItems, getSelectingIndex)
 import           Localization                   (getLocalizedText,
                                                  multilingualText)
-import           Monomer                        (CmbMultiline (multiline),
-                                                 CmbStyleBasic (styleBasic),
-                                                 CmbTextColor (textColor),
-                                                 CmbTextSize (textSize), black,
-                                                 image, label, label_, vstack,
-                                                 zstack)
-import           Scene                          (backgroundImage, elements,
-                                                 text)
+import           Monomer                        (CmbStyleBasic (styleBasic),
+                                                 CmbTextSize (textSize), label,
+                                                 vstack)
 import           TextShow                       (TextShow (showt))
 import           UI.Draw.Exploring              (drawExploring)
 import           UI.Draw.KeyEvent               (withKeyEvents)
+import           UI.Draw.Scene                  (drawScene)
 import           UI.Draw.Talking                (drawTalking)
 import           UI.Types                       (GameWidgetEnv, GameWidgetNode)
 
@@ -31,19 +26,11 @@ drawUI _ gs@Game { status = s } =
     case s of
         Exploring _          -> drawExploring gs
         Talking _            -> drawTalking gs
-        HandlingScene _      -> drawHandlingScene gs
+        HandlingScene _      -> drawScene gs
         SelectingItemToUse _ -> drawSelectingItem gs
         Title                -> drawTitle gs
         GameOver             -> drawGameOver
         SelectingLocale      -> drawSelectingLanguage
-
-drawHandlingScene :: Game -> GameWidgetNode
-drawHandlingScene Game { status = HandlingScene sh, config = c } =
-    withKeyEvents $ zstack [ image (s ^. backgroundImage)
-                           , label_  (getLocalizedText c $ text $ head $ s ^. elements) [multiline] `styleBasic` [textColor black]
-                           ]
-    where (s, _) = GSS.destructHandler sh
-drawHandlingScene _ = error "We are not handling a scene."
 
 drawSelectingItem :: Game -> GameWidgetNode
 drawSelectingItem Game { status = SelectingItemToUse sh, config = c } = withKeyEvents $ vstack labels
