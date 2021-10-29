@@ -4,53 +4,38 @@ module UI.Draw
     ( drawUI
     ) where
 
-import           Control.Lens                   ((&), (.~), (^.))
-import           Dungeon.Actor                  (standingImagePath)
+import           Control.Lens                   ((^.))
 import qualified Dungeon.Item                   as I
 import           Game                           (Game (Game, config, status))
 import           Game.Status                    (GameStatus (Exploring, GameOver, HandlingScene, SelectingItemToUse, SelectingLocale, Talking, Title))
 import qualified Game.Status.Scene              as GSS
 import           Game.Status.SelectingItemToUse (getItems, getSelectingIndex)
-import qualified Game.Status.Talking            as GST
 import           Localization                   (getLocalizedText,
                                                  multilingualText)
-import           Monomer                        (CmbBgColor (bgColor),
-                                                 CmbMultiline (multiline),
-                                                 CmbPaddingL (paddingL),
+import           Monomer                        (CmbMultiline (multiline),
                                                  CmbStyleBasic (styleBasic),
                                                  CmbTextColor (textColor),
                                                  CmbTextSize (textSize), black,
-                                                 filler, gray, hstack, image,
-                                                 label, label_, red, vstack,
+                                                 image, label, label_, vstack,
                                                  zstack)
-import qualified Monomer.Graphics.Lens          as L
 import           Scene                          (backgroundImage, elements,
                                                  text)
-import           Talking                        (TalkWith, message, person)
 import           TextShow                       (TextShow (showt))
 import           UI.Draw.Exploring              (drawExploring)
 import           UI.Draw.KeyEvent               (withKeyEvents)
+import           UI.Draw.Talking                (drawTalking)
 import           UI.Types                       (GameWidgetEnv, GameWidgetNode)
 
 drawUI :: GameWidgetEnv -> Game -> GameWidgetNode
-drawUI wenv gs@Game { status = s } =
+drawUI _ gs@Game { status = s } =
     case s of
         Exploring _          -> drawExploring gs
-        Talking _            -> drawTalking wenv gs
+        Talking _            -> drawTalking gs
         HandlingScene _      -> drawHandlingScene gs
         SelectingItemToUse _ -> drawSelectingItem gs
         Title                -> drawTitle gs
         GameOver             -> drawGameOver
         SelectingLocale      -> drawSelectingLanguage
-
-drawTalking ::  GameWidgetEnv -> Game -> GameWidgetNode
-drawTalking wenv e@Game { status = Talking th } =
-    withKeyEvents $ zstack [ drawUI wenv (e { status = Exploring afterGameStatus }) `styleBasic` [bgColor $ gray & L.a .~ 0.5]
-                           , filler `styleBasic` [bgColor $ black & L.a .~ 0.5]
-                           , talkingWindow e with
-                           ]
-    where (with, afterGameStatus) = GST.destructHandler th
-drawTalking _ _ = error "We are not handling a talk event."
 
 drawHandlingScene :: Game -> GameWidgetNode
 drawHandlingScene Game { status = HandlingScene sh, config = c } =
@@ -89,11 +74,3 @@ drawTitle Game { config = c } = withKeyEvents $ vstack [ label "Gimlight" `style
 
 drawGameOver :: GameWidgetNode
 drawGameOver = vstack [label "Game Over" `styleBasic` [textSize 72]]
-
-talkingWindow :: Game -> TalkWith -> GameWidgetNode
-talkingWindow Game { config = c } tw = hstack [ image (tw ^. person . standingImagePath)
-                            , window
-                            ]
-    where window = zstack [ image "images/talking_window.png"
-                          , label (getLocalizedText c (tw ^. message)) `styleBasic` [textColor red, textSize 16, paddingL 50]
-                          ]
