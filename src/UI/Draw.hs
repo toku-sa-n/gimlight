@@ -17,7 +17,7 @@ drawUI :: GameWidgetEnv -> Game -> GameWidgetNode
 drawUI _ gs@Game { status = s, config = c } =
     case s of
         Exploring eh         -> drawExploring eh c
-        Talking _            -> drawTalking gs
+        Talking th           -> drawTalking th c
         HandlingScene _      -> drawScene gs
         SelectingItemToUse _ -> drawSelectingItem gs
         Title                -> drawTitle gs
