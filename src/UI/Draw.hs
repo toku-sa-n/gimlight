@@ -16,10 +16,10 @@ import           UI.Types                (GameWidgetEnv, GameWidgetNode)
 drawUI :: GameWidgetEnv -> Game -> GameWidgetNode
 drawUI _ gs@Game { status = s, config = c } =
     case s of
-        Exploring eh         -> drawExploring eh c
-        Talking th           -> drawTalking th c
-        HandlingScene hs     -> drawScene hs c
-        SelectingItemToUse _ -> drawSelectingItem gs
-        Title                -> drawTitle gs
-        GameOver             -> drawGameOver
-        SelectingLocale      -> drawSelectingLocale
+        Exploring eh          -> drawExploring eh c
+        Talking th            -> drawTalking th c
+        HandlingScene hs      -> drawScene hs c
+        SelectingItemToUse sh -> drawSelectingItem sh c
+        Title                 -> drawTitle gs
+        GameOver              -> drawGameOver
+        SelectingLocale       -> drawSelectingLocale
