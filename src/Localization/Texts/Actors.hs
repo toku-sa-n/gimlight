@@ -1,13 +1,17 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module Localization.Texts.Actors
-    ( electria
+    ( player
+    , electria
     , talkWithElectria
     , orc
     , troll
     ) where
 
 import           Localization (MultilingualText, multilingualText)
+
+player :: MultilingualText
+player = multilingualText "Player" "プレイヤー"
 
 electria :: MultilingualText
 electria = multilingualText "Electria" "エレクトリア"
