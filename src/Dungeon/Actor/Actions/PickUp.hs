@@ -1,5 +1,3 @@
-{-# LANGUAGE OverloadedStrings #-}
-
 module Dungeon.Actor.Actions.PickUp
     ( pickUpAction
     ) where
