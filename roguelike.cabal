@@ -52,6 +52,7 @@ executable roguelike
                       , Game.Status.Talking
                       , Localization
                       , Localization.Texts
+                      , Localization.Texts.Actions
                       , Localization.Texts.Actors
                       , Localization.Texts.Items
                       , Localization.Texts.Scene
