@@ -4,23 +4,16 @@ module UI.Draw
     ( drawUI
     ) where
 
-import           Control.Lens                   ((^.))
-import qualified Dungeon.Item                   as I
-import           Game                           (Game (Game, config, status))
-import           Game.Status                    (GameStatus (Exploring, GameOver, HandlingScene, SelectingItemToUse, SelectingLocale, Talking, Title))
-import           Game.Status.SelectingItemToUse (getItems, getSelectingIndex)
-import           Localization                   (getLocalizedText,
-                                                 multilingualText)
-import           Monomer                        (label, vstack)
-import           TextShow                       (TextShow (showt))
-import           UI.Draw.Exploring              (drawExploring)
-import           UI.Draw.GameOver               (drawGameOver)
-import           UI.Draw.KeyEvent               (withKeyEvents)
-import           UI.Draw.Scene                  (drawScene)
-import           UI.Draw.SelectingLocale        (drawSelectingLocale)
-import           UI.Draw.Talking                (drawTalking)
-import           UI.Draw.Title                  (drawTitle)
-import           UI.Types                       (GameWidgetEnv, GameWidgetNode)
+import           Game                    (Game (Game, status))
+import           Game.Status             (GameStatus (Exploring, GameOver, HandlingScene, SelectingItemToUse, SelectingLocale, Talking, Title))
+import           UI.Draw.Exploring       (drawExploring)
+import           UI.Draw.GameOver        (drawGameOver)
+import           UI.Draw.Scene           (drawScene)
+import           UI.Draw.SelectingItem   (drawSelectingItem)
+import           UI.Draw.SelectingLocale (drawSelectingLocale)
+import           UI.Draw.Talking         (drawTalking)
+import           UI.Draw.Title           (drawTitle)
+import           UI.Types                (GameWidgetEnv, GameWidgetNode)
 
 drawUI :: GameWidgetEnv -> Game -> GameWidgetNode
 drawUI _ gs@Game { status = s } =
@@ -32,14 +25,3 @@ drawUI _ gs@Game { status = s } =
         Title                -> drawTitle gs
         GameOver             -> drawGameOver
         SelectingLocale      -> drawSelectingLocale
-
-drawSelectingItem :: Game -> GameWidgetNode
-drawSelectingItem Game { status = SelectingItemToUse sh, config = c } = withKeyEvents $ vstack labels
-    where labels = label topLabel:map label addAsterlist
-          addAsterlist = zipWith (\idx x -> if Just idx == getSelectingIndex sh
-                                                then "* " <> showt idx <> " " <> x
-                                                else showt idx <> " " <> x
-                                               ) [0..] $ map (getLocalizedText c) itemNames
-          itemNames = map (^. I.name) $ getItems sh
-          topLabel = getLocalizedText c $ multilingualText "Which Item do you use?" "どのアイテムを使う？"
-drawSelectingItem _ = error "We are not selecting an item."

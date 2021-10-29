@@ -63,6 +63,7 @@ executable roguelike
                       , UI.Draw.KeyEvent
                       , UI.Draw.Scene
                       , UI.Draw.SelectingLocale
+                      , UI.Draw.SelectingItem
                       , UI.Draw.Talking
                       , UI.Draw.Title
                       , UI.Event
