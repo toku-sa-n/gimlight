@@ -1,12 +1,16 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module Localization.Texts.Actions
-    ( youGotItem
+    ( youCannotMoveThere
+    , youGotItem
     , youGotNohing
     , bagIsFull
     ) where
 
 import           Localization (MultilingualText, multilingualText)
+
+youCannotMoveThere :: MultilingualText
+youCannotMoveThere = multilingualText "That way is blocked." "その方向には進めない．"
 
 youGotItem :: MultilingualText -> MultilingualText
 youGotItem item =
