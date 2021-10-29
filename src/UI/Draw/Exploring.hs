@@ -22,7 +22,8 @@ import           Game.Config           (Config)
 import           Game.Status.Exploring (ExploringHandler, getCurrentDungeon,
                                         getMessageLog, getPlayerActor)
 import           Linear.V2             (V2 (V2), _x, _y)
-import           Localization          (getLocalizedText, multilingualText)
+import           Localization          (getLocalizedText)
+import qualified Localization.Texts    as T
 import           Monomer               (CmbAlignLeft (alignLeft),
                                         CmbBgColor (bgColor),
                                         CmbHeight (height),
@@ -65,8 +66,8 @@ statusGrid eh c = vstack $ maybe []
            , label $ atk <> showt (getPower x)
            , label $ def <> showt (getDefence x)
            ]) $ getPlayerActor eh
-    where atk = getLocalizedText c $ multilingualText "ATK: " "攻撃: "
-          def = getLocalizedText c $ multilingualText "DEF: " "防御: "
+    where atk = getLocalizedText c T.attack
+          def = getLocalizedText c T.attack
 
 mapTiles :: ExploringHandler -> GameWidgetNode
 mapTiles eh = box_ [alignLeft] $ vgrid rows `styleBasic` styles

@@ -53,6 +53,7 @@ executable roguelike
                       , Localization
                       , Localization.Texts
                       , Localization.Texts.SelectingItem
+                      , Localization.Texts.Status
                       , Localization.Texts.Title
                       , Log
                       , Save
