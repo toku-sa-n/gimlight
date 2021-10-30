@@ -122,17 +122,20 @@ handleNpcTurns eh = foldl (\acc x -> handleNpcTurn (x ^. position) acc) eh $ npc
 handleNpcTurn :: Coord -> ExploringHandler -> ExploringHandler
 handleNpcTurn c eh@ExploringHandler { dungeons = ds } = newHandler
     where dungeonsWithoutTheActor = modify (snd . D.popActorAt c) ds
+
           theActor = fst . D.popActorAt c $ getFocused ds
+
           newHandler = case theActor of
-                           Just x ->
-                            let (newCurrentDungeon, generatedLog) =
-                                    runWriter $ runMaybeT $ npcAction x $ getFocused dungeonsWithoutTheActor
-                            in case newCurrentDungeon of
+                           Just x  -> doAction x
+                           Nothing -> error "No such npc."
+
+          doAction actor = let (newCurrentDungeon, generatedLog) =
+                                    runWriter $ runMaybeT $ npcAction actor $ getFocused dungeonsWithoutTheActor
+                           in case newCurrentDungeon of
                                    Just d -> eh { dungeons = modify (const d) dungeonsWithoutTheActor
                                                 , messageLog = L.addMessages generatedLog $ getMessageLog eh
                                                 }
                                    Nothing -> eh
-                           Nothing -> error "No such npc."
 
 getPlayerActor :: ExploringHandler -> Maybe Actor
 getPlayerActor = D.getPlayerActor . getCurrentDungeon
