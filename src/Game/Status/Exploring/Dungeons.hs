@@ -1,4 +1,3 @@
-{-# LANGUAGE LambdaCase #-}
 module Game.Status.Exploring.Dungeons
     ( Dungeons
     , ascendStairsAtPlayerPosition
