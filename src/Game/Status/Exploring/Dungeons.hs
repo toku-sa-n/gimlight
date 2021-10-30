@@ -4,12 +4,14 @@ module Game.Status.Exploring.Dungeons
     , descendStairsAtPlayerPosition
     , exitDungeon
     , doPlayerAction
+    , handleNpcTurn
     ) where
 
 import           Control.Lens               ((%~), (&), (.~), (^.))
 import           Control.Monad              (MonadPlus (mzero))
 import           Control.Monad.Trans.Maybe  (MaybeT, mapMaybeT)
 import           Control.Monad.Trans.Writer (Writer)
+import           Coord                      (Coord)
 import           Data.Foldable              (find)
 import           Dungeon                    (Dungeon, actors, ascendingStairs,
                                              descendingStairs,
@@ -17,6 +19,7 @@ import           Dungeon                    (Dungeon, actors, ascendingStairs,
 import qualified Dungeon                    as D
 import           Dungeon.Actor              (Actor, isPlayer, position)
 import           Dungeon.Actor.Actions      (Action)
+import           Dungeon.Actor.Behavior     (npcAction)
 import           Dungeon.Stairs             (StairsPair (StairsPair, downStairs, upStairs))
 import           Log                        (MessageLog)
 import           TreeZipper                 (TreeZipper, getFocused, goDownBy,
@@ -72,8 +75,21 @@ doPlayerAction action ds = result
                                   in mapMaybeT (fmap (fmap (\d -> modify (const d) zipperWithoutPlayer))) dungeonAfterAction
                        Nothing -> mzero
 
+handleNpcTurn :: Coord -> Dungeons -> MaybeT (Writer MessageLog) Dungeons
+handleNpcTurn c ds = newDungeons
+    where (theActor, dungeonsWithoutTheActor) = popActorAt c ds
+
+          doAction actor = npcAction actor $ getFocused dungeonsWithoutTheActor
+
+          newDungeon = maybe mzero doAction theActor
+
+          newDungeons = mapMaybeT (fmap (fmap (\d -> modify (const d) dungeonsWithoutTheActor))) newDungeon
+
 popPlayer :: Dungeons -> (Maybe Actor, Dungeons)
 popPlayer = popActorIf isPlayer
+
+popActorAt :: Coord -> Dungeons -> (Maybe Actor, Dungeons)
+popActorAt c = popActorIf (\x -> x ^. position == c)
 
 popActorIf :: (Actor -> Bool) -> Dungeons -> (Maybe Actor, Dungeons)
 popActorIf f z = (fst $ D.popActorIf f $ getFocused z, modify (snd . D.popActorIf f) z)

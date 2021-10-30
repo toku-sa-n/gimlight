@@ -26,7 +26,6 @@ import           Dungeon                        (Dungeon, npcs)
 import qualified Dungeon                        as D
 import           Dungeon.Actor                  (Actor, position)
 import           Dungeon.Actor.Actions          (Action)
-import           Dungeon.Actor.Behavior         (npcAction)
 import           Dungeon.Turn                   (Status (PlayerKilled))
 import           GHC.Generics                   (Generic)
 import           Game.Status.Exploring.Dungeons (Dungeons)
@@ -79,24 +78,11 @@ handleNpcTurns :: ExploringHandler -> ExploringHandler
 handleNpcTurns eh = foldl (\acc x -> handleNpcTurn (x ^. position) acc) eh $ npcs $ getCurrentDungeon eh
 
 handleNpcTurn :: Coord -> ExploringHandler -> ExploringHandler
-handleNpcTurn c eh@ExploringHandler { dungeons = ds } = newHandler
-    where newHandler = case theActor of
-                           Just x  -> doAction x
-                           Nothing -> error "No such npc."
-
-          theActor = fst . D.popActorAt c $ getFocused ds
-
-          doAction actor = let (newCurrentDungeon, generatedLog) =
-                                    runWriter $ runMaybeT $ npcAction actor $ getFocused dungeonsWithoutTheActor
-                           in case newCurrentDungeon of
-                                   Just d  -> updateDungeonAndLog d generatedLog
-                                   Nothing -> eh
-
-          dungeonsWithoutTheActor = modify (snd . D.popActorAt c) ds
-
-          updateDungeonAndLog d l = eh { dungeons = modify (const d) dungeonsWithoutTheActor
-                                       , messageLog = L.addMessages l $ getMessageLog eh
-                                       }
+handleNpcTurn c ExploringHandler { dungeons = ds, messageLog = l } = result
+    where (dungeonsAfterTurn, newLog) = runWriter $ runMaybeT $ DS.handleNpcTurn c ds
+          result = case dungeonsAfterTurn of
+                    Just x -> ExploringHandler { dungeons = x, messageLog = L.addMessages newLog l }
+                    Nothing -> ExploringHandler { dungeons = ds, messageLog = l }
 
 getPlayerActor :: ExploringHandler -> Maybe Actor
 getPlayerActor = D.getPlayerActor . getCurrentDungeon
