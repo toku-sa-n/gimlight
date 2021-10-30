@@ -132,10 +132,12 @@ handleNpcTurn c eh@ExploringHandler { dungeons = ds } = newHandler
           doAction actor = let (newCurrentDungeon, generatedLog) =
                                     runWriter $ runMaybeT $ npcAction actor $ getFocused dungeonsWithoutTheActor
                            in case newCurrentDungeon of
-                                   Just d -> eh { dungeons = modify (const d) dungeonsWithoutTheActor
-                                                , messageLog = L.addMessages generatedLog $ getMessageLog eh
-                                                }
+                                   Just d  -> updateDungeonAndLog d generatedLog
                                    Nothing -> eh
+
+          updateDungeonAndLog d l = eh { dungeons = modify (const d) dungeonsWithoutTheActor
+                                       , messageLog = L.addMessages l $ getMessageLog eh
+                                       }
 
 getPlayerActor :: ExploringHandler -> Maybe Actor
 getPlayerActor = D.getPlayerActor . getCurrentDungeon
