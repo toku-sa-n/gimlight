@@ -15,7 +15,7 @@ import           Dungeon                    (Dungeon, actors, ascendingStairs,
                                              descendingStairs,
                                              positionOnParentMap, updateMap)
 import qualified Dungeon                    as D
-import           Dungeon.Actor              (Actor, position)
+import           Dungeon.Actor              (Actor, isPlayer, position)
 import           Dungeon.Actor.Actions      (Action)
 import           Dungeon.Stairs             (StairsPair (StairsPair, downStairs, upStairs))
 import           Log                        (MessageLog)
@@ -73,4 +73,7 @@ doPlayerAction action ds = result
                        Nothing -> mzero
 
 popPlayer :: Dungeons -> (Maybe Actor, Dungeons)
-popPlayer z = (fst $ D.popPlayer $ getFocused z, modify (snd . D.popPlayer) z)
+popPlayer = popActorIf isPlayer
+
+popActorIf :: (Actor -> Bool) -> Dungeons -> (Maybe Actor, Dungeons)
+popActorIf f z = (fst $ D.popActorIf f $ getFocused z, modify (snd . D.popActorIf f) z)
