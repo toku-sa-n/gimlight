@@ -17,13 +17,12 @@ module Game.Status.Exploring
     , getMessageLog
     ) where
 
-import           Control.Lens                   ((%~), (&), (.~), (^.))
+import           Control.Lens                   ((^.))
 import           Control.Monad.Trans.Maybe      (MaybeT (runMaybeT))
 import           Control.Monad.Trans.Writer     (runWriter)
 import           Coord                          (Coord)
 import           Data.Binary                    (Binary)
-import           Dungeon                        (Dungeon, actors, npcs,
-                                                 popPlayer, positionOnParentMap)
+import           Dungeon                        (Dungeon, npcs, popPlayer)
 import qualified Dungeon                        as D
 import           Dungeon.Actor                  (Actor, position)
 import           Dungeon.Actor.Actions          (Action)
@@ -34,8 +33,7 @@ import           Game.Status.Exploring.Dungeons (Dungeons)
 import qualified Game.Status.Exploring.Dungeons as DS
 import           Log                            (Message, MessageLog)
 import qualified Log                            as L
-import           TreeZipper                     (TreeZipper, getFocused, goUp,
-                                                 modify)
+import           TreeZipper                     (TreeZipper, getFocused, modify)
 
 data ExploringHandler = ExploringHandler
                       { dungeons   :: Dungeons
@@ -57,18 +55,7 @@ descendStairsAtPlayerPosition eh@ExploringHandler { dungeons = ds } =
 
 exitDungeon :: ExploringHandler -> Maybe ExploringHandler
 exitDungeon eh@ExploringHandler { dungeons = ds } =
-    fmap (\ds' -> eh { dungeons = ds' }) newZipper
-    where zipperWithoutPlayer = modify (snd . popPlayer) ds
-          currentDungeon = getFocused ds
-          player = fst $ popPlayer currentDungeon
-          newPosition = currentDungeon ^. positionOnParentMap
-          newPlayer = case (player, newPosition) of
-                          (Just p, Just pos) -> Just $ p & position .~ pos
-                          _                  -> Nothing
-          zipperFocusingGlobalMap = goUp zipperWithoutPlayer
-          newZipper = case (zipperFocusingGlobalMap, newPlayer) of
-                          (Just g, Just p) -> Just $ modify (\d -> d & actors %~ (:) p) g
-                          _                -> Nothing
+    (\x -> eh { dungeons = x }) <$> DS.exitDungeon ds
 
 doPlayerAction :: Action -> ExploringHandler -> (Bool, ExploringHandler)
 doPlayerAction action eh@ExploringHandler { dungeons = ds } = result

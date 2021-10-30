@@ -2,6 +2,7 @@ module Game.Status.Exploring.Dungeons
     ( Dungeons
     , ascendStairsAtPlayerPosition
     , descendStairsAtPlayerPosition
+    , exitDungeon
     ) where
 
 import           Control.Lens   ((%~), (&), (.~), (^.))
@@ -42,6 +43,18 @@ descendStairsAtPlayerPosition ds = newZipper
                           (Just g, Just p) -> Just $ modify (\d -> updateMap $ d & actors %~ (:) p) g
                           _ -> Nothing
 
+exitDungeon :: Dungeons -> Maybe Dungeons
+exitDungeon ds = newZipper
+    where (player, zipperWithoutPlayer) = popPlayer ds
+          currentDungeon = getFocused ds
+          newPosition = currentDungeon ^. positionOnParentMap
+          newPlayer = case (player, newPosition) of
+                          (Just p, Just pos) -> Just $ p & position .~ pos
+                          _                  -> Nothing
+          zipperFocusingGlobalMap = goUp zipperWithoutPlayer
+          newZipper = case (zipperFocusingGlobalMap, newPlayer) of
+                          (Just g, Just p) -> Just $ modify (\d -> d & actors %~ (:) p) g
+                          _                -> Nothing
 
-popPlayer :: TreeZipper Dungeon -> (Maybe Actor, Dungeons)
+popPlayer :: Dungeons -> (Maybe Actor, Dungeons)
 popPlayer z = (fst $ D.popPlayer $ getFocused z, modify (snd . D.popPlayer) z)
