@@ -49,7 +49,6 @@ handleKeyInput e@GameModel { status = s } k =
         SelectingLocale      -> handleKeyInputDuringSelectingLanguage e k
         GameOver             -> []
 
-
 handleKeyInputDuringExploring :: GameModel -> Text -> [AppEventResponse GameModel AppEvent]
 handleKeyInputDuringExploring e@GameModel { status = st@(Exploring eh) } k
     | k == "Right" = [Model $ e { status = handlePlayerMoving (V2 1 0) eh }]
