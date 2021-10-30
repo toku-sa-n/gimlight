@@ -22,24 +22,20 @@ import           Control.Monad.Trans.Maybe      (MaybeT (runMaybeT))
 import           Control.Monad.Trans.Writer     (runWriter)
 import           Coord                          (Coord)
 import           Data.Binary                    (Binary)
-import           Data.Foldable                  (find)
-import           Dungeon                        (Dungeon, actors,
-                                                 descendingStairs, npcs,
-                                                 popPlayer, positionOnParentMap,
-                                                 updateMap)
+import           Dungeon                        (Dungeon, actors, npcs,
+                                                 popPlayer, positionOnParentMap)
 import qualified Dungeon                        as D
 import           Dungeon.Actor                  (Actor, position)
 import           Dungeon.Actor.Actions          (Action)
 import           Dungeon.Actor.Behavior         (npcAction)
-import           Dungeon.Stairs                 (StairsPair (StairsPair, downStairs))
 import           Dungeon.Turn                   (Status (PlayerKilled))
 import           GHC.Generics                   (Generic)
 import           Game.Status.Exploring.Dungeons (Dungeons)
 import qualified Game.Status.Exploring.Dungeons as DS
 import           Log                            (Message, MessageLog)
 import qualified Log                            as L
-import           TreeZipper                     (TreeZipper, getFocused,
-                                                 goDownBy, goUp, modify)
+import           TreeZipper                     (TreeZipper, getFocused, goUp,
+                                                 modify)
 
 data ExploringHandler = ExploringHandler
                       { dungeons   :: Dungeons
@@ -56,20 +52,8 @@ ascendStairsAtPlayerPosition eh@ExploringHandler { dungeons = ds } =
     (\x -> eh { dungeons = x }) <$> DS.ascendStairsAtPlayerPosition ds
 
 descendStairsAtPlayerPosition :: ExploringHandler -> Maybe ExploringHandler
-descendStairsAtPlayerPosition eh@ExploringHandler{ dungeons = ds } =
-    fmap (\x -> eh { dungeons = x }) newZipper
-    where (player, zipperWithoutPlayer) = popPlayerFromZipper ds
-          newPlayer = case (player, newPosition) of
-                          (Just p, Just pos) -> Just $ p & position .~ pos
-                          _                  -> Nothing
-          zipperFocusingNextDungeon = goDownBy (\x -> x ^. positionOnParentMap == fmap (^. position) player) zipperWithoutPlayer
-          newPosition = downStairs <$> find (\(StairsPair from _) -> Just from == fmap (^. position) player) (getFocused ds ^. descendingStairs)
-          newZipper = case (zipperFocusingNextDungeon, newPlayer) of
-                          (Just g, Just p) -> Just $ modify (\d -> updateMap $ d & actors %~ (:) p) g
-                          _ -> Nothing
-
-popPlayerFromZipper :: TreeZipper Dungeon -> (Maybe Actor, TreeZipper Dungeon)
-popPlayerFromZipper z = (fst $ popPlayer $ getFocused z, modify (snd . popPlayer) z)
+descendStairsAtPlayerPosition eh@ExploringHandler { dungeons = ds } =
+    (\x -> eh { dungeons = x }) <$> DS.descendStairsAtPlayerPosition ds
 
 exitDungeon :: ExploringHandler -> Maybe ExploringHandler
 exitDungeon eh@ExploringHandler { dungeons = ds } =
