@@ -1,19 +1,27 @@
+{-# LANGUAGE LambdaCase #-}
 module Game.Status.Exploring.Dungeons
     ( Dungeons
     , ascendStairsAtPlayerPosition
     , descendStairsAtPlayerPosition
     , exitDungeon
+    , doPlayerAction
     ) where
 
-import           Control.Lens   ((%~), (&), (.~), (^.))
-import           Data.Foldable  (find)
-import           Dungeon        (Dungeon, actors, ascendingStairs,
-                                 descendingStairs, positionOnParentMap,
-                                 updateMap)
-import qualified Dungeon        as D
-import           Dungeon.Actor  (Actor, position)
-import           Dungeon.Stairs (StairsPair (StairsPair, downStairs, upStairs))
-import           TreeZipper     (TreeZipper, getFocused, goDownBy, goUp, modify)
+import           Control.Lens               ((%~), (&), (.~), (^.))
+import           Control.Monad              (MonadPlus (mzero))
+import           Control.Monad.Trans.Maybe  (MaybeT, mapMaybeT)
+import           Control.Monad.Trans.Writer (Writer)
+import           Data.Foldable              (find)
+import           Dungeon                    (Dungeon, actors, ascendingStairs,
+                                             descendingStairs,
+                                             positionOnParentMap, updateMap)
+import qualified Dungeon                    as D
+import           Dungeon.Actor              (Actor, position)
+import           Dungeon.Actor.Actions      (Action)
+import           Dungeon.Stairs             (StairsPair (StairsPair, downStairs, upStairs))
+import           Log                        (MessageLog)
+import           TreeZipper                 (TreeZipper, getFocused, goDownBy,
+                                             goUp, modify)
 
 type Dungeons = TreeZipper Dungeon
 
@@ -55,6 +63,15 @@ exitDungeon ds = newZipper
           newZipper = case (zipperFocusingGlobalMap, newPlayer) of
                           (Just g, Just p) -> Just $ modify (\d -> d & actors %~ (:) p) g
                           _                -> Nothing
+
+doPlayerAction :: Action -> Dungeons -> MaybeT (Writer MessageLog) Dungeons
+doPlayerAction action ds = result
+    where (player, zipperWithoutPlayer) = popPlayer ds
+          currentDungeonWithoutPlayer = getFocused zipperWithoutPlayer
+          result = case player of
+                       Just p  -> let dungeonAfterAction = action p currentDungeonWithoutPlayer
+                                  in mapMaybeT (fmap (fmap (\d -> modify (const d) zipperWithoutPlayer))) dungeonAfterAction
+                       Nothing -> mzero
 
 popPlayer :: Dungeons -> (Maybe Actor, Dungeons)
 popPlayer z = (fst $ D.popPlayer $ getFocused z, modify (snd . D.popPlayer) z)

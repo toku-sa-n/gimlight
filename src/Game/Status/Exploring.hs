@@ -22,7 +22,7 @@ import           Control.Monad.Trans.Maybe      (MaybeT (runMaybeT))
 import           Control.Monad.Trans.Writer     (runWriter)
 import           Coord                          (Coord)
 import           Data.Binary                    (Binary)
-import           Dungeon                        (Dungeon, npcs, popPlayer)
+import           Dungeon                        (Dungeon, npcs)
 import qualified Dungeon                        as D
 import           Dungeon.Actor                  (Actor, position)
 import           Dungeon.Actor.Actions          (Action)
@@ -58,18 +58,14 @@ exitDungeon eh@ExploringHandler { dungeons = ds } =
     (\x -> eh { dungeons = x }) <$> DS.exitDungeon ds
 
 doPlayerAction :: Action -> ExploringHandler -> (Bool, ExploringHandler)
-doPlayerAction action eh@ExploringHandler { dungeons = ds } = result
-    where currentDungeon = getFocused ds
-          (player, dungeonWithoutPlayer) = popPlayer currentDungeon
-          result = case player of
-                    Just p -> let (newCurrentDungeon, newLogs) =
-                                    runWriter $ runMaybeT $ action p dungeonWithoutPlayer
-                                  handlerWithNewLog =
-                                    addMessages newLogs eh
-                              in case newCurrentDungeon of
-                                     Just x -> (True, handlerWithNewLog { dungeons = modify (const x) ds })
-                                     Nothing -> (False, handlerWithNewLog)
-                    Nothing -> (False, eh)
+doPlayerAction action ExploringHandler { dungeons = ds, messageLog = l } =
+    result
+    where (dungeonsAfterAction, newLog) = runWriter $ runMaybeT $ DS.doPlayerAction action ds
+          handlerWithNewLog = ExploringHandler { dungeons = ds, messageLog = L.addMessages newLog l }
+
+          result = case dungeonsAfterAction of
+                       Just x  -> (True, handlerWithNewLog { dungeons = x })
+                       Nothing -> (False, handlerWithNewLog)
 
 completeThisTurn :: ExploringHandler -> Maybe ExploringHandler
 completeThisTurn eh =
