@@ -57,10 +57,13 @@ attackFromTo attacker defender = (newAttacker, newDefender, message)
 
           message =
             case newDefender of
-                        Just _ -> if damage > 0
-                                      then (\a d -> [M.message $ T.damagedMessage damage a d])
-                                      else (\a d -> [M.message $ T.noDamageMessage a d])
+                        Just _  -> notKilledMessage
                         Nothing -> killedMessage
+
+          notKilledMessage =
+            if damage > 0
+                then (\a d -> [M.message $ T.damagedMessage damage a d])
+                else (\a d -> [M.message $ T.noDamageMessage a d])
 
           killedMessage =
             \a d -> map M.message [T.damagedMessage damage a d, T.deathMessage d]
