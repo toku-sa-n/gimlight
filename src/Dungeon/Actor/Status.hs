@@ -63,9 +63,8 @@ attackFromTo attacker defender = (newAttacker, newDefender, message)
                         Nothing -> killedMessage
 
           killedMessage =
-            \a d -> if levelUp > 0
-                       then map M.message [T.damagedMessage damage a d, T.deathMessage d, T.levelUp a (getLevel newAttacker)]
-                       else map M.message [T.damagedMessage damage a d, T.deathMessage d]
+            \a d -> map M.message [T.damagedMessage damage a d, T.deathMessage d]
+                     ++ [M.message $ T.levelUp a (getLevel newAttacker) | levelUp > 0]
 
 healHp :: Int -> Status -> Status
 healHp amount a@Status { hp = h } =
