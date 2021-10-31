@@ -27,22 +27,21 @@ module Dungeon.Actor
     , removeNthItem
     ) where
 
-import           Control.Lens              (makeLenses, (%~), (&), (.~), (^.))
-import           Control.Monad.Trans.Maybe (MaybeT (MaybeT))
-import           Control.Monad.Writer      (MonadWriter (writer), Writer)
-import           Coord                     (Coord)
-import           Data.Binary               (Binary)
-import           Data.Text                 (Text)
-import           Dungeon.Actor.Inventory   (Inventory, inventory)
-import qualified Dungeon.Actor.Inventory   as I
-import           Dungeon.Actor.Status      (Status)
-import qualified Dungeon.Actor.Status      as S
-import           Dungeon.Actor.Status.Hp   (hp)
-import           Dungeon.Item              (Item)
-import           GHC.Generics              (Generic)
-import           Localization              (MultilingualText)
-import qualified Localization.Texts        as T
-import           Log                       (MessageLog, message)
+import           Control.Lens            (makeLenses, (%~), (&), (.~), (^.))
+import           Control.Monad.Writer    (MonadWriter (writer), Writer)
+import           Coord                   (Coord)
+import           Data.Binary             (Binary)
+import           Data.Text               (Text)
+import           Dungeon.Actor.Inventory (Inventory, inventory)
+import qualified Dungeon.Actor.Inventory as I
+import           Dungeon.Actor.Status    (Status)
+import qualified Dungeon.Actor.Status    as S
+import           Dungeon.Actor.Status.Hp (hp)
+import           Dungeon.Item            (Item)
+import           GHC.Generics            (Generic)
+import           Localization            (MultilingualText)
+import qualified Localization.Texts      as T
+import           Log                     (MessageLog)
 
 data ActorKind = Player | FriendlyNpc | Monster deriving (Show, Ord, Eq, Generic)
 instance Binary ActorKind
@@ -79,7 +78,7 @@ monster position' name' st walking = actor position' name' st Monster mempty wal
 
 player :: Coord -> Actor
 player c = actor c T.player st Player mempty "images/player.png" "images/sample_standing_picture.png"
-    where st = S.status (hp 30) 2 5
+    where st = S.status (hp 30) 5 2
 
 isPlayer :: Actor -> Bool
 isPlayer e = (e ^. actorKind) == Player
@@ -93,9 +92,10 @@ getHp e = S.getHp $ e ^. status
 getMaxHp :: Actor -> Int
 getMaxHp e = S.getMaxHp $ e ^. status
 
-attackFromTo :: Actor -> Actor -> MaybeT (Writer MessageLog) Actor
-attackFromTo attacker defender = MaybeT $ writer (newDefender, [message msg])
-    where (newDefenderStatus, msgFunc) = S.attackFromTo (attacker ^. status) (defender ^. status)
+attackFromTo :: Actor -> Actor -> (Writer MessageLog) (Actor, Maybe Actor)
+attackFromTo attacker defender = writer ((newAttacker, newDefender), msg)
+    where (newAttackerStatus, newDefenderStatus, msgFunc) = S.attackFromTo (attacker ^. status) (defender ^. status)
+          newAttacker = attacker & status .~ newAttackerStatus
           newDefender = (\x -> defender & status .~ x) <$> newDefenderStatus
           msg = msgFunc (attacker ^. name) (defender ^. name)
 
