@@ -3,8 +3,11 @@
 module Dungeon.Actor.Status
     ( Status
     , status
+    , getLevel
     , getHp
     , getMaxHp
+    , getCurrentExperiencePoint
+    , getExperiencePointForNextLevel
     , attackFromTo
     , healHp
     , getPower
@@ -85,3 +88,9 @@ getDefence = defence
 
 getLevel :: Status -> Int
 getLevel Status { experience = e } = E.getLevel e
+
+getCurrentExperiencePoint :: Status -> Int
+getCurrentExperiencePoint Status { experience = e } = E.getCurrentExperiencePoint e
+
+getExperiencePointForNextLevel :: Status -> Int
+getExperiencePointForNextLevel Status { experience = e } = E.pointForNextLevel e

@@ -5,6 +5,9 @@
 module Dungeon.Actor
     ( Actor
     , player
+    , getLevel
+    , getCurrentExperiencePoint
+    , getExperiencePointForNextLevel
     , getHp
     , getMaxHp
     , getPower
@@ -101,6 +104,15 @@ attackFromTo attacker defender = writer ((newAttacker, newDefender), msg)
 
 healHp :: Int -> Actor -> Actor
 healHp amount a = a & status %~ S.healHp amount
+
+getLevel :: Actor -> Int
+getLevel a = S.getLevel $ a ^. status
+
+getCurrentExperiencePoint :: Actor -> Int
+getCurrentExperiencePoint a = S.getCurrentExperiencePoint $ a ^. status
+
+getExperiencePointForNextLevel :: Actor -> Int
+getExperiencePointForNextLevel a = S.getExperiencePointForNextLevel $ a ^. status
 
 getPower :: Actor -> Int
 getPower a = S.getPower $ a ^. status

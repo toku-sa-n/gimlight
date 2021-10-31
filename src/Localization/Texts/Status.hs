@@ -1,13 +1,21 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module Localization.Texts.Status
-    ( attack
+    ( level
+    , experience
+    , attack
     , defence
     , levelUp
     ) where
 
 import           Localization (MultilingualText, multilingualText)
 import           TextShow     (TextShow (showt))
+
+level :: MultilingualText
+level = multilingualText "Level" "レベル"
+
+experience :: MultilingualText
+experience = multilingualText "Experience" "経験値"
 
 attack :: MultilingualText
 attack = multilingualText "Attack" "攻撃"
