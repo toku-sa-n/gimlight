@@ -66,10 +66,10 @@ attackFromTo attacker defender = (newAttacker, newDefender, message)
                         Just _  -> notKilledMessage
                         Nothing -> killedMessage
 
-          notKilledMessage =
+          notKilledMessage = \a d ->
             if damage > 0
-                then (\a d -> [M.message $ T.damagedMessage damage a d])
-                else (\a d -> [M.message $ T.noDamageMessage a d])
+                then [M.message $ T.damagedMessage damage a d]
+                else [M.message $ T.noDamageMessage a d]
 
           killedMessage =
             \a d -> map M.message [T.damagedMessage damage a d, T.deathMessage d]
