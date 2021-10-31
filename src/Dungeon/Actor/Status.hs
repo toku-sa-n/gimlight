@@ -48,7 +48,10 @@ attackFromTo :: Status -> Status -> (Status, Maybe Status, MultilingualText -> M
 attackFromTo attacker defender = (newAttacker, newDefender, message)
     where damage = max 0 $ getPower attacker - getDefence defender
 
-          newAttacker = attacker { experience = newAttackerExp }
+          newAttacker = attacker { power = getPower attacker + levelUp
+                                 , defence = getDefence attacker + levelUp
+                                 , experience = newAttackerExp
+                                 }
 
           newDefender = receiveDamage damage defender
 
