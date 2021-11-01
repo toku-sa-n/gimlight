@@ -27,10 +27,8 @@ handleNpcTurns d = foldl foldStep (writer (d, [])) $ npcs d
     where foldStep acc x = acc >>= (runMaybeT . handleNpcTurn (x ^. position)) >>= maybe acc return
 
 handleNpcTurn :: Coord -> Dungeon -> MaybeT (Writer MessageLog) Dungeon
-handleNpcTurn c d = newDungeon
-    where newDungeon = maybe mzero doAction theActor
-
-          (theActor, dungeonWithoutTheActor) = popActorAt c d
+handleNpcTurn c d = maybe mzero doAction theActor
+    where (theActor, dungeonWithoutTheActor) = popActorAt c d
 
           doAction actor = npcAction actor dungeonWithoutTheActor
 
