@@ -50,7 +50,7 @@ jobs:
     - name: Detect unused lines
       run: |
         cabal install weeder
-        weeder
+        ~/.cabal/bin/weeder
 
     - name: Run tests
       run: cabal test all
