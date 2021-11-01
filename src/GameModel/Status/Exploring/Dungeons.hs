@@ -77,10 +77,7 @@ doPlayerAction action ds = result
 
 handleNpcTurns :: Dungeons -> Writer MessageLog Dungeons
 handleNpcTurns ds = foldl foldStep (writer (ds, [])) $ npcs $ getFocused ds
-    where foldStep acc x = do
-            result <- acc >>= (runMaybeT . handleNpcTurn (x ^. position))
-
-            maybe acc return result
+    where foldStep acc x = acc >>= (runMaybeT . handleNpcTurn (x ^. position)) >>= maybe acc return
 
 handleNpcTurn :: Coord -> Dungeons -> MaybeT (Writer MessageLog) Dungeons
 handleNpcTurn c ds = newDungeons
