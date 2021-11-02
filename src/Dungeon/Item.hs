@@ -14,12 +14,15 @@ module Dungeon.Item
 import           Coord              (Coord)
 import           Data.Binary        (Binary)
 import           Data.Text          (Text)
+import           Dungeon.Item.Book  (BookHandler)
 import           Dungeon.Item.Heal  (HealHandler, healHandler)
 import           GHC.Generics       (Generic)
 import           Localization       (MultilingualText)
 import qualified Localization.Texts as T
 
-newtype Effect = Heal HealHandler deriving (Show, Ord, Eq, Generic)
+data Effect = Heal HealHandler
+            | Book BookHandler
+            deriving (Show, Ord, Eq, Generic)
 
 instance Binary Effect
 
