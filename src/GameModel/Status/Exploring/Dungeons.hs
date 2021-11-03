@@ -17,7 +17,7 @@ import           Dungeon                    (Dungeon, actors, ascendingStairs,
                                              positionOnParentMap, updateMap)
 import qualified Dungeon                    as D
 import           Dungeon.Actor              (Actor, isPlayer, position)
-import           Dungeon.Actor.Actions      (Action)
+import           Dungeon.Actor.Actions      (Action, ActionStatus)
 import qualified Dungeon.Actor.NpcBehavior  as NPC
 import           Dungeon.Stairs             (StairsPair (StairsPair, downStairs, upStairs))
 import           Log                        (MessageLog)
@@ -70,13 +70,13 @@ exitDungeon ds = newZipper
                           (Just g, Just p) -> Just $ modify (\d -> d & actors %~ (:) p) g
                           _                -> Nothing
 
-doPlayerAction :: Action -> Dungeons -> MaybeT (Writer MessageLog) Dungeons
+doPlayerAction :: Action -> Dungeons -> MaybeT (Writer MessageLog) (ActionStatus, Dungeons)
 doPlayerAction action ds = result
     where (player, zipperWithoutPlayer) = popPlayer ds
           currentDungeonWithoutPlayer = getFocused zipperWithoutPlayer
           result = case player of
                        Just p  -> let dungeonAfterAction = action p currentDungeonWithoutPlayer
-                                  in mapMaybeT (fmap (fmap (\d -> modify (const d) zipperWithoutPlayer))) dungeonAfterAction
+                                  in mapMaybeT (fmap (fmap (\(a, d) -> (a, modify (const d) zipperWithoutPlayer)))) dungeonAfterAction
                        Nothing -> mzero
 
 handleNpcTurns :: Dungeons -> Writer MessageLog Dungeons

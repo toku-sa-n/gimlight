@@ -12,7 +12,7 @@ import           Data.Maybe            (isNothing)
 import           Dungeon               (Dungeon, actorAt, mapWidthAndHeight,
                                         pushActor, tileMap)
 import           Dungeon.Actor         (Actor, position)
-import           Dungeon.Actor.Actions (Action)
+import           Dungeon.Actor.Actions (Action, ActionStatus (Ok))
 import           Dungeon.Map.Tile      (walkable)
 import           Linear.V2             (V2 (V2))
 import qualified Localization.Texts    as T
@@ -22,7 +22,7 @@ moveAction offset src d = if not (movable d (src ^. position + offset))
                                 then do
                                     tell [T.youCannotMoveThere]
                                     mzero
-                                else return $ pushActor (updatePosition d src offset) d
+                                else return (Ok, pushActor (updatePosition d src offset) d)
 
 updatePosition :: Dungeon -> Actor -> V2 Int -> Actor
 updatePosition d src offset

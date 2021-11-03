@@ -6,7 +6,7 @@ import           Control.Lens          ((^.))
 import           Control.Monad.Writer  (MonadPlus (mzero), tell)
 import           Dungeon               (pushActor)
 import           Dungeon.Actor         (healHp, name, removeNthItem)
-import           Dungeon.Actor.Actions (Action)
+import           Dungeon.Actor.Actions (Action, ActionStatus (Ok))
 import           Dungeon.Item          (Effect (Book, Heal), getEffect)
 import           Dungeon.Item.Heal     (getHealAmount)
 import qualified Localization.Texts    as T
@@ -24,7 +24,7 @@ doItemEffect :: Effect -> Action
 doItemEffect (Heal handler) actor dungeon = do
     tell [T.healed (actor ^. name) amount]
 
-    return $ pushActor (healHp amount actor) dungeon
+    return (Ok, pushActor (healHp amount actor) dungeon)
 
     where amount = getHealAmount handler
 doItemEffect (Book _) _ _ = undefined

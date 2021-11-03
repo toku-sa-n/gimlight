@@ -26,7 +26,8 @@ import           Data.Binary                         (Binary)
 import           Dungeon                             (Dungeon)
 import qualified Dungeon                             as D
 import           Dungeon.Actor                       (Actor)
-import           Dungeon.Actor.Actions               (Action)
+import           Dungeon.Actor.Actions               (Action,
+                                                      ActionStatus (Ok, ReadingStarted))
 import           GHC.Generics                        (Generic)
 import           GameModel.Status.Exploring.Dungeons (Dungeons)
 import qualified GameModel.Status.Exploring.Dungeons as DS
@@ -63,8 +64,13 @@ doPlayerAction action eh =
           handlerWithNewLog = eh & messageLog %~ L.addMessages newLog
 
           result = case dungeonsAfterAction of
-                       Just x  -> (True, handlerWithNewLog & dungeons .~ x)
-                       Nothing -> (False, handlerWithNewLog)
+                       Just (status, d) -> (True, handleStatus status d)
+                       Nothing          -> (False, handlerWithNewLog)
+
+          handleStatus status d =
+              case status of
+                  Ok               -> handlerWithNewLog & dungeons .~ d
+                  ReadingStarted _ -> undefined
 
 completeThisTurn :: ExploringHandler -> Maybe ExploringHandler
 completeThisTurn eh =
