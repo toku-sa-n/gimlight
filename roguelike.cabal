@@ -57,6 +57,7 @@ executable roguelike
                       , Localization.Texts
                       , Localization.Texts.Actions
                       , Localization.Texts.Actors
+                      , Localization.Texts.Books
                       , Localization.Texts.Items
                       , Localization.Texts.Scene
                       , Localization.Texts.SelectingItem

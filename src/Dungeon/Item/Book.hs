@@ -1,6 +1,7 @@
 {-# LANGUAGE DeriveGeneric #-}
 module Dungeon.Item.Book
     ( BookHandler
+    , bookHandler
     ) where
 
 import           Data.Binary  (Binary)
@@ -12,3 +13,6 @@ newtype BookHandler = BookHandler
                     } deriving (Show, Ord, Eq, Generic)
 
 instance Binary BookHandler
+
+bookHandler :: MultilingualText -> BookHandler
+bookHandler = BookHandler

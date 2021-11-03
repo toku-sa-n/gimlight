@@ -5,6 +5,7 @@ module Dungeon.Item
     ( Item
     , Effect(..)
     , herb
+    , sampleBook
     , getName
     , getPosition
     , getIconImagePath
@@ -14,7 +15,7 @@ module Dungeon.Item
 import           Coord              (Coord)
 import           Data.Binary        (Binary)
 import           Data.Text          (Text)
-import           Dungeon.Item.Book  (BookHandler)
+import           Dungeon.Item.Book  (BookHandler, bookHandler)
 import           Dungeon.Item.Heal  (HealHandler, healHandler)
 import           GHC.Generics       (Generic)
 import           Localization       (MultilingualText)
@@ -56,3 +57,6 @@ getEffect Item { effect = e } = e
 
 herb :: Coord -> Item
 herb p = item p "images/herb.png" (Heal $ healHandler 4)
+
+sampleBook :: Coord -> Item
+sampleBook p = item p "images/book.png" (Book $ bookHandler T.sampleBook )
