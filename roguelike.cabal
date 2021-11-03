@@ -50,6 +50,7 @@ executable roguelike
                       , GameModel.Status
                       , GameModel.Status.Exploring
                       , GameModel.Status.Exploring.Dungeons
+                      , GameModel.Status.ReadingBook
                       , GameModel.Status.Scene
                       , GameModel.Status.SelectingItemToUse
                       , GameModel.Status.Talking
@@ -73,6 +74,7 @@ executable roguelike
                       , UI.Draw.Exploring
                       , UI.Draw.GameOver
                       , UI.Draw.KeyEvent
+                      , UI.Draw.ReadingBook
                       , UI.Draw.Scene
                       , UI.Draw.SelectingLocale
                       , UI.Draw.SelectingItem

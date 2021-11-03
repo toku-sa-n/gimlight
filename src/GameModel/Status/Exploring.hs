@@ -26,8 +26,7 @@ import           Data.Binary                         (Binary)
 import           Dungeon                             (Dungeon)
 import qualified Dungeon                             as D
 import           Dungeon.Actor                       (Actor)
-import           Dungeon.Actor.Actions               (Action,
-                                                      ActionStatus (Ok, ReadingStarted))
+import           Dungeon.Actor.Actions               (Action, ActionStatus)
 import           GHC.Generics                        (Generic)
 import           GameModel.Status.Exploring.Dungeons (Dungeons)
 import qualified GameModel.Status.Exploring.Dungeons as DS
@@ -57,20 +56,15 @@ descendStairsAtPlayerPosition eh = (\x -> eh & dungeons .~ x) <$> DS.descendStai
 exitDungeon :: ExploringHandler -> Maybe ExploringHandler
 exitDungeon eh = (\x -> eh & dungeons .~ x) <$> DS.exitDungeon (eh ^. dungeons)
 
-doPlayerAction :: Action -> ExploringHandler -> (Bool, ExploringHandler)
+doPlayerAction :: Action -> ExploringHandler -> (Maybe ActionStatus, ExploringHandler)
 doPlayerAction action eh =
     result
     where (dungeonsAfterAction, newLog) = runWriter $ runMaybeT $ DS.doPlayerAction action $ eh ^. dungeons
           handlerWithNewLog = eh & messageLog %~ L.addMessages newLog
 
           result = case dungeonsAfterAction of
-                       Just (status, d) -> (True, handleStatus status d)
-                       Nothing          -> (False, handlerWithNewLog)
-
-          handleStatus status d =
-              case status of
-                  Ok               -> handlerWithNewLog & dungeons .~ d
-                  ReadingStarted _ -> undefined
+                       Just (status, d) -> (Just status, handlerWithNewLog & dungeons .~ d)
+                       Nothing          -> (Nothing, handlerWithNewLog)
 
 completeThisTurn :: ExploringHandler -> Maybe ExploringHandler
 completeThisTurn eh =

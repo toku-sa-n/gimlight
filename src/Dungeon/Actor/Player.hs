@@ -7,16 +7,16 @@ module Dungeon.Actor.Player
     ) where
 
 import           Control.Lens                        ((^.))
-import           Data.Bifunctor                      (Bifunctor (second))
 import           Dungeon                             (isTown)
 import           Dungeon.Actor                       (Actor, isMonster,
                                                       talkMessage)
 import qualified Dungeon.Actor                       as A
+import           Dungeon.Actor.Actions               (ActionStatus (Ok, ReadingStarted))
 import           Dungeon.Actor.Actions.Consume       (consumeAction)
 import           Dungeon.Actor.Actions.Melee         (meleeAction)
 import           Dungeon.Actor.Actions.Move          (moveAction)
 import           Dungeon.Actor.Actions.PickUp        (pickUpAction)
-import           GameModel.Status                    (GameStatus (Exploring, GameOver, SelectingItemToUse, Talking))
+import           GameModel.Status                    (GameStatus (Exploring, GameOver, ReadingBook, SelectingItemToUse, Talking))
 import           GameModel.Status.Exploring          (ExploringHandler, actorAt,
                                                       completeThisTurn,
                                                       doPlayerAction,
@@ -25,6 +25,7 @@ import           GameModel.Status.Exploring          (ExploringHandler, actorAt,
                                                       getPlayerPosition,
                                                       isPositionInDungeon)
 import qualified GameModel.Status.Exploring          as GSE
+import           GameModel.Status.ReadingBook        (readingBookHandler)
 import           GameModel.Status.SelectingItemToUse (SelectingItemToUseHandler,
                                                       finishSelecting,
                                                       getSelectingIndex,
@@ -46,7 +47,12 @@ playerBumpAction offset eh =
 meleeOrTalk :: V2 Int -> Actor -> ExploringHandler -> (Bool, GameStatus)
 meleeOrTalk offset target eh =
     if isMonster target
-        then second Exploring $ doPlayerAction (meleeAction offset) eh
+        then let (status, newHandler) = doPlayerAction (meleeAction offset) eh
+             in case status of
+                    Just x -> case x of
+                                  Ok -> (True, Exploring newHandler)
+                                  ReadingStarted _ -> error "Unreachable."
+                    Nothing  -> (False, Exploring newHandler)
         else (True, Talking $ talkingHandler (talkWith target $ target ^. talkMessage) eh)
 
 moveOrExitMap :: V2 Int -> ExploringHandler -> (Bool, GameStatus)
@@ -55,7 +61,12 @@ moveOrExitMap offset eh =
                           Just p  -> p + offset
                           Nothing -> error "The player is dead."
     in if isPositionInDungeon destination eh || not (isTown (getCurrentDungeon eh))
-        then second Exploring $ doPlayerAction (moveAction offset) eh
+        then let (status, newHandler) = doPlayerAction (moveAction offset) eh
+             in case status of
+                    Just x -> case x of
+                                  Ok -> (True, Exploring newHandler)
+                                  ReadingStarted _ -> error "Unreachable."
+                    Nothing -> (False, Exploring newHandler)
         else (True, exitDungeon eh)
 
 exitDungeon :: ExploringHandler -> GameStatus
@@ -75,10 +86,12 @@ handlePlayerMoving offset gs =
 
 handlePlayerPickingUp :: ExploringHandler -> GameStatus
 handlePlayerPickingUp eh =
-    let (isSuccess, newHandler) = doPlayerAction pickUpAction eh
-    in if isSuccess
-        then maybe GameOver Exploring $ completeThisTurn newHandler
-        else Exploring newHandler
+    let (status, newHandler) = doPlayerAction pickUpAction eh
+    in case status of
+           Just x -> case x of
+                         Ok -> maybe GameOver Exploring $ completeThisTurn newHandler
+                         ReadingStarted _ -> error "Unreachable."
+           Nothing -> Exploring newHandler
 
 handlePlayerSelectingItemToUse :: ExploringHandler -> GameStatus
 handlePlayerSelectingItemToUse eh =
@@ -92,8 +105,10 @@ handlePlayerConsumeItem :: SelectingItemToUseHandler -> GameStatus
 handlePlayerConsumeItem sh =
     case getSelectingIndex sh of
         Just n ->
-            let (isSuccess, newHandler) = doPlayerAction (consumeAction n) $ finishSelecting sh
-            in if isSuccess
-                then maybe GameOver Exploring (completeThisTurn newHandler)
-                else Exploring newHandler
+            let (status, newHandler) = doPlayerAction (consumeAction n) $ finishSelecting sh
+            in case status of
+                   Just x -> case x of
+                                 Ok -> maybe GameOver Exploring $ completeThisTurn newHandler
+                                 ReadingStarted book -> ReadingBook $ readingBookHandler book newHandler
+                   Nothing -> Exploring newHandler
         Nothing -> SelectingItemToUse sh

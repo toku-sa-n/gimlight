@@ -10,38 +10,41 @@ module Dungeon.Item
     , getPosition
     , getIconImagePath
     , getEffect
+    , isUsableManyTimes
     ) where
 
 import           Coord              (Coord)
 import           Data.Binary        (Binary)
 import           Data.Text          (Text)
-import           Dungeon.Item.Book  (BookHandler, bookHandler)
+import           Dungeon.Item.Book  (Book)
 import           Dungeon.Item.Heal  (HealHandler, healHandler)
 import           GHC.Generics       (Generic)
 import           Localization       (MultilingualText)
 import qualified Localization.Texts as T
 
 data Effect = Heal HealHandler
-            | Book BookHandler
+            | Book Book
             deriving (Show, Ord, Eq, Generic)
 
 instance Binary Effect
 
 data Item = Item
-          { name          :: MultilingualText
-          , position      :: Coord
-          , iconImagePath :: Text
-          , effect        :: Effect
+          { name            :: MultilingualText
+          , position        :: Coord
+          , iconImagePath   :: Text
+          , effect          :: Effect
+          , usableManyTimes :: Bool
           } deriving (Show, Ord, Eq, Generic)
 
 instance Binary Item
 
-item :: Coord -> Text -> Effect -> Item
-item p ip e = Item { name = T.herb
-                   , position = p
-                   , iconImagePath = ip
-                   , effect = e
-                   }
+item :: MultilingualText -> Coord -> Text -> Effect -> Bool -> Item
+item n p ip e u = Item { name = n
+                       , position = p
+                       , iconImagePath = ip
+                       , effect = e
+                       , usableManyTimes = u
+                       }
 
 getName :: Item -> MultilingualText
 getName Item { name = n } = n
@@ -55,8 +58,11 @@ getIconImagePath Item { iconImagePath = ip } = ip
 getEffect :: Item -> Effect
 getEffect Item { effect = e } = e
 
+isUsableManyTimes :: Item -> Bool
+isUsableManyTimes Item { usableManyTimes = u } = u
+
 herb :: Coord -> Item
-herb p = item p "images/herb.png" (Heal $ healHandler 4)
+herb p = item T.herb p "images/herb.png" (Heal $ healHandler 4) False
 
 sampleBook :: Coord -> Item
-sampleBook p = item p "images/book.png" (Book $ bookHandler T.sampleBook )
+sampleBook p = item T.sampleBook p "images/book.png" (Book T.sampleBookContent ) True
