@@ -49,6 +49,11 @@ jobs:
         cabal install weeder
         ~/.cabal/bin/weeder
 
+    - name: Run hfmt
+      run: |
+        cabal install hfmt
+        ~/.cabal/bin/hfmt
+
     - name: Run tests
       run: cabal test all
 
