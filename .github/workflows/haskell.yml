@@ -57,4 +57,4 @@ jobs:
     - uses: rwe/actions-hlint-run@v2
       with:
         path: src/
-        fail-on: suggestion
+        fail-on: status
