@@ -49,11 +49,6 @@ jobs:
         cabal install weeder
         ~/.cabal/bin/weeder
 
-    - name: Run hfmt
-      run: |
-        cabal install hfmt
-        ~/.cabal/bin/hfmt
-
     - name: Run tests
       run: cabal test all
 
@@ -63,3 +58,12 @@ jobs:
       with:
         path: src/
         fail-on: suggestion
+
+    - name: Run hfmt
+      run: |
+        # With the freeze file, `cabal install` fails.
+        rm cabal.project.freeze
+
+        cabal install hfmt
+        ~/.cabal/bin/hfmt
+
