@@ -74,7 +74,7 @@ doPlayerAction action ds = result
           currentDungeonWithoutPlayer = getFocused zipperWithoutPlayer
           result = case player of
                        Just p  -> let dungeonAfterAction = action p currentDungeonWithoutPlayer
-                                  in fmap (\(a, d) -> (a, modify (const d) zipperWithoutPlayer)) dungeonAfterAction
+                                  in (\(a, d) -> (a, modify (const d) zipperWithoutPlayer)) <$> dungeonAfterAction
                        Nothing -> return (Failed, ds)
 
 handleNpcTurns :: Dungeons -> Writer MessageLog Dungeons
