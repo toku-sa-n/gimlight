@@ -3,11 +3,11 @@ module Dungeon.Actor.Actions.Consume
     ) where
 
 import           Control.Lens          ((^.))
-import           Control.Monad.Writer  (MonadPlus (mzero), tell)
+import           Control.Monad.Writer  (tell)
 import           Dungeon               (pushActor)
 import           Dungeon.Actor         (healHp, name, removeNthItem)
 import           Dungeon.Actor.Actions (Action,
-                                        ActionStatus (Ok, ReadingStarted))
+                                        ActionStatus (Failed, Ok, ReadingStarted))
 import           Dungeon.Item          (Effect (Book, Heal), getEffect,
                                         isUsableManyTimes)
 import           Dungeon.Item.Heal     (getHealAmount)
@@ -19,7 +19,7 @@ consumeAction n e d =
         Just x -> useItem x
         Nothing -> do
             tell [T.whatToUse]
-            mzero
+            return (Failed, pushActor e d)
     where
         useItem x =
             let actor = if isUsableManyTimes x

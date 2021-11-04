@@ -5,14 +5,14 @@ module Dungeon.Actor.Actions.Move
     ) where
 
 import           Control.Lens          ((&), (.~), (^.))
-import           Control.Monad.Writer  (MonadPlus (mzero), tell)
+import           Control.Monad.Writer  (tell)
 import           Coord                 (Coord)
 import           Data.Array            ((!))
 import           Data.Maybe            (isNothing)
 import           Dungeon               (Dungeon, actorAt, mapWidthAndHeight,
                                         pushActor, tileMap)
 import           Dungeon.Actor         (Actor, position)
-import           Dungeon.Actor.Actions (Action, ActionStatus (Ok))
+import           Dungeon.Actor.Actions (Action, ActionStatus (Failed, Ok))
 import           Dungeon.Map.Tile      (walkable)
 import           Linear.V2             (V2 (V2))
 import qualified Localization.Texts    as T
@@ -21,7 +21,7 @@ moveAction :: V2 Int -> Action
 moveAction offset src d = if not (movable d (src ^. position + offset))
                                 then do
                                     tell [T.youCannotMoveThere]
-                                    mzero
+                                    return (Failed, pushActor src d)
                                 else return (Ok, pushActor (updatePosition d src offset) d)
 
 updatePosition :: Dungeon -> Actor -> V2 Int -> Actor

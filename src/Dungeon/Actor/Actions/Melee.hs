@@ -4,15 +4,14 @@ module Dungeon.Actor.Actions.Melee
     ( meleeAction
     ) where
 
-import           Control.Lens              ((^.))
-import           Control.Monad.Trans.Maybe (MaybeT (MaybeT))
-import           Control.Monad.Writer      (MonadPlus (mzero), Writer)
-import           Dungeon                   (Dungeon, popActorAt, pushActor)
-import           Dungeon.Actor             (Actor, position)
-import qualified Dungeon.Actor             as A
-import           Dungeon.Actor.Actions     (Action, ActionStatus (Ok))
-import           Linear.V2                 (V2)
-import           Log                       (MessageLog)
+import           Control.Lens          ((^.))
+import           Control.Monad.Writer  (Writer)
+import           Dungeon               (Dungeon, popActorAt, pushActor)
+import           Dungeon.Actor         (Actor, position)
+import qualified Dungeon.Actor         as A
+import           Dungeon.Actor.Actions (Action, ActionStatus (Failed, Ok))
+import           Linear.V2             (V2)
+import           Log                   (MessageLog)
 
 meleeAction :: V2 Int -> Action
 meleeAction offset src dungeon =
@@ -22,8 +21,8 @@ meleeAction offset src dungeon =
 
           result =
             case target of
-                Nothing       -> mzero
-                Just defender -> MaybeT $ Just <$> attackFromTo src defender dungeonWithoutTarget
+                Nothing       -> return (Failed, pushActor src dungeon)
+                Just defender -> attackFromTo src defender dungeonWithoutTarget
 
 attackFromTo :: Actor -> Actor -> Dungeon -> Writer MessageLog (ActionStatus, Dungeon)
 attackFromTo attacker defender dungeonWithoutAttackerAndDefender = do

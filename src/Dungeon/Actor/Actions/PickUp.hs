@@ -3,10 +3,10 @@ module Dungeon.Actor.Actions.PickUp
     ) where
 
 import           Control.Lens            ((&), (.~), (^.))
-import           Control.Monad.Writer    (MonadPlus (mzero), tell)
+import           Control.Monad.Writer    (tell)
 import           Dungeon                 (popItemAt, pushActor)
 import           Dungeon.Actor           (inventoryItems, position)
-import           Dungeon.Actor.Actions   (Action, ActionStatus (Ok))
+import           Dungeon.Actor.Actions   (Action, ActionStatus (Failed, Ok))
 import           Dungeon.Actor.Inventory (addItem)
 import           Dungeon.Item            (getName)
 import qualified Localization.Texts      as T
@@ -21,8 +21,8 @@ pickUpAction e d =
                     return (Ok, pushActor (e & inventoryItems .~ xs) dungeonAfterPickingUp)
                 Nothing -> do
                     tell [T.bagIsFull]
-                    mzero
+                    return (Failed, pushActor e d)
         Nothing -> do
             tell [T.youGotNohing]
-            mzero
+            return (Failed, pushActor e d)
     where (item, dungeonAfterPickingUp) = popItemAt (e ^. position) d

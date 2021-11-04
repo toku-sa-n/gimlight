@@ -11,7 +11,7 @@ import           Dungeon                             (isTown)
 import           Dungeon.Actor                       (Actor, isMonster,
                                                       talkMessage)
 import qualified Dungeon.Actor                       as A
-import           Dungeon.Actor.Actions               (ActionStatus (Ok, ReadingStarted))
+import           Dungeon.Actor.Actions               (ActionStatus (Failed, Ok, ReadingStarted))
 import           Dungeon.Actor.Actions.Consume       (consumeAction)
 import           Dungeon.Actor.Actions.Melee         (meleeAction)
 import           Dungeon.Actor.Actions.Move          (moveAction)
@@ -49,10 +49,9 @@ meleeOrTalk offset target eh =
     if isMonster target
         then let (status, newHandler) = doPlayerAction (meleeAction offset) eh
              in case status of
-                    Just x -> case x of
-                                  Ok -> (True, Exploring newHandler)
-                                  ReadingStarted _ -> error "Unreachable."
-                    Nothing  -> (False, Exploring newHandler)
+                    Ok               -> (True, Exploring newHandler)
+                    ReadingStarted _ -> error "Unreachable."
+                    Failed           -> (False, Exploring newHandler)
         else (True, Talking $ talkingHandler (talkWith target $ target ^. talkMessage) eh)
 
 moveOrExitMap :: V2 Int -> ExploringHandler -> (Bool, GameStatus)
@@ -63,10 +62,9 @@ moveOrExitMap offset eh =
     in if isPositionInDungeon destination eh || not (isTown (getCurrentDungeon eh))
         then let (status, newHandler) = doPlayerAction (moveAction offset) eh
              in case status of
-                    Just x -> case x of
-                                  Ok -> (True, Exploring newHandler)
-                                  ReadingStarted _ -> error "Unreachable."
-                    Nothing -> (False, Exploring newHandler)
+                    Ok               -> (True, Exploring newHandler)
+                    ReadingStarted _ -> error "Unreachable."
+                    Failed           -> (False, Exploring newHandler)
         else (True, exitDungeon eh)
 
 exitDungeon :: ExploringHandler -> GameStatus
@@ -88,10 +86,9 @@ handlePlayerPickingUp :: ExploringHandler -> GameStatus
 handlePlayerPickingUp eh =
     let (status, newHandler) = doPlayerAction pickUpAction eh
     in case status of
-           Just x -> case x of
-                         Ok -> maybe GameOver Exploring $ completeThisTurn newHandler
-                         ReadingStarted _ -> error "Unreachable."
-           Nothing -> Exploring newHandler
+            Ok -> maybe GameOver Exploring $ completeThisTurn newHandler
+            ReadingStarted _ -> error "Unreachable."
+            Failed -> Exploring newHandler
 
 handlePlayerSelectingItemToUse :: ExploringHandler -> GameStatus
 handlePlayerSelectingItemToUse eh =
@@ -107,8 +104,7 @@ handlePlayerConsumeItem sh =
         Just n ->
             let (status, newHandler) = doPlayerAction (consumeAction n) $ finishSelecting sh
             in case status of
-                   Just x -> case x of
-                                 Ok -> maybe GameOver Exploring $ completeThisTurn newHandler
-                                 ReadingStarted book -> ReadingBook $ readingBookHandler book newHandler
-                   Nothing -> Exploring newHandler
+                    Ok -> maybe GameOver Exploring $ completeThisTurn newHandler
+                    ReadingStarted book -> ReadingBook $ readingBookHandler book newHandler
+                    Failed -> Exploring newHandler
         Nothing -> SelectingItemToUse sh
