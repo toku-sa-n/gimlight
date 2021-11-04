@@ -11,4 +11,4 @@ herb :: MultilingualText
 herb = multilingualText "Herb" "薬草"
 
 sampleBook :: MultilingualText
-sampleBook = multilingualText "Sample book." "テスト用本"
+sampleBook = multilingualText "Sample book" "テスト用本"
