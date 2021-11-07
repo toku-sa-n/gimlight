@@ -4,10 +4,11 @@ module Quest
     (
     ) where
 
-import           GHC.Generics (Generic)
+import           GHC.Generics   (Generic)
+import           Quest.KillBats (KillBats)
 
-data QuestCollection =
+newtype QuestCollection =
     QuestCollection
-        {
+        { killBats :: KillBats
         }
     deriving (Show, Ord, Eq, Generic)
