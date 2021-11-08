@@ -69,6 +69,8 @@ executable roguelike
                       , Localization.Texts.Title
                       , Log
                       , Player
+                      , Quest
+                      , Quest.KillBats
                       , Save
                       , TreeZipper
                       , UI.Draw

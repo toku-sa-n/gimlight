@@ -7,6 +7,7 @@ module Quest.KillBats
     , incrementCount
     ) where
 
+import           Data.Binary  (Binary)
 import           GHC.Generics (Generic)
 
 newtype KillBats =
@@ -14,6 +15,8 @@ newtype KillBats =
         { getRemaining :: Int
         }
     deriving (Show, Ord, Eq, Generic)
+
+instance Binary KillBats
 
 killBats :: KillBats
 killBats = KillBats 0

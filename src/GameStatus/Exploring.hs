@@ -31,12 +31,14 @@ import           GameStatus.Exploring.Dungeons (Dungeons)
 import qualified GameStatus.Exploring.Dungeons as DS
 import           Log                           (MessageLog)
 import qualified Log                           as L
+import           Quest                         (QuestCollection)
 import           TreeZipper                    (TreeZipper, getFocused, modify)
 
 data ExploringHandler =
     ExploringHandler
         { _dungeons   :: Dungeons
         , _messageLog :: MessageLog
+        , quests      :: QuestCollection
         }
     deriving (Show, Ord, Eq, Generic)
 
@@ -44,7 +46,8 @@ makeLenses ''ExploringHandler
 
 instance Binary ExploringHandler
 
-exploringHandler :: TreeZipper Dungeon -> MessageLog -> ExploringHandler
+exploringHandler ::
+       TreeZipper Dungeon -> MessageLog -> QuestCollection -> ExploringHandler
 exploringHandler = ExploringHandler
 
 ascendStairsAtPlayerPosition :: ExploringHandler -> Maybe ExploringHandler
