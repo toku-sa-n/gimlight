@@ -31,14 +31,15 @@ import           GameStatus.Exploring.Dungeons (Dungeons)
 import qualified GameStatus.Exploring.Dungeons as DS
 import           Log                           (MessageLog)
 import qualified Log                           as L
-import           Quest                         (QuestCollection)
+import           Quest                         (QuestCollection,
+                                                handleWithTurnResult)
 import           TreeZipper                    (TreeZipper, getFocused, modify)
 
 data ExploringHandler =
     ExploringHandler
         { _dungeons   :: Dungeons
         , _messageLog :: MessageLog
-        , quests      :: QuestCollection
+        , _quests     :: QuestCollection
         }
     deriving (Show, Ord, Eq, Generic)
 
@@ -74,12 +75,15 @@ doPlayerAction action eh = (status, newHandler)
 
 processAfterPlayerTurn :: ExploringHandler -> Maybe ExploringHandler
 processAfterPlayerTurn eh =
-    (\x -> handlerAfterNpcTurns & dungeons %~ modify (const x)) <$>
+    (\x ->
+         handlerAfterNpcTurns & dungeons %~ modify (const x) &
+         quests %~ updateQuests x) <$>
     newCurrentDungeon
   where
-    (handlerAfterNpcTurns, _) = handleNpcTurns eh
+    updateQuests d = handleWithTurnResult d killed
     newCurrentDungeon =
         D.updateMap $ getFocused $ handlerAfterNpcTurns ^. dungeons
+    (handlerAfterNpcTurns, killed) = handleNpcTurns eh
 
 handleNpcTurns :: ExploringHandler -> (ExploringHandler, [Actor])
 handleNpcTurns eh = (newHandler, killed)
