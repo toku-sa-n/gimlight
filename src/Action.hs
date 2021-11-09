@@ -17,4 +17,6 @@ data ActionStatus
 
 type Action = Actor -> Dungeon -> ActionResultWithLog
 
-type ActionResultWithLog = Writer MessageLog (ActionStatus, Dungeon)
+type ActionResult = (ActionStatus, Dungeon)
+
+type ActionResultWithLog = Writer MessageLog ActionResult
