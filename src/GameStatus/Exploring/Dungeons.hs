@@ -116,9 +116,10 @@ doPlayerAction action ds = result
                         statusAndNewDungeon
             Nothing -> return (Failed, ds)
 
-handleNpcTurns :: Dungeons -> Writer MessageLog Dungeons
+handleNpcTurns :: Dungeons -> Writer MessageLog (Dungeons, [Actor])
 handleNpcTurns ds =
-    (\x -> modify (const x) ds) <$> NPC.handleNpcTurns (getFocused ds)
+    (\(x, killed) -> (modify (const x) ds, killed)) <$>
+    NPC.handleNpcTurns (getFocused ds)
 
 popPlayer :: Dungeons -> (Maybe Actor, Dungeons)
 popPlayer = popActorIf isPlayer

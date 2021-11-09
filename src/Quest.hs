@@ -1,22 +1,33 @@
-{-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE DeriveGeneric   #-}
+{-# LANGUAGE TemplateHaskell #-}
 
 module Quest
     ( QuestCollection
     , questCollection
+    , handleWithTurnResult
     ) where
 
+import           Actor          (Actor)
+import           Control.Lens   (makeLenses, (%~), (&))
 import           Data.Binary    (Binary)
+import           Dungeon        (Dungeon)
 import           GHC.Generics   (Generic)
 import           Quest.KillBats (KillBats)
 import qualified Quest.KillBats as KillBats
 
 newtype QuestCollection =
     QuestCollection
-        { killBats :: KillBats
+        { _killBats :: KillBats
         }
     deriving (Show, Ord, Eq, Generic)
+
+makeLenses ''QuestCollection
 
 instance Binary QuestCollection
 
 questCollection :: QuestCollection
-questCollection = QuestCollection {killBats = KillBats.killBats}
+questCollection = QuestCollection {_killBats = KillBats.killBats}
+
+handleWithTurnResult :: Dungeon -> [Actor] -> QuestCollection -> QuestCollection
+handleWithTurnResult currentDungeon killed qc =
+    qc & killBats %~ KillBats.handleWithTurnResult currentDungeon killed

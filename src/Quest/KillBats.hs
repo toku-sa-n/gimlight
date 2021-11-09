@@ -3,12 +3,15 @@
 module Quest.KillBats
     ( KillBats
     , killBats
+    , handleWithTurnResult
     , questCompleted
-    , incrementCount
     ) where
 
-import           Data.Binary  (Binary)
-import           GHC.Generics (Generic)
+import           Actor              (Actor)
+import           Data.Binary        (Binary)
+import           Dungeon            (Dungeon, getIdentifier)
+import           Dungeon.Identifier (Identifier (BatsCave))
+import           GHC.Generics       (Generic)
 
 newtype KillBats =
     KillBats
@@ -20,6 +23,12 @@ instance Binary KillBats
 
 killBats :: KillBats
 killBats = KillBats 0
+
+handleWithTurnResult :: Dungeon -> [Actor] -> KillBats -> KillBats
+handleWithTurnResult d killed k =
+    if getIdentifier d == BatsCave
+        then iterate incrementCount k !! length killed
+        else k
 
 questCompleted :: KillBats -> Bool
 questCompleted k = getRemaining k >= quota

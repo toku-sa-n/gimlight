@@ -77,15 +77,17 @@ processAfterPlayerTurn eh =
     (\x -> handlerAfterNpcTurns & dungeons %~ modify (const x)) <$>
     newCurrentDungeon
   where
-    handlerAfterNpcTurns = handleNpcTurns eh
+    (handlerAfterNpcTurns, _) = handleNpcTurns eh
     newCurrentDungeon =
         D.updateMap $ getFocused $ handlerAfterNpcTurns ^. dungeons
 
-handleNpcTurns :: ExploringHandler -> ExploringHandler
-handleNpcTurns eh =
-    eh & dungeons .~ dungeonsAfterNpcTurns & messageLog %~ L.addMessages newLog
+handleNpcTurns :: ExploringHandler -> (ExploringHandler, [Actor])
+handleNpcTurns eh = (newHandler, killed)
   where
-    (dungeonsAfterNpcTurns, newLog) =
+    newHandler =
+        eh & dungeons .~ dungeonsAfterNpcTurns &
+        messageLog %~ L.addMessages newLog
+    ((dungeonsAfterNpcTurns, killed), newLog) =
         runWriter $ DS.handleNpcTurns $ eh ^. dungeons
 
 getPlayerActor :: ExploringHandler -> Maybe Actor
