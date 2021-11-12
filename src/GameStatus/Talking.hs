@@ -3,7 +3,7 @@
 module GameStatus.Talking
     ( TalkingHandler
     , talkingHandler
-    , TalkingElement(..)
+    , TalkingPart(..)
     , getQuestion
     , getChoices
     , getSelectingIndex
@@ -20,23 +20,23 @@ import           Localization         (MultilingualText)
 data SelectionHandler =
     SelectionHandler
         { question        :: MultilingualText
-        , choicesAndNexts :: [(MultilingualText, Maybe TalkingElement)]
+        , choicesAndNexts :: [(MultilingualText, Maybe TalkingPart)]
         , selectingIndex  :: Int
         }
     deriving (Show, Ord, Eq, Generic)
 
 instance Binary SelectionHandler
 
-newtype TalkingElement =
+newtype TalkingPart =
     Selection SelectionHandler
     deriving (Show, Ord, Eq, Generic)
 
-instance Binary TalkingElement
+instance Binary TalkingPart
 
 data TalkingHandler =
     TalkingHandler
         { talkingPartner :: Actor
-        , element        :: TalkingElement
+        , element        :: TalkingPart
         , afterTalking   :: ExploringHandler
         }
     deriving (Show, Ord, Eq, Generic)
@@ -52,7 +52,7 @@ getChoices = map fst . choicesAndNexts
 getSelectingIndex :: SelectionHandler -> Int
 getSelectingIndex = selectingIndex
 
-talkingHandler :: Actor -> TalkingElement -> ExploringHandler -> TalkingHandler
+talkingHandler :: Actor -> TalkingPart -> ExploringHandler -> TalkingHandler
 talkingHandler = TalkingHandler
 
 getTalkingPartner :: TalkingHandler -> Actor
@@ -66,5 +66,5 @@ proceedTalking (TalkingHandler a es at) =
                 Just x  -> Right $ TalkingHandler a x at
                 Nothing -> Left at
 
-select :: SelectionHandler -> Maybe TalkingElement
+select :: SelectionHandler -> Maybe TalkingPart
 select (SelectionHandler _ xs n) = snd $ xs !! n
