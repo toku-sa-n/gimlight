@@ -12,6 +12,7 @@ module Actor
     , getMaxHp
     , getPower
     , getDefence
+    , getTalkingPart
     , monster
     , isPlayer
     , isMonster
@@ -19,7 +20,6 @@ module Actor
     , attackFromTo
     , actor
     , position
-    , talk
     , name
     , pathToDestination
     , standingImagePath
@@ -130,6 +130,9 @@ getHp e = S.getHp $ e ^. status
 
 getMaxHp :: Actor -> Int
 getMaxHp e = S.getMaxHp $ e ^. status
+
+getTalkingPart :: Actor -> Maybe TalkingPart
+getTalkingPart a = a ^. talk
 
 attackFromTo :: Actor -> Actor -> (Writer MessageLog) (Actor, Maybe Actor)
 attackFromTo attacker defender = writer ((newAttacker, newDefender), msg)
