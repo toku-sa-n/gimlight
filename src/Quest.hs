@@ -7,13 +7,13 @@ module Quest
     , handleWithTurnResult
     ) where
 
-import           Actor.Identifier (Identifier)
-import           Control.Lens     (makeLenses, (%~), (&))
-import           Data.Binary      (Binary)
-import           Dungeon          (Dungeon)
-import           GHC.Generics     (Generic)
-import           Quest.KillBats   (KillBats)
-import qualified Quest.KillBats   as KillBats
+import qualified Actor.Identifier   as A
+import           Control.Lens       (makeLenses, (%~), (&))
+import           Data.Binary        (Binary)
+import qualified Dungeon.Identifier as D
+import           GHC.Generics       (Generic)
+import           Quest.KillBats     (KillBats)
+import qualified Quest.KillBats     as KillBats
 
 newtype QuestCollection =
     QuestCollection
@@ -29,6 +29,6 @@ questCollection :: QuestCollection
 questCollection = QuestCollection {_killBats = KillBats.killBats}
 
 handleWithTurnResult ::
-       Dungeon -> [Identifier] -> QuestCollection -> QuestCollection
+       D.Identifier -> [A.Identifier] -> QuestCollection -> QuestCollection
 handleWithTurnResult currentDungeon killed qc =
     qc & killBats %~ KillBats.handleWithTurnResult currentDungeon killed

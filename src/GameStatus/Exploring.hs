@@ -77,7 +77,7 @@ processAfterPlayerTurn :: ExploringHandler -> Maybe ExploringHandler
 processAfterPlayerTurn eh =
     (\x ->
          handlerAfterNpcTurns & dungeons %~ modify (const x) &
-         quests %~ updateQuests x) <$>
+         quests %~ updateQuests (D.getIdentifier x)) <$>
     newCurrentDungeon
   where
     updateQuests d = handleWithTurnResult d $ map getIdentifier killed
