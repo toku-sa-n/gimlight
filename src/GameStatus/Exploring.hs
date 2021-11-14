@@ -18,7 +18,7 @@ module GameStatus.Exploring
     ) where
 
 import           Action                        (Action, ActionStatus)
-import           Actor                         (Actor)
+import           Actor                         (Actor, getIdentifier)
 import           Control.Lens                  (makeLenses, (%~), (&), (.~),
                                                 (^.))
 import           Control.Monad.Trans.Writer    (runWriter)
@@ -80,7 +80,7 @@ processAfterPlayerTurn eh =
          quests %~ updateQuests x) <$>
     newCurrentDungeon
   where
-    updateQuests d = handleWithTurnResult d killed
+    updateQuests d = handleWithTurnResult d $ map getIdentifier killed
     newCurrentDungeon =
         D.updateMap $ getFocused $ handlerAfterNpcTurns ^. dungeons
     (handlerAfterNpcTurns, killed) = handleNpcTurns eh
