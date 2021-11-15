@@ -10,9 +10,12 @@ module Localization.Texts.Actors
     , talkWithElectriaNo
     , orc
     , troll
+    , module Localization.Texts.Actors.Electria
     ) where
 
-import           Localization (MultilingualText, multilingualText)
+import           Localization                       (MultilingualText,
+                                                     multilingualText)
+import           Localization.Texts.Actors.Electria
 
 player :: MultilingualText
 player = multilingualText "Player" "プレイヤー"

@@ -69,11 +69,15 @@ exitDungeon eh = (\x -> eh & dungeons .~ x) <$> DS.exitDungeon (eh ^. dungeons)
 doPlayerAction :: Action -> ExploringHandler -> (ActionStatus, ExploringHandler)
 doPlayerAction action eh = (status, newHandler)
   where
-    ((status, dungeonsAfterAction), newLog) =
+    ((status, dungeonsAfterAction, killed), newLog) =
         runWriter $ DS.doPlayerAction action $ eh ^. dungeons
     newHandler =
         eh & messageLog %~ L.addMessages newLog &
-        dungeons .~ dungeonsAfterAction
+        dungeons .~ dungeonsAfterAction &
+        quests %~
+        handleWithTurnResult
+            (D.getIdentifier (getFocused dungeonsAfterAction))
+            (map getIdentifier killed)
 
 processAfterPlayerTurn :: ExploringHandler -> Maybe ExploringHandler
 processAfterPlayerTurn eh =

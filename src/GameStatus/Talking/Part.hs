@@ -6,10 +6,12 @@ module GameStatus.Talking.Part
     , QuestInquiryHandler
     , selectionHandler
     , questInquiryHandler
+    , updateQuestHandler
     , getQuestion
     , getChoices
     , getSelectingIndex
     , proceedTalking
+    , proceedNonVisiblePartsIfNecessary
     , selectPrevChoice
     , selectNextChoice
     ) where
@@ -70,6 +72,9 @@ questInquiryHandler ::
        Inquiry -> Maybe TalkingPart -> Maybe TalkingPart -> QuestInquiryHandler
 questInquiryHandler = QuestInquiryHandler
 
+updateQuestHandler :: Updater -> Maybe TalkingPart -> UpdateQuestHandler
+updateQuestHandler = UpdateQuestHandler
+
 getQuestion :: SelectionHandler -> MultilingualText
 getQuestion = question
 
@@ -85,29 +90,29 @@ getSelectingIndex (SelectionHandler _ cs n) =
 proceedTalking ::
        QuestCollection -> TalkingPart -> (Maybe TalkingPart, QuestCollection)
 proceedTalking q (Selection h) = select q h
-proceedTalking q p             = proceedNonVisibleParts q p
+proceedTalking q p             = proceedNonVisiblePartsIfNecessary q p
 
-proceedNonVisibleParts ::
+proceedNonVisiblePartsIfNecessary ::
        QuestCollection -> TalkingPart -> (Maybe TalkingPart, QuestCollection)
-proceedNonVisibleParts q (QuestInquiry (QuestInquiryHandler i t f))
+proceedNonVisiblePartsIfNecessary q (QuestInquiry (QuestInquiryHandler i t f))
     | Quest.inquiry i q =
         case t of
-            Just x  -> proceedNonVisibleParts q x
+            Just x  -> proceedNonVisiblePartsIfNecessary q x
             Nothing -> (Nothing, q)
     | otherwise =
         case f of
-            Just x  -> proceedNonVisibleParts q x
+            Just x  -> proceedNonVisiblePartsIfNecessary q x
             Nothing -> (Nothing, q)
-proceedNonVisibleParts q (UpdateQuest (UpdateQuestHandler u af)) =
+proceedNonVisiblePartsIfNecessary q (UpdateQuest (UpdateQuestHandler u af)) =
     case af of
-        Just x  -> proceedNonVisibleParts updatedQuests x
+        Just x  -> proceedNonVisiblePartsIfNecessary updatedQuests x
         Nothing -> (Nothing, updatedQuests)
   where
     updatedQuests =
         fromMaybe
             (error "Failed to update the quest collection.")
             (Quest.update u q)
-proceedNonVisibleParts _ _ = error "That part is visible."
+proceedNonVisiblePartsIfNecessary q p = (Just p, q)
 
 selectPrevChoice :: TalkingPart -> TalkingPart
 selectPrevChoice (Selection (SelectionHandler q cns idx)) =
@@ -130,7 +135,7 @@ select ::
 select q (SelectionHandler _ xs n) =
     case next of
         Just (Selection x) -> (Just $ Selection x, q)
-        Just x             -> proceedNonVisibleParts q x
+        Just x             -> proceedNonVisiblePartsIfNecessary q x
         Nothing            -> (Nothing, q)
   where
     next = snd $ xs NonEmpty.!! n
