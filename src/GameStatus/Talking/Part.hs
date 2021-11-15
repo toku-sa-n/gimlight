@@ -129,7 +129,8 @@ select ::
     -> (Maybe TalkingPart, QuestCollection)
 select q (SelectionHandler _ xs n) =
     case next of
-        Just x  -> proceedNonVisibleParts q x
-        Nothing -> (Nothing, q)
+        Just (Selection x) -> (Just $ Selection x, q)
+        Just x             -> proceedNonVisibleParts q x
+        Nothing            -> (Nothing, q)
   where
     next = snd $ xs NonEmpty.!! n
