@@ -3,8 +3,12 @@
 module Quest.KillBats
     ( KillBats
     , killBats
+    , startQuest
+    , completeQuest
+    , isQuestStarted
+    , isQuestCompleted
+    , isEnoughBatsKilled
     , handleWithTurnResult
-    , questCompleted
     ) where
 
 import qualified Actor.Identifier   as A
@@ -12,28 +16,44 @@ import           Data.Binary        (Binary)
 import qualified Dungeon.Identifier as D
 import           GHC.Generics       (Generic)
 
-newtype KillBats =
-    KillBats
-        { getRemaining :: Int
-        }
+data KillBats
+    = NotStarted
+    | OnGoing
+          { getRemaining :: Int
+          }
+    | Completed
     deriving (Show, Ord, Eq, Generic)
 
 instance Binary KillBats
 
 killBats :: KillBats
-killBats = KillBats 0
+killBats = NotStarted
+
+startQuest :: KillBats -> Maybe KillBats
+startQuest NotStarted = Just $ OnGoing 0
+startQuest _          = Nothing
+
+completeQuest :: KillBats -> Maybe KillBats
+completeQuest (OnGoing n)
+    | n >= quota = Just Completed
+    | otherwise = Nothing
+completeQuest _ = Nothing
+
+isQuestStarted :: KillBats -> Bool
+isQuestStarted (OnGoing _) = True
+isQuestStarted _           = False
+
+isQuestCompleted :: KillBats -> Bool
+isQuestCompleted Completed = True
+isQuestCompleted _         = False
+
+isEnoughBatsKilled :: KillBats -> Bool
+isEnoughBatsKilled (OnGoing n) = n >= quota
+isEnoughBatsKilled _           = undefined
 
 handleWithTurnResult :: D.Identifier -> [A.Identifier] -> KillBats -> KillBats
-handleWithTurnResult d killed k =
-    if d == D.BatsCave
-        then iterate incrementCount k !! length killed
-        else k
-
-questCompleted :: KillBats -> Bool
-questCompleted k = getRemaining k >= quota
-
-incrementCount :: KillBats -> KillBats
-incrementCount (KillBats k) = KillBats (k + 1)
+handleWithTurnResult D.BatsCave killed (OnGoing n) = OnGoing $ n + length killed
+handleWithTurnResult _ _ k                         = k
 
 quota :: Int
 quota = 3

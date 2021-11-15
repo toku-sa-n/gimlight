@@ -3,7 +3,9 @@
 module GameStatus.Talking.Part
     ( TalkingPart(..)
     , SelectionHandler
+    , QuestInquiryHandler
     , selectionHandler
+    , questInquiryHandler
     , getQuestion
     , getChoices
     , getSelectingIndex
@@ -15,8 +17,30 @@ module GameStatus.Talking.Part
 import           Data.Binary        (Binary)
 import           Data.List.NonEmpty (NonEmpty, toList)
 import qualified Data.List.NonEmpty as NonEmpty
+import           Data.Maybe         (fromMaybe)
 import           GHC.Generics       (Generic)
 import           Localization       (MultilingualText)
+import           Quest              (Inquiry, QuestCollection, Updater)
+import qualified Quest
+
+data UpdateQuestHandler =
+    UpdateQuestHandler
+        { updater :: Updater
+        , after   :: Maybe TalkingPart
+        }
+    deriving (Show, Ord, Eq, Generic)
+
+instance Binary UpdateQuestHandler
+
+data QuestInquiryHandler =
+    QuestInquiryHandler
+        { inquiry   :: Inquiry
+        , trueThen  :: Maybe TalkingPart
+        , falseThen :: Maybe TalkingPart
+        }
+    deriving (Show, Ord, Eq, Generic)
+
+instance Binary QuestInquiryHandler
 
 data SelectionHandler =
     SelectionHandler
@@ -28,8 +52,10 @@ data SelectionHandler =
 
 instance Binary SelectionHandler
 
-newtype TalkingPart =
-    Selection SelectionHandler
+data TalkingPart
+    = Selection SelectionHandler
+    | QuestInquiry QuestInquiryHandler
+    | UpdateQuest UpdateQuestHandler
     deriving (Show, Ord, Eq, Generic)
 
 instance Binary TalkingPart
@@ -39,6 +65,10 @@ selectionHandler ::
     -> NonEmpty (MultilingualText, Maybe TalkingPart)
     -> SelectionHandler
 selectionHandler q c = SelectionHandler q c 0
+
+questInquiryHandler ::
+       Inquiry -> Maybe TalkingPart -> Maybe TalkingPart -> QuestInquiryHandler
+questInquiryHandler = QuestInquiryHandler
 
 getQuestion :: SelectionHandler -> MultilingualText
 getQuestion = question
@@ -52,20 +82,41 @@ getSelectingIndex (SelectionHandler _ cs n) =
         then Nothing
         else Just n
 
-proceedTalking :: TalkingPart -> Maybe TalkingPart
-proceedTalking (Selection h) = select h
+proceedTalking :: QuestCollection -> TalkingPart -> Maybe TalkingPart
+proceedTalking q (Selection h) = select q h
+proceedTalking q p             = proceedNonVisibleParts q p
+
+proceedNonVisibleParts :: QuestCollection -> TalkingPart -> Maybe TalkingPart
+proceedNonVisibleParts q (QuestInquiry (QuestInquiryHandler i t f))
+    | Quest.inquiry i q = t >>= proceedNonVisibleParts q
+    | otherwise = f
+proceedNonVisibleParts q (UpdateQuest (UpdateQuestHandler u af)) =
+    af >>= proceedNonVisibleParts updatedQuests
+  where
+    updatedQuests =
+        fromMaybe
+            (error "Failed to update the quest collection.")
+            (Quest.update u q)
+proceedNonVisibleParts _ _ = error "That part is visible."
 
 selectPrevChoice :: TalkingPart -> TalkingPart
 selectPrevChoice (Selection (SelectionHandler q cns idx)) =
     Selection $ SelectionHandler q cns newIdx
   where
     newIdx = (idx - 1) `mod` length cns
+selectPrevChoice _ = error "We are not selecting anything."
 
 selectNextChoice :: TalkingPart -> TalkingPart
 selectNextChoice (Selection (SelectionHandler q cns idx)) =
     Selection $ SelectionHandler q cns newIdx
   where
     newIdx = (idx + 1) `mod` length cns
+selectNextChoice _ = error "We are not selecting anything."
 
-select :: SelectionHandler -> Maybe TalkingPart
-select (SelectionHandler _ xs n) = snd $ xs NonEmpty.!! n
+select :: QuestCollection -> SelectionHandler -> Maybe TalkingPart
+select q (SelectionHandler _ xs n) =
+    case next of
+        Just (QuestInquiry _) -> next >>= proceedTalking q
+        _                     -> next
+  where
+    next = snd $ xs NonEmpty.!! n

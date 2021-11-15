@@ -31,11 +31,12 @@ talking :: TalkingPart
 talking = q
   where
     q =
-        Selection $selectionHandler T.talkWithElectria $
+        Selection $
+        selectionHandler T.talkWithElectria $
         fromList [(T.yes, Just afterYes), (T.no, Just afterNo)]
     afterYes =
         Selection $
         selectionHandler T.talkWithElectriaYes $ fromList [(T.yes, Nothing)]
     afterNo =
-        Selection $selectionHandler T.talkWithElectriaNo $
-        fromList [(T.yes, Nothing)]
+        Selection $
+        selectionHandler T.talkWithElectriaNo $ fromList [(T.yes, Nothing)]

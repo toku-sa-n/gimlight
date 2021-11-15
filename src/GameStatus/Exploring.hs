@@ -9,6 +9,7 @@ module GameStatus.Exploring
     , exitDungeon
     , doPlayerAction
     , processAfterPlayerTurn
+    , getQuests
     , getPlayerActor
     , getPlayerPosition
     , actorAt
@@ -93,6 +94,9 @@ handleNpcTurns eh = (newHandler, killed)
         messageLog %~ L.addMessages newLog
     ((dungeonsAfterNpcTurns, killed), newLog) =
         runWriter $ DS.handleNpcTurns $ eh ^. dungeons
+
+getQuests :: ExploringHandler -> QuestCollection
+getQuests e = e ^. quests
 
 getPlayerActor :: ExploringHandler -> Maybe Actor
 getPlayerActor = D.getPlayerActor . getCurrentDungeon
