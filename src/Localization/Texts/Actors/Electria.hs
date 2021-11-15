@@ -36,7 +36,7 @@ electriaNotCompleted =
 electriaCompleted :: MultilingualText
 electriaCompleted =
     multilingualText
-        "Thanks for the investigation! I'm surprised because there are orcs and trolls in the cave. What happened in the cave?"
+        "Thanks for the investigation! I'm surprised because there are orcs and trolls in the cave. I wonder what happened in the cave."
         "調査ありがとう！あの洞窟にオークやらトロールやらがいるなんて驚いたわ。一体何があったのかしら。"
 
 electriaAfterCompletion :: MultilingualText
