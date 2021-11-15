@@ -9,6 +9,7 @@ module GameStatus.Exploring
     , exitDungeon
     , doPlayerAction
     , processAfterPlayerTurn
+    , updateQuests
     , getQuests
     , getPlayerActor
     , getPlayerPosition
@@ -78,10 +79,10 @@ processAfterPlayerTurn :: ExploringHandler -> Maybe ExploringHandler
 processAfterPlayerTurn eh =
     (\x ->
          handlerAfterNpcTurns & dungeons %~ modify (const x) &
-         quests %~ updateQuests (D.getIdentifier x)) <$>
+         quests %~ updateQuestsForResult (D.getIdentifier x)) <$>
     newCurrentDungeon
   where
-    updateQuests d = handleWithTurnResult d $ map getIdentifier killed
+    updateQuestsForResult d = handleWithTurnResult d $ map getIdentifier killed
     newCurrentDungeon =
         D.updateMap $ getFocused $ handlerAfterNpcTurns ^. dungeons
     (handlerAfterNpcTurns, killed) = handleNpcTurns eh
@@ -94,6 +95,9 @@ handleNpcTurns eh = (newHandler, killed)
         messageLog %~ L.addMessages newLog
     ((dungeonsAfterNpcTurns, killed), newLog) =
         runWriter $ DS.handleNpcTurns $ eh ^. dungeons
+
+updateQuests :: QuestCollection -> ExploringHandler -> ExploringHandler
+updateQuests q e = e & quests .~ q
 
 getQuests :: ExploringHandler -> QuestCollection
 getQuests e = e ^. quests

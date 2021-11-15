@@ -14,7 +14,8 @@ module GameStatus.Talking
 import           Actor                   (Actor)
 import           Data.Binary             (Binary)
 import           GHC.Generics            (Generic)
-import           GameStatus.Exploring    (ExploringHandler, getQuests)
+import           GameStatus.Exploring    (ExploringHandler, getQuests,
+                                          updateQuests)
 import           GameStatus.Talking.Part (TalkingPart)
 import qualified GameStatus.Talking.Part as Part
 
@@ -43,8 +44,9 @@ getExploringHandler (TalkingHandler _ _ h) = h
 proceedTalking :: TalkingHandler -> Either ExploringHandler TalkingHandler
 proceedTalking (TalkingHandler a p at) =
     case Part.proceedTalking (getQuests at) p of
-        Just x  -> Right $ TalkingHandler a x at
-        Nothing -> Left at
+        (Just next, updatedQuests) ->
+            Right $ TalkingHandler a next (updateQuests updatedQuests at)
+        (Nothing, updatedQuests) -> Left $ updateQuests updatedQuests at
 
 selectPrevChoice :: TalkingHandler -> TalkingHandler
 selectPrevChoice (TalkingHandler a p at) =

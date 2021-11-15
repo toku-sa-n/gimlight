@@ -82,16 +82,26 @@ getSelectingIndex (SelectionHandler _ cs n) =
         then Nothing
         else Just n
 
-proceedTalking :: QuestCollection -> TalkingPart -> Maybe TalkingPart
+proceedTalking ::
+       QuestCollection -> TalkingPart -> (Maybe TalkingPart, QuestCollection)
 proceedTalking q (Selection h) = select q h
 proceedTalking q p             = proceedNonVisibleParts q p
 
-proceedNonVisibleParts :: QuestCollection -> TalkingPart -> Maybe TalkingPart
+proceedNonVisibleParts ::
+       QuestCollection -> TalkingPart -> (Maybe TalkingPart, QuestCollection)
 proceedNonVisibleParts q (QuestInquiry (QuestInquiryHandler i t f))
-    | Quest.inquiry i q = t >>= proceedNonVisibleParts q
-    | otherwise = f
+    | Quest.inquiry i q =
+        case t of
+            Just x  -> proceedNonVisibleParts q x
+            Nothing -> (Nothing, q)
+    | otherwise =
+        case f of
+            Just x  -> proceedNonVisibleParts q x
+            Nothing -> (Nothing, q)
 proceedNonVisibleParts q (UpdateQuest (UpdateQuestHandler u af)) =
-    af >>= proceedNonVisibleParts updatedQuests
+    case af of
+        Just x  -> proceedNonVisibleParts updatedQuests x
+        Nothing -> (Nothing, updatedQuests)
   where
     updatedQuests =
         fromMaybe
@@ -113,10 +123,13 @@ selectNextChoice (Selection (SelectionHandler q cns idx)) =
     newIdx = (idx + 1) `mod` length cns
 selectNextChoice _ = error "We are not selecting anything."
 
-select :: QuestCollection -> SelectionHandler -> Maybe TalkingPart
+select ::
+       QuestCollection
+    -> SelectionHandler
+    -> (Maybe TalkingPart, QuestCollection)
 select q (SelectionHandler _ xs n) =
     case next of
-        Just (QuestInquiry _) -> next >>= proceedTalking q
-        _                     -> next
+        Just x  -> proceedNonVisibleParts q x
+        Nothing -> (Nothing, q)
   where
     next = snd $ xs NonEmpty.!! n
