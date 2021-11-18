@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tileset version="1.5" tiledversion="1.7.2" name="map_tiles" tilewidth="48" tileheight="48" tilecount="900" columns="30">
+ <image source="../images/map_tiles.png" width="1440" height="1440"/>
+ <tile id="0" type="ground"/>
+ <tile id="1" type="wall"/>
+ <tile id="2" type="ground"/>
+ <tile id="3" type="ground"/>
+ <tile id="4" type="ground"/>
+ <tile id="5" type="ground"/>
+</tileset>
