@@ -1,3 +1,4 @@
+{-# LANGUAGE LambdaCase        #-}
 {-# LANGUAGE OverloadedStrings #-}
 
 module UI.Event
@@ -145,7 +146,7 @@ handleKeyInputDuringTitle g k
   where
     startNewGame GameModel {config = c} = do
         st <- newGameStatus
-        return GameModel {status = st, config = c}
+        return g {status = st, config = c}
 
 handleKeyInputDuringSelectingLanguage ::
        GameModel -> Text -> [GameEventResponse]
