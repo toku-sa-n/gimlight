@@ -164,7 +164,7 @@ mapActors eh = mapMaybe actorToImage $ d ^. actors
     leftPadding actor =
         fromIntegral $ actorPositionOnDisplay actor ^. _x * tileWidth
     topPadding actor =
-        fromIntegral $ (actorPositionOnDisplay actor ^. _y + 1) * tileHeight
+        fromIntegral $ (actorPositionOnDisplay actor ^. _y) * tileHeight
     style actor = [paddingL $ leftPadding actor, paddingT $ topPadding actor]
     actorPositionOnDisplay actor = actor ^. A.position - topLeftCoord d
     isActorDrawed actor =
