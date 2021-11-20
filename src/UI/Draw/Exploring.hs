@@ -16,6 +16,7 @@ import           Control.Monad                   (guard)
 import           Coord                           (Coord)
 import           Data.Array                      ((!))
 import           Data.Maybe                      (mapMaybe)
+import           Data.Text                       (pack)
 import           Data.Vector.Storable.ByteString (vectorToByteString)
 import           Dungeon                         (Dungeon, actors, explored,
                                                   items, mapWidthAndHeight,
@@ -108,20 +109,20 @@ mapTiles wenv tileGraphics eh =
     box_ [alignLeft] $ vgrid rows `styleBasic` styles
   where
     d = getCurrentDungeon eh
-    V2 bottomLeftX bottomLeftY = bottomLeftCoord d
+    V2 topLeftCoordX topLeftCoordY = topLeftCoord d
     rows =
-        [ hgrid $ row y
-        | y <-
-              [bottomLeftY + tileRows - 1,bottomLeftY + tileRows - 2 .. bottomLeftY]
-        ]
+        [hgrid $ row y | y <- [topLeftCoordY .. topLeftCoordY + tileRows - 1]]
     row y =
-        [cell $ V2 x y | x <- [bottomLeftX .. bottomLeftX + tileColumns - 1]]
+        [ cell $ V2 x y
+        | x <- [topLeftCoordX .. topLeftCoordX + tileColumns - 1]
+        ]
     isVisible c = (d ^. visible) ! c
     isExplored c = (d ^. explored) ! c
     cell c =
         zstack
             [ imageMem (imageName c) (imageAt c) (Size 48 48)
             , filler `styleBasic` [bgColor $ black & L.a .~ cellOpacity c]
+            , label $ pack $ show c
             ]
     imageName (V2 x y) = showt (wenv ^. L.timestamp) <> showt x <> showt y
     imageAt c =
@@ -146,7 +147,7 @@ mapItems eh = mapMaybe itemToImage $ d ^. items
     isItemDrawed item =
         let pos = itemPositionOnDisplay item
             isVisible = (d ^. visible) ! I.getPosition item
-         in V2 0 0 <= pos && pos <= topRightCoord d && isVisible
+         in V2 0 0 <= pos && pos <= bottomRightCoord d && isVisible
     d = getCurrentDungeon eh
     leftPadding item =
         fromIntegral $ itemPositionOnDisplay item ^. _x * tileWidth
@@ -154,7 +155,7 @@ mapItems eh = mapMaybe itemToImage $ d ^. items
         fromIntegral $
         mapDrawingHeight - (itemPositionOnDisplay item ^. _y + 1) * tileHeight
     style item = [paddingL $ leftPadding item, paddingT $ topPadding item]
-    itemPositionOnDisplay item = I.getPosition item - bottomLeftCoord d
+    itemPositionOnDisplay item = I.getPosition item - bottomRightCoord d
 
 mapActors :: ExploringHandler -> [GameWidgetNode]
 mapActors eh = mapMaybe actorToImage $ d ^. actors
@@ -163,20 +164,19 @@ mapActors eh = mapMaybe actorToImage $ d ^. actors
     leftPadding actor =
         fromIntegral $ actorPositionOnDisplay actor ^. _x * tileWidth
     topPadding actor =
-        fromIntegral $
-        mapDrawingHeight - (actorPositionOnDisplay actor ^. _y + 1) * tileHeight
+        fromIntegral $ (actorPositionOnDisplay actor ^. _y + 1) * tileHeight
     style actor = [paddingL $ leftPadding actor, paddingT $ topPadding actor]
-    actorPositionOnDisplay actor = actor ^. A.position - bottomLeftCoord d
+    actorPositionOnDisplay actor = actor ^. A.position - topLeftCoord d
     isActorDrawed actor =
         let pos = actorPositionOnDisplay actor
             isVisible = (d ^. visible) ! (actor ^. A.position)
-         in V2 0 0 <= pos && pos <= topRightCoord d && isVisible
+         in topLeftCoord d <= pos && pos <= bottomRightCoord d && isVisible
     actorToImage actor =
         guard (isActorDrawed actor) >>
         return (image (actor ^. walkingImagePath) `styleBasic` style actor)
 
-bottomLeftCoord :: Dungeon -> Coord
-bottomLeftCoord d = V2 x y
+topLeftCoord :: Dungeon -> Coord
+topLeftCoord d = V2 x y
   where
     V2 unadjustedX unadjestedY =
         maybe
@@ -187,10 +187,11 @@ bottomLeftCoord d = V2 x y
     x = max 0 $ min maxX unadjustedX
     y = max 0 $ min maxY unadjestedY
 
-topRightCoord :: Dungeon -> Coord
-topRightCoord d = bottomLeftCoord d + mapWidthAndHeight d - V2 1 1
+bottomRightCoord :: Dungeon -> Coord
+bottomRightCoord d = topLeftCoord d + mapWidthAndHeight d - V2 1 1
 
-mapDrawingWidth, mapDrawingHeight :: Int
+mapDrawingWidth :: Int
 mapDrawingWidth = tileWidth * tileColumns
 
+mapDrawingHeight :: Int
 mapDrawingHeight = tileHeight * tileRows
