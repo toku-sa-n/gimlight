@@ -152,7 +152,7 @@ mapItems eh = mapMaybe itemToImage $ d ^. items
     topPadding item =
         fromIntegral $ itemPositionOnDisplay item ^. _y * tileHeight
     style item = [paddingL $ leftPadding item, paddingT $ topPadding item]
-    itemPositionOnDisplay item = I.getPosition item - bottomRightCoord d
+    itemPositionOnDisplay item = I.getPosition item - topLeftCoord d
 
 mapActors :: ExploringHandler -> [GameWidgetNode]
 mapActors eh = mapMaybe actorToImage $ d ^. actors
