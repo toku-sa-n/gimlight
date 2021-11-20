@@ -1,28 +1,22 @@
 module UI.Graphics.MapTiles
     ( MapTiles
     , mapTiles
-    , getTileOfIndex
     ) where
 
 import           Codec.Picture       (Image (imageHeight, imageWidth),
                                       PixelRGBA8, convertRGBA8, readImage)
 import           Codec.Picture.Extra (crop)
-import           Data.Array          (Array, listArray, (!))
+import           Data.Array          (Array, listArray)
 import           UI.Draw.Config      (tileHeight, tileWidth)
 
-newtype MapTiles =
-    MapTiles (Array Int (Image PixelRGBA8))
-    deriving (Eq)
+type MapTiles = Array Int (Image PixelRGBA8)
 
 mapTiles :: IO (Maybe MapTiles)
-mapTiles = fmap (MapTiles . cutTileMapToArray . cutTileMap) <$> readTileMapFile
+mapTiles = fmap (cutTileMapToArray . cutTileMap) <$> readTileMapFile
   where
     cutTileMapToArray tiles = listArray (0, len - 1) tiles
       where
         len = length tiles
-
-getTileOfIndex :: Int -> MapTiles -> Image PixelRGBA8
-getTileOfIndex idx (MapTiles arr) = arr ! idx
 
 readTileMapFile :: IO (Maybe (Image PixelRGBA8))
 readTileMapFile = do

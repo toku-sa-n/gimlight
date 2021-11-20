@@ -47,7 +47,7 @@ import           UI.Draw.Config                  (logRows, tileColumns,
                                                   tileHeight, tileRows,
                                                   tileWidth, windowWidth)
 import           UI.Draw.KeyEvent                (withKeyEvents)
-import           UI.Graphics.MapTiles            (MapTiles, getTileOfIndex)
+import           UI.Graphics.MapTiles            (MapTiles)
 import           UI.Types                        (GameWidgetEnv, GameWidgetNode)
 
 drawExploring ::
@@ -125,8 +125,7 @@ mapTiles wenv tileGraphics eh =
     imageName (V2 x y) =
         showt (wenv ^. L.timestamp) <> showt x <> "," <> showt y
     imageAt c =
-        vectorToByteString $
-        imageData $ getTileOfIndex ((d ^. tileMap) ! c) tileGraphics
+        vectorToByteString $ imageData $ tileGraphics ! ((d ^. tileMap) ! c)
     cellOpacity c =
         case (isVisible c, isExplored c) of
             (True, _) -> 0
