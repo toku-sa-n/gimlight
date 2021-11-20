@@ -120,14 +120,13 @@ mapTiles wenv tileGraphics eh =
     isExplored c = (d ^. explored) ! c
     cell c =
         zstack
-            [ imageMem
-                  (showt $ wenv ^. L.timestamp)
-                  (vectorToByteString
-                       (imageData
-                            (getTileOfIndex ((d ^. tileMap) ! c) tileGraphics)))
-                  (Size 48 48)
+            [ imageMem (imageName c) (imageAt c) (Size 48 48)
             , filler `styleBasic` [bgColor $ black & L.a .~ cellOpacity c]
             ]
+    imageName (V2 x y) = showt (wenv ^. L.timestamp) <> showt x <> showt y
+    imageAt c =
+        vectorToByteString $
+        imageData $ getTileOfIndex ((d ^. tileMap) ! c) tileGraphics
     cellOpacity c =
         case (isVisible c, isExplored c) of
             (True, _) -> 0
