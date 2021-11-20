@@ -150,8 +150,7 @@ mapItems eh = mapMaybe itemToImage $ d ^. items
     leftPadding item =
         fromIntegral $ itemPositionOnDisplay item ^. _x * tileWidth
     topPadding item =
-        fromIntegral $
-        mapDrawingHeight - (itemPositionOnDisplay item ^. _y + 1) * tileHeight
+        fromIntegral $ itemPositionOnDisplay item ^. _y * tileHeight
     style item = [paddingL $ leftPadding item, paddingT $ topPadding item]
     itemPositionOnDisplay item = I.getPosition item - bottomRightCoord d
 
