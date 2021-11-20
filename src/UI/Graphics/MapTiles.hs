@@ -45,8 +45,8 @@ isValidTileMapFile img =
 cutTileMap :: Image PixelRGBA8 -> [Image PixelRGBA8]
 cutTileMap img =
     [ crop (col * tileWidth) (row * tileHeight) tileWidth tileHeight img
-    | col <- [0 .. columnsOfTilesInImage - 1]
-    , row <- [0 .. rowsOfTilesInImage - 1]
+    | row <- [0 .. rowsOfTilesInImage - 1]
+    , col <- [0 .. columnsOfTilesInImage - 1]
     ]
   where
     columnsOfTilesInImage = imageWidth img `div` tileWidth
