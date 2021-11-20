@@ -16,7 +16,6 @@ import           Control.Monad                   (guard)
 import           Coord                           (Coord)
 import           Data.Array                      ((!))
 import           Data.Maybe                      (mapMaybe)
-import           Data.Text                       (pack)
 import           Data.Vector.Storable.ByteString (vectorToByteString)
 import           Dungeon                         (Dungeon, actors, explored,
                                                   items, mapWidthAndHeight,
@@ -122,9 +121,9 @@ mapTiles wenv tileGraphics eh =
         zstack
             [ imageMem (imageName c) (imageAt c) (Size 48 48)
             , filler `styleBasic` [bgColor $ black & L.a .~ cellOpacity c]
-            , label $ pack $ show c
             ]
-    imageName (V2 x y) = showt (wenv ^. L.timestamp) <> showt x <> showt y
+    imageName (V2 x y) =
+        showt (wenv ^. L.timestamp) <> showt x <> "," <> showt y
     imageAt c =
         vectorToByteString $
         imageData $ getTileOfIndex ((d ^. tileMap) ! c) tileGraphics
