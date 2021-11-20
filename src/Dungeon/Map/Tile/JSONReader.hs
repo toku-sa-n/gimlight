@@ -6,14 +6,20 @@ module Dungeon.Map.Tile.JSONReader
 
 import           Control.Lens     (filtered, has, only, (^..), (^?))
 import           Data.Aeson.Lens  (_Bool, _Integer, _String, key, values)
-import           Data.Array       (array)
+import           Data.Array       (array, (//))
 import           Data.Text        (Text)
 import           Dungeon.Map.Tile (Tile, TileCollection, tile)
 
+-- We set the initial values to prevent an `undefined element` panic on
+-- comparisons.
 readTileFile :: FilePath -> IO (Maybe TileCollection)
 readTileFile path = do
     json <- readFile path
-    return $ (\l -> array (0, l - 1) $ indexAndTile json) <$> getTileCount json
+    return $
+        (\l ->
+             array (0, l - 1) (zip [0 ..] $ replicate l $ tile False False) //
+             indexAndTile json) <$>
+        getTileCount json
 
 getTileCount :: String -> Maybe Int
 getTileCount json = fromInteger <$> json ^? key "tilecount" . _Integer
