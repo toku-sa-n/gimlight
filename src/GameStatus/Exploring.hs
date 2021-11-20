@@ -13,7 +13,6 @@ module GameStatus.Exploring
     , getQuests
     , getPlayerActor
     , getPlayerPosition
-    , getTileCollection
     , actorAt
     , isPositionInDungeon
     , getCurrentDungeon
@@ -114,9 +113,6 @@ updateQuests q e = e & quests .~ q
 
 getQuests :: ExploringHandler -> QuestCollection
 getQuests e = e ^. quests
-
-getTileCollection :: ExploringHandler -> TileCollection
-getTileCollection e = e ^. tileCollection
 
 getPlayerActor :: ExploringHandler -> Maybe Actor
 getPlayerActor = D.getPlayerActor . getCurrentDungeon
