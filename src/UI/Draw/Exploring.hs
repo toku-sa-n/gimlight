@@ -4,50 +4,64 @@ module UI.Draw.Exploring
     ( drawExploring
     ) where
 
-import           Actor                (getCurrentExperiencePoint, getDefence,
-                                       getExperiencePointForNextLevel, getHp,
-                                       getLevel, getMaxHp, getPower,
-                                       walkingImagePath)
-import qualified Actor                as A
-import           Control.Lens         ((&), (.~), (^.))
-import           Control.Monad        (guard)
-import           Coord                (Coord)
-import           Data.Array           ((!))
-import           Data.Maybe           (mapMaybe)
-import           Dungeon              (Dungeon, actors, explored, items,
-                                       mapWidthAndHeight, playerPosition,
-                                       tileMap, visible)
-import qualified Dungeon.Map.Tile     as MT
-import           GameConfig           (GameConfig)
-import           GameStatus.Exploring (ExploringHandler, getCurrentDungeon,
-                                       getMessageLog, getPlayerActor)
-import qualified Item                 as I
-import           Linear.V2            (V2 (V2), _x, _y)
-import           Localization         (getLocalizedText)
-import qualified Localization.Texts   as T
-import           Monomer              (CmbAlignLeft (alignLeft),
-                                       CmbBgColor (bgColor), CmbHeight (height),
-                                       CmbMultiline (multiline),
-                                       CmbPaddingL (paddingL),
-                                       CmbPaddingT (paddingT),
-                                       CmbStyleBasic (styleBasic),
-                                       CmbWidth (width), black, box_, filler,
-                                       hgrid, hstack, image, label, label_,
-                                       vgrid, vstack, zstack)
-import qualified Monomer.Lens         as L
-import           TextShow             (TextShow (showt))
-import           UI.Draw.Config       (logRows, tileColumns, tileHeight,
-                                       tileRows, tileWidth, windowWidth)
-import           UI.Draw.KeyEvent     (withKeyEvents)
-import           UI.Types             (GameWidgetNode)
+import           Actor                           (getCurrentExperiencePoint,
+                                                  getDefence,
+                                                  getExperiencePointForNextLevel,
+                                                  getHp, getLevel, getMaxHp,
+                                                  getPower, walkingImagePath)
+import qualified Actor                           as A
+import           Codec.Picture                   (Image (imageData))
+import           Control.Lens                    ((&), (.~), (^.))
+import           Control.Monad                   (guard)
+import           Coord                           (Coord)
+import           Data.Array                      ((!))
+import           Data.Maybe                      (mapMaybe)
+import           Data.Vector.Storable.ByteString (vectorToByteString)
+import           Dungeon                         (Dungeon, actors, explored,
+                                                  items, mapWidthAndHeight,
+                                                  playerPosition, tileMap,
+                                                  visible)
+import           GameConfig                      (GameConfig)
+import           GameStatus.Exploring            (ExploringHandler,
+                                                  getCurrentDungeon,
+                                                  getMessageLog, getPlayerActor)
+import qualified Item                            as I
+import           Linear.V2                       (V2 (V2), _x, _y)
+import           Localization                    (getLocalizedText)
+import qualified Localization.Texts              as T
+import           Monomer                         (CmbAlignLeft (alignLeft),
+                                                  CmbBgColor (bgColor),
+                                                  CmbHeight (height),
+                                                  CmbMultiline (multiline),
+                                                  CmbPaddingL (paddingL),
+                                                  CmbPaddingT (paddingT),
+                                                  CmbStyleBasic (styleBasic),
+                                                  CmbWidth (width), Size (Size),
+                                                  black, box_, filler, hgrid,
+                                                  hstack, image, imageMem,
+                                                  label, label_, vgrid, vstack,
+                                                  zstack)
+import qualified Monomer.Lens                    as L
+import           TextShow                        (TextShow (showt))
+import           UI.Draw.Config                  (logRows, tileColumns,
+                                                  tileHeight, tileRows,
+                                                  tileWidth, windowWidth)
+import           UI.Draw.KeyEvent                (withKeyEvents)
+import           UI.Graphics.MapTiles            (MapTiles, getTileOfIndex)
+import           UI.Types                        (GameWidgetEnv, GameWidgetNode)
 
-drawExploring :: ExploringHandler -> GameConfig -> GameWidgetNode
-drawExploring eh c =
+drawExploring ::
+       GameWidgetEnv
+    -> MapTiles
+    -> ExploringHandler
+    -> GameConfig
+    -> GameWidgetNode
+drawExploring wenv tileGraphics eh c =
     withKeyEvents $ vstack [statusAndMapGrid, messageLogArea eh c]
   where
     statusAndMapGrid =
         hstack
-            [ mapGrid eh
+            [ mapGrid wenv tileGraphics eh
             , statusGrid eh c `styleBasic`
               [width $ fromIntegral $ windowWidth - tileWidth * tileColumns]
             ]
@@ -58,9 +72,9 @@ messageLogArea eh c =
     fmap (\x -> label_ (getLocalizedText c x) [multiline]) $
     take logRows $ getMessageLog eh
 
-mapGrid :: ExploringHandler -> GameWidgetNode
-mapGrid eh =
-    zstack (mapTiles eh : (mapItems eh ++ mapActors eh)) `styleBasic`
+mapGrid :: GameWidgetEnv -> MapTiles -> ExploringHandler -> GameWidgetNode
+mapGrid wenv tileGraphics eh =
+    zstack (mapTiles wenv tileGraphics eh : (mapItems eh ++ mapActors eh)) `styleBasic`
     [ width $ fromIntegral mapDrawingWidth
     , height $ fromIntegral mapDrawingHeight
     ]
@@ -89,8 +103,9 @@ statusGrid eh c =
     atk = getLocalizedText c T.attack
     def = getLocalizedText c T.defence
 
-mapTiles :: ExploringHandler -> GameWidgetNode
-mapTiles eh = box_ [alignLeft] $ vgrid rows `styleBasic` styles
+mapTiles :: GameWidgetEnv -> MapTiles -> ExploringHandler -> GameWidgetNode
+mapTiles wenv tileGraphics eh =
+    box_ [alignLeft] $ vgrid rows `styleBasic` styles
   where
     d = getCurrentDungeon eh
     V2 bottomLeftX bottomLeftY = bottomLeftCoord d
@@ -105,7 +120,12 @@ mapTiles eh = box_ [alignLeft] $ vgrid rows `styleBasic` styles
     isExplored c = (d ^. explored) ! c
     cell c =
         zstack
-            [ image $ MT.getImagePath $ (d ^. tileMap) ! c
+            [ imageMem
+                  (showt $ wenv ^. L.timestamp)
+                  (vectorToByteString
+                       (imageData
+                            (getTileOfIndex ((d ^. tileMap) ! c) tileGraphics)))
+                  (Size 48 48)
             , filler `styleBasic` [bgColor $ black & L.a .~ cellOpacity c]
             ]
     cellOpacity c =
