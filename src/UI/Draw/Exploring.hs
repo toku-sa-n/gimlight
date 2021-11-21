@@ -44,15 +44,12 @@ import           Monomer                         (CmbHeight (height),
                                                   Point (Point), Rect (Rect),
                                                   Renderer (addImage, beginPath, deleteImage, fill, setFillImagePattern),
                                                   Size (Size), Widget,
-                                                  WidgetNode,
-                                                  WidgetRequest (RemoveRendererImage),
-                                                  currentStyle,
+                                                  WidgetNode, currentStyle,
                                                   defaultWidgetNode,
                                                   drawRoundedRect,
                                                   getContentArea, hstack, image,
-                                                  label, label_, resultReqs,
-                                                  vstack, zstack)
-import           Monomer.Widgets.Single          (Single (singleDispose, singleRender),
+                                                  label, label_, vstack, zstack)
+import           Monomer.Widgets.Single          (Single (singleRender),
                                                   createSingle)
 import           TextShow                        (TextShow (showt))
 import           UI.Draw.Config                  (logRows, tileColumns,
@@ -114,8 +111,7 @@ mapWidget :: MapTiles -> ExploringHandler -> WidgetNode s e
 mapWidget tiles eh = defaultWidgetNode "map" $ makeMap tiles eh
 
 makeMap :: MapTiles -> ExploringHandler -> Widget s e
-makeMap tileGraphics eh =
-    createSingle () def {singleRender = render, singleDispose = dispose}
+makeMap tileGraphics eh = createSingle () def {singleRender = render}
   where
     render wenv node renderer = do
         addImage renderer imagePath mapSize rows []
@@ -135,7 +131,6 @@ makeMap tileGraphics eh =
         Rect x y w h = getContentArea node style
         angle = 0
         transparent = 1
-    dispose _ node = resultReqs node [RemoveRendererImage imagePath]
     rows =
         vectorToByteString $
         V.concat [row y | y <- [topLeftCoordY .. topLeftCoordY + tileRows - 1]]
