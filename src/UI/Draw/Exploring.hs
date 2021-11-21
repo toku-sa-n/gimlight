@@ -145,9 +145,10 @@ mapItems eh = mapMaybe itemToImage $ d ^. items
         guard (isItemDrawed item) >>
         return (image (I.getIconImagePath item) `styleBasic` style item)
     isItemDrawed item =
-        let pos = itemPositionOnDisplay item
+        let displayPosition = itemPositionOnDisplay item
             isVisible = (d ^. visible) ! I.getPosition item
-         in V2 0 0 <= pos && pos <= bottomRightCoord d && isVisible
+         in V2 0 0 <= displayPosition &&
+            displayPosition < V2 tileColumns tileRows && isVisible
     d = getCurrentDungeon eh
     leftPadding item =
         fromIntegral $ itemPositionOnDisplay item ^. _x * tileWidth
@@ -167,9 +168,10 @@ mapActors eh = mapMaybe actorToImage $ d ^. actors
     style actor = [paddingL $ leftPadding actor, paddingT $ topPadding actor]
     actorPositionOnDisplay actor = actor ^. A.position - topLeftCoord d
     isActorDrawed actor =
-        let pos = actorPositionOnDisplay actor
+        let displayPosition = actorPositionOnDisplay actor
             isVisible = (d ^. visible) ! (actor ^. A.position)
-         in V2 0 0 <= pos && pos <= bottomRightCoord d && isVisible
+         in V2 0 0 <= displayPosition &&
+            displayPosition < V2 tileColumns tileRows && isVisible
     actorToImage actor =
         guard (isActorDrawed actor) >>
         return (image (actor ^. walkingImagePath) `styleBasic` style actor)
@@ -185,9 +187,6 @@ topLeftCoord d = V2 x y
     V2 maxX maxY = mapWidthAndHeight d - V2 tileColumns tileRows
     x = max 0 $ min maxX unadjustedX
     y = max 0 $ min maxY unadjestedY
-
-bottomRightCoord :: Dungeon -> Coord
-bottomRightCoord d = topLeftCoord d + mapWidthAndHeight d - V2 1 1
 
 mapSize :: Size
 mapSize = Size (fromIntegral mapDrawingWidth) (fromIntegral mapDrawingHeight)
