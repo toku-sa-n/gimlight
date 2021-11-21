@@ -169,7 +169,7 @@ mapActors eh = mapMaybe actorToImage $ d ^. actors
     isActorDrawed actor =
         let pos = actorPositionOnDisplay actor
             isVisible = (d ^. visible) ! (actor ^. A.position)
-         in topLeftCoord d <= pos && pos <= bottomRightCoord d && isVisible
+         in V2 0 0 <= pos && pos <= bottomRightCoord d && isVisible
     actorToImage actor =
         guard (isActorDrawed actor) >>
         return (image (actor ^. walkingImagePath) `styleBasic` style actor)
