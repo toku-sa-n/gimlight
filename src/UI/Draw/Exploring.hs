@@ -123,9 +123,8 @@ mapTiles wenv tileGraphics eh =
             [ ZipList $ imageAt $ V2 x y
             | x <- [topLeftCoordX .. topLeftCoordX + tileColumns - 1]
             ]
-    imageAt :: Coord -> [Vector (PixelBaseComponent PixelRGBA8)]
     imageAt c =
-        chunksOf (tileWidth * 4) $
+        chunksOf (tileWidth * 4) $ -- `(*4)` for R, G, B, and A bytes.
         imageData $
         pixelMap (applyOpacity c) $ tileGraphics ! ((d ^. tileMap) ! c)
     applyOpacity c (PixelRGBA8 r g b a)
