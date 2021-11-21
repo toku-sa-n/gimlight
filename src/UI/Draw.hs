@@ -16,10 +16,10 @@ import           UI.Graphics             (getMapTiles)
 import           UI.Types                (GameWidgetEnv, GameWidgetNode)
 
 drawUI :: GameWidgetEnv -> GameModel -> GameWidgetNode
-drawUI wenv GameModel {status = s, config = c, graphics = g} =
+drawUI _ GameModel {status = s, config = c, graphics = g} =
     case s of
-        Exploring eh    -> drawExploring wenv (getMapTiles g) eh c
-        Talking th      -> drawTalking wenv (getMapTiles g) th c
+        Exploring eh    -> drawExploring (getMapTiles g) eh c
+        Talking th      -> drawTalking (getMapTiles g) th c
         Scene hs        -> drawScene hs c
         SelectingItem h -> drawSelectingItem h c
         ReadingBook h   -> drawReadingBook h c

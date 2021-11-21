@@ -14,10 +14,11 @@ import           Codec.Picture                   (Image (imageData),
                                                   PixelRGBA8 (PixelRGBA8),
                                                   pixelMap)
 import           Control.Applicative             (ZipList (ZipList, getZipList))
-import           Control.Lens                    ((^.))
+import           Control.Lens                    ((&), (.~), (^.))
 import           Control.Monad                   (guard)
 import           Coord                           (Coord)
 import           Data.Array                      ((!))
+import           Data.Default                    (Default (def))
 import           Data.Maybe                      (mapMaybe)
 import           Data.Vector.Split               (chunksOf)
 import qualified Data.Vector.Storable            as V
@@ -34,49 +35,54 @@ import qualified Item                            as I
 import           Linear.V2                       (V2 (V2), _x, _y)
 import           Localization                    (getLocalizedText)
 import qualified Localization.Texts              as T
-import           Monomer                         (CmbAlignLeft (alignLeft),
-                                                  CmbHeight (height),
+import           Monomer                         (CmbHeight (height),
                                                   CmbMultiline (multiline),
                                                   CmbPaddingL (paddingL),
                                                   CmbPaddingT (paddingT),
                                                   CmbStyleBasic (styleBasic),
-                                                  CmbWidth (width), Size (Size),
-                                                  box_, hstack, image, imageMem,
-                                                  label, label_, vstack, zstack)
+                                                  CmbWidth (width),
+                                                  Point (Point), Rect (Rect),
+                                                  Renderer (addImage, beginPath, fill, setFillImagePattern),
+                                                  Size (Size), Widget,
+                                                  WidgetNode,
+                                                  WidgetRequest (RemoveRendererImage, ResizeWidgets),
+                                                  currentStyle,
+                                                  defaultWidgetNode,
+                                                  drawRoundedRect,
+                                                  getContentArea, hstack, image,
+                                                  label, label_, resultReqs,
+                                                  vstack, zstack)
 import qualified Monomer.Lens                    as L
+import           Monomer.Widgets.Single          (Single (singleDispose, singleMerge, singleRender),
+                                                  createSingle)
 import           TextShow                        (TextShow (showt))
 import           UI.Draw.Config                  (logRows, tileColumns,
                                                   tileHeight, tileRows,
                                                   tileWidth, windowWidth)
 import           UI.Draw.KeyEvent                (withKeyEvents)
 import           UI.Graphics.MapTiles            (MapTiles)
-import           UI.Types                        (GameWidgetEnv, GameWidgetNode)
+import           UI.Types                        (GameWidgetNode)
 
-drawExploring ::
-       GameWidgetEnv
-    -> MapTiles
-    -> ExploringHandler
-    -> GameConfig
-    -> GameWidgetNode
-drawExploring wenv tileGraphics eh c =
+drawExploring :: MapTiles -> ExploringHandler -> GameConfig -> GameWidgetNode
+drawExploring tileGraphics eh c =
     withKeyEvents $ vstack [statusAndMapGrid, messageLogArea eh c]
   where
     statusAndMapGrid =
         hstack
-            [ mapGrid wenv tileGraphics eh
+            [ mapGrid tileGraphics eh
             , statusGrid eh c `styleBasic`
               [width $ fromIntegral $ windowWidth - tileWidth * tileColumns]
             ]
 
 messageLogArea :: ExploringHandler -> GameConfig -> GameWidgetNode
 messageLogArea eh c =
-    vstack $
-    fmap (\x -> label_ (getLocalizedText c x) [multiline]) $
-    take logRows $ getMessageLog eh
+    vstack $ fmap (\x -> label_ (getLocalizedText c x) [multiline]) $
+    take logRows $
+    getMessageLog eh
 
-mapGrid :: GameWidgetEnv -> MapTiles -> ExploringHandler -> GameWidgetNode
-mapGrid wenv tileGraphics eh =
-    zstack (mapTiles wenv tileGraphics eh : (mapItems eh ++ mapActors eh)) `styleBasic`
+mapGrid :: MapTiles -> ExploringHandler -> GameWidgetNode
+mapGrid tileGraphics eh =
+    zstack (mapWidget tileGraphics eh : (mapItems eh ++ mapActors eh)) `styleBasic`
     [ width $ fromIntegral mapDrawingWidth
     , height $ fromIntegral mapDrawingHeight
     ]
@@ -89,33 +95,62 @@ statusGrid eh c =
         (\x ->
              [ label "Player"
              , label $ lvl <> ": " <> showt (getLevel x)
-             , label $
-               experience <>
-               ": " <>
-               showt (getCurrentExperiencePoint x) <>
-               " / " <> showt (getExperiencePointForNextLevel x)
+             , label $ experience <> ": " <> showt (getCurrentExperiencePoint x) <>
+               " / " <>
+               showt (getExperiencePointForNextLevel x)
              , label $ "HP: " <> showt (getHp x) <> " / " <> showt (getMaxHp x)
              , label $ atk <> ": " <> showt (getPower x)
-             , label $ def <> ": " <> showt (getDefence x)
+             , label $ defence <> ": " <> showt (getDefence x)
              ]) $
     getPlayerActor eh
   where
     lvl = getLocalizedText c T.level
     experience = getLocalizedText c T.experience
     atk = getLocalizedText c T.attack
-    def = getLocalizedText c T.defence
+    defence = getLocalizedText c T.defence
 
-mapTiles :: GameWidgetEnv -> MapTiles -> ExploringHandler -> GameWidgetNode
-mapTiles wenv tileGraphics eh =
-    box_ [alignLeft] $ imageMem imageName rows mapSize `styleBasic` styles
+mapWidget :: MapTiles -> ExploringHandler -> WidgetNode s e
+mapWidget tiles eh = defaultWidgetNode "map" $ makeMap tiles eh
+
+makeMap :: MapTiles -> ExploringHandler -> Widget s e
+makeMap tileGraphics eh =
+    createSingle
+        ()
+        def
+            { singleMerge = merge
+            , singleRender = render
+            , singleDispose = dispose
+            }
   where
-    imageName = showt (wenv ^. L.timestamp)
+    merge wenv newNode _ _ =
+        resultReqs
+            (newNode & L.widget .~ makeMap tileGraphics eh)
+            [RemoveRendererImage $ imagePath wenv, ResizeWidgets widgetId]
+      where
+        widgetId = newNode ^. L.info . L.widgetId
+    render wenv node renderer = do
+        addImage renderer (imagePath wenv) mapSize rows []
+        beginPath renderer
+        setFillImagePattern
+            renderer
+            (imagePath wenv)
+            (Point x y)
+            (Size w h)
+            angle
+            transparent
+        drawRoundedRect renderer (Rect x y w h) def
+        fill renderer
+      where
+        style = currentStyle wenv node
+        Rect x y w h = getContentArea node style
+        angle = 0
+        transparent = 1
+    dispose wenv node = resultReqs node [RemoveRendererImage $ imagePath wenv]
     rows =
         vectorToByteString $
         V.concat [row y | y <- [topLeftCoordY .. topLeftCoordY + tileRows - 1]]
     row y =
-        V.concat $
-        getZipList $
+        V.concat $ getZipList $
         foldl1
             (\acc x -> (V.++) <$> acc <*> x)
             [ ZipList $ imageAt $ V2 x y
@@ -124,7 +159,9 @@ mapTiles wenv tileGraphics eh =
     imageAt c =
         chunksOf (tileWidth * 4) $ -- `(*4)` for R, G, B, and A bytes.
         imageData $
-        pixelMap (applyOpacity c) $ tileGraphics ! ((d ^. tileMap) ! c)
+        pixelMap (applyOpacity c) $
+        tileGraphics !
+        ((d ^. tileMap) ! c)
     applyOpacity c (PixelRGBA8 r g b a)
         | isVisible c = PixelRGBA8 r g b a
         | isExplored c = PixelRGBA8 (r `div` 2) (g `div` 2) (b `div` 2) a
@@ -133,10 +170,7 @@ mapTiles wenv tileGraphics eh =
     isExplored c = (d ^. explored) ! c
     d = getCurrentDungeon eh
     V2 topLeftCoordX topLeftCoordY = topLeftCoord d
-    styles =
-        [ width $ fromIntegral mapDrawingWidth
-        , height $ fromIntegral mapDrawingHeight
-        ]
+    imagePath w = showt (w ^. L.timestamp)
 
 mapItems :: ExploringHandler -> [GameWidgetNode]
 mapItems eh = mapMaybe itemToImage $ d ^. items
@@ -147,8 +181,9 @@ mapItems eh = mapMaybe itemToImage $ d ^. items
     isItemDrawed item =
         let displayPosition = itemPositionOnDisplay item
             isVisible = (d ^. visible) ! I.getPosition item
-         in V2 0 0 <= displayPosition &&
-            displayPosition < V2 tileColumns tileRows && isVisible
+         in V2 0 0 <= displayPosition && displayPosition <
+            V2 tileColumns tileRows &&
+            isVisible
     d = getCurrentDungeon eh
     leftPadding item =
         fromIntegral $ itemPositionOnDisplay item ^. _x * tileWidth
@@ -170,8 +205,9 @@ mapActors eh = mapMaybe actorToImage $ d ^. actors
     isActorDrawed actor =
         let displayPosition = actorPositionOnDisplay actor
             isVisible = (d ^. visible) ! (actor ^. A.position)
-         in V2 0 0 <= displayPosition &&
-            displayPosition < V2 tileColumns tileRows && isVisible
+         in V2 0 0 <= displayPosition && displayPosition <
+            V2 tileColumns tileRows &&
+            isVisible
     actorToImage actor =
         guard (isActorDrawed actor) >>
         return (image (actor ^. walkingImagePath) `styleBasic` style actor)
