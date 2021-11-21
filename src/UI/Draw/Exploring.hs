@@ -42,7 +42,7 @@ import           Monomer                         (CmbHeight (height),
                                                   CmbStyleBasic (styleBasic),
                                                   CmbWidth (width),
                                                   Point (Point), Rect (Rect),
-                                                  Renderer (addImage, beginPath, fill, setFillImagePattern),
+                                                  Renderer (addImage, beginPath, deleteImage, fill, setFillImagePattern),
                                                   Size (Size), Widget,
                                                   WidgetNode,
                                                   WidgetRequest (RemoveRendererImage, ResizeWidgets),
@@ -122,30 +122,31 @@ makeMap tileGraphics eh =
             , singleDispose = dispose
             }
   where
-    merge wenv newNode _ _ =
+    merge _ newNode _ _ =
         resultReqs
             (newNode & L.widget .~ makeMap tileGraphics eh)
-            [RemoveRendererImage $ imagePath wenv, ResizeWidgets widgetId]
+            [RemoveRendererImage imagePath, ResizeWidgets widgetId]
       where
         widgetId = newNode ^. L.info . L.widgetId
     render wenv node renderer = do
-        addImage renderer (imagePath wenv) mapSize rows []
+        addImage renderer imagePath mapSize rows []
         beginPath renderer
         setFillImagePattern
             renderer
-            (imagePath wenv)
+            imagePath
             (Point x y)
             (Size w h)
             angle
             transparent
         drawRoundedRect renderer (Rect x y w h) def
         fill renderer
+        deleteImage renderer imagePath
       where
         style = currentStyle wenv node
         Rect x y w h = getContentArea node style
         angle = 0
         transparent = 1
-    dispose wenv node = resultReqs node [RemoveRendererImage $ imagePath wenv]
+    dispose _ node = resultReqs node [RemoveRendererImage imagePath]
     rows =
         vectorToByteString $
         V.concat [row y | y <- [topLeftCoordY .. topLeftCoordY + tileRows - 1]]
@@ -170,7 +171,7 @@ makeMap tileGraphics eh =
     isExplored c = (d ^. explored) ! c
     d = getCurrentDungeon eh
     V2 topLeftCoordX topLeftCoordY = topLeftCoord d
-    imagePath w = showt (w ^. L.timestamp)
+    imagePath = "mapWidget"
 
 mapItems :: ExploringHandler -> [GameWidgetNode]
 mapItems eh = mapMaybe itemToImage $ d ^. items
