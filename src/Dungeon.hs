@@ -42,7 +42,7 @@ import           Actor                (Actor, isPlayer)
 import qualified Actor                as A
 import           Control.Lens         (makeLenses, (%~), (&), (.~), (^.))
 import           Coord                (Coord)
-import           Data.Array.Base      (IArray (bounds), assocs, (//))
+import           Data.Array.Base      (IArray (bounds), assocs, (!), (//))
 import           Data.Binary          (Binary)
 import           Data.Foldable        (find)
 import           Data.List            (findIndex)
@@ -53,8 +53,7 @@ import           Dungeon.Map.Explored (ExploredMap, initExploredMap,
                                        updateExploredMap)
 import           Dungeon.Map.Fov      (Fov, calculateFov, initFov)
 import           Dungeon.Map.Tile     (TileCollection, TileId, TileMap,
-                                       getTileOfIndex, isTransparent,
-                                       isWalkable)
+                                       isTransparent, isWalkable)
 import           Dungeon.Stairs       (StairsPair (StairsPair, downStairs, upStairs))
 import           GHC.Generics         (Generic)
 import           Item                 (Item)
@@ -185,11 +184,10 @@ stairsPositionCandidates ts d =
     isDownStairsPosition c = c `elem` map upStairs (d ^. descendingStairs)
 
 walkableFloor :: TileCollection -> Dungeon -> BoolMap
-walkableFloor ts d = fmap (isWalkable . flip getTileOfIndex ts) (d ^. tileMap)
+walkableFloor ts d = fmap (isWalkable . (ts !)) (d ^. tileMap)
 
 transparentMap :: TileCollection -> Dungeon -> BoolMap
-transparentMap ts d =
-    fmap (isTransparent . flip getTileOfIndex ts) (d ^. tileMap)
+transparentMap ts d = fmap (isTransparent . (ts !)) (d ^. tileMap)
 
 npcs :: Dungeon -> [Actor]
 npcs d = filter (not . isPlayer) $ d ^. actors

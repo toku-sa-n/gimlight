@@ -7,7 +7,6 @@ module Dungeon.Map.Tile
     , TileId
     , tile
     , allWallTiles
-    , getTileOfIndex
     , isWalkable
     , isTransparent
     , floorTile
@@ -15,7 +14,7 @@ module Dungeon.Map.Tile
     , downStairs
     ) where
 
-import           Data.Array   (Array, (!))
+import           Data.Array   (Array)
 import           Data.Binary  (Binary)
 import qualified Dungeon.Map  as M
 import           GHC.Generics (Generic)
@@ -41,9 +40,6 @@ tile = Tile
 
 allWallTiles :: V2 Int -> TileMap
 allWallTiles widthAndHeight = M.generate widthAndHeight (const 1)
-
-getTileOfIndex :: Int -> TileCollection -> Tile
-getTileOfIndex n ts = ts ! n
 
 isWalkable :: Tile -> Bool
 isWalkable = walkable

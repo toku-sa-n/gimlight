@@ -12,8 +12,7 @@ import           Data.Array           ((!))
 import           Data.Maybe           (isNothing)
 import           Dungeon              (Dungeon, actorAt, mapWidthAndHeight,
                                        pushActor, tileMap)
-import           Dungeon.Map.Tile     (TileCollection, getTileOfIndex,
-                                       isWalkable)
+import           Dungeon.Map.Tile     (TileCollection, isWalkable)
 import           Linear.V2            (V2 (V2))
 import qualified Localization.Texts   as T
 
@@ -36,7 +35,7 @@ updatePosition ts d src offset =
 movable :: TileCollection -> Dungeon -> Coord -> Bool
 movable ts d c =
     isNothing (actorAt c d) &&
-    isPositionInRange d c && isWalkable (getTileOfIndex ((d ^. tileMap) ! c) ts)
+    isPositionInRange d c && isWalkable (ts ! ((d ^. tileMap) ! c))
 
 nextPosition :: Dungeon -> Actor -> V2 Int -> Coord
 nextPosition d src offset =
