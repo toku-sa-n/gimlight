@@ -10,8 +10,10 @@ import           Actor                           (getCurrentExperiencePoint,
                                                   getHp, getLevel, getMaxHp,
                                                   getPower, walkingImagePath)
 import qualified Actor                           as A
-import           Codec.Picture                   (Image (imageData))
-import           Control.Lens                    ((&), (.~), (^.))
+import           Codec.Picture                   (Image (imageData),
+                                                  PixelRGBA8 (PixelRGBA8),
+                                                  pixelMap)
+import           Control.Lens                    ((^.))
 import           Control.Monad                   (guard)
 import           Coord                           (Coord)
 import           Data.Array                      ((!))
@@ -30,17 +32,15 @@ import           Linear.V2                       (V2 (V2), _x, _y)
 import           Localization                    (getLocalizedText)
 import qualified Localization.Texts              as T
 import           Monomer                         (CmbAlignLeft (alignLeft),
-                                                  CmbBgColor (bgColor),
                                                   CmbHeight (height),
                                                   CmbMultiline (multiline),
                                                   CmbPaddingL (paddingL),
                                                   CmbPaddingT (paddingT),
                                                   CmbStyleBasic (styleBasic),
                                                   CmbWidth (width), Size (Size),
-                                                  black, box_, filler, hgrid,
-                                                  hstack, image, imageMem,
-                                                  label, label_, vgrid, vstack,
-                                                  zstack)
+                                                  box_, hgrid, hstack, image,
+                                                  imageMem, label, label_,
+                                                  vgrid, vstack, zstack)
 import qualified Monomer.Lens                    as L
 import           TextShow                        (TextShow (showt))
 import           UI.Draw.Config                  (logRows, tileColumns,
@@ -117,20 +117,17 @@ mapTiles wenv tileGraphics eh =
         ]
     isVisible c = (d ^. visible) ! c
     isExplored c = (d ^. explored) ! c
-    cell c =
-        zstack
-            [ imageMem (imageName c) (imageAt c) (Size 48 48)
-            , filler `styleBasic` [bgColor $ black & L.a .~ cellOpacity c]
-            ]
+    cell c = imageMem (imageName c) (imageAt c) (Size 48 48)
     imageName (V2 x y) =
         showt (wenv ^. L.timestamp) <> showt x <> "," <> showt y
     imageAt c =
-        vectorToByteString $ imageData $ tileGraphics ! ((d ^. tileMap) ! c)
-    cellOpacity c =
-        case (isVisible c, isExplored c) of
-            (True, _) -> 0
-            (_, True) -> 0.5
-            _         -> 1
+        vectorToByteString $
+        imageData $
+        pixelMap (applyOpacity c) $ tileGraphics ! ((d ^. tileMap) ! c)
+    applyOpacity c (PixelRGBA8 r g b a)
+        | isVisible c = PixelRGBA8 r g b a
+        | isExplored c = PixelRGBA8 (r `div` 2) (g `div` 2) (b `div` 2) a
+        | otherwise = PixelRGBA8 0 0 0 0xff
     styles =
         [ width $ fromIntegral mapDrawingWidth
         , height $ fromIntegral mapDrawingHeight
