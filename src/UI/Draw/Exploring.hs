@@ -11,7 +11,6 @@ import           Actor                           (getCurrentExperiencePoint,
                                                   getPower, walkingImagePath)
 import qualified Actor                           as A
 import           Codec.Picture                   (Image (imageData),
-                                                  Pixel (PixelBaseComponent),
                                                   PixelRGBA8 (PixelRGBA8),
                                                   pixelMap)
 import           Control.Applicative             (ZipList (ZipList, getZipList))
@@ -21,7 +20,6 @@ import           Coord                           (Coord)
 import           Data.Array                      ((!))
 import           Data.Maybe                      (mapMaybe)
 import           Data.Vector.Split               (chunksOf)
-import           Data.Vector.Storable            (Vector)
 import qualified Data.Vector.Storable            as V
 import           Data.Vector.Storable.ByteString (vectorToByteString)
 import           Dungeon                         (Dungeon, actors, explored,
