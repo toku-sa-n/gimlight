@@ -11,13 +11,18 @@ import           Actor                           (getCurrentExperiencePoint,
                                                   getPower, walkingImagePath)
 import qualified Actor                           as A
 import           Codec.Picture                   (Image (imageData),
+                                                  Pixel (PixelBaseComponent),
                                                   PixelRGBA8 (PixelRGBA8),
                                                   pixelMap)
+import           Control.Applicative             (ZipList (ZipList, getZipList))
 import           Control.Lens                    ((^.))
 import           Control.Monad                   (guard)
 import           Coord                           (Coord)
 import           Data.Array                      ((!))
 import           Data.Maybe                      (mapMaybe)
+import           Data.Vector.Split               (chunksOf)
+import           Data.Vector.Storable            (Vector)
+import qualified Data.Vector.Storable            as V
 import           Data.Vector.Storable.ByteString (vectorToByteString)
 import           Dungeon                         (Dungeon, actors, explored,
                                                   items, mapWidthAndHeight,
@@ -38,9 +43,8 @@ import           Monomer                         (CmbAlignLeft (alignLeft),
                                                   CmbPaddingT (paddingT),
                                                   CmbStyleBasic (styleBasic),
                                                   CmbWidth (width), Size (Size),
-                                                  box_, hgrid, hstack, image,
-                                                  imageMem, label, label_,
-                                                  vgrid, vstack, zstack)
+                                                  box_, hstack, image, imageMem,
+                                                  label, label_, vstack, zstack)
 import qualified Monomer.Lens                    as L
 import           TextShow                        (TextShow (showt))
 import           UI.Draw.Config                  (logRows, tileColumns,
@@ -105,29 +109,33 @@ statusGrid eh c =
 
 mapTiles :: GameWidgetEnv -> MapTiles -> ExploringHandler -> GameWidgetNode
 mapTiles wenv tileGraphics eh =
-    box_ [alignLeft] $ vgrid rows `styleBasic` styles
+    box_ [alignLeft] $ imageMem imageName rows mapSize `styleBasic` styles
   where
-    d = getCurrentDungeon eh
-    V2 topLeftCoordX topLeftCoordY = topLeftCoord d
+    imageName = showt (wenv ^. L.timestamp)
     rows =
-        [hgrid $ row y | y <- [topLeftCoordY .. topLeftCoordY + tileRows - 1]]
-    row y =
-        [ cell $ V2 x y
-        | x <- [topLeftCoordX .. topLeftCoordX + tileColumns - 1]
-        ]
-    isVisible c = (d ^. visible) ! c
-    isExplored c = (d ^. explored) ! c
-    cell c = imageMem (imageName c) (imageAt c) (Size 48 48)
-    imageName (V2 x y) =
-        showt (wenv ^. L.timestamp) <> showt x <> "," <> showt y
-    imageAt c =
         vectorToByteString $
+        V.concat [row y | y <- [topLeftCoordY .. topLeftCoordY + tileRows - 1]]
+    row y =
+        V.concat $
+        getZipList $
+        foldl1
+            (\acc x -> (V.++) <$> acc <*> x)
+            [ ZipList $ imageAt $ V2 x y
+            | x <- [topLeftCoordX .. topLeftCoordX + tileColumns - 1]
+            ]
+    imageAt :: Coord -> [Vector (PixelBaseComponent PixelRGBA8)]
+    imageAt c =
+        chunksOf (tileWidth * 4) $
         imageData $
         pixelMap (applyOpacity c) $ tileGraphics ! ((d ^. tileMap) ! c)
     applyOpacity c (PixelRGBA8 r g b a)
         | isVisible c = PixelRGBA8 r g b a
         | isExplored c = PixelRGBA8 (r `div` 2) (g `div` 2) (b `div` 2) a
         | otherwise = PixelRGBA8 0 0 0 0xff
+    isVisible c = (d ^. visible) ! c
+    isExplored c = (d ^. explored) ! c
+    d = getCurrentDungeon eh
+    V2 topLeftCoordX topLeftCoordY = topLeftCoord d
     styles =
         [ width $ fromIntegral mapDrawingWidth
         , height $ fromIntegral mapDrawingHeight
@@ -183,6 +191,9 @@ topLeftCoord d = V2 x y
 
 bottomRightCoord :: Dungeon -> Coord
 bottomRightCoord d = topLeftCoord d + mapWidthAndHeight d - V2 1 1
+
+mapSize :: Size
+mapSize = Size (fromIntegral mapDrawingWidth) (fromIntegral mapDrawingHeight)
 
 mapDrawingWidth :: Int
 mapDrawingWidth = tileWidth * tileColumns
