@@ -126,6 +126,7 @@ generateDungeonAccum itemsAcc enemiesAcc acc tileMap playerPos g cfg
             , appendRoom
             , center room)
         | otherwise = (itemsAcc, enemiesAcc, acc, tileMap, playerPos)
+    usable = not $ any (roomOverlaps room) acc
     appendRoom
         | null acc = createRoom room tileMap
         | otherwise =
@@ -136,7 +137,6 @@ generateDungeonAccum itemsAcc enemiesAcc acc tileMap playerPos g cfg
     (x, g''') = randomR (0, width - roomWidth - 1) g''
     (y, g'''') = randomR (0, height - roomHeight - 1) g'''
     room = roomFromWidthHeight (V2 x y) (V2 roomWidth roomHeight)
-    usable = not $ any (roomOverlaps room) acc
     (enemies, g''''') = placeEnemies g'''' room maxMonstersPerRoom
     (items, g'''''') = placeItems g''''' room maxItemsPerRoom
     V2 width height = snd (bounds tileMap) + V2 1 1
