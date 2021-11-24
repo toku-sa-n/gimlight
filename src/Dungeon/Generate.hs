@@ -121,19 +121,20 @@ generateDungeonAccum itemsAcc enemiesAcc acc tileMap playerPos g cfg
     (newItemsAcc, newEnemiesAcc, newAcc, newDungeon, newPlayerPos)
         | usable = addRoom
         | otherwise = (itemsAcc, enemiesAcc, acc, tileMap, playerPos)
-    addRoom =
-        if null acc
-            then ( items ++ itemsAcc
-                 , enemies ++ enemiesAcc
-                 , room : acc
-                 , createRoom room tileMap
-                 , center room)
-            else ( items ++ itemsAcc
-                 , enemies ++ enemiesAcc
-                 , room : acc
-                 , tunnelBetween (center room) (center $ head acc) $
-                   createRoom room tileMap
-                 , center room)
+    addRoom
+        | null acc =
+            ( items ++ itemsAcc
+            , enemies ++ enemiesAcc
+            , room : acc
+            , createRoom room tileMap
+            , center room)
+        | otherwise =
+            ( items ++ itemsAcc
+            , enemies ++ enemiesAcc
+            , room : acc
+            , tunnelBetween (center room) (center $ head acc) $
+              createRoom room tileMap
+            , center room)
     (roomWidth, g') = randomR (roomMinSize cfg, roomMaxSize cfg) g
     (roomHeight, g'') = randomR (roomMinSize cfg, roomMaxSize cfg) g'
     (x, g''') = randomR (0, width - roomWidth - 1) g''
