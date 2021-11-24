@@ -118,6 +118,22 @@ generateDungeonAccum itemsAcc enemiesAcc acc tileMap playerPos g cfg
             g''''''
             cfg {maxRooms = maxRooms cfg - 1}
   where
+    (newItemsAcc, newEnemiesAcc, newAcc, newDungeon, newPlayerPos)
+        | usable = addRoom
+        | otherwise = (itemsAcc, enemiesAcc, acc, tileMap, playerPos)
+    addRoom =
+        if null acc
+            then ( items ++ itemsAcc
+                 , enemies ++ enemiesAcc
+                 , room : acc
+                 , createRoom room tileMap
+                 , center room)
+            else ( items ++ itemsAcc
+                 , enemies ++ enemiesAcc
+                 , room : acc
+                 , tunnelBetween (center room) (center $ head acc) $
+                   createRoom room tileMap
+                 , center room)
     (roomWidth, g') = randomR (roomMinSize cfg, roomMaxSize cfg) g
     (roomHeight, g'') = randomR (roomMinSize cfg, roomMaxSize cfg) g'
     (x, g''') = randomR (0, width - roomWidth - 1) g''
@@ -126,21 +142,6 @@ generateDungeonAccum itemsAcc enemiesAcc acc tileMap playerPos g cfg
     usable = not $ any (roomOverlaps room) acc
     (enemies, g''''') = placeEnemies g'''' room maxMonstersPerRoom
     (items, g'''''') = placeItems g''''' room maxItemsPerRoom
-    (newItemsAcc, newEnemiesAcc, newAcc, newDungeon, newPlayerPos)
-        | usable =
-            if null acc
-                then ( items ++ itemsAcc
-                     , enemies ++ enemiesAcc
-                     , room : acc
-                     , createRoom room tileMap
-                     , center room)
-                else ( items ++ itemsAcc
-                     , enemies ++ enemiesAcc
-                     , room : acc
-                     , tunnelBetween (center room) (center $ head acc) $
-                       createRoom room tileMap
-                     , center room)
-        | otherwise = (itemsAcc, enemiesAcc, acc, tileMap, playerPos)
     V2 width height = snd (bounds tileMap) + V2 1 1
 
 createRoom :: Room -> TileMap -> TileMap
