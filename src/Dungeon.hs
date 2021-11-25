@@ -20,6 +20,7 @@ module Dungeon
     , playerPosition
     , stairsPositionCandidates
     , updateMap
+    , calculateFovAt
     , isTown
     , actorAt
     , isPositionInDungeon
