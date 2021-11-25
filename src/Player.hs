@@ -37,21 +37,23 @@ import           Linear.V2                (V2)
 
 handlePlayerMoving :: V2 Int -> ExploringHandler -> GameStatus
 handlePlayerMoving offset gs =
-    let (isSuccess, newState) = playerBumpAction offset gs
-     in if isSuccess
-            then case newState of
-                     Exploring eh ->
-                         maybe GameOver Exploring (processAfterPlayerTurn eh)
-                     _ -> newState
-            else newState
+    if isSuccess
+        then case newState of
+                 Exploring eh ->
+                     maybe GameOver Exploring (processAfterPlayerTurn eh)
+                 _ -> newState
+        else newState
+  where
+    (isSuccess, newState) = playerBumpAction offset gs
 
 handlePlayerPickingUp :: ExploringHandler -> GameStatus
 handlePlayerPickingUp eh =
-    let (status, newHandler) = doPlayerAction pickUpAction eh
-     in case status of
-            Ok -> maybe GameOver Exploring $ processAfterPlayerTurn newHandler
-            ReadingStarted _ -> error "Unreachable."
-            Failed -> Exploring newHandler
+    case status of
+        Ok -> maybe GameOver Exploring $ processAfterPlayerTurn newHandler
+        ReadingStarted _ -> error "Unreachable."
+        Failed -> Exploring newHandler
+  where
+    (status, newHandler) = doPlayerAction pickUpAction eh
 
 handlePlayerSelectingItem :: Reason -> ExploringHandler -> GameStatus
 handlePlayerSelectingItem reason eh =
@@ -82,13 +84,12 @@ handlePlayerAfterSelecting h = result
             Drop -> dropAction
 
 playerBumpAction :: V2 Int -> ExploringHandler -> (Bool, GameStatus)
-playerBumpAction offset eh =
-    let action =
-            case actorAtDestination of
-                Just x  -> meleeOrTalk offset x
-                Nothing -> moveOrExitMap offset
-     in action eh
+playerBumpAction offset eh = action eh
   where
+    action =
+        case actorAtDestination of
+            Just x  -> meleeOrTalk offset x
+            Nothing -> moveOrExitMap offset
     actorAtDestination =
         find (\x -> x ^. position == destination) $
         getActors $ getCurrentDungeon eh
