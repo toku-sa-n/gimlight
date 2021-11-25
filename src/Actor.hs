@@ -30,6 +30,7 @@ module Actor
     , inventoryItems
     , getItems
     , removeNthItem
+    , target
     ) where
 
 import           Actor.Identifier        (Identifier, toName)
@@ -70,6 +71,7 @@ data Actor =
         , _walkingImagePath  :: Text
         , _standingImagePath :: Text
         , _inventoryItems    :: Inventory
+        , _target            :: Maybe Index
         }
     deriving (Show, Ord, Eq, Generic)
 
@@ -102,6 +104,7 @@ actor ig position' id' st ak talkMessage' walkingImagePath' standingImagePath' =
             , _standingImagePath = standingImagePath'
             , _actorKind = ak
             , _inventoryItems = inventory 5
+            , _target = Nothing
             }
     (idx, newGenerator) = generate ig
 
