@@ -22,8 +22,8 @@ import           Data.Binary      (Binary)
 import           Data.Maybe       (isJust, isNothing)
 import qualified Dungeon.Map      as M
 import           Dungeon.Map.Bool (BoolMap)
-import           Dungeon.Map.Tile (TileCollection, TileId, isTransparent,
-                                   isWalkable, wallTile)
+import           Dungeon.Map.Tile (TileCollection, TileId, wallTile)
+import qualified Dungeon.Map.Tile as Tile
 import           GHC.Generics     (Generic)
 import           Linear.V2        (V2 (V2))
 
@@ -37,6 +37,12 @@ data Cell =
 makeLenses ''Cell
 
 instance Binary Cell
+
+isWalkable :: TileCollection -> Cell -> Bool
+isWalkable tc c = Tile.isWalkable (tc ! (c ^. tileId)) && isNothing (c ^. actor)
+
+isTransparent :: TileCollection -> Cell -> Bool
+isTransparent tc c = Tile.isTransparent (tc ! (c ^. tileId))
 
 newtype CellMap =
     CellMap (Array (V2 Int) Cell)
@@ -61,10 +67,10 @@ changeTileAt c i (CellMap m)
     newTile = m ! c & tileId .~ i
 
 walkableMap :: TileCollection -> CellMap -> BoolMap
-walkableMap tc (CellMap m) = isWalkable . ((tc !) . (^. tileId)) <$> m
+walkableMap tc (CellMap cm) = isWalkable tc <$> cm
 
 transparentMap :: TileCollection -> CellMap -> BoolMap
-transparentMap tc (CellMap m) = isTransparent . ((tc !) . (^. tileId)) <$> m
+transparentMap tc (CellMap cm) = isTransparent tc <$> cm
 
 tileIdAt :: Coord -> CellMap -> Maybe TileId
 tileIdAt c t = (^. tileId) <$> cellAt c t
@@ -72,7 +78,7 @@ tileIdAt c t = (^. tileId) <$> cellAt c t
 isWalkableAt :: Coord -> TileCollection -> CellMap -> Bool
 isWalkableAt c tc t =
     case cellAt c t of
-        Just x  -> isWalkable (tc ! (x ^. tileId)) && isNothing (x ^. actor)
+        Just x  -> isWalkable tc x
         Nothing -> False
 
 cellAt :: Coord -> CellMap -> Maybe Cell
