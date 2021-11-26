@@ -9,13 +9,14 @@ module Dungeon.Map.Cell
     , walkableMap
     , widthAndHeight
     , isWalkableAt
+    , locateActorAt
     , transparentMap
     , tileIdAt
     , cellAt
     ) where
 
 import           Actor            (Actor)
-import           Control.Lens     (makeLenses, (&), (.~), (^.))
+import           Control.Lens     (makeLenses, (&), (.~), (?~), (^.))
 import           Coord            (Coord)
 import           Data.Array       (Array, bounds, (!), (//))
 import           Data.Binary      (Binary)
@@ -43,6 +44,11 @@ isWalkable tc c = Tile.isWalkable (tc ! (c ^. tileId)) && isNothing (c ^. actor)
 
 isTransparent :: TileCollection -> Cell -> Bool
 isTransparent tc c = Tile.isTransparent (tc ! (c ^. tileId))
+
+locateActor :: Actor -> Cell -> Maybe Cell
+locateActor a c
+    | isJust (c ^. actor) = Nothing
+    | otherwise = Just $ c & actor ?~ a
 
 newtype CellMap =
     CellMap (Array (V2 Int) Cell)
@@ -72,14 +78,22 @@ walkableMap tc (CellMap cm) = isWalkable tc <$> cm
 transparentMap :: TileCollection -> CellMap -> BoolMap
 transparentMap tc (CellMap cm) = isTransparent tc <$> cm
 
-tileIdAt :: Coord -> CellMap -> Maybe TileId
-tileIdAt c t = (^. tileId) <$> cellAt c t
-
 isWalkableAt :: Coord -> TileCollection -> CellMap -> Bool
 isWalkableAt c tc t =
     case cellAt c t of
         Just x  -> isWalkable tc x
         Nothing -> False
+
+locateActorAt :: Actor -> Coord -> CellMap -> Maybe CellMap
+locateActorAt a c (CellMap cm)
+    | coordIsInRange c (CellMap cm) =
+        (\x -> CellMap (cm // [(c, x)])) <$> newCell
+    | otherwise = Nothing
+  where
+    newCell = locateActor a (cm ! c)
+
+tileIdAt :: Coord -> CellMap -> Maybe TileId
+tileIdAt c t = (^. tileId) <$> cellAt c t
 
 cellAt :: Coord -> CellMap -> Maybe Cell
 cellAt c (CellMap m)
