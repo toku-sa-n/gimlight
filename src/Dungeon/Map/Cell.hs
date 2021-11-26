@@ -19,7 +19,7 @@ import           Control.Lens     (makeLenses, (&), (.~), (^.))
 import           Coord            (Coord)
 import           Data.Array       (Array, bounds, (!), (//))
 import           Data.Binary      (Binary)
-import           Data.Maybe       (isJust)
+import           Data.Maybe       (isJust, isNothing)
 import qualified Dungeon.Map      as M
 import           Dungeon.Map.Bool (BoolMap)
 import           Dungeon.Map.Tile (TileCollection, TileId, isTransparent,
@@ -30,7 +30,7 @@ import           Linear.V2        (V2 (V2))
 data Cell =
     Cell
         { _tileId :: TileId
-        , actor   :: Maybe Actor
+        , _actor  :: Maybe Actor
         }
     deriving (Show, Ord, Eq, Generic)
 
@@ -69,15 +69,15 @@ transparentMap tc (CellMap m) = isTransparent . ((tc !) . (^. tileId)) <$> m
 tileIdAt :: Coord -> CellMap -> Maybe TileId
 tileIdAt c t = (^. tileId) <$> cellAt c t
 
+isWalkableAt :: Coord -> TileCollection -> CellMap -> Bool
+isWalkableAt c tc t =
+    case cellAt c t of
+        Just x  -> isWalkable (tc ! (x ^. tileId)) && isNothing (x ^. actor)
+        Nothing -> False
+
 cellAt :: Coord -> CellMap -> Maybe Cell
 cellAt c (CellMap m)
     | c >= lower && c <= upper = Just $ m ! c
     | otherwise = Nothing
   where
     (lower, upper) = bounds m
-
-isWalkableAt :: Coord -> TileCollection -> CellMap -> Bool
-isWalkableAt c tc t =
-    case tileIdAt c t of
-        Just x  -> isWalkable (tc ! x)
-        Nothing -> False
