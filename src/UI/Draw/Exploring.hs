@@ -23,10 +23,10 @@ import           Data.Maybe                      (fromMaybe, mapMaybe)
 import           Data.Vector.Split               (chunksOf)
 import qualified Data.Vector.Storable            as V
 import           Data.Vector.Storable.ByteString (vectorToByteString)
-import           Dungeon                         (Dungeon, explored, getActors,
-                                                  items, mapWidthAndHeight,
-                                                  playerPosition, tileMap,
-                                                  visible)
+import           Dungeon                         (Dungeon, cellMap, explored,
+                                                  getActors, items,
+                                                  mapWidthAndHeight,
+                                                  playerPosition, visible)
 import           Dungeon.Map.Cell                (tileIdAt)
 import           GameConfig                      (GameConfig)
 import           GameStatus.Exploring            (ExploringHandler,
@@ -149,7 +149,7 @@ makeMap tileGraphics eh = createSingle () def {singleRender = render}
     tileId c =
         fromMaybe
             (error "Failed to get the tile ID.")
-            (tileIdAt c (d ^. tileMap))
+            (tileIdAt c (d ^. cellMap))
     applyOpacity c (PixelRGBA8 r g b a)
         | isVisible c = PixelRGBA8 r g b a
         | isExplored c = PixelRGBA8 (r `div` 2) (g `div` 2) (b `div` 2) a

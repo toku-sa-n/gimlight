@@ -26,7 +26,7 @@ module Dungeon
     , isPositionInDungeon
     , npcs
     , positionOnParentMap
-    , tileMap
+    , cellMap
     , visible
     , explored
     , items
@@ -64,7 +64,7 @@ import           Linear.V2            (V2 (..))
 
 data Dungeon =
     Dungeon
-        { _tileMap             :: CellMap
+        { _cellMap             :: CellMap
         , _visible             :: Fov
         , _explored            :: ExploredMap
         , _actors              :: [Actor]
@@ -87,7 +87,7 @@ instance Binary Dungeon
 dungeon :: CellMap -> [Actor] -> [Item] -> Identifier -> Dungeon
 dungeon t e i ident =
     Dungeon
-        { _tileMap = t
+        { _cellMap = t
         , _visible = initFov (widthAndHeight t)
         , _explored = initExploredMap (widthAndHeight t)
         , _actors = e
@@ -102,7 +102,7 @@ getIdentifier :: Dungeon -> Identifier
 getIdentifier d = d ^. identifier
 
 changeTile :: Coord -> TileId -> Dungeon -> Maybe Dungeon
-changeTile c t d = (\x -> d & tileMap .~ x) <$> changeTileAt c t (d ^. tileMap)
+changeTile c t d = (\x -> d & cellMap .~ x) <$> changeTileAt c t (d ^. cellMap)
 
 addAscendingAndDescendingStiars ::
        StairsPair -> (Dungeon, Dungeon) -> (Dungeon, Dungeon)
@@ -186,16 +186,16 @@ stairsPositionCandidates ts d =
     isDownStairsPosition c = c `elem` map upStairs (d ^. descendingStairs)
 
 walkableFloor :: TileCollection -> Dungeon -> BoolMap
-walkableFloor ts d = walkableMap ts (d ^. tileMap)
+walkableFloor ts d = walkableMap ts (d ^. cellMap)
 
 transparentMap :: TileCollection -> Dungeon -> BoolMap
-transparentMap ts d = Cell.transparentMap ts (d ^. tileMap)
+transparentMap ts d = Cell.transparentMap ts (d ^. cellMap)
 
 npcs :: Dungeon -> [Actor]
 npcs = filter (not . isPlayer) . getActors
 
 mapWidthAndHeight :: Dungeon -> V2 Int
-mapWidthAndHeight d = widthAndHeight (d ^. tileMap)
+mapWidthAndHeight d = widthAndHeight (d ^. cellMap)
 
 isTown :: Dungeon -> Bool
 isTown d = Identifier.isTown $ d ^. identifier
