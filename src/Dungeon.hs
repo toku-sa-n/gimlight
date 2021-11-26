@@ -49,13 +49,13 @@ import           Data.List            (findIndex)
 import           Dungeon.Identifier   (Identifier)
 import qualified Dungeon.Identifier   as Identifier
 import           Dungeon.Map.Bool     (BoolMap)
+import           Dungeon.Map.Cell     (CellMap, changeTileAt, walkableMap,
+                                       widthAndHeight)
+import qualified Dungeon.Map.Cell     as Cell
 import           Dungeon.Map.Explored (ExploredMap, initExploredMap,
                                        updateExploredMap)
 import           Dungeon.Map.Fov      (Fov, calculateFov, initFov)
-import           Dungeon.Map.Tile     (CellMap, TileCollection, TileId,
-                                       changeTileAt, walkableMap,
-                                       widthAndHeight)
-import qualified Dungeon.Map.Tile     as TileMap
+import           Dungeon.Map.Tile     (TileCollection, TileId)
 import           Dungeon.Stairs       (StairsPair (StairsPair, downStairs, upStairs))
 import           GHC.Generics         (Generic)
 import           Item                 (Item)
@@ -189,13 +189,13 @@ walkableFloor :: TileCollection -> Dungeon -> BoolMap
 walkableFloor ts d = walkableMap ts (d ^. tileMap)
 
 transparentMap :: TileCollection -> Dungeon -> BoolMap
-transparentMap ts d = TileMap.transparentMap ts (d ^. tileMap)
+transparentMap ts d = Cell.transparentMap ts (d ^. tileMap)
 
 npcs :: Dungeon -> [Actor]
 npcs = filter (not . isPlayer) . getActors
 
 mapWidthAndHeight :: Dungeon -> V2 Int
-mapWidthAndHeight d = TileMap.widthAndHeight (d ^. tileMap)
+mapWidthAndHeight d = widthAndHeight (d ^. tileMap)
 
 isTown :: Dungeon -> Bool
 isTown d = Identifier.isTown $ d ^. identifier

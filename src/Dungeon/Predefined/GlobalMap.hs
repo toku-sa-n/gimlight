@@ -5,8 +5,8 @@ module Dungeon.Predefined.GlobalMap
 import           Data.Maybe             (fromMaybe)
 import           Dungeon                (Dungeon, dungeon)
 import           Dungeon.Identifier     (Identifier (GlobalMap))
+import           Dungeon.Map.Cell       (CellMap)
 import qualified Dungeon.Map.JSONReader as JSONReader
-import           Dungeon.Map.Tile       (CellMap)
 
 globalMap :: IO Dungeon
 globalMap = do

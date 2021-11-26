@@ -12,7 +12,8 @@ import           Data.Foldable        (find)
 import           Data.Maybe           (isJust)
 import           Dungeon              (Dungeon, getActors, mapWidthAndHeight,
                                        pushActor, tileMap)
-import           Dungeon.Map.Tile     (TileCollection, isWalkableAt)
+import           Dungeon.Map.Cell     (isWalkableAt)
+import           Dungeon.Map.Tile     (TileCollection)
 import           Linear.V2            (V2 (V2))
 import qualified Localization.Texts   as T
 

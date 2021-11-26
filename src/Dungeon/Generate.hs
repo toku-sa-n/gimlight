@@ -18,9 +18,10 @@ import           Dungeon.Generate.Room   (Room (..), center,
                                           roomFromTwoPositionInclusive,
                                           roomFromWidthHeight, roomOverlaps)
 import           Dungeon.Identifier      (Identifier)
-import           Dungeon.Map.Tile        (CellMap, TileCollection, allWallTiles,
-                                          changeTileAt, downStairs, floorTile,
-                                          upStairs, widthAndHeight)
+import           Dungeon.Map.Cell        (CellMap, allWallTiles, changeTileAt,
+                                          widthAndHeight)
+import           Dungeon.Map.Tile        (TileCollection, downStairs, floorTile,
+                                          upStairs)
 import           Dungeon.Size            (maxSize, minSize)
 import           Dungeon.Stairs          (StairsPair (StairsPair))
 import           IndexGenerator          (IndexGenerator)

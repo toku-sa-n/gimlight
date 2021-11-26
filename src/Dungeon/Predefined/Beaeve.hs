@@ -6,8 +6,8 @@ import           Actor.Friendly.Electria (electria)
 import           Data.Maybe              (fromMaybe)
 import           Dungeon                 (Dungeon, dungeon)
 import           Dungeon.Identifier      (Identifier (Beaeve))
+import           Dungeon.Map.Cell        (CellMap)
 import qualified Dungeon.Map.JSONReader  as JSONReader
-import           Dungeon.Map.Tile        (CellMap)
 import           IndexGenerator          (IndexGenerator)
 import           Linear.V2               (V2 (V2))
 

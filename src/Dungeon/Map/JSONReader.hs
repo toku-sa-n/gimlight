@@ -9,7 +9,7 @@ import           Control.Monad    (guard)
 import           Data.Aeson.Lens  (_Array, _Integer, key, values)
 import           Data.Array       (array)
 import           Data.Vector      (toList)
-import           Dungeon.Map.Tile (CellMap, cellMap)
+import           Dungeon.Map.Cell (CellMap, cellMap)
 import           Linear.V2        (V2 (V2))
 
 readMapFile :: FilePath -> IO (Maybe CellMap)

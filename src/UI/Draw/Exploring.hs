@@ -27,7 +27,7 @@ import           Dungeon                         (Dungeon, explored, getActors,
                                                   items, mapWidthAndHeight,
                                                   playerPosition, tileMap,
                                                   visible)
-import           Dungeon.Map.Tile                (tileIdAt)
+import           Dungeon.Map.Cell                (tileIdAt)
 import           GameConfig                      (GameConfig)
 import           GameStatus.Exploring            (ExploringHandler,
                                                   getCurrentDungeon,
