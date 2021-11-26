@@ -1,5 +1,6 @@
 {-# LANGUAGE DeriveGeneric   #-}
 {-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE TupleSections   #-}
 
 module Dungeon.Map.Cell
     ( CellMap
@@ -97,10 +98,7 @@ isWalkableAt c tc t =
 positionsAndActors :: CellMap -> [(Coord, Actor)]
 positionsAndActors (CellMap cm) = mapMaybe mapStep $ assocs cm
   where
-    mapStep (coord, cell) =
-        case cell ^. actor of
-            Just x  -> Just (coord, x)
-            Nothing -> Nothing
+    mapStep (coord, cell) = (coord, ) <$> cell ^. actor
 
 locateActorAt :: Actor -> Coord -> CellMap -> Maybe CellMap
 locateActorAt a c (CellMap cm)
