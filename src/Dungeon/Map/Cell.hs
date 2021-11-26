@@ -83,7 +83,10 @@ isWalkableAt c tc t =
 
 cellAt :: Coord -> CellMap -> Maybe Cell
 cellAt c (CellMap m)
-    | c >= lower && c <= upper = Just $ m ! c
+    | coordIsInRange c (CellMap m) = Just $ m ! c
     | otherwise = Nothing
+
+coordIsInRange :: Coord -> CellMap -> Bool
+coordIsInRange c (CellMap m) = c >= lower && c <= upper
   where
     (lower, upper) = bounds m
