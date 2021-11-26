@@ -115,9 +115,9 @@ removeActorAt c (CellMap cm) =
         Nothing           -> Nothing
 
 removeActorIf :: (Actor -> Bool) -> CellMap -> Maybe (Actor, CellMap)
-removeActorIf f cm = index >>= flip removeActorAt cm
+removeActorIf f cm = position >>= flip removeActorAt cm
   where
-    index = fst <$> find (f . snd) (positionsAndActors cm)
+    position = fst <$> find (f . snd) (positionsAndActors cm)
 
 tileIdAt :: Coord -> CellMap -> Maybe TileId
 tileIdAt c t = (^. tileId) <$> cellAt c t
