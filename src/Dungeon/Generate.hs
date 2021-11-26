@@ -18,7 +18,7 @@ import           Dungeon.Generate.Room   (Room (..), center,
                                           roomFromTwoPositionInclusive,
                                           roomFromWidthHeight, roomOverlaps)
 import           Dungeon.Identifier      (Identifier)
-import           Dungeon.Map.Tile        (TileCollection, TileMap, allWallTiles,
+import           Dungeon.Map.Tile        (CellMap, TileCollection, allWallTiles,
                                           changeTileAt, downStairs, floorTile,
                                           upStairs, widthAndHeight)
 import           Dungeon.Size            (maxSize, minSize)
@@ -122,12 +122,12 @@ generateDungeonAccum ::
        [Item]
     -> [Actor]
     -> [Room]
-    -> TileMap
+    -> CellMap
     -> Coord
     -> StdGen
     -> IndexGenerator
     -> Config
-    -> (TileMap, [Actor], [Item], V2 Int, StdGen, IndexGenerator)
+    -> (CellMap, [Actor], [Item], V2 Int, StdGen, IndexGenerator)
 generateDungeonAccum itemsAcc enemiesAcc acc tileMap playerPos g ig cfg
     | maxRooms cfg == 0 = (tileMap, enemiesAcc, itemsAcc, playerPos, g, ig)
     | otherwise =
@@ -164,7 +164,7 @@ generateDungeonAccum itemsAcc enemiesAcc acc tileMap playerPos g ig cfg
     (items, g'''''') = placeItems g''''' room maxItemsPerRoom
     V2 width height = widthAndHeight tileMap
 
-createRoom :: Room -> TileMap -> TileMap
+createRoom :: Room -> CellMap -> CellMap
 createRoom room r =
     foldl
         (\acc x ->
@@ -174,7 +174,7 @@ createRoom room r =
         r
         [V2 x y | x <- [x1 room .. x2 room - 1], y <- [y1 room .. y2 room - 1]]
 
-tunnelBetween :: Coord -> Coord -> TileMap -> TileMap
+tunnelBetween :: Coord -> Coord -> CellMap -> CellMap
 tunnelBetween start end d = createRoom path1 $ createRoom path2 d
   where
     path1 = roomFromTwoPositionInclusive start corner

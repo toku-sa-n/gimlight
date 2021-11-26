@@ -2,7 +2,7 @@
 {-# LANGUAGE TemplateHaskell #-}
 
 module Dungeon.Map.Tile
-    ( TileMap
+    ( CellMap
     , tileMap
     , widthAndHeight
     , changeTileAt
@@ -46,42 +46,42 @@ makeLenses ''Cell
 
 instance Binary Cell
 
-newtype TileMap =
-    TileMap (Array (V2 Int) Cell)
+newtype CellMap =
+    CellMap (Array (V2 Int) Cell)
     deriving (Show, Ord, Eq, Generic)
 
-instance Binary TileMap
+instance Binary CellMap
 
-tileMap :: Array (V2 Int) TileId -> TileMap
-tileMap = TileMap . fmap (`Cell` Nothing)
+tileMap :: Array (V2 Int) TileId -> CellMap
+tileMap = CellMap . fmap (`Cell` Nothing)
 
-widthAndHeight :: TileMap -> V2 Int
-widthAndHeight (TileMap m) = snd (bounds m) + V2 1 1
+widthAndHeight :: CellMap -> V2 Int
+widthAndHeight (CellMap m) = snd (bounds m) + V2 1 1
 
-changeTileAt :: Coord -> TileId -> TileMap -> Maybe TileMap
-changeTileAt c i (TileMap m)
-    | isJust $ tileIdAt c (TileMap m) = Just $ TileMap $ m // [(c, newTile)]
+changeTileAt :: Coord -> TileId -> CellMap -> Maybe CellMap
+changeTileAt c i (CellMap m)
+    | isJust $ tileIdAt c (CellMap m) = Just $ CellMap $ m // [(c, newTile)]
     | otherwise = Nothing
   where
     newTile = m ! c & tileId .~ i
 
-walkableMap :: TileCollection -> TileMap -> BoolMap
-walkableMap tc (TileMap m) = isWalkable . ((tc !) . (^. tileId)) <$> m
+walkableMap :: TileCollection -> CellMap -> BoolMap
+walkableMap tc (CellMap m) = isWalkable . ((tc !) . (^. tileId)) <$> m
 
-transparentMap :: TileCollection -> TileMap -> BoolMap
-transparentMap tc (TileMap m) = isTransparent . ((tc !) . (^. tileId)) <$> m
+transparentMap :: TileCollection -> CellMap -> BoolMap
+transparentMap tc (CellMap m) = isTransparent . ((tc !) . (^. tileId)) <$> m
 
-tileIdAt :: Coord -> TileMap -> Maybe TileId
+tileIdAt :: Coord -> CellMap -> Maybe TileId
 tileIdAt c t = (^. tileId) <$> cellAt c t
 
-cellAt :: Coord -> TileMap -> Maybe Cell
-cellAt c (TileMap m)
+cellAt :: Coord -> CellMap -> Maybe Cell
+cellAt c (CellMap m)
     | c >= lower && c <= upper = Just $ m ! c
     | otherwise = Nothing
   where
     (lower, upper) = bounds m
 
-isWalkableAt :: Coord -> TileCollection -> TileMap -> Bool
+isWalkableAt :: Coord -> TileCollection -> CellMap -> Bool
 isWalkableAt c tc t =
     case tileIdAt c t of
         Just x  -> isWalkable (tc ! x)
@@ -101,8 +101,8 @@ type TileCollection = Array Int Tile
 tile :: Bool -> Bool -> Tile
 tile = Tile
 
-allWallTiles :: V2 Int -> TileMap
-allWallTiles wh = TileMap $ M.generate wh (const (Cell wallTile Nothing))
+allWallTiles :: V2 Int -> CellMap
+allWallTiles wh = CellMap $ M.generate wh (const (Cell wallTile Nothing))
 
 isWalkable :: Tile -> Bool
 isWalkable = walkable

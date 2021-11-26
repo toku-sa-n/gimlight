@@ -7,7 +7,7 @@ import           Data.Maybe              (fromMaybe)
 import           Dungeon                 (Dungeon, dungeon)
 import           Dungeon.Identifier      (Identifier (Beaeve))
 import qualified Dungeon.Map.JSONReader  as JSONReader
-import           Dungeon.Map.Tile        (TileMap)
+import           Dungeon.Map.Tile        (CellMap)
 import           IndexGenerator          (IndexGenerator)
 import           Linear.V2               (V2 (V2))
 
@@ -18,7 +18,7 @@ beaeve ig = do
   where
     (electria', ig') = electria ig (V2 4 5)
 
-readMapFile :: IO TileMap
+readMapFile :: IO CellMap
 readMapFile = do
     tileMap <- JSONReader.readMapFile "maps/beaeve.json"
     return $ fromMaybe (error "Failed to read the map file of Beaeve") tileMap

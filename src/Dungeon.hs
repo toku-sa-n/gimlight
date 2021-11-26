@@ -52,7 +52,7 @@ import           Dungeon.Map.Bool     (BoolMap)
 import           Dungeon.Map.Explored (ExploredMap, initExploredMap,
                                        updateExploredMap)
 import           Dungeon.Map.Fov      (Fov, calculateFov, initFov)
-import           Dungeon.Map.Tile     (TileCollection, TileId, TileMap,
+import           Dungeon.Map.Tile     (CellMap, TileCollection, TileId,
                                        changeTileAt, walkableMap,
                                        widthAndHeight)
 import qualified Dungeon.Map.Tile     as TileMap
@@ -64,7 +64,7 @@ import           Linear.V2            (V2 (..))
 
 data Dungeon =
     Dungeon
-        { _tileMap             :: TileMap
+        { _tileMap             :: CellMap
         , _visible             :: Fov
         , _explored            :: ExploredMap
         , _actors              :: [Actor]
@@ -84,7 +84,7 @@ makeLenses ''Dungeon
 
 instance Binary Dungeon
 
-dungeon :: TileMap -> [Actor] -> [Item] -> Identifier -> Dungeon
+dungeon :: CellMap -> [Actor] -> [Item] -> Identifier -> Dungeon
 dungeon t e i ident =
     Dungeon
         { _tileMap = t
