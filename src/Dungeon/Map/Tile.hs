@@ -3,7 +3,7 @@
 
 module Dungeon.Map.Tile
     ( CellMap
-    , tileMap
+    , cellMap
     , widthAndHeight
     , changeTileAt
     , walkableMap
@@ -52,8 +52,8 @@ newtype CellMap =
 
 instance Binary CellMap
 
-tileMap :: Array (V2 Int) TileId -> CellMap
-tileMap = CellMap . fmap (`Cell` Nothing)
+cellMap :: Array (V2 Int) TileId -> CellMap
+cellMap = CellMap . fmap (`Cell` Nothing)
 
 widthAndHeight :: CellMap -> V2 Int
 widthAndHeight (CellMap m) = snd (bounds m) + V2 1 1
