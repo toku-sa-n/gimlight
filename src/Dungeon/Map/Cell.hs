@@ -11,6 +11,7 @@ module Dungeon.Map.Cell
     , isWalkableAt
     , locateActorAt
     , removeActorAt
+    , positionsAndActors
     , transparentMap
     , tileIdAt
     , cellAt
@@ -19,9 +20,9 @@ module Dungeon.Map.Cell
 import           Actor            (Actor)
 import           Control.Lens     (makeLenses, (&), (.~), (?~), (^.))
 import           Coord            (Coord)
-import           Data.Array       (Array, bounds, (!), (//))
+import           Data.Array       (Array, assocs, bounds, (!), (//))
 import           Data.Binary      (Binary)
-import           Data.Maybe       (isJust, isNothing)
+import           Data.Maybe       (isJust, isNothing, mapMaybe)
 import qualified Dungeon.Map      as M
 import           Dungeon.Map.Bool (BoolMap)
 import           Dungeon.Map.Tile (TileCollection, TileId, wallTile)
@@ -90,6 +91,14 @@ isWalkableAt c tc t =
     case cellAt c t of
         Just x  -> isWalkable tc x
         Nothing -> False
+
+positionsAndActors :: CellMap -> [(Coord, Actor)]
+positionsAndActors (CellMap cm) = mapMaybe mapStep $ assocs cm
+  where
+    mapStep (coord, cell) =
+        case cell ^. actor of
+            Just x  -> Just (coord, x)
+            Nothing -> Nothing
 
 locateActorAt :: Actor -> Coord -> CellMap -> Maybe CellMap
 locateActorAt a c (CellMap cm)
