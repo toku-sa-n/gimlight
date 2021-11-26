@@ -10,6 +10,7 @@ module Dungeon.Map.Cell
     , widthAndHeight
     , isWalkableAt
     , locateActorAt
+    , removeActorAt
     , transparentMap
     , tileIdAt
     , cellAt
@@ -49,6 +50,12 @@ locateActor :: Actor -> Cell -> Maybe Cell
 locateActor a c
     | isJust (c ^. actor) = Nothing
     | otherwise = Just $ c & actor ?~ a
+
+removeActor :: Cell -> Maybe (Actor, Cell)
+removeActor c =
+    case c ^. actor of
+        Just a  -> Just (a, c & actor .~ Nothing)
+        Nothing -> Nothing
 
 newtype CellMap =
     CellMap (Array (V2 Int) Cell)
@@ -91,6 +98,12 @@ locateActorAt a c (CellMap cm)
     | otherwise = Nothing
   where
     newCell = locateActor a (cm ! c)
+
+removeActorAt :: Coord -> CellMap -> Maybe (Actor, CellMap)
+removeActorAt c (CellMap cm) =
+    case cellAt c (CellMap cm) >>= removeActor of
+        Just (a, newCell) -> Just (a, CellMap $ cm // [(c, newCell)])
+        Nothing           -> Nothing
 
 tileIdAt :: Coord -> CellMap -> Maybe TileId
 tileIdAt c t = (^. tileId) <$> cellAt c t
