@@ -26,7 +26,6 @@ module Dungeon
     , isPositionInDungeon
     , positionsAndNpcs
     , getPositionsAndActors
-    , getPositionsAndItems
     , positionOnParentMap
     , cellMap
     , visible
@@ -50,8 +49,8 @@ import qualified Dungeon.Identifier   as Identifier
 import           Dungeon.Map.Bool     (BoolMap)
 import           Dungeon.Map.Cell     (CellMap, changeTileAt, locateActorAt,
                                        locateItemAt, positionsAndActors,
-                                       positionsAndItems, removeActorAt,
-                                       removeActorIf, removeItemAt, walkableMap,
+                                       removeActorAt, removeActorIf,
+                                       removeItemAt, walkableMap,
                                        widthAndHeight)
 import qualified Dungeon.Map.Cell     as Cell
 import           Dungeon.Map.Explored (ExploredMap, initExploredMap,
@@ -192,9 +191,6 @@ transparentMap ts d = Cell.transparentMap ts (d ^. cellMap)
 positionsAndNpcs :: Dungeon -> [(Coord, Actor)]
 positionsAndNpcs =
     filter (not . isPlayer . snd) . positionsAndActors . (^. cellMap)
-
-getPositionsAndItems :: Dungeon -> [(Coord, Item)]
-getPositionsAndItems = positionsAndItems . (^. cellMap)
 
 mapWidthAndHeight :: Dungeon -> V2 Int
 mapWidthAndHeight d = widthAndHeight (d ^. cellMap)
