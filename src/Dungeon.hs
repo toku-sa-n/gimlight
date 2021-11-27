@@ -26,11 +26,11 @@ module Dungeon
     , isPositionInDungeon
     , positionsAndNpcs
     , getPositionsAndActors
+    , getPositionsAndItems
     , positionOnParentMap
     , cellMap
     , visible
     , explored
-    , items
     , popItemAt
     , descendingStairs
     , addAscendingAndDescendingStiars
@@ -40,18 +40,19 @@ module Dungeon
     ) where
 
 import           Actor                (Actor, isPlayer)
-import           Control.Lens         (makeLenses, (%~), (&), (.~), (^.))
+import           Control.Lens         (makeLenses, (&), (.~), (^.))
 import           Coord                (Coord)
 import           Data.Array.Base      (assocs)
 import           Data.Binary          (Binary)
-import           Data.Foldable        (find)
-import           Data.List            (findIndex)
+import           Data.Foldable        (find, foldlM)
+import           Data.Maybe           (fromMaybe)
 import           Dungeon.Identifier   (Identifier)
 import qualified Dungeon.Identifier   as Identifier
 import           Dungeon.Map.Bool     (BoolMap)
 import           Dungeon.Map.Cell     (CellMap, changeTileAt, locateActorAt,
-                                       positionsAndActors, removeActorAt,
-                                       removeActorIf, walkableMap,
+                                       locateItemAt, positionsAndActors,
+                                       positionsAndItems, removeActorAt,
+                                       removeActorIf, removeItemIf, walkableMap,
                                        widthAndHeight)
 import qualified Dungeon.Map.Cell     as Cell
 import           Dungeon.Map.Explored (ExploredMap, initExploredMap,
@@ -69,7 +70,6 @@ data Dungeon =
         { _cellMap             :: CellMap
         , _visible             :: Fov
         , _explored            :: ExploredMap
-        , _items               :: [Item]
         , _positionOnParentMap :: Maybe Coord
           -- Do not integrate `_ascendingStairs` with
           -- `_positionOnParentMap` For example, towns have a `Just`
@@ -88,15 +88,18 @@ instance Binary Dungeon
 dungeon :: CellMap -> [Item] -> Identifier -> Dungeon
 dungeon c i ident =
     Dungeon
-        { _cellMap = c
+        { _cellMap = cellMapWithItems
         , _visible = initFov (widthAndHeight c)
         , _explored = initExploredMap (widthAndHeight c)
-        , _items = i
         , _positionOnParentMap = Nothing
         , _ascendingStairs = Nothing
         , _descendingStairs = []
         , _identifier = ident
         }
+  where
+    cellMapWithItems =
+        fromMaybe (error "Failed to locate items.") (foldlM foldStep c i)
+    foldStep acc x = locateItemAt x (I.getPosition x) acc
 
 getIdentifier :: Dungeon -> Identifier
 getIdentifier d = d ^. identifier
@@ -154,7 +157,10 @@ pushActor p e d =
         Nothing -> error "Failed to push an actor."
 
 pushItem :: Item -> Dungeon -> Dungeon
-pushItem i d = d & items %~ (i :)
+pushItem i d =
+    case locateItemAt i (I.getPosition i) (d ^. cellMap) of
+        Just x  -> d & cellMap .~ x
+        Nothing -> error "Failed to push an item."
 
 popActorAt :: Coord -> Dungeon -> (Maybe Actor, Dungeon)
 popActorAt c d =
@@ -173,13 +179,9 @@ popItemAt c = popItemIf (\x -> I.getPosition x == c)
 
 popItemIf :: (Item -> Bool) -> Dungeon -> (Maybe Item, Dungeon)
 popItemIf f d =
-    let xs = d ^. items
-     in case findIndex f xs of
-            Just x ->
-                let item = xs !! x
-                    newItems = take x xs ++ drop (x + 1) xs
-                 in (Just item, d & items .~ newItems)
-            Nothing -> (Nothing, d)
+    case removeItemIf f (d ^. cellMap) of
+        Just (i, newMap) -> (Just i, d & cellMap .~ newMap)
+        Nothing          -> (Nothing, d)
 
 stairsPositionCandidates :: TileCollection -> Dungeon -> [Coord]
 stairsPositionCandidates ts d =
@@ -199,6 +201,9 @@ transparentMap ts d = Cell.transparentMap ts (d ^. cellMap)
 positionsAndNpcs :: Dungeon -> [(Coord, Actor)]
 positionsAndNpcs =
     filter (not . isPlayer . snd) . positionsAndActors . (^. cellMap)
+
+getPositionsAndItems :: Dungeon -> [(Coord, Item)]
+getPositionsAndItems = positionsAndItems . (^. cellMap)
 
 mapWidthAndHeight :: Dungeon -> V2 Int
 mapWidthAndHeight d = widthAndHeight (d ^. cellMap)

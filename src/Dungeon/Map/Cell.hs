@@ -15,7 +15,9 @@ module Dungeon.Map.Cell
     , removeActorAt
     , removeItemAt
     , removeActorIf
+    , removeItemIf
     , positionsAndActors
+    , positionsAndItems
     , transparentMap
     , tileIdAt
     , cellAt
@@ -116,6 +118,11 @@ positionsAndActors (CellMap cm) = mapMaybe mapStep $ assocs cm
   where
     mapStep (coord, cell) = (coord, ) <$> cell ^. actor
 
+positionsAndItems :: CellMap -> [(Coord, Item)]
+positionsAndItems (CellMap cm) = mapMaybe mapStep $ assocs cm
+  where
+    mapStep (coord, cell) = (coord, ) <$> cell ^. item
+
 locateActorAt :: Actor -> Coord -> CellMap -> Maybe CellMap
 locateActorAt a c (CellMap cm)
     | coordIsInRange c (CellMap cm) =
@@ -148,6 +155,11 @@ removeActorIf :: (Actor -> Bool) -> CellMap -> Maybe (Actor, CellMap)
 removeActorIf f cm = position >>= flip removeActorAt cm
   where
     position = fst <$> find (f . snd) (positionsAndActors cm)
+
+removeItemIf :: (Item -> Bool) -> CellMap -> Maybe (Item, CellMap)
+removeItemIf f cm = position >>= flip removeItemAt cm
+  where
+    position = fst <$> find (f . snd) (positionsAndItems cm)
 
 tileIdAt :: Coord -> CellMap -> Maybe TileId
 tileIdAt c t = (^. tileId) <$> cellAt c t

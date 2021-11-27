@@ -23,10 +23,10 @@ import           Data.Vector.Split               (chunksOf)
 import qualified Data.Vector.Storable            as V
 import           Data.Vector.Storable.ByteString (vectorToByteString)
 import           Dungeon                         (Dungeon, cellMap, explored,
-                                                  getPositionsAndActors, items,
+                                                  getPositionsAndActors,
                                                   mapWidthAndHeight,
                                                   playerPosition, visible)
-import           Dungeon.Map.Cell                (tileIdAt)
+import           Dungeon.Map.Cell                (positionsAndItems, tileIdAt)
 import           GameConfig                      (GameConfig)
 import           GameStatus.Exploring            (ExploringHandler,
                                                   getCurrentDungeon,
@@ -160,7 +160,7 @@ makeMap tileGraphics eh = createSingle () def {singleRender = render}
     imagePath = "mapWidget"
 
 mapItems :: ExploringHandler -> [GameWidgetNode]
-mapItems eh = mapMaybe itemToImage $ d ^. items
+mapItems eh = mapMaybe (itemToImage . snd) (positionsAndItems (d ^. cellMap))
   where
     itemToImage item =
         guard (isItemDrawed item) >>
