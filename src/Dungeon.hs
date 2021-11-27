@@ -44,12 +44,15 @@ import           Control.Lens         (makeLenses, (%~), (&), (.~), (^.))
 import           Coord                (Coord)
 import           Data.Array.Base      (assocs)
 import           Data.Binary          (Binary)
-import           Data.Foldable        (find)
+import           Data.Foldable        (find, foldlM)
 import           Data.List            (findIndex)
+import           Data.Maybe           (fromMaybe)
 import           Dungeon.Identifier   (Identifier)
 import qualified Dungeon.Identifier   as Identifier
 import           Dungeon.Map.Bool     (BoolMap)
-import           Dungeon.Map.Cell     (CellMap, changeTileAt, walkableMap,
+import           Dungeon.Map.Cell     (CellMap, changeTileAt, locateActorAt,
+                                       positionsAndActors, removeActorAt,
+                                       removeActorIf, walkableMap,
                                        widthAndHeight)
 import qualified Dungeon.Map.Cell     as Cell
 import           Dungeon.Map.Explored (ExploredMap, initExploredMap,
@@ -67,7 +70,6 @@ data Dungeon =
         { _cellMap             :: CellMap
         , _visible             :: Fov
         , _explored            :: ExploredMap
-        , _actors              :: [Actor]
         , _items               :: [Item]
         , _positionOnParentMap :: Maybe Coord
           -- Do not integrate `_ascendingStairs` with
@@ -87,16 +89,20 @@ instance Binary Dungeon
 dungeon :: CellMap -> [Actor] -> [Item] -> Identifier -> Dungeon
 dungeon t e i ident =
     Dungeon
-        { _cellMap = t
+        { _cellMap = cellMapWithActors
         , _visible = initFov (widthAndHeight t)
         , _explored = initExploredMap (widthAndHeight t)
-        , _actors = e
         , _items = i
         , _positionOnParentMap = Nothing
         , _ascendingStairs = Nothing
         , _descendingStairs = []
         , _identifier = ident
         }
+  where
+    cellMapWithActors =
+        fromMaybe
+            (error "Failed to add actors.")
+            (foldlM (\acc x -> locateActorAt x (x ^. A.position) acc) t e)
 
 getIdentifier :: Dungeon -> Identifier
 getIdentifier d = d ^. identifier
@@ -142,26 +148,28 @@ getPlayerActor :: Dungeon -> Maybe Actor
 getPlayerActor = find isPlayer . getActors
 
 getActors :: Dungeon -> [Actor]
-getActors d = d ^. actors
+getActors = map snd . positionsAndActors . (^. cellMap)
 
 pushActor :: Actor -> Dungeon -> Dungeon
-pushActor e d = d & actors %~ (e :)
+pushActor e d =
+    case locateActorAt e (e ^. A.position) (d ^. cellMap) of
+        Just x  -> d & cellMap .~ x
+        Nothing -> error "Failed to push an actor."
 
 pushItem :: Item -> Dungeon -> Dungeon
 pushItem i d = d & items %~ (i :)
 
 popActorAt :: Coord -> Dungeon -> (Maybe Actor, Dungeon)
-popActorAt c = popActorIf (\x -> x ^. A.position == c)
+popActorAt c d =
+    case removeActorAt c (d ^. cellMap) of
+        Just (a, newMap) -> (Just a, d & cellMap .~ newMap)
+        Nothing          -> (Nothing, d)
 
 popActorIf :: (Actor -> Bool) -> Dungeon -> (Maybe Actor, Dungeon)
 popActorIf f d =
-    let xs = getActors d
-     in case findIndex f xs of
-            Just x ->
-                let actor = xs !! x
-                    newEntities = take x xs ++ drop (x + 1) xs
-                 in (Just actor, d & actors .~ newEntities)
-            Nothing -> (Nothing, d)
+    case removeActorIf f (d ^. cellMap) of
+        Just (a, newMap) -> (Just a, d & cellMap .~ newMap)
+        Nothing          -> (Nothing, d)
 
 popItemAt :: Coord -> Dungeon -> (Maybe Item, Dungeon)
 popItemAt c = popItemIf (\x -> I.getPosition x == c)
