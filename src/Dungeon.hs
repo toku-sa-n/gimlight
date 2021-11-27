@@ -24,7 +24,6 @@ module Dungeon
     , calculateFovAt
     , isTown
     , isPositionInDungeon
-    , npcs
     , positionsAndNpcs
     , getPositionsAndActors
     , positionOnParentMap
@@ -196,9 +195,6 @@ walkableFloor ts d = walkableMap ts (d ^. cellMap)
 
 transparentMap :: TileCollection -> Dungeon -> BoolMap
 transparentMap ts d = Cell.transparentMap ts (d ^. cellMap)
-
-npcs :: Dungeon -> [Actor]
-npcs = filter (not . isPlayer) . getActors
 
 positionsAndNpcs :: Dungeon -> [(Coord, Actor)]
 positionsAndNpcs =
