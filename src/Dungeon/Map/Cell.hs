@@ -13,6 +13,7 @@ module Dungeon.Map.Cell
     , locateActorAt
     , locateItemAt
     , removeActorAt
+    , removeItemAt
     , removeActorIf
     , positionsAndActors
     , transparentMap
@@ -67,6 +68,12 @@ removeActor :: Cell -> Maybe (Actor, Cell)
 removeActor c =
     case c ^. actor of
         Just a  -> Just (a, c & actor .~ Nothing)
+        Nothing -> Nothing
+
+removeItem :: Cell -> Maybe (Item, Cell)
+removeItem c =
+    case c ^. item of
+        Just i  -> Just (i, c & item .~ Nothing)
         Nothing -> Nothing
 
 newtype CellMap =
@@ -128,6 +135,12 @@ locateItemAt i c (CellMap cm)
 removeActorAt :: Coord -> CellMap -> Maybe (Actor, CellMap)
 removeActorAt c (CellMap cm) =
     case cellAt c (CellMap cm) >>= removeActor of
+        Just (a, newCell) -> Just (a, CellMap $ cm // [(c, newCell)])
+        Nothing           -> Nothing
+
+removeItemAt :: Coord -> CellMap -> Maybe (Item, CellMap)
+removeItemAt c (CellMap cm) =
+    case cellAt c (CellMap cm) >>= removeItem of
         Just (a, newCell) -> Just (a, CellMap $ cm // [(c, newCell)])
         Nothing           -> Nothing
 
