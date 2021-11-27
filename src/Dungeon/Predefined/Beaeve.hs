@@ -6,7 +6,7 @@ import           Actor.Friendly.Electria (electria)
 import           Data.Maybe              (fromMaybe)
 import           Dungeon                 (Dungeon, dungeon)
 import           Dungeon.Identifier      (Identifier (Beaeve))
-import           Dungeon.Map.Cell        (CellMap)
+import           Dungeon.Map.Cell        (CellMap, locateActorAt)
 import qualified Dungeon.Map.JSONReader  as JSONReader
 import           IndexGenerator          (IndexGenerator)
 import           Linear.V2               (V2 (V2))
@@ -14,7 +14,11 @@ import           Linear.V2               (V2 (V2))
 beaeve :: IndexGenerator -> IO (Dungeon, IndexGenerator)
 beaeve ig = do
     tileMap <- readMapFile
-    return (dungeon tileMap [electria'] [] Beaeve, ig')
+    let tileMap' =
+            fromMaybe
+                (error "Failed to locate an actor.")
+                (locateActorAt electria' (V2 4 5) tileMap)
+    return (dungeon tileMap' [] Beaeve, ig')
   where
     (electria', ig') = electria ig (V2 4 5)
 

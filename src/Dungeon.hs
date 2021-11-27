@@ -44,9 +44,8 @@ import           Control.Lens         (makeLenses, (%~), (&), (.~), (^.))
 import           Coord                (Coord)
 import           Data.Array.Base      (assocs)
 import           Data.Binary          (Binary)
-import           Data.Foldable        (find, foldlM)
+import           Data.Foldable        (find)
 import           Data.List            (findIndex)
-import           Data.Maybe           (fromMaybe)
 import           Dungeon.Identifier   (Identifier)
 import qualified Dungeon.Identifier   as Identifier
 import           Dungeon.Map.Bool     (BoolMap)
@@ -86,23 +85,18 @@ makeLenses ''Dungeon
 
 instance Binary Dungeon
 
-dungeon :: CellMap -> [Actor] -> [Item] -> Identifier -> Dungeon
-dungeon t e i ident =
+dungeon :: CellMap -> [Item] -> Identifier -> Dungeon
+dungeon c i ident =
     Dungeon
-        { _cellMap = cellMapWithActors
-        , _visible = initFov (widthAndHeight t)
-        , _explored = initExploredMap (widthAndHeight t)
+        { _cellMap = c
+        , _visible = initFov (widthAndHeight c)
+        , _explored = initExploredMap (widthAndHeight c)
         , _items = i
         , _positionOnParentMap = Nothing
         , _ascendingStairs = Nothing
         , _descendingStairs = []
         , _identifier = ident
         }
-  where
-    cellMapWithActors =
-        fromMaybe
-            (error "Failed to add actors.")
-            (foldlM (\acc x -> locateActorAt x (x ^. A.position) acc) t e)
 
 getIdentifier :: Dungeon -> Identifier
 getIdentifier d = d ^. identifier

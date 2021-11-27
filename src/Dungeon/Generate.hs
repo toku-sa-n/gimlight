@@ -7,6 +7,7 @@ import qualified Actor                   as A
 import           Actor.Monsters          (orc, troll)
 import           Control.Lens            ((^.))
 import           Coord                   (Coord)
+import           Data.Foldable           (foldlM)
 import           Data.Maybe              (fromMaybe)
 import           Data.Tree               (Tree (Node, rootLabel, subForest))
 import           Dungeon                 (Dungeon,
@@ -19,7 +20,7 @@ import           Dungeon.Generate.Room   (Room (..), center,
                                           roomFromWidthHeight, roomOverlaps)
 import           Dungeon.Identifier      (Identifier)
 import           Dungeon.Map.Cell        (CellMap, allWallTiles, changeTileAt,
-                                          widthAndHeight)
+                                          locateActorAt, widthAndHeight)
 import           Dungeon.Map.Tile        (TileCollection, downStairs, floorTile,
                                           upStairs)
 import           Dungeon.Size            (maxSize, minSize)
@@ -98,14 +99,18 @@ generateDungeon ::
 generateDungeon g ig cfg ident =
     ( dungeon
           (fromMaybe (error "Failed to change the tile.") $
-           changeTileAt enterPosition upStairs tiles)
-          actors
+           changeTileAt enterPosition upStairs cellMap)
           items
           ident
     , enterPosition
     , g'''
     , ig')
   where
+    cellMap =
+        fromMaybe
+            (error "Failed to locate actors.")
+            (foldlM foldStep tiles actors)
+    foldStep acc x = locateActorAt x (x ^. A.position) acc
     (tiles, actors, items, enterPosition, g''', ig') =
         generateDungeonAccum
             []
