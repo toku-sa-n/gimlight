@@ -44,8 +44,7 @@ import           Control.Lens         (makeLenses, (&), (.~), (^.))
 import           Coord                (Coord)
 import           Data.Array.Base      (assocs)
 import           Data.Binary          (Binary)
-import           Data.Foldable        (find, foldlM)
-import           Data.Maybe           (fromMaybe)
+import           Data.Foldable        (find)
 import           Dungeon.Identifier   (Identifier)
 import qualified Dungeon.Identifier   as Identifier
 import           Dungeon.Map.Bool     (BoolMap)
@@ -85,10 +84,10 @@ makeLenses ''Dungeon
 
 instance Binary Dungeon
 
-dungeon :: CellMap -> [Item] -> Identifier -> Dungeon
-dungeon c i ident =
+dungeon :: CellMap -> Identifier -> Dungeon
+dungeon c ident =
     Dungeon
-        { _cellMap = cellMapWithItems
+        { _cellMap = c
         , _visible = initFov (widthAndHeight c)
         , _explored = initExploredMap (widthAndHeight c)
         , _positionOnParentMap = Nothing
@@ -96,10 +95,6 @@ dungeon c i ident =
         , _descendingStairs = []
         , _identifier = ident
         }
-  where
-    cellMapWithItems =
-        fromMaybe (error "Failed to locate items.") (foldlM foldStep c i)
-    foldStep acc x = locateItemAt x (I.getPosition x) acc
 
 getIdentifier :: Dungeon -> Identifier
 getIdentifier d = d ^. identifier
