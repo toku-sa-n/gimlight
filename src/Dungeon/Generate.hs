@@ -182,17 +182,8 @@ placeEnemies ::
     -> Room
     -> Int
     -> (CellMap, IndexGenerator, StdGen)
-placeEnemies = placeEnemiesAccum
-
-placeEnemiesAccum ::
-       CellMap
-    -> StdGen
-    -> IndexGenerator
-    -> Room
-    -> Int
-    -> (CellMap, IndexGenerator, StdGen)
-placeEnemiesAccum cellMap g ig _ 0 = (cellMap, ig, g)
-placeEnemiesAccum cellMap g ig r n = placeEnemiesAccum newMap g''' ig' r (n - 1)
+placeEnemies cellMap g ig _ 0 = (cellMap, ig, g)
+placeEnemies cellMap g ig r n = placeEnemies newMap g''' ig' r (n - 1)
   where
     (x, g') = randomR (x1 r, x2 r - 1) g
     (y, g'') = randomR (y1 r, y2 r - 1) g'
