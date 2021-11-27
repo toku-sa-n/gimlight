@@ -51,7 +51,7 @@ import           Dungeon.Map.Bool     (BoolMap)
 import           Dungeon.Map.Cell     (CellMap, changeTileAt, locateActorAt,
                                        locateItemAt, positionsAndActors,
                                        positionsAndItems, removeActorAt,
-                                       removeActorIf, removeItemIf, walkableMap,
+                                       removeActorIf, removeItemAt, walkableMap,
                                        widthAndHeight)
 import qualified Dungeon.Map.Cell     as Cell
 import           Dungeon.Map.Explored (ExploredMap, initExploredMap,
@@ -61,7 +61,6 @@ import           Dungeon.Map.Tile     (TileCollection, TileId)
 import           Dungeon.Stairs       (StairsPair (StairsPair, downStairs, upStairs))
 import           GHC.Generics         (Generic)
 import           Item                 (Item)
-import qualified Item                 as I
 import           Linear.V2            (V2 (..))
 
 data Dungeon =
@@ -151,9 +150,9 @@ pushActor p e d =
         Just x  -> d & cellMap .~ x
         Nothing -> error "Failed to push an actor."
 
-pushItem :: Item -> Dungeon -> Dungeon
-pushItem i d =
-    case locateItemAt i (I.getPosition i) (d ^. cellMap) of
+pushItem :: Coord -> Item -> Dungeon -> Dungeon
+pushItem position i d =
+    case locateItemAt i position (d ^. cellMap) of
         Just x  -> d & cellMap .~ x
         Nothing -> error "Failed to push an item."
 
@@ -170,11 +169,8 @@ popActorIf f d =
         Nothing          -> (Nothing, d)
 
 popItemAt :: Coord -> Dungeon -> (Maybe Item, Dungeon)
-popItemAt c = popItemIf (\x -> I.getPosition x == c)
-
-popItemIf :: (Item -> Bool) -> Dungeon -> (Maybe Item, Dungeon)
-popItemIf f d =
-    case removeItemIf f (d ^. cellMap) of
+popItemAt c d =
+    case removeItemAt c (d ^. cellMap) of
         Just (i, newMap) -> (Just i, d & cellMap .~ newMap)
         Nothing          -> (Nothing, d)
 

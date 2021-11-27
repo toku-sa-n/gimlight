@@ -197,8 +197,8 @@ placeItemsAccum cellMap g r n = placeItemsAccum newMap g''' r (n - 1)
     (y, g'') = randomR (y1 r, y2 r - 1) g'
     (prob, g''') = random g'' :: (Float, StdGen)
     newItem
-        | prob < 0.8 = herb (V2 x y)
-        | otherwise = sampleBook (V2 x y)
+        | prob < 0.8 = herb
+        | otherwise = sampleBook
 
 newMonster :: StdGen -> IndexGenerator -> ((Actor, IndexGenerator), StdGen)
 newMonster g ig =
