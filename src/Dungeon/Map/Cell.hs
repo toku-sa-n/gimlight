@@ -31,12 +31,14 @@ import           Dungeon.Map.Bool (BoolMap)
 import           Dungeon.Map.Tile (TileCollection, TileId, wallTile)
 import qualified Dungeon.Map.Tile as Tile
 import           GHC.Generics     (Generic)
+import           Item             (Item)
 import           Linear.V2        (V2 (V2))
 
 data Cell =
     Cell
         { _tileId :: TileId
         , _actor  :: Maybe Actor
+        , item    :: Maybe Item
         }
     deriving (Show, Ord, Eq, Generic)
 
@@ -68,10 +70,11 @@ newtype CellMap =
 instance Binary CellMap
 
 cellMap :: Array (V2 Int) TileId -> CellMap
-cellMap = CellMap . fmap (`Cell` Nothing)
+cellMap = CellMap . fmap (\x -> Cell x Nothing Nothing)
 
 allWallTiles :: V2 Int -> CellMap
-allWallTiles wh = CellMap $ M.generate wh (const (Cell wallTile Nothing))
+allWallTiles wh =
+    CellMap $ M.generate wh (const (Cell wallTile Nothing Nothing))
 
 widthAndHeight :: CellMap -> V2 Int
 widthAndHeight (CellMap m) = snd (bounds m) + V2 1 1
