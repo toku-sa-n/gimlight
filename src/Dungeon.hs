@@ -25,6 +25,8 @@ module Dungeon
     , isTown
     , isPositionInDungeon
     , npcs
+    , positionsAndNpcs
+    , getPositionsAndActors
     , positionOnParentMap
     , cellMap
     , visible
@@ -39,7 +41,6 @@ module Dungeon
     ) where
 
 import           Actor                (Actor, isPlayer)
-import qualified Actor                as A
 import           Control.Lens         (makeLenses, (%~), (&), (.~), (^.))
 import           Coord                (Coord)
 import           Data.Array.Base      (assocs)
@@ -136,17 +137,20 @@ calculateFovAt :: Coord -> TileCollection -> Dungeon -> BoolMap
 calculateFovAt c ts d = calculateFov c (transparentMap ts d)
 
 playerPosition :: Dungeon -> Maybe Coord
-playerPosition d = (^. A.position) <$> getPlayerActor d
+playerPosition d = fst <$> getPlayerActor d
 
-getPlayerActor :: Dungeon -> Maybe Actor
-getPlayerActor = find isPlayer . getActors
+getPlayerActor :: Dungeon -> Maybe (Coord, Actor)
+getPlayerActor = find (isPlayer . snd) . positionsAndActors . (^. cellMap)
 
 getActors :: Dungeon -> [Actor]
-getActors = map snd . positionsAndActors . (^. cellMap)
+getActors = map snd . getPositionsAndActors
 
-pushActor :: Actor -> Dungeon -> Dungeon
-pushActor e d =
-    case locateActorAt e (e ^. A.position) (d ^. cellMap) of
+getPositionsAndActors :: Dungeon -> [(Coord, Actor)]
+getPositionsAndActors = positionsAndActors . (^. cellMap)
+
+pushActor :: Coord -> Actor -> Dungeon -> Dungeon
+pushActor p e d =
+    case locateActorAt e p (d ^. cellMap) of
         Just x  -> d & cellMap .~ x
         Nothing -> error "Failed to push an actor."
 
@@ -195,6 +199,10 @@ transparentMap ts d = Cell.transparentMap ts (d ^. cellMap)
 
 npcs :: Dungeon -> [Actor]
 npcs = filter (not . isPlayer) . getActors
+
+positionsAndNpcs :: Dungeon -> [(Coord, Actor)]
+positionsAndNpcs =
+    filter (not . isPlayer . snd) . positionsAndActors . (^. cellMap)
 
 mapWidthAndHeight :: Dungeon -> V2 Int
 mapWidthAndHeight d = widthAndHeight (d ^. cellMap)

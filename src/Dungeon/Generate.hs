@@ -3,7 +3,6 @@ module Dungeon.Generate
     ) where
 
 import           Actor                   (Actor)
-import qualified Actor                   as A
 import           Actor.Monsters          (orc, troll)
 import           Control.Lens            ((^.))
 import           Coord                   (Coord)
@@ -187,9 +186,8 @@ placeEnemies cellMap g ig r n = placeEnemies newMap g''' ig' r (n - 1)
   where
     (x, g') = randomR (x1 r, x2 r - 1) g
     (y, g'') = randomR (y1 r, y2 r - 1) g'
-    ((enemy, ig'), g''') = newMonster g'' ig (V2 x y)
-    newMap =
-        fromMaybe cellMap (locateActorAt enemy (enemy ^. A.position) cellMap)
+    ((enemy, ig'), g''') = newMonster g'' ig
+    newMap = fromMaybe cellMap (locateActorAt enemy (V2 x y) cellMap)
 
 placeItems :: StdGen -> Room -> Int -> ([Item], StdGen)
 placeItems = placeItemsAccum []
@@ -208,13 +206,12 @@ placeItemsAccum items g r n = placeItemsAccum newItems g''' r (n - 1)
                      else sampleBook (V2 x y) : items
             else items
 
-newMonster ::
-       StdGen -> IndexGenerator -> Coord -> ((Actor, IndexGenerator), StdGen)
-newMonster g ig c =
+newMonster :: StdGen -> IndexGenerator -> ((Actor, IndexGenerator), StdGen)
+newMonster g ig =
     let (r, g') = random g :: (Float, StdGen)
      in if r < 0.8
-            then (orc ig c, g')
-            else (troll ig c, g')
+            then (orc ig, g')
+            else (troll ig, g')
 
 maxMonstersPerRoom :: Int
 maxMonstersPerRoom = 1

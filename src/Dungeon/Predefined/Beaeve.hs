@@ -20,7 +20,7 @@ beaeve ig = do
                 (locateActorAt electria' (V2 4 5) tileMap)
     return (dungeon tileMap' [] Beaeve, ig')
   where
-    (electria', ig') = electria ig (V2 4 5)
+    (electria', ig') = electria ig
 
 readMapFile :: IO CellMap
 readMapFile = do
