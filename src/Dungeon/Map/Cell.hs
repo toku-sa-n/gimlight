@@ -11,6 +11,7 @@ module Dungeon.Map.Cell
     , widthAndHeight
     , isWalkableAt
     , locateActorAt
+    , locateItemAt
     , removeActorAt
     , removeActorIf
     , positionsAndActors
@@ -38,7 +39,7 @@ data Cell =
     Cell
         { _tileId :: TileId
         , _actor  :: Maybe Actor
-        , item    :: Maybe Item
+        , _item   :: Maybe Item
         }
     deriving (Show, Ord, Eq, Generic)
 
@@ -56,6 +57,11 @@ locateActor :: Actor -> Cell -> Maybe Cell
 locateActor a c
     | isJust (c ^. actor) = Nothing
     | otherwise = Just $ c & actor ?~ a
+
+locateItem :: Item -> Cell -> Maybe Cell
+locateItem i c
+    | isJust (c ^. item) = Nothing
+    | otherwise = Just $ c & item ?~ i
 
 removeActor :: Cell -> Maybe (Actor, Cell)
 removeActor c =
@@ -110,6 +116,14 @@ locateActorAt a c (CellMap cm)
     | otherwise = Nothing
   where
     newCell = locateActor a (cm ! c)
+
+locateItemAt :: Item -> Coord -> CellMap -> Maybe CellMap
+locateItemAt i c (CellMap cm)
+    | coordIsInRange c (CellMap cm) =
+        (\x -> CellMap (cm // [(c, x)])) <$> newCell
+    | otherwise = Nothing
+  where
+    newCell = locateItem i (cm ! c)
 
 removeActorAt :: Coord -> CellMap -> Maybe (Actor, CellMap)
 removeActorAt c (CellMap cm) =
