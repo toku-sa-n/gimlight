@@ -15,7 +15,6 @@ import           Control.Monad                   (guard)
 import           Coord                           (Coord)
 import           Data.Array                      ((!))
 import           Data.Maybe                      (catMaybes, mapMaybe)
-import           Data.Text                       (pack)
 import           Data.Vector.Storable.ByteString (vectorToByteString)
 import           Dungeon                         (Dungeon, cellMap,
                                                   getPositionsAndActors,
@@ -111,23 +110,23 @@ mapWidget tiles eh = vstack rows
     cell c =
         zstack $ catMaybes [lowerLayerAt c, upperLayerAt c, Just $ shadowAt c]
     lowerLayerAt c =
-        (\img ->
+        (\tileId ->
              imageMem
-                 (imageNameAt c "lower")
-                 (vectorToByteString $ imageData img)
+                 (showt tileId)
+                 (vectorToByteString $ imageData $ tiles ! tileId)
                  (Size
-                      (fromIntegral $ imageWidth img)
-                      (fromIntegral $ imageHeight img))) <$>
-        getLayerOfAt lower c
+                      (fromIntegral $ imageWidth $ tiles ! tileId)
+                      (fromIntegral $ imageHeight $ tiles ! tileId))) <$>
+        getTileIdOfLayerAt lower c
     upperLayerAt c =
-        (\img ->
+        (\tileId ->
              imageMem
-                 (imageNameAt c "upper")
-                 (vectorToByteString $ imageData img)
+                 (showt tileId)
+                 (vectorToByteString $ imageData $ tiles ! tileId)
                  (Size
-                      (fromIntegral $ imageWidth img)
-                      (fromIntegral $ imageHeight img))) <$>
-        getLayerOfAt upper c
+                      (fromIntegral $ imageWidth $ tiles ! tileId)
+                      (fromIntegral $ imageHeight $ tiles ! tileId))) <$>
+        getTileIdOfLayerAt upper c
     shadowAt c = filler `styleBasic` [bgColor $ black & L.a .~ cellOpacity c]
     cellOpacity c
         | isVisible c = 0
@@ -135,8 +134,7 @@ mapWidget tiles eh = vstack rows
         | otherwise = 1
     isVisible c = playerFov (d ^. cellMap) ! c
     isExplored c = exploredMap (d ^. cellMap) ! c
-    imageNameAt c prefix = pack prefix <> pack (show c)
-    getLayerOfAt which c = tileIdLayer c >>= fmap (tiles !) . (^. which)
+    getTileIdOfLayerAt which c = tileIdLayer c >>= (^. which)
     tileIdLayer c = tileIdLayerAt c $ d ^. cellMap
     V2 topLeftCoordX topLeftCoordY = topLeftCoord d
     d = getCurrentDungeon eh
