@@ -9,7 +9,8 @@ import           Actor                           (getCurrentExperiencePoint,
                                                   getExperiencePointForNextLevel,
                                                   getHp, getLevel, getMaxHp,
                                                   getPower, walkingImagePath)
-import           Codec.Picture                   (Image (imageData),
+import           Codec.Picture                   (Image (imageData, imageHeight, imageWidth),
+                                                  Pixel (pixelAt),
                                                   PixelRGBA8 (PixelRGBA8),
                                                   generateImage, pixelMap)
 import           Control.Applicative             (ZipList (ZipList, getZipList))
@@ -18,7 +19,7 @@ import           Control.Monad                   (guard)
 import           Coord                           (Coord)
 import           Data.Array                      ((!))
 import           Data.Default                    (Default (def))
-import           Data.Maybe                      (mapMaybe)
+import           Data.Maybe                      (fromMaybe, mapMaybe)
 import           Data.Vector.Split               (chunksOf)
 import qualified Data.Vector.Storable            as V
 import           Data.Vector.Storable.ByteString (vectorToByteString)
@@ -26,8 +27,9 @@ import           Dungeon                         (Dungeon, cellMap,
                                                   getPositionsAndActors,
                                                   mapWidthAndHeight,
                                                   playerPosition)
-import           Dungeon.Map.Cell                (exploredMap, playerFov,
-                                                  positionsAndItems, tileIdAt)
+import           Dungeon.Map.Cell                (exploredMap, lower, playerFov,
+                                                  positionsAndItems,
+                                                  tileIdLayerAt, upper)
 import           GameConfig                      (GameConfig)
 import           GameStatus.Exploring            (ExploringHandler,
                                                   getCurrentDungeon,
@@ -145,10 +147,15 @@ makeMap tileGraphics eh = createSingle () def {singleRender = render}
             ]
     imageAt c =
         chunksOf (tileWidth * 4) $ -- `(*4)` for R, G, B, and A bytes.
-        imageData $
-        pixelMap (applyOpacity c) $ maybe emptyImage (tileGraphics !) (tileId c)
+        imageData $ pixelMap (applyOpacity c) $ compositeImageAt c
+    compositeImageAt c =
+        compositeTwoLayers (lowerLayerImage c) (upperLayerImage c)
+    upperLayerImage = fromMaybe emptyImage . getLayerOfAt upper
+    lowerLayerImage = fromMaybe emptyImage . getLayerOfAt lower
     emptyImage = generateImage (\_ _ -> PixelRGBA8 0 0 0 0) tileWidth tileHeight
-    tileId c = tileIdAt c (d ^. cellMap)
+    getLayerOfAt which c =
+        tileIdLayer c >>= (fmap (tileGraphics !) . (^. which))
+    tileIdLayer c = tileIdLayerAt c (d ^. cellMap)
     applyOpacity c (PixelRGBA8 r g b a)
         | isVisible c = PixelRGBA8 r g b a
         | isExplored c = PixelRGBA8 (r `div` 2) (g `div` 2) (b `div` 2) a
@@ -219,3 +226,31 @@ mapDrawingWidth = tileWidth * tileColumns
 
 mapDrawingHeight :: Int
 mapDrawingHeight = tileHeight * tileRows
+
+compositeTwoLayers :: Image PixelRGBA8 -> Image PixelRGBA8 -> Image PixelRGBA8
+compositeTwoLayers b f =
+    generateImage
+        (\x y -> compositeTwoPixels (pixelAt b x y) (pixelAt f x y))
+        w
+        h
+  where
+    w = min (imageWidth b) (imageWidth f)
+    h = min (imageHeight b) (imageHeight f)
+
+-- Equations are from
+-- https://odashi.hatenablog.com/entry/20110921/1316610121.
+compositeTwoPixels :: PixelRGBA8 -> PixelRGBA8 -> PixelRGBA8
+compositeTwoPixels (PixelRGBA8 br bg bb ba) (PixelRGBA8 fr fg fb fa)
+    | a == 0 = PixelRGBA8 0 0 0 0
+    | otherwise =
+        PixelRGBA8 (c br' fr') (c bg' fg') (c bb' fb') (round $ a * 255)
+  where
+    [br', bg', bb', ba', fr', fg', fb', fa'] =
+        map
+            ((/ (255 :: Double)) . fromIntegral)
+            [br, bg, bb, ba, fr, fg, fb, fa]
+    a1 = fa' * ba'
+    a2 = fa' * (1 - ba')
+    a3 = (1 - fa') * ba'
+    a = a1 + a2 + a3
+    c b f = round $ (a1 * f + a2 * f + a3 * b) / a * 255
