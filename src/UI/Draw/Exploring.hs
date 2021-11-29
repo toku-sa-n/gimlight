@@ -109,7 +109,9 @@ mapWidget tiles eh = vstack rows
         ]
     cell c =
         zstack $ catMaybes [lowerLayerAt c, upperLayerAt c, Just $ shadowAt c]
-    lowerLayerAt c =
+    lowerLayerAt = layerOfAt lower
+    upperLayerAt = layerOfAt upper
+    layerOfAt which c =
         (\tileId ->
              imageMem
                  (showt tileId)
@@ -117,16 +119,7 @@ mapWidget tiles eh = vstack rows
                  (Size
                       (fromIntegral $ imageWidth $ tiles ! tileId)
                       (fromIntegral $ imageHeight $ tiles ! tileId))) <$>
-        getTileIdOfLayerAt lower c
-    upperLayerAt c =
-        (\tileId ->
-             imageMem
-                 (showt tileId)
-                 (vectorToByteString $ imageData $ tiles ! tileId)
-                 (Size
-                      (fromIntegral $ imageWidth $ tiles ! tileId)
-                      (fromIntegral $ imageHeight $ tiles ! tileId))) <$>
-        getTileIdOfLayerAt upper c
+        getTileIdOfLayerAt which c
     shadowAt c = filler `styleBasic` [bgColor $ black & L.a .~ cellOpacity c]
     cellOpacity c
         | isVisible c = 0
