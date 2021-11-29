@@ -102,7 +102,7 @@ mapWidget :: MapTiles -> ExploringHandler -> GameWidgetNode
 mapWidget tiles eh = vstack rows
   where
     rows = [row y | y <- [topLeftCoordY .. topLeftCoordY + tileRows - 1]]
-    row y = hstack (columns y)
+    row y = hstack $ columns y
     columns y =
         [ cell (V2 x y)
         | x <- [topLeftCoordX .. topLeftCoordX + tileColumns - 1]
