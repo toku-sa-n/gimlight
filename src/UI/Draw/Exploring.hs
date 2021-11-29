@@ -111,15 +111,16 @@ mapWidget tiles eh = vstack rows
         zstack $ catMaybes [lowerLayerAt c, upperLayerAt c, Just $ shadowAt c]
     lowerLayerAt = layerOfAt lower
     upperLayerAt = layerOfAt upper
-    layerOfAt which c =
-        (\tileId ->
-             imageMem
-                 (showt tileId)
-                 (vectorToByteString $ imageData $ tiles ! tileId)
-                 (Size
-                      (fromIntegral $ imageWidth $ tiles ! tileId)
-                      (fromIntegral $ imageHeight $ tiles ! tileId))) <$>
-        getTileIdOfLayerAt which c
+    layerOfAt which c = tileIdToImageMem <$> getTileIdOfLayerAt which c
+    tileIdToImageMem tileId =
+        imageMem
+            (showt tileId)
+            (vectorToByteString $ imageData img)
+            (imgSize img)
+      where
+        img = tiles ! tileId
+    imgSize img =
+        Size (fromIntegral $ imageWidth img) (fromIntegral $ imageHeight img)
     shadowAt c = filler `styleBasic` [bgColor $ black & L.a .~ cellOpacity c]
     cellOpacity c
         | isVisible c = 0
