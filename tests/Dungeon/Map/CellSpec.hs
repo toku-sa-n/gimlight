@@ -10,7 +10,10 @@ import           Test.Hspec       (Spec, describe, it)
 import           Test.QuickCheck  (property)
 
 spec :: Spec
-spec =
+spec = testAllWallTiles
+
+testAllWallTiles :: Spec
+testAllWallTiles =
     describe "allWallTiles" $
     it "returns a cell map filled with walls." $ property propertyFunc
   where
