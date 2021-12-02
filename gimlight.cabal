@@ -10,7 +10,7 @@ extra-source-files:     CHANGELOG.md
 library
     exposed-modules:    Game
 
-    ghc-options:        -threaded -Wall -Werror
+    ghc-options:        -Wall -Werror
 
     other-modules:      Action
                       , Action.Consume
