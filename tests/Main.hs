@@ -1,4 +1,6 @@
-module Main(main) where
+module Main
+    ( main
+    ) where
 
-main::IO()
-main=return()
+main :: IO ()
+main = return ()
