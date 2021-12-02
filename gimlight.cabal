@@ -7,6 +7,17 @@ maintainer:             tokusan441@gmail.com
 
 extra-source-files:     CHANGELOG.md
 
+Test-Suite spec
+    type:               exitcode-stdio-1.0
+    main-is:            Main.hs
+    ghc-options:        -Wall -Werror
+
+    build-depends:      base >= 4.14.3 && < 4.15
+                      , gimlight
+
+    hs-source-dirs:     tests
+    default-Language:   Haskell2010
+
 library
     exposed-modules:    Game
 
