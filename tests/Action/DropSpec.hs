@@ -40,5 +40,4 @@ spec =
     tc = array (0, 0) [(0, tile True True)]
     d = dungeon cm Beaeve
     cm =
-        cellMap $
-        array (V2 0 0, V2 0 0) [(V2 0 0, TileIdLayer (Just 0) (Just 0))]
+        cellMap $ array (V2 0 0, V2 0 0) [(V2 0 0, TileIdLayer Nothing Nothing)]
