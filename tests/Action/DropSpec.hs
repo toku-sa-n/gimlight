@@ -13,7 +13,8 @@ import           Control.Lens               ((&), (.~), (^.))
 import           Control.Monad.Trans.Writer (writer)
 import           Data.Array                 (array)
 import           Data.Maybe                 (fromJust)
-import           Dungeon                    (dungeon, pushActor, pushItem)
+import           Dungeon                    (Dungeon, dungeon, pushActor,
+                                             pushItem)
 import           Dungeon.Identifier         (Identifier (Beaeve))
 import           Dungeon.Map.Cell           (TileIdLayer (TileIdLayer), cellMap)
 import           Dungeon.Map.Tile           (tile)
@@ -47,13 +48,10 @@ testDropItemSuccessfully =
     actorWithItem =
         (\x -> actorWithoutItem & inventoryItems .~ x)
             (fromJust $ addItem herb (actorWithoutItem ^. inventoryItems))
-    d = dungeon cm Beaeve
+    d = initDungeon
     (actorWithoutItem, _) = player ig
     ig = generator
-    cm =
-        cellMap $
-        array (V2 0 0, V2 0 0) [(playerPosition, TileIdLayer Nothing Nothing)]
-    playerPosition = V2 0 0
+    playerPosition = V2 1 0
 
 testItemAlreadyExists :: Spec
 testItemAlreadyExists =
@@ -74,8 +72,13 @@ testItemAlreadyExists =
     (a, _) = player ig
     ig = generator
     tc = array (0, 0) [(0, tile True True)]
-    d = pushItem playerPosition herb $ dungeon cm Beaeve
+    d = initDungeon
+    playerPosition = V2 0 0
+
+initDungeon :: Dungeon
+initDungeon = pushItem (V2 0 0) herb $ dungeon cm Beaeve
+  where
     cm =
         cellMap $
-        array (V2 0 0, V2 0 0) [(playerPosition, TileIdLayer Nothing Nothing)]
-    playerPosition = V2 0 0
+        array (V2 0 0, V2 1 0) [(V2 0 0, emptyTile), (V2 1 0, emptyTile)]
+    emptyTile = TileIdLayer Nothing Nothing
