@@ -13,7 +13,7 @@ import           Control.Lens               ((&), (.~), (^.))
 import           Control.Monad.Trans.Writer (writer)
 import           Data.Array                 (array)
 import           Data.Maybe                 (fromJust)
-import           Dungeon                    (dungeon, pushActor)
+import           Dungeon                    (dungeon, pushActor, pushItem)
 import           Dungeon.Identifier         (Identifier (Beaeve))
 import           Dungeon.Map.Cell           (TileIdLayer (TileIdLayer), cellMap)
 import           Dungeon.Map.Tile           (tile)
@@ -45,6 +45,6 @@ spec =
     (a, _) = player ig
     ig = generator
     tc = array (0, 0) [(0, tile True True)]
-    d = dungeon cm Beaeve
+    d = pushItem (V2 0 0) herb $ dungeon cm Beaeve
     cm =
         cellMap $ array (V2 0 0, V2 0 0) [(V2 0 0, TileIdLayer Nothing Nothing)]
