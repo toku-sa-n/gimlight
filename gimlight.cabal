@@ -41,6 +41,9 @@ Test-Suite spec
     other-modules:      DungeonSpec
                       , Dungeon.Map.CellSpec
 
+    other-modules:      Action.DropSpec
+                      , Dungeon.Map.CellSpec
+
     build-depends:      gimlight
                       , hspec >= 2.9.1 && < 2.10
                       , QuickCheck >= 2.14.2 && < 2.15
@@ -50,7 +53,8 @@ Test-Suite spec
 
 library
     import:             common
-    exposed-modules:    Actor
+    exposed-modules:    Action.Drop
+                      , Actor
                       , Dungeon
                       , Dungeon.Identifier
                       , Dungeon.Map.Cell
@@ -60,7 +64,6 @@ library
 
     other-modules:      Action
                       , Action.Consume
-                      , Action.Drop
                       , Action.Melee
                       , Action.Move
                       , Action.PickUp
