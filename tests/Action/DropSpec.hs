@@ -7,14 +7,18 @@ module Action.DropSpec
 import           Action                     (ActionResult (ActionResult, killed, newDungeon, status),
                                              ActionStatus (Failed))
 import           Action.Drop                (dropAction)
-import           Actor                      (player)
+import           Actor                      (inventoryItems, player)
+import           Actor.Inventory            (addItem)
+import           Control.Lens               ((&), (.~), (^.))
 import           Control.Monad.Trans.Writer (writer)
 import           Data.Array                 (array)
+import           Data.Maybe                 (fromJust)
 import           Dungeon                    (dungeon, pushActor)
 import           Dungeon.Identifier         (Identifier (Beaeve))
 import           Dungeon.Map.Cell           (TileIdLayer (TileIdLayer), cellMap)
 import           Dungeon.Map.Tile           (tile)
 import           IndexGenerator             (generator)
+import           Item                       (herb)
 import           Linear.V2                  (V2 (V2))
 import           Localization               (multilingualText)
 import           Test.Hspec                 (Spec, it, shouldBe)
@@ -26,7 +30,7 @@ spec =
     writer
         ( ActionResult
               { status = Failed
-              , newDungeon = pushActor (V2 0 0) a d
+              , newDungeon = pushActor (V2 0 0) actorWithItem d
               , killed = []
               }
         , [ multilingualText
@@ -34,7 +38,10 @@ spec =
                 "足元には既にアイテムがある。"
           ])
   where
-    result = dropAction 1 (V2 0 0) a tc d
+    result = dropAction 1 (V2 0 0) actorWithItem tc d
+    actorWithItem =
+        (\x -> a & inventoryItems .~ x)
+            (fromJust $ addItem herb (a ^. inventoryItems))
     (a, _) = player ig
     ig = generator
     tc = array (0, 0) [(0, tile True True)]
