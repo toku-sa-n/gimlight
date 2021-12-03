@@ -36,16 +36,16 @@ testDropItemSuccessfully =
   where
     result =
         dropAction 0 playerPosition actorWithItem initTileCollection initDungeon
-    expected =
-        writer
-            ( ActionResult
-                  { status = Ok
-                  , newDungeon =
-                        pushItem playerPosition herb $
-                        pushActor playerPosition actorWithoutItem initDungeon
-                  , killed = []
-                  }
-            , [T.youDropped (getName herb)])
+    expected = writer (expectedResult, expectedLog)
+    expectedResult =
+        ActionResult
+            { status = Ok
+            , newDungeon =
+                  pushItem playerPosition herb $
+                  pushActor playerPosition actorWithoutItem initDungeon
+            , killed = []
+            }
+    expectedLog = [T.youDropped $ getName herb]
     (actorWithoutItem, actorWithItem) = playerWithoutAndWithItem
     playerPosition = V2 1 0
 
@@ -56,15 +56,14 @@ testItemAlreadyExists =
   where
     result =
         dropAction 0 playerPosition actorWithItem initTileCollection initDungeon
-    expected =
-        writer
-            ( ActionResult
-                  { status = Failed
-                  , newDungeon =
-                        pushActor playerPosition actorWithItem initDungeon
-                  , killed = []
-                  }
-            , [T.itemExists])
+    expected = writer (expectedResult, expectedLog)
+    expectedResult =
+        ActionResult
+            { status = Failed
+            , newDungeon = pushActor playerPosition actorWithItem initDungeon
+            , killed = []
+            }
+    expectedLog = [T.itemExists]
     (_, actorWithItem) = playerWithoutAndWithItem
     playerPosition = V2 0 0
 
