@@ -24,7 +24,10 @@ import qualified Localization.Texts         as T
 import           Test.Hspec                 (Spec, it, shouldBe)
 
 spec :: Spec
-spec =
+spec = testItemAlreadyExists
+
+testItemAlreadyExists :: Spec
+testItemAlreadyExists =
     it "returns a Failed result if there is already an item at the player's foot" $
     result `shouldBe`
     writer
