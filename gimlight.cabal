@@ -62,9 +62,9 @@ library
                       , Dungeon.Map.Cell
                       , Dungeon.Map.Tile
                       , Game
-                      , Localization.Texts
                       , IndexGenerator
                       , Item
+                      , Localization.Texts
 
     other-modules:      Action.Consume
                       , Action.Melee
