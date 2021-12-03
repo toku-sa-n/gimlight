@@ -5,7 +5,7 @@ module Action.DropSpec
     ) where
 
 import           Action                     (ActionResult (ActionResult, killed, newDungeon, status),
-                                             ActionStatus (Failed))
+                                             ActionStatus (Failed, Ok))
 import           Action.Drop                (dropAction)
 import           Actor                      (inventoryItems, player)
 import           Actor.Inventory            (addItem)
@@ -18,17 +18,46 @@ import           Dungeon.Identifier         (Identifier (Beaeve))
 import           Dungeon.Map.Cell           (TileIdLayer (TileIdLayer), cellMap)
 import           Dungeon.Map.Tile           (tile)
 import           IndexGenerator             (generator)
-import           Item                       (herb)
+import           Item                       (getName, herb)
 import           Linear.V2                  (V2 (V2))
 import qualified Localization.Texts         as T
 import           Test.Hspec                 (Spec, it, shouldBe)
 
 spec :: Spec
-spec = testItemAlreadyExists
+spec = do
+    testDropItemSuccessfully
+    testItemAlreadyExists
+
+testDropItemSuccessfully :: Spec
+testDropItemSuccessfully =
+    it "returns a Ok result if there is no item at the player's foot." $
+    result `shouldBe`
+    writer
+        ( ActionResult
+              { status = Ok
+              , newDungeon =
+                    pushItem playerPosition herb $
+                    pushActor playerPosition actorWithoutItem d
+              , killed = []
+              }
+        , [T.youDropped (getName herb)])
+  where
+    result = dropAction 0 playerPosition actorWithItem tc d
+    tc = array (0, 0) [(0, tile True True)]
+    actorWithItem =
+        (\x -> actorWithoutItem & inventoryItems .~ x)
+            (fromJust $ addItem herb (actorWithoutItem ^. inventoryItems))
+    d = dungeon cm Beaeve
+    (actorWithoutItem, _) = player ig
+    ig = generator
+    cm =
+        cellMap $
+        array (V2 0 0, V2 0 0) [(playerPosition, TileIdLayer Nothing Nothing)]
+    playerPosition = V2 0 0
 
 testItemAlreadyExists :: Spec
 testItemAlreadyExists =
-    it "returns a Failed result if there is already an item at the player's foot" $
+    it "returns a Failed result if there is already an item at the player's foot." $
     result `shouldBe`
     writer
         ( ActionResult
