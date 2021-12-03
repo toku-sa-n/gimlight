@@ -38,7 +38,7 @@ spec =
                 "足元には既にアイテムがある。"
           ])
   where
-    result = dropAction 1 (V2 0 0) actorWithItem tc d
+    result = dropAction 0 (V2 0 0) actorWithItem tc d
     actorWithItem =
         (\x -> a & inventoryItems .~ x)
             (fromJust $ addItem herb (a ^. inventoryItems))
