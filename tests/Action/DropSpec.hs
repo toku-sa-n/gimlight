@@ -32,36 +32,39 @@ spec = do
 testDropItemSuccessfully :: Spec
 testDropItemSuccessfully =
     it "returns a Ok result if there is no item at the player's foot." $
-    result `shouldBe`
-    writer
-        ( ActionResult
-              { status = Ok
-              , newDungeon =
-                    pushItem playerPosition herb $
-                    pushActor playerPosition actorWithoutItem initDungeon
-              , killed = []
-              }
-        , [T.youDropped (getName herb)])
+    result `shouldBe` expected
   where
     result =
         dropAction 0 playerPosition actorWithItem initTileCollection initDungeon
+    expected =
+        writer
+            ( ActionResult
+                  { status = Ok
+                  , newDungeon =
+                        pushItem playerPosition herb $
+                        pushActor playerPosition actorWithoutItem initDungeon
+                  , killed = []
+                  }
+            , [T.youDropped (getName herb)])
     (actorWithoutItem, actorWithItem) = playerWithoutAndWithItem
     playerPosition = V2 1 0
 
 testItemAlreadyExists :: Spec
 testItemAlreadyExists =
     it "returns a Failed result if there is already an item at the player's foot." $
-    result `shouldBe`
-    writer
-        ( ActionResult
-              { status = Failed
-              , newDungeon = pushActor playerPosition actorWithItem initDungeon
-              , killed = []
-              }
-        , [T.itemExists])
+    result `shouldBe` expected
   where
     result =
         dropAction 0 playerPosition actorWithItem initTileCollection initDungeon
+    expected =
+        writer
+            ( ActionResult
+                  { status = Failed
+                  , newDungeon =
+                        pushActor playerPosition actorWithItem initDungeon
+                  , killed = []
+                  }
+            , [T.itemExists])
     (_, actorWithItem) = playerWithoutAndWithItem
     playerPosition = V2 0 0
 
