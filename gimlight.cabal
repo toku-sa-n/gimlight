@@ -41,6 +41,7 @@ Test-Suite spec
     other-modules:      Action.DropSpec
                       , Dungeon.Map.CellSpec
                       , DungeonSpec
+                      , FovSpec
 
     build-depends:      gimlight
                       , hspec >= 2.9.1 && < 2.10
