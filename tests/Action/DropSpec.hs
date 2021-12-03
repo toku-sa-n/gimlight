@@ -18,7 +18,7 @@ import           Test.Hspec                 (Spec, it, shouldBe)
 
 spec :: Spec
 spec =
-    it "returns a Failed result if there is already an item at player's foot" $
+    it "returns a Failed result if there is already an item at the player's foot" $
     result `shouldBe`
     ActionResult {status = Failed, newDungeon = d, killed = []}
   where
