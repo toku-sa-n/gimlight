@@ -40,7 +40,6 @@ Test-Suite spec
     main-is:            Main.hs
     other-modules:      Action.DropSpec
                       , Dungeon.Map.CellSpec
-                      , Dungeon.Map.CellSpec
                       , DungeonSpec
 
     build-depends:      gimlight
