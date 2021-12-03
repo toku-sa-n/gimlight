@@ -10,7 +10,7 @@ import           Action.Drop                (dropAction)
 import           Actor                      (player)
 import           Control.Monad.Trans.Writer (writer)
 import           Data.Array                 (array)
-import           Dungeon                    (dungeon)
+import           Dungeon                    (dungeon, pushActor)
 import           Dungeon.Identifier         (Identifier (Beaeve))
 import           Dungeon.Map.Cell           (TileIdLayer (TileIdLayer), cellMap)
 import           Dungeon.Map.Tile           (tile)
@@ -24,7 +24,11 @@ spec =
     it "returns a Failed result if there is already an item at the player's foot" $
     result `shouldBe`
     writer
-        ( ActionResult {status = Failed, newDungeon = d, killed = []}
+        ( ActionResult
+              { status = Failed
+              , newDungeon = pushActor (V2 0 0) a d
+              , killed = []
+              }
         , [ multilingualText
                 "There is already an item at your foot."
                 "足元には既にアイテムがある。"
