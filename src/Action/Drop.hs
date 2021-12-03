@@ -15,16 +15,17 @@ dropAction :: Int -> Action
 dropAction n position e tiles d
     | itemExists = do
         tell [T.itemExists]
-        return $ ActionResult Failed (pushActor position e d) []
+        return failedResult
     | otherwise =
         case item of
             Just x -> dropItem x position newActor tiles d
             Nothing -> do
                 tell [T.whatToDrop]
-                return $ ActionResult Failed (pushActor position e d) []
+                return failedResult
   where
     (item, newActor) = removeNthItem n e
     itemExists = (\(x, _) -> isJust x) $ popItemAt position d
+    failedResult = ActionResult Failed (pushActor position e d) []
 
 dropItem :: Item -> Action
 dropItem item position actor _ dungeon = do
