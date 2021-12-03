@@ -38,14 +38,13 @@ testDropItemSuccessfully =
               { status = Ok
               , newDungeon =
                     pushItem playerPosition herb $
-                    pushActor playerPosition actorWithoutItem d
+                    pushActor playerPosition actorWithoutItem initDungeon
               , killed = []
               }
         , [T.youDropped (getName herb)])
   where
-    result = dropAction 0 playerPosition actorWithItem tc d
-    tc = initTileCollection
-    d = initDungeon
+    result =
+        dropAction 0 playerPosition actorWithItem initTileCollection initDungeon
     (actorWithoutItem, actorWithItem) = playerWithoutAndWithItem
     playerPosition = V2 1 0
 
@@ -56,15 +55,14 @@ testItemAlreadyExists =
     writer
         ( ActionResult
               { status = Failed
-              , newDungeon = pushActor playerPosition actorWithItem d
+              , newDungeon = pushActor playerPosition actorWithItem initDungeon
               , killed = []
               }
         , [T.itemExists])
   where
-    result = dropAction 0 playerPosition actorWithItem tc d
+    result =
+        dropAction 0 playerPosition actorWithItem initTileCollection initDungeon
     (_, actorWithItem) = playerWithoutAndWithItem
-    tc = initTileCollection
-    d = initDungeon
     playerPosition = V2 0 0
 
 initDungeon :: Dungeon
