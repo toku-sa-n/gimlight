@@ -12,7 +12,8 @@ Test-Suite spec
     main-is:            Main.hs
     ghc-options:        -Wall -Werror
 
-    other-modules:      Dungeon.Map.CellSpec
+    other-modules:      DungeonSpec
+                      , Dungeon.Map.CellSpec
 
     build-depends:      base
                       , gimlight
