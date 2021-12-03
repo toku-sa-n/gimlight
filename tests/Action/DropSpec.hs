@@ -17,7 +17,7 @@ import           Dungeon                    (Dungeon, dungeon, pushActor,
                                              pushItem)
 import           Dungeon.Identifier         (Identifier (Beaeve))
 import           Dungeon.Map.Cell           (TileIdLayer (TileIdLayer), cellMap)
-import           Dungeon.Map.Tile           (tile)
+import           Dungeon.Map.Tile           (TileCollection, tile)
 import           IndexGenerator             (generator)
 import           Item                       (getName, herb)
 import           Linear.V2                  (V2 (V2))
@@ -44,12 +44,9 @@ testDropItemSuccessfully =
         , [T.youDropped (getName herb)])
   where
     result = dropAction 0 playerPosition actorWithItem tc d
-    tc = array (0, 0) [(0, tile True True)]
-    actorWithItem =
-        (\x -> actorWithoutItem & inventoryItems .~ x)
-            (fromJust $ addItem herb (actorWithoutItem ^. inventoryItems))
+    tc = initTileCollection
     d = initDungeon
-    actorWithoutItem = initPlayer
+    (actorWithoutItem, actorWithItem) = playerWithoutAndWithItem
     playerPosition = V2 1 0
 
 testItemAlreadyExists :: Spec
@@ -65,11 +62,8 @@ testItemAlreadyExists =
         , [T.itemExists])
   where
     result = dropAction 0 playerPosition actorWithItem tc d
-    actorWithItem =
-        (\x -> a & inventoryItems .~ x)
-            (fromJust $ addItem herb (a ^. inventoryItems))
-    a = initPlayer
-    tc = array (0, 0) [(0, tile True True)]
+    (_, actorWithItem) = playerWithoutAndWithItem
+    tc = initTileCollection
     d = initDungeon
     playerPosition = V2 0 0
 
@@ -81,5 +75,13 @@ initDungeon = pushItem (V2 0 0) herb $ dungeon cm Beaeve
         array (V2 0 0, V2 1 0) [(V2 0 0, emptyTile), (V2 1 0, emptyTile)]
     emptyTile = TileIdLayer Nothing Nothing
 
-initPlayer :: Actor
-initPlayer = fst $ player generator
+playerWithoutAndWithItem :: (Actor, Actor)
+playerWithoutAndWithItem = (without, with)
+  where
+    without = fst $ player generator
+    with =
+        (\x -> without & inventoryItems .~ x)
+            (fromJust $ addItem herb (without ^. inventoryItems))
+
+initTileCollection :: TileCollection
+initTileCollection = array (0, 0) [(0, tile True True)]
