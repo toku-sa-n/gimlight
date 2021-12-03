@@ -30,18 +30,20 @@ spec =
     writer
         ( ActionResult
               { status = Failed
-              , newDungeon = pushActor (V2 0 0) actorWithItem d
+              , newDungeon = pushActor playerPosition actorWithItem d
               , killed = []
               }
         , [T.itemExists])
   where
-    result = dropAction 0 (V2 0 0) actorWithItem tc d
+    result = dropAction 0 playerPosition actorWithItem tc d
     actorWithItem =
         (\x -> a & inventoryItems .~ x)
             (fromJust $ addItem herb (a ^. inventoryItems))
     (a, _) = player ig
     ig = generator
     tc = array (0, 0) [(0, tile True True)]
-    d = pushItem (V2 0 0) herb $ dungeon cm Beaeve
+    d = pushItem playerPosition herb $ dungeon cm Beaeve
     cm =
-        cellMap $ array (V2 0 0, V2 0 0) [(V2 0 0, TileIdLayer Nothing Nothing)]
+        cellMap $
+        array (V2 0 0, V2 0 0) [(playerPosition, TileIdLayer Nothing Nothing)]
+    playerPosition = V2 0 0
