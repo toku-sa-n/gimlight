@@ -1,5 +1,3 @@
-{-# LANGUAGE OverloadedStrings #-}
-
 module Action.Drop
     ( dropAction
     ) where
@@ -11,17 +9,12 @@ import           Control.Monad.Writer (tell)
 import           Data.Maybe           (isJust)
 import           Dungeon              (popItemAt, pushActor, pushItem)
 import           Item                 (Item, getName)
-import           Localization         (multilingualText)
 import qualified Localization.Texts   as T
 
 dropAction :: Int -> Action
 dropAction n position e tiles d
     | itemExists = do
-        tell
-            [ multilingualText
-                  "There is already an item at your foot."
-                  "足元には既にアイテムがある。"
-            ]
+        tell [T.itemExists]
         return $ ActionResult Failed (pushActor position e d) []
     | otherwise =
         case item of

@@ -20,7 +20,7 @@ import           Dungeon.Map.Tile           (tile)
 import           IndexGenerator             (generator)
 import           Item                       (herb)
 import           Linear.V2                  (V2 (V2))
-import           Localization               (multilingualText)
+import qualified Localization.Texts         as T
 import           Test.Hspec                 (Spec, it, shouldBe)
 
 spec :: Spec
@@ -33,10 +33,7 @@ spec =
               , newDungeon = pushActor (V2 0 0) actorWithItem d
               , killed = []
               }
-        , [ multilingualText
-                "There is already an item at your foot."
-                "足元には既にアイテムがある。"
-          ])
+        , [T.itemExists])
   where
     result = dropAction 0 (V2 0 0) actorWithItem tc d
     actorWithItem =

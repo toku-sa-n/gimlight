@@ -62,7 +62,7 @@ library
                       , Dungeon.Map.Cell
                       , Dungeon.Map.Tile
                       , Game
-                      , Localization
+                      , Localization.Texts
                       , IndexGenerator
                       , Item
 
@@ -105,7 +105,7 @@ library
                       , GameStatus.Talking.Part
                       , Item.Book
                       , Item.Heal
-                      , Localization.Texts
+                      , Localization
                       , Localization.Texts.Actions
                       , Localization.Texts.Actors
                       , Localization.Texts.Actors.Electria
