@@ -39,12 +39,10 @@ testDropItemSuccessfully =
     expected = writer (expectedResult, expectedLog)
     expectedResult =
         ActionResult
-            { status = Ok
-            , newDungeon =
-                  pushItem playerPosition herb $
-                  pushActor playerPosition actorWithoutItem initDungeon
-            , killed = []
-            }
+            {status = Ok, newDungeon = dungeonAfterDropping, killed = []}
+    dungeonAfterDropping =
+        pushItem playerPosition herb $
+        pushActor playerPosition actorWithoutItem initDungeon
     expectedLog = [T.youDropped $ getName herb]
     (actorWithoutItem, actorWithItem) = playerWithoutAndWithItem
     playerPosition = V2 1 0
