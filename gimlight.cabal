@@ -61,6 +61,7 @@ library
                       , Dungeon.Map.Cell
                       , Dungeon.Map.Tile
                       , Game
+                      , Localization
                       , IndexGenerator
 
     other-modules:      Action.Consume
@@ -104,7 +105,6 @@ library
                       , Item
                       , Item.Book
                       , Item.Heal
-                      , Localization
                       , Localization.Texts
                       , Localization.Texts.Actions
                       , Localization.Texts.Actors
