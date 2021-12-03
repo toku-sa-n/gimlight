@@ -14,7 +14,20 @@ spec =
     calculatedFov `shouldBe` expectedFov
   where
     expectedFov =
-        array (V2 0 0, V2 2 2) [(V2 x y, True) | x <- [0 .. 2], y <- [0 .. 2]]
-    calculatedFov = calculateFov (V2 1 1) transparentMap
+        array
+            (V2 0 0, V2 (mapWidth - 1) (mapHeight - 1))
+            [ (V2 x y, True)
+            | x <- [0 .. mapWidth - 1]
+            , y <- [0 .. mapHeight - 1]
+            ]
+    calculatedFov = calculateFov playerPosition transparentMap
     transparentMap =
-        array (V2 0 0, V2 2 2) [(V2 x y, True) | x <- [0 .. 2], y <- [0 .. 2]]
+        array
+            (V2 0 0, V2 (mapWidth - 1) (mapHeight - 1))
+            [ (V2 x y, True)
+            | x <- [0 .. mapWidth - 1]
+            , y <- [0 .. mapHeight - 1]
+            ]
+    mapWidth = 3
+    mapHeight = 3
+    playerPosition = V2 1 1
