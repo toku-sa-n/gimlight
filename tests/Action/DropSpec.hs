@@ -57,10 +57,8 @@ testItemAlreadyExists =
     expected = writer (expectedResult, expectedLog)
     expectedResult =
         ActionResult
-            { status = Failed
-            , newDungeon = pushActor playerPosition actorWithItem initDungeon
-            , killed = []
-            }
+            {status = Failed, newDungeon = dungeonAfterAction, killed = []}
+    dungeonAfterAction = pushActor playerPosition actorWithItem initDungeon
     expectedLog = [T.itemExists]
     (_, actorWithItem) = playerWithoutAndWithItem
     playerPosition = V2 0 0
