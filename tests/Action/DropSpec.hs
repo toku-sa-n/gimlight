@@ -7,7 +7,7 @@ module Action.DropSpec
 import           Action                     (ActionResult (ActionResult, killed, newDungeon, status),
                                              ActionStatus (Failed, Ok))
 import           Action.Drop                (dropAction)
-import           Actor                      (inventoryItems, player)
+import           Actor                      (Actor, inventoryItems, player)
 import           Actor.Inventory            (addItem)
 import           Control.Lens               ((&), (.~), (^.))
 import           Control.Monad.Trans.Writer (writer)
@@ -49,8 +49,7 @@ testDropItemSuccessfully =
         (\x -> actorWithoutItem & inventoryItems .~ x)
             (fromJust $ addItem herb (actorWithoutItem ^. inventoryItems))
     d = initDungeon
-    (actorWithoutItem, _) = player ig
-    ig = generator
+    actorWithoutItem = initPlayer
     playerPosition = V2 1 0
 
 testItemAlreadyExists :: Spec
@@ -69,8 +68,7 @@ testItemAlreadyExists =
     actorWithItem =
         (\x -> a & inventoryItems .~ x)
             (fromJust $ addItem herb (a ^. inventoryItems))
-    (a, _) = player ig
-    ig = generator
+    a = initPlayer
     tc = array (0, 0) [(0, tile True True)]
     d = initDungeon
     playerPosition = V2 0 0
@@ -82,3 +80,6 @@ initDungeon = pushItem (V2 0 0) herb $ dungeon cm Beaeve
         cellMap $
         array (V2 0 0, V2 1 0) [(V2 0 0, emptyTile), (V2 1 0, emptyTile)]
     emptyTile = TileIdLayer Nothing Nothing
+
+initPlayer :: Actor
+initPlayer = fst $ player generator
