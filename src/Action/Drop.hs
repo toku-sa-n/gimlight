@@ -22,7 +22,7 @@ dropAction n position e tiles d
             Nothing -> failWithReason T.whatToDrop
   where
     (item, newActor) = removeNthItem n e
-    itemExists = (\(x, _) -> isJust x) $ popItemAt position d
+    itemExists = isJust $ fst $ popItemAt position d
     failWithReason :: MultilingualText -> ActionResultWithLog
     failWithReason reason = do
         tell [reason]
