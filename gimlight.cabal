@@ -53,17 +53,17 @@ Test-Suite spec
 
 library
     import:             common
-    exposed-modules:    Action.Drop
+    exposed-modules:    Action
+                      , Action.Drop
                       , Actor
                       , Dungeon
                       , Dungeon.Identifier
                       , Dungeon.Map.Cell
                       , Dungeon.Map.Tile
-                      , IndexGenerator
                       , Game
+                      , IndexGenerator
 
-    other-modules:      Action
-                      , Action.Consume
+    other-modules:      Action.Consume
                       , Action.Melee
                       , Action.Move
                       , Action.PickUp
