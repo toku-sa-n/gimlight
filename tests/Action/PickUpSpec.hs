@@ -26,6 +26,7 @@ spec :: Spec
 spec = do
     testPickUpSuccess
     testPickUpVoid
+    testPickUpWhenInventoryIsFull
 
 testPickUpSuccess :: Spec
 testPickUpSuccess =
@@ -71,6 +72,31 @@ testPickUpVoid =
     expectedLog = [T.youGotNothing]
     (actorWithoutItem, _) = player generator
     playerPosition = V2 1 0
+
+testPickUpWhenInventoryIsFull :: Spec
+testPickUpWhenInventoryIsFull =
+    it "returns a Failed result if the player's inventory is full." $
+    result `shouldBe` expected
+  where
+    result =
+        pickUpAction
+            playerPosition
+            actorWithFullItems
+            initTileCollection
+            initDungeon
+    expected = writer (expectedResult, expectedLog)
+    expectedResult =
+        ActionResult
+            {status = Failed, newDungeon = dungeonAfterPickingUp, killed = []}
+    dungeonAfterPickingUp =
+        pushActor playerPosition actorWithFullItems initDungeon
+    expectedLog = [T.bagIsFull]
+    actorWithFullItems =
+        iterate
+            (\x -> x & inventoryItems %~ (fromJust . addItem herb))
+            (fst $ player generator) !!
+        5
+    playerPosition = V2 0 0
 
 initDungeon :: Dungeon
 initDungeon = pushItem (V2 0 0) herb $ dungeon cm Beaeve
