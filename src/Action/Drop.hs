@@ -9,7 +9,7 @@ import           Actor                (removeNthItem)
 import           Control.Lens         ((&), (.~), (^.))
 import           Control.Monad.Writer (tell)
 import           Dungeon              (cellMap, pushActor)
-import           Dungeon.Map.Cell     (locateItemAt)
+import           Dungeon.Map.Cell     (CellMap, locateItemAt)
 import           Item                 (Item, getName)
 import           Localization         (MultilingualText)
 import qualified Localization.Texts   as T
@@ -24,14 +24,16 @@ dropAction n position e _ d =
     dropItem :: Item -> ActionResultWithLog
     dropItem item' =
         case locateItemAt item' position (d ^. cellMap) of
-            Just newCellMap -> do
-                tell [T.youDropped $ getName item']
-                return $
-                    ActionResult
-                        Ok
-                        (pushActor position newActor (d & cellMap .~ newCellMap))
-                        []
-            Nothing -> failWithReason T.itemExists
+            Just newCellMap -> successResult newCellMap item'
+            Nothing         -> failWithReason T.itemExists
+    successResult :: CellMap -> Item -> ActionResultWithLog
+    successResult newCellMap item' = do
+        tell [T.youDropped $ getName item']
+        return $
+            ActionResult
+                Ok
+                (pushActor position newActor (d & cellMap .~ newCellMap))
+                []
     failWithReason :: MultilingualText -> ActionResultWithLog
     failWithReason reason = do
         tell [reason]
