@@ -21,11 +21,6 @@ dropAction n position e _ d =
         Nothing -> failWithReason T.whatToDrop
   where
     (item, newActor) = removeNthItem n e
-    failWithReason :: MultilingualText -> ActionResultWithLog
-    failWithReason reason = do
-        tell [reason]
-        return failedResult
-    failedResult = ActionResult Failed (pushActor position e d) []
     dropItem :: Item -> ActionResultWithLog
     dropItem item' =
         case locateItemAt item' position (d ^. cellMap) of
@@ -36,6 +31,9 @@ dropAction n position e _ d =
                         Ok
                         (pushActor position newActor (d & cellMap .~ newCellMap))
                         []
-            Nothing -> do
-                tell [T.itemExists]
-                return $ ActionResult Failed (pushActor position e d) []
+            Nothing -> failWithReason T.itemExists
+    failWithReason :: MultilingualText -> ActionResultWithLog
+    failWithReason reason = do
+        tell [reason]
+        return failedResult
+    failedResult = ActionResult Failed (pushActor position e d) []
