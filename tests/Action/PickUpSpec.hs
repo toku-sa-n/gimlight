@@ -3,7 +3,7 @@ module Action.PickUpSpec
     ) where
 
 import           Action               (ActionResult (ActionResult, killed, newDungeon, status),
-                                       ActionStatus (Ok))
+                                       ActionStatus (Failed, Ok))
 import           Action.PickUp        (pickUpAction)
 import           Actor                (inventoryItems, player)
 import           Actor.Inventory      (addItem)
@@ -23,7 +23,9 @@ import qualified Localization.Texts   as T
 import           Test.Hspec           (Spec, it, shouldBe)
 
 spec :: Spec
-spec = testPickUpSuccess
+spec = do
+    testPickUpSuccess
+    testPickUpVoid
 
 testPickUpSuccess :: Spec
 testPickUpSuccess =
@@ -48,6 +50,27 @@ testPickUpSuccess =
         actorWithoutItem & inventoryItems %~ (fromJust . addItem herb)
     (actorWithoutItem, _) = player generator
     playerPosition = V2 0 0
+
+testPickUpVoid :: Spec
+testPickUpVoid =
+    it "returns a Failed result if there is no item at the player's foot." $
+    result `shouldBe` expected
+  where
+    result =
+        pickUpAction
+            playerPosition
+            actorWithoutItem
+            initTileCollection
+            initDungeon
+    expected = writer (expectedResult, expectedLog)
+    expectedResult =
+        ActionResult
+            {status = Failed, newDungeon = dungeonAfterPickingUp, killed = []}
+    dungeonAfterPickingUp =
+        pushActor playerPosition actorWithoutItem initDungeon
+    expectedLog = [T.youGotNothing]
+    (actorWithoutItem, _) = player generator
+    playerPosition = V2 1 0
 
 initDungeon :: Dungeon
 initDungeon = pushItem (V2 0 0) herb $ dungeon cm Beaeve
