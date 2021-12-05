@@ -56,6 +56,7 @@ Test-Suite spec
 library
     import:             common
     exposed-modules:    Action
+                      , Action.Consume
                       , Action.Drop
                       , Action.PickUp
                       , Action.Wait
@@ -71,8 +72,7 @@ library
                       , Item
                       , Localization.Texts
 
-    other-modules:      Action.Consume
-                      , Action.Melee
+    other-modules:      Action.Melee
                       , Action.Move
                       , Actor.NpcBehavior
                       , Actor.Friendly
