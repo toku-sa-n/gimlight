@@ -63,6 +63,7 @@ library
                       , Actor
                       , Actor.Identifier
                       , Actor.Inventory
+                      , Coord
                       , Dungeon
                       , Dungeon.Identifier
                       , Dungeon.Map.Cell
@@ -83,7 +84,6 @@ library
                       , Actor.Status
                       , Actor.Status.Hp
                       , Actor.Status.Experience
-                      , Coord
                       , Dungeon.Generate
                       , Dungeon.Generate.Config
                       , Dungeon.Generate.Room
