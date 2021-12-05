@@ -57,6 +57,7 @@ library
     exposed-modules:    Action
                       , Action.Drop
                       , Action.PickUp
+                      , Action.Wait
                       , Actor
                       , Actor.Inventory
                       , Dungeon
@@ -72,7 +73,6 @@ library
     other-modules:      Action.Consume
                       , Action.Melee
                       , Action.Move
-                      , Action.Wait
                       , Actor.NpcBehavior
                       , Actor.Friendly
                       , Actor.Friendly.Electria
