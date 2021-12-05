@@ -61,6 +61,7 @@ library
                       , Action.PickUp
                       , Action.Wait
                       , Actor
+                      , Actor.Identifier
                       , Actor.Inventory
                       , Dungeon
                       , Dungeon.Identifier
@@ -70,6 +71,7 @@ library
                       , Game
                       , IndexGenerator
                       , Item
+                      , Item.Heal
                       , Localization.Texts
 
     other-modules:      Action.Melee
@@ -77,7 +79,6 @@ library
                       , Actor.NpcBehavior
                       , Actor.Friendly
                       , Actor.Friendly.Electria
-                      , Actor.Identifier
                       , Actor.Monsters
                       , Actor.Status
                       , Actor.Status.Hp
@@ -106,7 +107,6 @@ library
                       , GameStatus.Talking
                       , GameStatus.Talking.Part
                       , Item.Book
-                      , Item.Heal
                       , Localization
                       , Localization.Texts.Actions
                       , Localization.Texts.Actors
