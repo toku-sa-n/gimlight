@@ -40,6 +40,7 @@ Test-Suite spec
     main-is:            Main.hs
     other-modules:      Action.ConsumeSpec
                       , Action.DropSpec
+                      , Action.MoveSpec
                       , Action.PickUpSpec
                       , Action.WaitSpec
                       , Dungeon.Map.CellSpec
