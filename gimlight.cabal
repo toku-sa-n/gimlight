@@ -60,6 +60,7 @@ library
     exposed-modules:    Action
                       , Action.Consume
                       , Action.Drop
+                      , Action.Melee
                       , Action.Move
                       , Action.PickUp
                       , Action.Wait
@@ -67,6 +68,8 @@ library
                       , Actor.Identifier
                       , Actor.Inventory
                       , Actor.Monsters
+                      , Actor.Status
+                      , Actor.Status.Hp
                       , Coord
                       , Dungeon
                       , Dungeon.Identifier
@@ -79,12 +82,9 @@ library
                       , Item.Heal
                       , Localization.Texts
 
-    other-modules:      Action.Melee
-                      , Actor.NpcBehavior
+    other-modules:      Actor.NpcBehavior
                       , Actor.Friendly
                       , Actor.Friendly.Electria
-                      , Actor.Status
-                      , Actor.Status.Hp
                       , Actor.Status.Experience
                       , Dungeon.Generate
                       , Dungeon.Generate.Config
