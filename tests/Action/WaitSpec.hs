@@ -9,11 +9,11 @@ import           Actor                (player)
 import           Control.Monad.Writer (writer)
 import           Data.Array           (array)
 import           Data.Maybe           (fromJust)
-import           Dungeon.Map.Cell     (TileIdLayer (TileIdLayer), cellMap,
-                                       locateActorAt)
+import           Dungeon.Map.Cell     (locateActorAt)
 import           Dungeon.Map.Tile     (tile)
 import           IndexGenerator       (generator)
 import           Linear.V2            (V2 (V2))
+import           SetUp                (initCellMap)
 import           Test.Hspec           (Spec, describe, it, shouldBe)
 
 spec :: Spec
@@ -28,8 +28,5 @@ spec =
     expectedLog = []
     p = fst $ player generator
     tc = array (0, 0) [(0, tile True True)]
-    cellMapWithPlayer =
-        fromJust $ locateActorAt p playerPosition cellMapWithoutPlayer
-    cellMapWithoutPlayer =
-        cellMap $ array (V2 0 0, V2 0 0) [(V2 0 0, TileIdLayer Nothing Nothing)]
+    cellMapWithPlayer = fromJust $ locateActorAt p playerPosition initCellMap
     playerPosition = V2 0 0
