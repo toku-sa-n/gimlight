@@ -6,8 +6,8 @@ import           Action               (ActionResult (ActionResult, killed, newCe
                                        ActionStatus (Ok))
 import           Action.Wait          (waitAction)
 import           Control.Monad.Writer (writer)
-import           Linear.V2            (V2 (V2))
-import           SetUp                (initCellMap, initTileCollection)
+import           SetUp                (initCellMap, initTileCollection,
+                                       playerPosition)
 import           Test.Hspec           (Spec, describe, it, shouldBe)
 
 spec :: Spec
@@ -20,4 +20,3 @@ spec =
     expectedResult =
         ActionResult {status = Ok, newCellMap = initCellMap, killed = []}
     expectedLog = []
-    playerPosition = V2 0 0
