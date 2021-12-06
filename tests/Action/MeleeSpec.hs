@@ -14,6 +14,7 @@ import           Actor.Status.Hp      (hp)
 import           Control.Lens         ((&), (.~), (^.))
 import           Control.Monad.Writer (runWriter, writer)
 import           Data.Array           (array)
+import           Data.Maybe           (fromJust)
 import           Dungeon              (Dungeon, dungeon, pushActor)
 import qualified Dungeon              as D
 import           Dungeon.Identifier   (Identifier (Beaeve))
@@ -25,7 +26,9 @@ import           Linear.V2            (V2 (V2))
 import           Test.Hspec           (Spec, describe, it, shouldBe)
 
 spec :: Spec
-spec = testKill
+spec = do
+    testKill
+    testDamage
 
 testKill :: Spec
 testKill =
@@ -47,6 +50,33 @@ testKill =
         case removeActorAt (V2 1 1) (d ^. D.cellMap) of
             Just (a, newCellMap) -> (a, d & D.cellMap .~ newCellMap)
             Nothing              -> error "unreachable."
+    s = fst $ strongest g
+    (d, g) = initDungeon
+
+testDamage :: Spec
+testDamage =
+    describe "Strongest orc" $
+    it "attacks to the intermediate orc" $ result `shouldBe` expected
+  where
+    result = meleeAction (V2 0 1) (V2 0 0) s initTileCollection d
+    expected = writer (expectedResult, expectedLog)
+    expectedResult =
+        ActionResult
+            { status = Ok
+            , newDungeon =
+                  pushActor (V2 0 0) newAttacker $
+                  pushActor
+                      (V2 0 1)
+                      (fromJust newDefender)
+                      dungeonWithoutDefender
+            , killed = []
+            }
+    ((newAttacker, newDefender), expectedLog) =
+        runWriter $ attackFromTo s defender
+    (defender, dungeonWithoutDefender) =
+        case removeActorAt (V2 0 1) (d ^. D.cellMap) of
+            Just (a, newCellMap) -> (a, d & D.cellMap .~ newCellMap)
+            Nothing              -> error "unreachable"
     s = fst $ strongest g
     (d, g) = initDungeon
 
