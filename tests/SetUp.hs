@@ -21,8 +21,7 @@ initCellMap =
     locateActorAt
         p
         playerPosition
-        (cellMap $
-         array (V2 0 0, V2 1 0) [(V2 0 0, emptyTile), (V2 1 0, emptyTile)]) >>=
+        (cellMap $ array (V2 0 0, V2 2 0) [(V2 x 0, emptyTile) | x <- [0 .. 2]]) >>=
     locateItemAt herb playerPosition
   where
     p = fst $ player generator
