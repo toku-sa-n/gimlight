@@ -18,7 +18,12 @@ initCellMap :: CellMap
 initCellMap =
     fromJust $
     locateActorAt p playerPosition $
-    cellMap $ array (V2 0 0, V2 0 0) [(V2 0 0, TileIdLayer Nothing Nothing)]
+    cellMap $
+    array
+        (V2 0 0, V2 1 0)
+        [ (V2 0 0, TileIdLayer Nothing Nothing)
+        , (V2 1 0, TileIdLayer Nothing Nothing)
+        ]
   where
     p = fst $ player generator
 

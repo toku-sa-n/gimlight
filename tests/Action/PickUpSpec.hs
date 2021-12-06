@@ -14,11 +14,11 @@ import           Data.Maybe           (fromJust)
 import           Dungeon.Map.Cell     (CellMap, TileIdLayer (TileIdLayer),
                                        cellMap, locateActorAt, locateItemAt,
                                        removeItemAt)
-import           Dungeon.Map.Tile     (TileCollection, tile)
 import           IndexGenerator       (generator)
 import           Item                 (getName, herb)
 import           Linear.V2            (V2 (V2))
 import qualified Localization.Texts   as T
+import           SetUp                (initTileCollection)
 import           Test.Hspec           (Spec, it, shouldBe)
 
 spec :: Spec
@@ -97,6 +97,3 @@ initCellMap = fromJust $ locateItemAt herb (V2 0 0) cm
         cellMap $
         array (V2 0 0, V2 1 0) [(V2 0 0, emptyTile), (V2 1 0, emptyTile)]
     emptyTile = TileIdLayer Nothing Nothing
-
-initTileCollection :: TileCollection
-initTileCollection = array (0, 0) [(0, tile True True)]
