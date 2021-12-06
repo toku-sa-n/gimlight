@@ -71,12 +71,16 @@ testPickUpWhenInventoryIsFull =
     it "returns a Failed result if the player's inventory is full." $
     result `shouldBe` expected
   where
-    result = pickUpAction playerPosition initTileCollection cellMapWithPlayer
+    result =
+        pickUpAction playerPosition initTileCollection cellMapWithFullItemPlayer
     expected = writer (expectedResult, expectedLog)
     expectedResult =
         ActionResult
-            {status = Failed, newCellMap = cellMapWithPlayer, killed = []}
-    cellMapWithPlayer =
+            { status = Failed
+            , newCellMap = cellMapWithFullItemPlayer
+            , killed = []
+            }
+    cellMapWithFullItemPlayer =
         fromJust $ locateActorAt actorWithFullItems playerPosition initCellMap
     expectedLog = [T.bagIsFull]
     actorWithFullItems =
