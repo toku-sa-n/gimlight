@@ -16,9 +16,9 @@ import           Data.Array           (array)
 import           Data.Maybe           (fromJust)
 import           Dungeon.Map.Cell     (CellMap, TileIdLayer (TileIdLayer),
                                        cellMap, locateActorAt, removeActorAt)
-import           Dungeon.Map.Tile     (TileCollection, tile)
 import           IndexGenerator       (IndexGenerator, generator)
 import           Linear.V2            (V2 (V2))
+import           SetUp                (initTileCollection)
 import           Test.Hspec           (Spec, describe, it, shouldBe)
 
 spec :: Spec
@@ -93,9 +93,6 @@ initCellMap = (fromJust afterLocating, g''')
     (w, g') = weakest generator
     (i, g'') = intermediate g'
     (s, g''') = strongest g''
-
-initTileCollection :: TileCollection
-initTileCollection = array (0, 0) [(0, tile True True)]
 
 strongest :: IndexGenerator -> (Actor, IndexGenerator)
 strongest g = monster g Orc (S.status (hp 100) 100 100) ""
