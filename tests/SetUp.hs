@@ -27,6 +27,7 @@ initCellMap =
         playerPosition
         (cellMap $ array (V2 0 0, V2 2 0) [(V2 x 0, emptyTile) | x <- [0 .. 2]]) >>=
     locateItemAt herb playerPosition >>=
+    locateItemAt herb orcWithFulItemsPosition >>=
     locateActorAt orcWithoutItems orcWithoutItemsPosition >>=
     locateActorAt orcWithFullItems orcWithFulItemsPosition
   where
