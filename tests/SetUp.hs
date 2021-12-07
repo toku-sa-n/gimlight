@@ -27,9 +27,9 @@ initCellMap =
         playerPosition
         (cellMap $ array (V2 0 0, V2 2 0) [(V2 x 0, emptyTile) | x <- [0 .. 2]]) >>=
     locateItemAt herb playerPosition >>=
-    locateItemAt herb orcWithFulItemsPosition >>=
+    locateItemAt herb orcWithFullItemsPosition >>=
     locateActorAt orcWithoutItems orcWithoutItemsPosition >>=
-    locateActorAt orcWithFullItems orcWithFulItemsPosition
+    locateActorAt orcWithFullItems orcWithFullItemsPosition
   where
     (p, g) = player generator
     (orcWithoutItems, g') = orc g
@@ -47,5 +47,5 @@ playerPosition = V2 0 0
 orcWithoutItemsPosition :: Coord
 orcWithoutItemsPosition = V2 1 0
 
-orcWithFulItemsPosition :: Coord
-orcWithFulItemsPosition = V2 2 0
+orcWithFullItemsPosition :: Coord
+orcWithFullItemsPosition = V2 2 0
