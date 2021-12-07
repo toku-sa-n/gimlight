@@ -11,7 +11,7 @@ import           Actor.Inventory  (addItem)
 import           Actor.Monsters   (orc)
 import           Control.Lens     ((%~))
 import           Coord            (Coord)
-import           Data.Array       (array)
+import           Data.Array       (array, (//))
 import           Data.Bifunctor   (Bifunctor (first))
 import           Data.Maybe       (fromJust)
 import           Dungeon.Map.Cell (CellMap, TileIdLayer (TileIdLayer), cellMap,
@@ -27,7 +27,11 @@ initCellMap =
     locateActorAt
         p
         playerPosition
-        (cellMap $ array (V2 0 0, V2 2 0) [(V2 x 0, emptyTile) | x <- [0 .. 2]]) >>=
+        (cellMap $
+         array
+             (V2 0 0, V2 2 1)
+             [(V2 x y, emptyTile) | x <- [0 .. 2], y <- [0 .. 1]] //
+         [(V2 0 1, unwalkable)]) >>=
     locateItemAt herb playerPosition >>=
     locateItemAt herb orcWithFullItemsPosition >>=
     locateActorAt orcWithoutItems orcWithoutItemsPosition >>=
@@ -39,6 +43,7 @@ initCellMap =
         iterate (first (inventoryItems %~ (fromJust . addItem herb))) (orc g') !!
         5
     emptyTile = TileIdLayer Nothing Nothing
+    unwalkable = TileIdLayer (Just 1) Nothing
 
 initTileCollection :: TileCollection
 initTileCollection = array (0, 0) [(0, tile True True)]
