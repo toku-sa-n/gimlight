@@ -46,7 +46,7 @@ initCellMap =
     unwalkable = TileIdLayer (Just 1) Nothing
 
 initTileCollection :: TileCollection
-initTileCollection = array (0, 0) [(0, tile True True)]
+initTileCollection = array (0, 1) [(0, tile True True), (1, tile False True)]
 
 playerPosition :: Coord
 playerPosition = V2 0 0
