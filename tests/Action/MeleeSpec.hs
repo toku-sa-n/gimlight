@@ -33,23 +33,23 @@ testKill =
         it "returns a Nothing defender" $ newDefender `shouldBe` Nothing
   where
     result =
-        meleeAction (V2 1 1) (V2 0 0) initTileCollection cellMapBeforeAttack
+        meleeAction (V2 1 1) (V2 0 2) initTileCollection cellMapBeforeAttack
     expected = writer (expectedResult, expectedLog)
     expectedResult =
         ActionResult
             { status = Ok
             , newCellMap =
                   fromJust $
-                  locateActorAt newAttacker (V2 0 0) cellMapWithoutDefender
+                  locateActorAt newAttacker (V2 0 2) cellMapWithoutDefender
             , killed = [defender]
             }
     ((newAttacker, newDefender), expectedLog) =
         runWriter $ attackFromTo s defender
     (defender, cellMapWithoutDefender) =
-        case removeActorAt (V2 1 1) cm of
+        case removeActorAt (V2 1 3) cm of
             Just (a, ncm) -> (a, ncm)
             Nothing       -> error "unreachable."
-    cellMapBeforeAttack = fromJust $ locateActorAt s (V2 0 0) cm
+    cellMapBeforeAttack = fromJust $ locateActorAt s (V2 0 2) cm
     s = fst $ strongest g
     (cm, g) = initCellMap
 
@@ -59,24 +59,24 @@ testDamage =
     it "attacks to the intermediate orc" $ result `shouldBe` expected
   where
     result =
-        meleeAction (V2 0 1) (V2 0 0) initTileCollection cellMapBeforeAttacking
+        meleeAction (V2 0 1) (V2 0 2) initTileCollection cellMapBeforeAttacking
     expected = writer (expectedResult, expectedLog)
     expectedResult =
         ActionResult
             { status = Ok
             , newCellMap =
                   fromJust $
-                  locateActorAt newAttacker (V2 0 0) cellMapWithoutDefender >>=
-                  locateActorAt (fromJust newDefender) (V2 0 1)
+                  locateActorAt newAttacker (V2 0 2) cellMapWithoutDefender >>=
+                  locateActorAt (fromJust newDefender) (V2 0 3)
             , killed = []
             }
     ((newAttacker, newDefender), expectedLog) =
         runWriter $ attackFromTo s defender
     (defender, cellMapWithoutDefender) =
-        case removeActorAt (V2 0 1) cm of
+        case removeActorAt (V2 0 3) cm of
             Just (a, ncm) -> (a, ncm)
             Nothing       -> error "unreachable"
-    cellMapBeforeAttacking = fromJust $ locateActorAt s (V2 0 0) cm
+    cellMapBeforeAttacking = fromJust $ locateActorAt s (V2 0 2) cm
     s = fst $ strongest g
     (cm, g) = initCellMap
 
@@ -84,11 +84,11 @@ initCellMap :: (CellMap, IndexGenerator)
 initCellMap = (fromJust afterLocating, g''')
   where
     afterLocating =
-        locateActorAt w (V2 1 1) cm >>= locateActorAt i (V2 0 1) >>=
-        locateActorAt s (V2 1 0)
+        locateActorAt w (V2 1 3) cm >>= locateActorAt i (V2 0 3) >>=
+        locateActorAt s (V2 1 2)
     cm =
         cellMap $
-        array (V2 0 0, V2 1 1) [(V2 x y, walkable) | x <- [0, 1], y <- [0, 1]]
+        array (V2 0 0, V2 1 3) [(V2 x y, walkable) | x <- [0, 1], y <- [0 .. 3]]
     walkable = TileIdLayer (Just 0) (Just 0)
     (w, g') = weakest generator
     (i, g'') = intermediate g'
