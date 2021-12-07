@@ -9,7 +9,6 @@ import           Action.Move          (moveAction)
 import           Actor                (player)
 import           Actor.Monsters       (orc)
 import           Control.Monad.Writer (writer)
-import           Coord                (Coord)
 import           Data.Array           (array)
 import           Data.Maybe           (fromJust)
 import           Dungeon.Map.Cell     (CellMap, TileIdLayer (TileIdLayer),
@@ -17,7 +16,7 @@ import           Dungeon.Map.Cell     (CellMap, TileIdLayer (TileIdLayer),
 import           IndexGenerator       (generator)
 import           Linear.V2            (V2 (V2))
 import qualified Localization.Texts   as T
-import           SetUp                (initTileCollection)
+import           SetUp                (initTileCollection, playerPosition)
 import           Test.Hspec           (Spec, it, shouldBe)
 
 spec :: Spec
@@ -85,6 +84,3 @@ initCellMapAndPlayer = cm
     (p, g') = player generator
     walkable = TileIdLayer (Just 0) (Just 0)
     unwalkable = TileIdLayer (Just 1) (Just 0)
-
-playerPosition :: Coord
-playerPosition = V2 0 0
