@@ -89,12 +89,11 @@ testPickUpWhenInventoryIsFull =
             (\x -> x & inventoryItems %~ (fromJust . addItem herb))
             (fst $ orc generator) !!
         5
-    playerPosition = V2 0 0
+    playerPosition = V2 2 0
 
 initCellMap :: CellMap
-initCellMap = fromJust $ locateItemAt herb (V2 0 0) cm
+initCellMap =
+    fromJust $ locateItemAt herb (V2 0 0) cm >>= locateItemAt herb (V2 2 0)
   where
-    cm =
-        cellMap $
-        array (V2 0 0, V2 1 0) [(V2 0 0, emptyTile), (V2 1 0, emptyTile)]
+    cm = cellMap $ array (V2 0 0, V2 2 0) [(V2 x 0, emptyTile) | x <- [0 .. 2]]
     emptyTile = TileIdLayer Nothing Nothing
