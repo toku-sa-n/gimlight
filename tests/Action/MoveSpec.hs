@@ -14,10 +14,10 @@ import           Data.Array           (array)
 import           Data.Maybe           (fromJust)
 import           Dungeon.Map.Cell     (CellMap, TileIdLayer (TileIdLayer),
                                        cellMap, locateActorAt, removeActorAt)
-import           Dungeon.Map.Tile     (TileCollection, tile)
 import           IndexGenerator       (generator)
 import           Linear.V2            (V2 (V2))
 import qualified Localization.Texts   as T
+import           SetUp                (initTileCollection)
 import           Test.Hspec           (Spec, it, shouldBe)
 
 spec :: Spec
@@ -85,9 +85,6 @@ initCellMapAndPlayer = cm
     (p, g') = player generator
     walkable = TileIdLayer (Just 0) (Just 0)
     unwalkable = TileIdLayer (Just 1) (Just 0)
-
-initTileCollection :: TileCollection
-initTileCollection = array (0, 1) [(0, tile True True), (1, tile False True)]
 
 playerPosition :: Coord
 playerPosition = V2 0 0
