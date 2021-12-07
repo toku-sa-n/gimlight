@@ -14,9 +14,10 @@ import           Dungeon.Map.Cell     (locateActorAt, removeActorAt,
                                        removeItemAt)
 import           IndexGenerator       (generator)
 import           Item                 (getName, herb)
-import           Linear.V2            (V2 (V2))
 import qualified Localization.Texts   as T
-import           SetUp                (initCellMap, initTileCollection)
+import           SetUp                (initCellMap, initTileCollection,
+                                       orcWithFullItemsPosition,
+                                       orcWithoutItemsPosition, playerPosition)
 import           Test.Hspec           (Spec, it, shouldBe)
 
 spec :: Spec
@@ -44,28 +45,26 @@ testPickUpSuccess =
     actorWithItem =
         actorWithoutItem & inventoryItems %~ (fromJust . addItem herb)
     (actorWithoutItem, _) = player generator
-    playerPosition = V2 0 0
 
 testPickUpVoid :: Spec
 testPickUpVoid =
     it "returns a Failed result if there is no item at the player's foot." $
     result `shouldBe` expected
   where
-    result = pickUpAction playerPosition initTileCollection initCellMap
+    result = pickUpAction orcWithoutItemsPosition initTileCollection initCellMap
     expected = writer (expectedResult, expectedLog)
     expectedResult =
         ActionResult {status = Failed, newCellMap = initCellMap, killed = []}
     expectedLog = [T.youGotNothing]
-    playerPosition = V2 1 0
 
 testPickUpWhenInventoryIsFull :: Spec
 testPickUpWhenInventoryIsFull =
     it "returns a Failed result if the player's inventory is full." $
     result `shouldBe` expected
   where
-    result = pickUpAction playerPosition initTileCollection initCellMap
+    result =
+        pickUpAction orcWithFullItemsPosition initTileCollection initCellMap
     expected = writer (expectedResult, expectedLog)
     expectedResult =
         ActionResult {status = Failed, newCellMap = initCellMap, killed = []}
     expectedLog = [T.bagIsFull]
-    playerPosition = V2 2 0

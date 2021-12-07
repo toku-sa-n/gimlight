@@ -2,6 +2,8 @@ module SetUp
     ( initCellMap
     , initTileCollection
     , playerPosition
+    , orcWithoutItemsPosition
+    , orcWithFullItemsPosition
     ) where
 
 import           Actor            (inventoryItems, player)
