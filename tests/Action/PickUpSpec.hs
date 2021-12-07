@@ -7,6 +7,7 @@ import           Action               (ActionResult (ActionResult, killed, newCe
 import           Action.PickUp        (pickUpAction)
 import           Actor                (inventoryItems, player)
 import           Actor.Inventory      (addItem)
+import           Actor.Monsters       (orc)
 import           Control.Lens         ((%~), (&))
 import           Control.Monad.Writer (writer)
 import           Data.Array           (array)
@@ -63,7 +64,7 @@ testPickUpVoid =
     cellMapWithPlayer =
         fromJust $ locateActorAt actorWithoutItem playerPosition initCellMap
     expectedLog = [T.youGotNothing]
-    (actorWithoutItem, _) = player generator
+    (actorWithoutItem, _) = orc generator
     playerPosition = V2 1 0
 
 testPickUpWhenInventoryIsFull :: Spec
@@ -86,7 +87,7 @@ testPickUpWhenInventoryIsFull =
     actorWithFullItems =
         iterate
             (\x -> x & inventoryItems %~ (fromJust . addItem herb))
-            (fst $ player generator) !!
+            (fst $ orc generator) !!
         5
     playerPosition = V2 0 0
 
