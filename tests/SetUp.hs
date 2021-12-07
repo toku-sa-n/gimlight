@@ -46,9 +46,9 @@ initCellMap =
     locateActorAt w weakestOrcPosition
   where
     (p, g) = player generator
-    (w, g') = weakest g
-    (i, g'') = intermediate g'
-    (s, g''') = strongest g''
+    (w, g') = weakestOrc g
+    (i, g'') = intermediateOrc g'
+    (s, g''') = strongestOrc g''
     (orcWithoutItems, g'''') = orc g'''
     (orcWithFullItems, _) =
         iterate
@@ -61,14 +61,14 @@ initCellMap =
 initTileCollection :: TileCollection
 initTileCollection = array (0, 1) [(0, tile True True), (1, tile False True)]
 
-strongest :: IndexGenerator -> (Actor, IndexGenerator)
-strongest g = monster g Orc (status (hp 100) 100 100) ""
+strongestOrc :: IndexGenerator -> (Actor, IndexGenerator)
+strongestOrc g = monster g Orc (status (hp 100) 100 100) ""
 
-intermediate :: IndexGenerator -> (Actor, IndexGenerator)
-intermediate g = monster g Orc (status (hp 100) 50 50) ""
+intermediateOrc :: IndexGenerator -> (Actor, IndexGenerator)
+intermediateOrc g = monster g Orc (status (hp 100) 50 50) ""
 
-weakest :: IndexGenerator -> (Actor, IndexGenerator)
-weakest g = monster g Orc (status (hp 1) 0 0) ""
+weakestOrc :: IndexGenerator -> (Actor, IndexGenerator)
+weakestOrc g = monster g Orc (status (hp 1) 0 0) ""
 
 playerPosition :: Coord
 playerPosition = V2 0 0
