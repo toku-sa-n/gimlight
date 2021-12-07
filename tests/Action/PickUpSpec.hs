@@ -28,7 +28,7 @@ spec = do
 
 testPickUpSuccess :: Spec
 testPickUpSuccess =
-    it "returns a Ok result if there is an item at the player's foot, and player's inventory is not full." $
+    it "returns a Ok result if there is an item at the actor's foot, and player's inventory is not full." $
     result `shouldBe` expected
   where
     result = pickUpAction playerPosition initTileCollection initCellMap
@@ -48,7 +48,7 @@ testPickUpSuccess =
 
 testPickUpVoid :: Spec
 testPickUpVoid =
-    it "returns a Failed result if there is no item at the player's foot." $
+    it "returns a Failed result if there is no item at the actor's foot." $
     result `shouldBe` expected
   where
     result = pickUpAction orcWithoutItemsPosition initTileCollection initCellMap
@@ -59,7 +59,7 @@ testPickUpVoid =
 
 testPickUpWhenInventoryIsFull :: Spec
 testPickUpWhenInventoryIsFull =
-    it "returns a Failed result if the player's inventory is full." $
+    it "returns a Failed result if the actor's inventory is full." $
     result `shouldBe` expected
   where
     result =
