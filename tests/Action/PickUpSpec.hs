@@ -5,14 +5,13 @@ module Action.PickUpSpec
 import           Action               (ActionResult (ActionResult, killed, newCellMap, status),
                                        ActionStatus (Failed, Ok))
 import           Action.PickUp        (pickUpAction)
-import           Actor                (inventoryItems, player)
+import           Actor                (inventoryItems)
 import           Actor.Inventory      (addItem)
 import           Control.Lens         ((%~), (&))
 import           Control.Monad.Writer (writer)
 import           Data.Maybe           (fromJust)
 import           Dungeon.Map.Cell     (locateActorAt, removeActorAt,
                                        removeItemAt)
-import           IndexGenerator       (generator)
 import           Item                 (getName, herb)
 import qualified Localization.Texts   as T
 import           SetUp                (initCellMap, initTileCollection,
@@ -43,8 +42,8 @@ testPickUpSuccess =
         locateActorAt actorWithItem playerPosition . snd
     expectedLog = [T.youGotItem $ getName herb]
     actorWithItem =
-        actorWithoutItem & inventoryItems %~ (fromJust . addItem herb)
-    (actorWithoutItem, _) = player generator
+        (\(x, _) -> x & inventoryItems %~ (fromJust . addItem herb))
+            (fromJust (removeActorAt playerPosition initCellMap))
 
 testPickUpVoid :: Spec
 testPickUpVoid =
