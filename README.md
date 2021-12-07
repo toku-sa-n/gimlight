@@ -4,7 +4,7 @@
 
 ### Windows
 
-I think we can build and run this project, but I don't know how. So, if you find the way please tell me the instructions.
+I think we can build and run this project on Windows, but I don't know how. So, if you find the way please tell me the instructions.
 
 ### Linux
 
