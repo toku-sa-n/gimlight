@@ -34,8 +34,11 @@ initCellMap =
         playerPosition
         (cellMap $
          array
-             (V2 0 0, V2 2 3)
-             [(V2 x y, emptyTile) | x <- [0 .. 2], y <- [0 .. 3]] //
+             (V2 0 0, V2 (mapWidth - 1) (mapHeight - 1))
+             [ (V2 x y, emptyTile)
+             | x <- [0 .. mapWidth - 1]
+             , y <- [0 .. mapHeight - 1]
+             ] //
          [(V2 0 1, unwalkable)]) >>=
     locateItemAt herb playerPosition >>=
     locateItemAt herb orcWithFullItemsPosition >>=
@@ -57,6 +60,8 @@ initCellMap =
         5
     emptyTile = TileIdLayer Nothing Nothing
     unwalkable = TileIdLayer (Just 1) Nothing
+    mapWidth = 3
+    mapHeight = 4
 
 initTileCollection :: TileCollection
 initTileCollection = array (0, 1) [(0, tile True True), (1, tile False True)]
