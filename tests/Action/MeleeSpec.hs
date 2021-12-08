@@ -28,7 +28,8 @@ testKill =
         it "kills the weakest orc" $ result `shouldBe` expected
         it "returns a Nothing defender" $ newDefender `shouldBe` Nothing
   where
-    result = meleeAction (V2 0 1) (V2 1 2) initTileCollection initCellMap
+    result =
+        meleeAction (V2 0 1) strongestOrcPosition initTileCollection initCellMap
     expected = writer (expectedResult, expectedLog)
     expectedResult =
         ActionResult
