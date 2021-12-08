@@ -10,7 +10,6 @@ import           Actor.Identifier     (toName)
 import           Actor.Inventory      (addItem)
 import           Control.Lens         ((%~), (&))
 import           Control.Monad.Writer (writer)
-import           Coord                (Coord)
 import           Data.Array           (array)
 import           Data.Maybe           (fromJust)
 import           Dungeon.Map.Cell     (CellMap, TileIdLayer (TileIdLayer),
@@ -22,6 +21,7 @@ import           Item                 (Effect (Book, Heal), getEffect, herb,
 import           Item.Heal            (getHealAmount)
 import           Linear.V2            (V2 (V2))
 import qualified Localization.Texts   as T
+import           SetUp                (playerPosition)
 import           Test.Hspec           (Spec, it, shouldBe)
 
 spec :: Spec
@@ -80,6 +80,3 @@ initCellMap =
 
 initTileCollection :: TileCollection
 initTileCollection = array (0, 0) [(0, tile True True)]
-
-playerPosition :: Coord
-playerPosition = V2 0 0
