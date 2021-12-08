@@ -46,7 +46,7 @@ testKill =
             Just (a, ncm) -> (a, ncm)
             Nothing       -> error "unreachable."
     (attacker, _) = fromJust $ removeActorAt (V2 1 2) cm
-    (cm, _) = initCellMap
+    cm = initCellMap
 
 testDamage :: Spec
 testDamage =
@@ -72,10 +72,10 @@ testDamage =
             Just (a, ncm) -> (a, ncm)
             Nothing       -> error "unreachable"
     attacker = fst $ fromJust $ removeActorAt (V2 1 2) cm
-    (cm, _) = initCellMap
+    cm = initCellMap
 
-initCellMap :: (CellMap, IndexGenerator)
-initCellMap = (fromJust afterLocating, g''')
+initCellMap :: CellMap
+initCellMap = fromJust afterLocating
   where
     afterLocating =
         locateActorAt w (V2 1 3) cm >>= locateActorAt i (V2 0 3) >>=
@@ -86,7 +86,7 @@ initCellMap = (fromJust afterLocating, g''')
     walkable = TileIdLayer (Just 0) (Just 0)
     (w, g') = weakest generator
     (i, g'') = intermediate g'
-    (s, g''') = strongest g''
+    (s, _) = strongest g''
 
 strongest :: IndexGenerator -> (Actor, IndexGenerator)
 strongest g = monster g Orc (S.status (hp 100) 100 100) ""
