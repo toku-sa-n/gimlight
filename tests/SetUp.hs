@@ -49,18 +49,21 @@ initCellMap =
     locateActorAt orcWithFullItems orcWithFullItemsPosition >>=
     locateActorAt s strongestOrcPosition >>=
     locateActorAt i intermediateOrcPosition >>=
-    locateActorAt w weakestOrcPosition
+    locateActorAt w weakestOrcPosition >>=
+    locateActorAt orcWithHerb orcWithHerbPosition
   where
     (p, g) = player generator
     (w, g') = weakestOrc g
     (i, g'') = intermediateOrc g'
     (s, g''') = strongestOrc g''
     (orcWithoutItems, g'''') = orc g'''
-    (orcWithFullItems, _) =
+    (orcWithFullItems, g''''') =
         iterate
             (first (inventoryItems %~ (fromJust . addItem herb)))
             (orc g'''') !!
         5
+    (orcWithHerb, _) =
+        first (inventoryItems %~ (fromJust . addItem herb)) $ orc g'''''
     emptyTile = TileIdLayer Nothing Nothing
     unwalkable = TileIdLayer (Just 1) Nothing
     mapWidth = 3
@@ -95,3 +98,6 @@ intermediateOrcPosition = V2 0 3
 
 weakestOrcPosition :: Coord
 weakestOrcPosition = V2 1 3
+
+orcWithHerbPosition :: Coord
+orcWithHerbPosition = V2 2 1
