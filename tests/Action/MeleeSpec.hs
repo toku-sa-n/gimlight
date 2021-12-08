@@ -55,7 +55,7 @@ testDamage =
                   fromJust $
                   locateActorAt
                       (fromJust newDefender)
-                      (V2 0 3)
+                      intermediateOrcPosition
                       cellMapWithoutDefender
             , killed = []
             }
