@@ -42,9 +42,7 @@ testKill =
             }
     ((_, newDefender), expectedLog) = runWriter $ attackFromTo attacker defender
     (defender, cellMapWithoutDefender) =
-        case removeActorAt (V2 1 3) initCellMap of
-            Just (a, ncm) -> (a, ncm)
-            Nothing       -> error "unreachable."
+        fromJust $ removeActorAt (V2 1 3) initCellMap
     (attacker, _) = fromJust $ removeActorAt (V2 1 2) initCellMap
 
 testDamage :: Spec
