@@ -9,6 +9,7 @@ module SetUp
     , strongestOrcPosition
     , intermediateOrcPosition
     , weakestOrcPosition
+    , orcWithHerbPosition
     ) where
 
 import           Actor            (Actor, inventoryItems, monster, player)

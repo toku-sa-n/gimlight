@@ -15,10 +15,10 @@ import           Data.Maybe                 (fromJust)
 import           Dungeon.Map.Cell           (locateActorAt, locateItemAt,
                                              removeActorAt)
 import           Item                       (getName, herb)
-import           Linear.V2                  (V2 (V2))
 import qualified Localization.Texts         as T
 import           SetUp                      (initCellMap, initTileCollection,
-                                             orcWithFullItemsPosition)
+                                             orcWithFullItemsPosition,
+                                             orcWithHerbPosition)
 import           Test.Hspec                 (Spec, it, shouldBe)
 
 spec :: Spec
@@ -31,22 +31,21 @@ testDropItemSuccessfully =
     it "returns a Ok result if there is no item at the player's foot." $
     result `shouldBe` expected
   where
-    result = dropAction 0 playerPosition initTileCollection initCellMap
+    result = dropAction 0 orcWithHerbPosition initTileCollection initCellMap
     expected = writer (expectedResult, expectedLog)
     expectedResult =
         ActionResult
             {status = Ok, newCellMap = cellMapAfterDropping, killed = []}
     cellMapAfterDropping =
         fromJust $
-        removeActorAt playerPosition initCellMap >>=
+        removeActorAt orcWithHerbPosition initCellMap >>=
         (\(a, cm) ->
              locateActorAt
                  (a & inventoryItems %~ (snd . removeNthItem 0))
-                 playerPosition
+                 orcWithHerbPosition
                  cm) >>=
-        locateItemAt herb playerPosition
+        locateItemAt herb orcWithHerbPosition
     expectedLog = [T.youDropped $ getName herb]
-    playerPosition = V2 2 1
 
 testItemAlreadyExists :: Spec
 testItemAlreadyExists =
