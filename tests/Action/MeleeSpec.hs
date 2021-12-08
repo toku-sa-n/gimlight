@@ -32,26 +32,21 @@ testKill =
         it "kills the weakest orc" $ result `shouldBe` expected
         it "returns a Nothing defender" $ newDefender `shouldBe` Nothing
   where
-    result =
-        meleeAction (V2 1 1) (V2 0 2) initTileCollection cellMapBeforeAttack
+    result = meleeAction (V2 0 1) (V2 1 2) initTileCollection cm
     expected = writer (expectedResult, expectedLog)
     expectedResult =
         ActionResult
             { status = Ok
-            , newCellMap =
-                  fromJust $
-                  locateActorAt newAttacker (V2 0 2) cellMapWithoutDefender
+            , newCellMap = cellMapWithoutDefender
             , killed = [defender]
             }
-    ((newAttacker, newDefender), expectedLog) =
-        runWriter $ attackFromTo s defender
+    ((_, newDefender), expectedLog) = runWriter $ attackFromTo attacker defender
     (defender, cellMapWithoutDefender) =
         case removeActorAt (V2 1 3) cm of
             Just (a, ncm) -> (a, ncm)
             Nothing       -> error "unreachable."
-    cellMapBeforeAttack = fromJust $ locateActorAt s (V2 0 2) cm
-    s = fst $ strongest g
-    (cm, g) = initCellMap
+    (attacker, _) = fromJust $ removeActorAt (V2 1 2) cm
+    (cm, _) = initCellMap
 
 testDamage :: Spec
 testDamage =
