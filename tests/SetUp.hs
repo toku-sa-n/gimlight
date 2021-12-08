@@ -6,6 +6,7 @@ module SetUp
     , playerPosition
     , orcWithoutItemsPosition
     , orcWithFullItemsPosition
+    , strongestOrcPosition
     , intermediateOrcPosition
     ) where
 
