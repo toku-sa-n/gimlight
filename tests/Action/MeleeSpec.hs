@@ -46,7 +46,12 @@ testDamage =
     describe "Strongest orc" $
     it "attacks to the intermediate orc" $ result `shouldBe` expected
   where
-    result = meleeAction (V2 (-1) 1) (V2 1 2) initTileCollection initCellMap
+    result =
+        meleeAction
+            (V2 (-1) 1)
+            strongestOrcPosition
+            initTileCollection
+            initCellMap
     expected = writer (expectedResult, expectedLog)
     expectedResult =
         ActionResult
