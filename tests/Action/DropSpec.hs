@@ -17,7 +17,8 @@ import           Dungeon.Map.Cell           (locateActorAt, locateItemAt,
 import           Item                       (getName, herb)
 import           Linear.V2                  (V2 (V2))
 import qualified Localization.Texts         as T
-import           SetUp                      (initCellMap, initTileCollection)
+import           SetUp                      (initCellMap, initTileCollection,
+                                             orcWithFullItemsPosition)
 import           Test.Hspec                 (Spec, it, shouldBe)
 
 spec :: Spec
@@ -52,9 +53,9 @@ testItemAlreadyExists =
     it "returns a Failed result if there is already an item at the player's foot." $
     result `shouldBe` expected
   where
-    result = dropAction 0 playerPosition initTileCollection initCellMap
+    result =
+        dropAction 0 orcWithFullItemsPosition initTileCollection initCellMap
     expected = writer (expectedResult, expectedLog)
     expectedResult =
         ActionResult {status = Failed, newCellMap = initCellMap, killed = []}
     expectedLog = [T.itemExists]
-    playerPosition = V2 2 0
