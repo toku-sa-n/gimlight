@@ -16,11 +16,11 @@ import           Data.Maybe                 (fromJust)
 import           Dungeon.Map.Cell           (CellMap, TileIdLayer (TileIdLayer),
                                              cellMap, locateActorAt,
                                              locateItemAt)
-import           Dungeon.Map.Tile           (TileCollection, tile)
 import           IndexGenerator             (generator)
 import           Item                       (getName, herb)
 import           Linear.V2                  (V2 (V2))
 import qualified Localization.Texts         as T
+import           SetUp                      (initTileCollection)
 import           Test.Hspec                 (Spec, it, shouldBe)
 
 spec :: Spec
@@ -80,6 +80,3 @@ playerWithoutAndWithItem = (without, with)
     with =
         (\x -> without & inventoryItems .~ x)
             (fromJust $ addItem herb (without ^. inventoryItems))
-
-initTileCollection :: TileCollection
-initTileCollection = array (0, 0) [(0, tile True True)]
