@@ -14,7 +14,7 @@ import           Dungeon.Map.Cell     (locateActorAt, removeActorAt)
 import           Linear.V2            (V2 (V2))
 import           SetUp                (initCellMap, initTileCollection,
                                        intermediateOrcPosition,
-                                       strongestOrcPosition)
+                                       strongestOrcPosition, weakestOrcPosition)
 import           Test.Hspec           (Spec, describe, it, shouldBe)
 
 spec :: Spec
@@ -38,7 +38,7 @@ testKill =
             }
     ((_, newDefender), expectedLog) = runWriter $ attackFromTo attacker defender
     (defender, cellMapWithoutDefender) =
-        fromJust $ removeActorAt (V2 1 3) initCellMap
+        fromJust $ removeActorAt weakestOrcPosition initCellMap
     attacker = fst $ fromJust $ removeActorAt (V2 1 2) initCellMap
 
 testDamage :: Spec
