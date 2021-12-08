@@ -7,18 +7,12 @@ module Action.MeleeSpec
 import           Action               (ActionResult (ActionResult, killed, newCellMap, status),
                                        ActionStatus (Ok))
 import           Action.Melee         (meleeAction)
-import           Actor                (Actor, attackFromTo, monster)
-import           Actor.Identifier     (Identifier (Orc))
-import qualified Actor.Status         as S
-import           Actor.Status.Hp      (hp)
+import           Actor                (attackFromTo)
 import           Control.Monad.Writer (runWriter, writer)
-import           Data.Array           (array)
 import           Data.Maybe           (fromJust)
-import           Dungeon.Map.Cell     (CellMap, TileIdLayer (TileIdLayer),
-                                       cellMap, locateActorAt, removeActorAt)
-import           IndexGenerator       (IndexGenerator, generator)
+import           Dungeon.Map.Cell     (locateActorAt, removeActorAt)
 import           Linear.V2            (V2 (V2))
-import           SetUp                (initTileCollection)
+import           SetUp                (initCellMap, initTileCollection)
 import           Test.Hspec           (Spec, describe, it, shouldBe)
 
 spec :: Spec
@@ -67,26 +61,3 @@ testDamage =
     (defender, cellMapWithoutDefender) =
         fromJust $ removeActorAt (V2 0 3) initCellMap
     attacker = fst $ fromJust $ removeActorAt (V2 1 2) initCellMap
-
-initCellMap :: CellMap
-initCellMap = fromJust afterLocating
-  where
-    afterLocating =
-        locateActorAt w (V2 1 3) cm >>= locateActorAt i (V2 0 3) >>=
-        locateActorAt s (V2 1 2)
-    cm =
-        cellMap $
-        array (V2 0 0, V2 1 3) [(V2 x y, walkable) | x <- [0, 1], y <- [0 .. 3]]
-    walkable = TileIdLayer (Just 0) (Just 0)
-    (w, g') = weakest generator
-    (i, g'') = intermediate g'
-    (s, _) = strongest g''
-
-strongest :: IndexGenerator -> (Actor, IndexGenerator)
-strongest g = monster g Orc (S.status (hp 100) 100 100) ""
-
-intermediate :: IndexGenerator -> (Actor, IndexGenerator)
-intermediate g = monster g Orc (S.status (hp 100) 50 50) ""
-
-weakest :: IndexGenerator -> (Actor, IndexGenerator)
-weakest g = monster g Orc (S.status (hp 1) 0 0) ""
