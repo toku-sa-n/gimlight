@@ -39,7 +39,7 @@ testKill =
     ((_, newDefender), expectedLog) = runWriter $ attackFromTo attacker defender
     (defender, cellMapWithoutDefender) =
         fromJust $ removeActorAt weakestOrcPosition initCellMap
-    attacker = fst $ fromJust $ removeActorAt (V2 1 2) initCellMap
+    attacker = fst $ fromJust $ removeActorAt strongestOrcPosition initCellMap
 
 testDamage :: Spec
 testDamage =
