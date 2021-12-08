@@ -27,7 +27,7 @@ import           Dungeon.Map.Cell (CellMap, TileIdLayer (TileIdLayer), cellMap,
                                    locateActorAt, locateItemAt)
 import           Dungeon.Map.Tile (TileCollection, tile)
 import           IndexGenerator   (IndexGenerator, generator)
-import           Item             (herb)
+import           Item             (herb, sampleBook)
 import           Linear.V2        (V2 (V2))
 
 initCellMap :: CellMap
@@ -53,7 +53,9 @@ initCellMap =
     locateActorAt w weakestOrcPosition >>=
     locateActorAt orcWithHerb orcWithHerbPosition
   where
-    (p, g) = player generator
+    (p, g) =
+        first (inventoryItems %~ (fromJust . addItem sampleBook)) $
+        player generator
     (w, g') = weakestOrc g
     (i, g'') = intermediateOrc g'
     (s, g''') = strongestOrc g''
