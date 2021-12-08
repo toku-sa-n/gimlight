@@ -47,11 +47,7 @@ testDamage =
     it "attacks to the intermediate orc" $ result `shouldBe` expected
   where
     result =
-        meleeAction
-            (V2 (-1) 1)
-            strongestOrcPosition
-            initTileCollection
-            initCellMap
+        meleeAction offset strongestOrcPosition initTileCollection initCellMap
     expected = writer (expectedResult, expectedLog)
     expectedResult =
         ActionResult
@@ -68,3 +64,4 @@ testDamage =
     (defender, cellMapWithoutDefender) =
         fromJust $ removeActorAt intermediateOrcPosition initCellMap
     attacker = fst $ fromJust $ removeActorAt strongestOrcPosition initCellMap
+    offset = intermediateOrcPosition - strongestOrcPosition
