@@ -6,6 +6,7 @@ module SetUp
     , playerPosition
     , orcWithoutItemsPosition
     , orcWithFullItemsPosition
+    , intermediateOrcPosition
     ) where
 
 import           Actor            (Actor, inventoryItems, monster, player)
