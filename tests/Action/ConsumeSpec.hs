@@ -14,14 +14,13 @@ import           Data.Array           (array)
 import           Data.Maybe           (fromJust)
 import           Dungeon.Map.Cell     (CellMap, TileIdLayer (TileIdLayer),
                                        cellMap, locateActorAt)
-import           Dungeon.Map.Tile     (TileCollection, tile)
 import           IndexGenerator       (generator)
 import           Item                 (Effect (Book, Heal), getEffect, herb,
                                        sampleBook)
 import           Item.Heal            (getHealAmount)
 import           Linear.V2            (V2 (V2))
 import qualified Localization.Texts   as T
-import           SetUp                (playerPosition)
+import           SetUp                (initTileCollection, playerPosition)
 import           Test.Hspec           (Spec, it, shouldBe)
 
 spec :: Spec
@@ -77,6 +76,3 @@ testConsumeHerb =
 initCellMap :: CellMap
 initCellMap =
     cellMap $ array (V2 0 0, V2 0 0) [(V2 0 0, TileIdLayer Nothing Nothing)]
-
-initTileCollection :: TileCollection
-initTileCollection = array (0, 0) [(0, tile True True)]
