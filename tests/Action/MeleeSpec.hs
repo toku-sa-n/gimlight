@@ -53,7 +53,7 @@ testDamage =
     describe "Strongest orc" $
     it "attacks to the intermediate orc" $ result `shouldBe` expected
   where
-    result = meleeAction (V2 (-1) 1) (V2 1 2) initTileCollection cm
+    result = meleeAction (V2 (-1) 1) (V2 1 2) initTileCollection initCellMap
     expected = writer (expectedResult, expectedLog)
     expectedResult =
         ActionResult
@@ -68,11 +68,10 @@ testDamage =
             }
     ((_, newDefender), expectedLog) = runWriter $ attackFromTo attacker defender
     (defender, cellMapWithoutDefender) =
-        case removeActorAt (V2 0 3) cm of
+        case removeActorAt (V2 0 3) initCellMap of
             Just (a, ncm) -> (a, ncm)
             Nothing       -> error "unreachable"
-    attacker = fst $ fromJust $ removeActorAt (V2 1 2) cm
-    cm = initCellMap
+    attacker = fst $ fromJust $ removeActorAt (V2 1 2) initCellMap
 
 initCellMap :: CellMap
 initCellMap = fromJust afterLocating
