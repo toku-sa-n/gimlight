@@ -11,7 +11,6 @@ import           Actor                (attackFromTo)
 import           Control.Monad.Writer (runWriter, writer)
 import           Data.Maybe           (fromJust)
 import           Dungeon.Map.Cell     (locateActorAt, removeActorAt)
-import           Linear.V2            (V2 (V2))
 import           SetUp                (initCellMap, initTileCollection,
                                        intermediateOrcPosition,
                                        strongestOrcPosition, weakestOrcPosition)
@@ -29,7 +28,7 @@ testKill =
         it "returns a Nothing defender" $ newDefender `shouldBe` Nothing
   where
     result =
-        meleeAction (V2 0 1) strongestOrcPosition initTileCollection initCellMap
+        meleeAction offset strongestOrcPosition initTileCollection initCellMap
     expected = writer (expectedResult, expectedLog)
     expectedResult =
         ActionResult
@@ -41,6 +40,7 @@ testKill =
     (defender, cellMapWithoutDefender) =
         fromJust $ removeActorAt weakestOrcPosition initCellMap
     attacker = fst $ fromJust $ removeActorAt strongestOrcPosition initCellMap
+    offset = weakestOrcPosition - strongestOrcPosition
 
 testDamage :: Spec
 testDamage =
