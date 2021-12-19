@@ -86,7 +86,8 @@ updateTarget srcPosition ts d a
 
 updatePath :: Coord -> Actor -> TileCollection -> Dungeon -> Maybe Actor
 updatePath src e ts d
-    | isTargetInFov src ts d e = Just $ e & pathToDestination .~ newPath
+    | isTargetInFov src ts (d ^. cellMap) e =
+        Just $ e & pathToDestination .~ newPath
     | otherwise = Nothing
   where
     newPath = fromMaybe [] $ dst >>= getPathTo ts d src
@@ -135,10 +136,10 @@ offsetToTarget :: Coord -> Actor -> Dungeon -> Maybe (V2 Int)
 offsetToTarget position e d =
     subtract position <$> getTargetPosition e (d ^. cellMap)
 
-isTargetInFov :: Coord -> TileCollection -> Dungeon -> Actor -> Bool
-isTargetInFov position ts d actor =
-    ((calculateFov position (transparentMap ts (d ^. cellMap)) !) <$>
-     getTargetPosition actor (d ^. cellMap)) ==
+isTargetInFov :: Coord -> TileCollection -> CellMap -> Actor -> Bool
+isTargetInFov position ts cm actor =
+    ((calculateFov position (transparentMap ts cm) !) <$>
+     getTargetPosition actor cm) ==
     Just True
 
 getTargetPosition :: Actor -> CellMap -> Maybe Coord
