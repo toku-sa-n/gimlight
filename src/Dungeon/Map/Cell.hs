@@ -245,7 +245,7 @@ removeActorIf f = do
     position <- gets $ fmap fst . find (f . snd) . positionsAndActors
     case position of
         Just x  -> removeActorAt x
-        Nothing -> StateT $ \_ -> Left ActorNotFound
+        Nothing -> StateT $ const $ Left ActorNotFound
 
 tileIdLayerAt :: Coord -> CellMap -> Maybe TileIdLayer
 tileIdLayerAt c (CellMap cm) = cm ^? ix c . tileIdLayer
