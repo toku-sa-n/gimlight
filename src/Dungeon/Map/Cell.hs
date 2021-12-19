@@ -93,7 +93,7 @@ isTransparent tc c =
 
 isTileWalkable :: TileCollection -> Cell -> Bool
 isTileWalkable tc c =
-    fmap (Tile.isTransparent . (tc !)) (c ^. tileIdLayer . upper) /= Just False
+    fmap (Tile.isWalkable . (tc !)) (c ^. tileIdLayer . upper) /= Just False
 
 locateActor :: TileCollection -> Actor -> Cell -> Either Error Cell
 locateActor tc a c
