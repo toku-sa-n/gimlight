@@ -224,8 +224,9 @@ removeActorAt c =
         case cm ^? ix c of
             Just x ->
                 case removeActor x of
-                    (Right y, z) -> Right (y, CellMap $ cm // [(c, z)])
-                    (Left y, _)  -> Left y
+                    (Right removed, newCell) ->
+                        Right (removed, CellMap $ cm // [(c, newCell)])
+                    (Left e, _) -> Left e
             Nothing -> Left ActorNotFound
 
 removeItemAt :: Coord -> StateT CellMap (Either Error) Item
@@ -234,8 +235,9 @@ removeItemAt c =
         case cm ^? ix c of
             Just x ->
                 case removeItem x of
-                    (Right y, z) -> Right (y, CellMap $ cm // [(c, z)])
-                    (Left y, _)  -> Left y
+                    (Right removed, newCell) ->
+                        Right (removed, CellMap $ cm // [(c, newCell)])
+                    (Left e, _) -> Left e
             Nothing -> Left ItemNotFound
 
 removeActorIf :: (Actor -> Bool) -> StateT CellMap (Either Error) Actor
