@@ -20,9 +20,10 @@ import           Dungeon              (Dungeon, calculateFovAt, cellMap,
                                        getPositionsAndActors, positionsAndNpcs)
 import           Dungeon.Map.Cell     (CellMap, locateActorAt,
                                        positionsAndActors, removeActorAt,
-                                       removeActorIf)
+                                       removeActorIf, transparentMap)
 import           Dungeon.Map.Tile     (TileCollection)
 import           Dungeon.PathFinder   (getPathTo)
+import           Fov                  (calculateFov)
 import           Linear.V2            (V2 (V2))
 import           Log                  (MessageLog)
 
@@ -136,7 +137,8 @@ offsetToTarget position e d =
 
 isTargetInFov :: Coord -> TileCollection -> Dungeon -> Actor -> Bool
 isTargetInFov position ts d actor =
-    ((calculateFovAt position ts d !) <$> getTargetPosition actor (d ^. cellMap)) ==
+    ((calculateFov position (transparentMap ts (d ^. cellMap)) !) <$>
+     getTargetPosition actor (d ^. cellMap)) ==
     Just True
 
 getTargetPosition :: Actor -> CellMap -> Maybe Coord
