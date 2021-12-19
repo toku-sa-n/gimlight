@@ -19,7 +19,6 @@ module Dungeon.Map.Cell
     , transparentMap
     , exploredMap
     , widthAndHeight
-    , isWalkableAt
     , locateActorAt
     , locateItemAt
     , removeActorAt
@@ -196,9 +195,6 @@ updatePlayerFov tc (CellMap cm) =
         playerPosition
     playerPosition =
         fmap fst $ find (isPlayer . snd) $ positionsAndActors $ CellMap cm
-
-isWalkableAt :: Coord -> TileCollection -> CellMap -> Bool
-isWalkableAt c tc (CellMap cm) = maybe False (isWalkable tc) (cm ^? ix c)
 
 positionsAndActors :: CellMap -> [(Coord, Actor)]
 positionsAndActors (CellMap cm) = mapMaybe mapStep $ assocs cm
