@@ -31,7 +31,8 @@ import           Data.Binary        (Binary)
 import           Data.Foldable      (find)
 import           Dungeon.Identifier (Identifier)
 import qualified Dungeon.Identifier as Identifier
-import           Dungeon.Map.Cell   (CellMap, positionsAndActors, walkableMap)
+import           Dungeon.Map.Cell   (CellMap, positionsAndActors,
+                                     walkableFloors)
 import           Dungeon.Map.Tile   (TileCollection)
 import           Dungeon.Stairs     (StairsPair (StairsPair, downStairs, upStairs))
 import           GHC.Generics       (Generic)
@@ -97,7 +98,7 @@ stairsPositionCandidates :: TileCollection -> Dungeon -> [Coord]
 stairsPositionCandidates ts d =
     filter (not . isStairsOnPosition) $ walkableCoords (d ^. cellMap)
   where
-    walkableCoords = map fst . filter snd . assocs . walkableMap ts
+    walkableCoords = map fst . filter snd . assocs . walkableFloors ts
     isStairsOnPosition c = isUpStairsPosition c || isDownStairsPosition c
     isUpStairsPosition c = (downStairs <$> d ^. ascendingStairs) == Just c
     isDownStairsPosition c = c `elem` map upStairs (d ^. descendingStairs)
