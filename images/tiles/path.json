@@ -23,7 +23,7 @@
          "colors":[
                 {
                  "color":"#ff0000",
-                 "name":"mypath",
+                 "name":"unpaved path",
                  "probability":1,
                  "tile":-1
                 }],
