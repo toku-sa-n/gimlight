@@ -14,14 +14,13 @@ import           System.FilePath  (dropFileName, (</>))
 -- We set the initial values to prevent an `undefined element` panic on
 -- comparisons.
 readTileFile :: FilePath -> IO (Maybe (TileCollection, FilePath))
-readTileFile path = do
-    json <- readFile path
-    return $ do
+readTileFile path = parseFile <$> readFile path
+  where
+    parseFile json = do
         numTiles <- getTileCount json
         let tc = emptyArray numTiles // indexAndTile json
         imagePath <- unpack <$> getImagePath json
         return (tc, dropFileName path </> imagePath)
-  where
     emptyArray l =
         array (0, l - 1) . zip [0 ..] . replicate l $ tile False False
 
