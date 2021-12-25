@@ -5,9 +5,7 @@ module Dungeon.Map.JSONReaderSpec
 import           Data.Maybe             (fromJust)
 import           Dungeon.Map.JSONReader (readMapFile)
 import           System.Directory       (makeAbsolute)
-import           System.FilePath        (equalFilePath)
-import           Test.Hspec             (Spec, describe, it, runIO,
-                                         shouldSatisfy)
+import           Test.Hspec             (Spec, describe, it, runIO, shouldBe)
 
 spec :: Spec
 spec = testReadMapFileReturnsTilePath
@@ -18,4 +16,4 @@ testReadMapFileReturnsTilePath = do
     expected <- runIO $ makeAbsolute "maps/tiles.json"
     describe "readMapFile" .
         it "returns the path to the corresponding tile file." $
-        snd (fromJust result) `shouldSatisfy` (`equalFilePath` expected)
+        snd (fromJust result) `shouldBe` expected

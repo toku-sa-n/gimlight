@@ -5,9 +5,8 @@ module Dungeon.Map.Tile.JSONReaderSpec
 import           Data.Maybe                  (fromJust)
 import           Dungeon.Map.Tile.JSONReader (readTileFile)
 import           System.Directory            (makeAbsolute)
-import           System.FilePath             (equalFilePath)
 import           Test.Hspec                  (Spec, describe, it, runIO,
-                                              shouldSatisfy)
+                                              shouldBe)
 
 spec :: Spec
 spec = testReadTileFileReturnsImagePath
@@ -18,4 +17,4 @@ testReadTileFileReturnsImagePath = do
     expected <- runIO $ makeAbsolute "images/map_tiles.png"
     describe "readTileFile" $
         it "returns the path to the corresponding image file." $
-        snd (fromJust result) `shouldSatisfy` (`equalFilePath` expected)
+        snd (fromJust result) `shouldBe` expected
