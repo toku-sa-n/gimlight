@@ -28,5 +28,4 @@ beaeve tc ig = do
 readMapFile :: IO CellMap
 readMapFile = do
     tileMap <- JSONReader.readMapFile "maps/beaeve.json"
-    return . fst $
-        fromMaybe (error "Failed to read the map file of Beaeve") tileMap
+    return $ fromMaybe (error "Failed to read the map file of Beaeve") tileMap

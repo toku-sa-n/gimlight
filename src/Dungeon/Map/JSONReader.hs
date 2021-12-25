@@ -6,33 +6,25 @@ module Dungeon.Map.JSONReader
 
 import           Control.Lens     (Ixed (ix), (^..), (^?))
 import           Control.Monad    (guard)
-import           Data.Aeson.Lens  (_Array, _Integer, _String, key, values)
+import           Data.Aeson.Lens  (_Array, _Integer, key, values)
 import           Data.Array       (array)
-import           Data.Text        (unpack)
 import           Data.Vector      (Vector, toList)
 import qualified Data.Vector      as V
 import           Dungeon.Map.Cell (CellMap, TileIdLayer (TileIdLayer), cellMap)
 import           Dungeon.Map.Tile (TileId)
 import           Linear.V2        (V2 (V2))
-import           System.FilePath  (dropFileName, (</>))
 
-readMapFile :: FilePath -> IO (Maybe (CellMap, FilePath))
-readMapFile path = do
-    json <- readFile path
-    return $ do
-        V2 height width <- getMapSize json
-        tiles <- getTiles json
-        guard $ height * width == length tiles
-        tileFilePath <- getTileFilePath json
-        Just
-            ( cellMap $ array (V2 0 0, V2 (width - 1) (height - 1)) $
-              zip [V2 x y | y <- [0 .. height - 1], x <- [0 .. width - 1]] $
-              toList tiles
-            , dropFileName path </> tileFilePath)
+readMapFile :: FilePath -> IO (Maybe CellMap)
+readMapFile path = parseMapFile <$> readFile path
 
-getTileFilePath :: String -> Maybe FilePath
-getTileFilePath json =
-    fmap unpack $ json ^? key "tilesets" . values . key "source" . _String
+parseMapFile :: String -> Maybe CellMap
+parseMapFile json = do
+    V2 height width <- getMapSize json
+    tiles <- getTiles json
+    guard $ height * width == length tiles
+    Just $ cellMap $ array (V2 0 0, V2 (width - 1) (height - 1)) $
+        zip [V2 x y | y <- [0 .. height - 1], x <- [0 .. width - 1]] $
+        toList tiles
 
 getMapSize :: String -> Maybe (V2 Int)
 getMapSize json =
