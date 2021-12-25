@@ -76,6 +76,7 @@ library
                       , Dungeon.Identifier
                       , Dungeon.Map.Cell
                       , Dungeon.Map.Tile
+                      , Dungeon.Map.Tile.JSONReader
                       , Fov
                       , Game
                       , IndexGenerator
@@ -92,7 +93,6 @@ library
                       , Dungeon.Generate.Room
                       , Dungeon.Init
                       , Dungeon.Map.JSONReader
-                      , Dungeon.Map.Tile.JSONReader
                       , Dungeon.PathFinder
                       , Dungeon.Predefined.BatsCave
                       , Dungeon.Predefined.Beaeve

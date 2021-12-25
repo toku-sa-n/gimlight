@@ -1,4 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE TupleSections     #-}
 
 module Dungeon.Map.Tile.JSONReader
     ( readTileFile
@@ -12,10 +13,13 @@ import           Dungeon.Map.Tile (Tile, TileCollection, tile)
 
 -- We set the initial values to prevent an `undefined element` panic on
 -- comparisons.
-readTileFile :: FilePath -> IO (Maybe TileCollection)
+readTileFile :: FilePath -> IO (Maybe (TileCollection, Text))
 readTileFile path = do
     json <- readFile path
-    return $ (\l -> emptyArray l // indexAndTile json) <$> getTileCount json
+    return $
+        fmap
+            ((, "") . (\l -> emptyArray l // indexAndTile json))
+            (getTileCount json)
   where
     emptyArray l =
         array (0, l - 1) . zip [0 ..] . replicate l $ tile False False
@@ -39,8 +43,7 @@ getWalkable = getBoolProperty "walkable"
 
 getBoolProperty :: Text -> String -> [Bool]
 getBoolProperty property json =
-    json ^..
-    (key "tiles" . values . key "properties" . values .
-     filtered (has (key "name" . _String . only property)) .
-     key "value" .
-     _Bool)
+    json ^.. key "tiles" . values . key "properties" . values .
+    filtered (has (key "name" . _String . only property)) .
+    key "value" .
+    _Bool
