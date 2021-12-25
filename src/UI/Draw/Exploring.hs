@@ -14,6 +14,7 @@ import           Control.Lens                    ((&), (.~), (^.))
 import           Control.Monad                   (guard)
 import           Coord                           (Coord)
 import           Data.Array                      ((!))
+import qualified Data.Map                        as Map
 import           Data.Maybe                      (catMaybes, mapMaybe)
 import           Data.Vector.Storable.ByteString (vectorToByteString)
 import           Dungeon                         (Dungeon, cellMap)
@@ -118,7 +119,7 @@ mapWidget tiles eh = vstack rows
             (vectorToByteString $ imageData img)
             (imgSize img)
       where
-        img = tiles ! tileId
+        img = tiles Map.! tileId
     imgSize img =
         Size (fromIntegral $ imageWidth img) (fromIntegral $ imageHeight img)
     shadowAt c = filler `styleBasic` [bgColor $ black & L.a .~ cellOpacity c]

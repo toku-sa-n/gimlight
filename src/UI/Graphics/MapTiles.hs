@@ -6,15 +6,14 @@ module UI.Graphics.MapTiles
 import           Codec.Picture       (Image (imageHeight, imageWidth),
                                       PixelRGBA8, convertRGBA8, readImage)
 import           Codec.Picture.Extra (crop)
-import           Data.Array          (Array, listArray)
+import           Data.Map            (Map, fromList)
 import           UI.Draw.Config      (tileHeight, tileWidth)
 
-type MapTiles = Array Int (Image PixelRGBA8)
+type MapTiles = Map Int (Image PixelRGBA8)
 
 mapTiles :: FilePath -> IO (Maybe MapTiles)
-mapTiles path = fmap (cutTileMapToArray . cutTileMap) <$> readTileMapFile path
-  where
-    cutTileMapToArray tiles = listArray (0, length tiles - 1) tiles
+mapTiles path =
+    fmap (fromList . zip [0 ..] . cutTileMap) <$> readTileMapFile path
 
 readTileMapFile :: FilePath -> IO (Maybe (Image PixelRGBA8))
 readTileMapFile path = do
