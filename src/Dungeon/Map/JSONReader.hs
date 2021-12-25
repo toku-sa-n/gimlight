@@ -14,12 +14,19 @@ import qualified Data.Vector      as V
 import           Dungeon.Map.Cell (CellMap, TileIdLayer (TileIdLayer), cellMap)
 import           Dungeon.Map.Tile (TileId)
 import           Linear.V2        (V2 (V2))
+import           System.Directory (canonicalizePath)
 import           System.FilePath  (dropFileName, (</>))
 
 readMapFile :: FilePath -> IO (Maybe (CellMap, FilePath))
 readMapFile path = do
     json <- readFile path
-    return $ do
+    case parseFile json of
+        Just (tc, relativePath) -> do
+            canonicalized <- canonicalizePath relativePath
+            return $ Just (tc, canonicalized)
+        Nothing -> return Nothing
+  where
+    parseFile json = do
         V2 height width <- getMapSize json
         tiles <- getTiles json
         guard $ height * width == length tiles
