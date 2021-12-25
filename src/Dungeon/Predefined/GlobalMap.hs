@@ -16,7 +16,7 @@ globalMap = do
 readMapFile :: IO CellMap
 readMapFile = do
     tileMap <- JSONReader.readMapFile "maps/global_map.json"
-    return $
+    return . fst $
         fromMaybe
             (error "Failed to read the map file of the global map.")
             tileMap
