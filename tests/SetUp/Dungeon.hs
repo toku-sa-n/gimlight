@@ -23,6 +23,7 @@ import           Coord               (Coord)
 import           Data.Array          (array, (//))
 import           Data.Bifunctor      (Bifunctor (first))
 import           Data.Either         (fromRight)
+import           Data.Map            (fromList)
 import           Data.Maybe          (fromJust)
 import           Dungeon.Map.Cell    (CellMap, TileIdLayer (TileIdLayer),
                                       cellMap, locateActorAt, locateItemAt)
@@ -78,7 +79,7 @@ initCellMap =
     mapHeight = 4
 
 initTileCollection :: TileCollection
-initTileCollection = array (0, 1) [(0, tile True True), (1, tile False True)]
+initTileCollection = fromList [(0, tile True True), (1, tile False True)]
 
 strongestOrc :: IndexGenerator -> (Actor, IndexGenerator)
 strongestOrc g = monster g Orc (status (hp 100) 100 100) ""

@@ -13,8 +13,8 @@ module Dungeon.Map.Tile
     , downStairs
     ) where
 
-import           Data.Array   (Array)
 import           Data.Binary  (Binary)
+import           Data.Map     (Map)
 import           GHC.Generics (Generic)
 
 type TileId = Int
@@ -28,7 +28,7 @@ data Tile =
 
 instance Binary Tile
 
-type TileCollection = Array Int Tile
+type TileCollection = Map Int Tile
 
 tile :: Bool -> Bool -> Tile
 tile = Tile

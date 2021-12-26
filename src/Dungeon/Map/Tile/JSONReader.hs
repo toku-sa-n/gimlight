@@ -6,7 +6,7 @@ module Dungeon.Map.Tile.JSONReader
 
 import           Control.Lens     (filtered, has, only, (^..), (^?))
 import           Data.Aeson.Lens  (_Bool, _Integer, _String, key, values)
-import           Data.Array       (array, (//))
+import           Data.Map         (empty, insert)
 import           Data.Text        (Text, unpack)
 import           Dungeon.Map.Tile (Tile, TileCollection, tile)
 import           System.Directory (canonicalizePath,
@@ -26,18 +26,14 @@ readTileFile path = do
         Nothing -> return Nothing
   where
     parseTileFile json = do
-        numTiles <- getTileCount json
-        let tc = emptyArray numTiles // indexAndTile json
+        let tc =
+                foldl (\acc (idx, t) -> insert idx t acc) empty $
+                indexAndTile json
         imagePath <- unpack <$> getImagePath json
         return (tc, dropFileName path </> imagePath)
-    emptyArray l =
-        array (0, l - 1) . zip [0 ..] . replicate l $ tile False False
 
 getImagePath :: String -> Maybe Text
 getImagePath json = json ^? key "image" . _String
-
-getTileCount :: String -> Maybe Int
-getTileCount json = fromInteger <$> json ^? key "tilecount" . _Integer
 
 indexAndTile :: String -> [(Int, Tile)]
 indexAndTile json =

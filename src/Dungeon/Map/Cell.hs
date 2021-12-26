@@ -39,6 +39,7 @@ import           Coord               (Coord)
 import           Data.Array          (Array, array, assocs, bounds, (!), (//))
 import           Data.Binary         (Binary)
 import           Data.Foldable       (find)
+import qualified Data.Map            as M
 import           Data.Maybe          (isJust, isNothing, mapMaybe)
 import           Dungeon.Map.Tile    (TileCollection, TileId, floorTile,
                                       wallTile)
@@ -84,17 +85,17 @@ instance Binary Cell
 
 isWalkable :: TileCollection -> Cell -> Bool
 isWalkable tc c =
-    fmap (Tile.isWalkable . (tc !)) (c ^. (tileIdLayer . upper)) /= Just False &&
+    fmap (Tile.isWalkable . (tc M.!)) (c ^. (tileIdLayer . upper)) /= Just False &&
     isNothing (c ^. actor)
 
 isTransparent :: TileCollection -> Cell -> Bool
 isTransparent tc c =
-    fmap (Tile.isTransparent . (tc !)) (c ^. (tileIdLayer . upper)) /=
+    fmap (Tile.isTransparent . (tc M.!)) (c ^. (tileIdLayer . upper)) /=
     Just False
 
 isTileWalkable :: TileCollection -> Cell -> Bool
 isTileWalkable tc c =
-    fmap (Tile.isWalkable . (tc !)) (c ^. tileIdLayer . upper) /= Just False
+    fmap (Tile.isWalkable . (tc M.!)) (c ^. tileIdLayer . upper) /= Just False
 
 locateActor :: TileCollection -> Actor -> Cell -> Either Error Cell
 locateActor tc a c
