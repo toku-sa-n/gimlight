@@ -29,12 +29,12 @@ testAddTileFile = do
         -- `Image PixelRGBA8` does not implement `Show`. This is why we do not write `expected `shouldBe` True`.
         result == expected `shouldBe` True
   where
-    separatedFiles = fmap separatedFile [0 :: Int .. 5]
     insertMultipleSeparatedFiles fileNames insertAs m =
         foldl (\acc (k, v) -> insert k v acc) m . zip (zipWithIndex insertAs) <$>
         mapM readSingleSeparatedFile fileNames
     zipWithIndex name = zip (repeat name) [0 ..]
     readSingleSeparatedFile = fmap (convertRGBA8 . fromRight') . readImage
     unitedImageFile = "tests/images/tiles/united.png"
+    separatedFiles = fmap separatedFile [0 :: Int .. 5]
     separatedFile :: Int -> FilePath
     separatedFile n = "tests/images/tiles/separated_" ++ show n ++ ".png"
