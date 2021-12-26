@@ -1,15 +1,23 @@
 module UI.Graphics.MapTiles
     ( MapTiles
     , mapTiles
+    , addTileFile
     ) where
 
 import           Codec.Picture       (Image (imageHeight, imageWidth),
                                       PixelRGBA8, convertRGBA8, readImage)
 import           Codec.Picture.Extra (crop)
-import           Data.Map            (Map, fromList)
+import           Data.Map            (Map, fromList, insert)
 import           UI.Draw.Config      (tileHeight, tileWidth)
 
 type MapTiles = Map Int (Image PixelRGBA8)
+
+addTileFile :: FilePath -> MapTiles -> IO (Maybe MapTiles)
+addTileFile path tiles =
+    fmap
+        (foldl (\acc (idx, img) -> insert idx img acc) tiles .
+         zip [0 ..] . cutTileMap) <$>
+    readTileMapFile path
 
 mapTiles :: FilePath -> IO (Maybe MapTiles)
 mapTiles path =

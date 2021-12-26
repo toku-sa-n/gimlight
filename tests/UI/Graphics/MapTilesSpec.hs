@@ -2,7 +2,32 @@ module UI.Graphics.MapTilesSpec
     ( spec
     ) where
 
-import           Test.Hspec (Spec)
+import           Codec.Picture           (convertRGBA8, readImage)
+import           Data.Either.Combinators (fromRight')
+import           Data.Map                (empty, fromList)
+import           Data.Maybe              (fromJust)
+import           Test.Hspec              (Spec, describe, it, runIO, shouldBe)
+import           UI.Graphics.MapTiles    (addTileFile)
 
 spec :: Spec
-spec = undefined
+spec = testAddTileFile
+
+testAddTileFile :: Spec
+testAddTileFile = do
+    result <-
+        fmap fromJust . runIO $
+        addTileFile "tests/images/tiles/united.png" empty
+    expected <- runIO $ readMultipleSeparatedFiles separatedFiles
+    describe "addTileFile" $
+        it
+            "separate tile images in the tile file and adds all separated images." $
+        -- `Image PixelRGBA8` does not implement `Show`. This is why we do not write `expected `shouldBe` True`.
+        result == expected `shouldBe` True
+  where
+    separatedFiles =
+        fmap
+            (\x -> "tests/images/tiles/separated_" ++ show x ++ ".png")
+            [0 :: Int .. 5]
+    readMultipleSeparatedFiles fileNames =
+        fromList . zip [0 ..] <$> mapM readSingleSeparatedFile fileNames
+    readSingleSeparatedFile = fmap (convertRGBA8 . fromRight') . readImage
