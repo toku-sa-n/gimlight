@@ -4,7 +4,7 @@ module UI.Graphics.MapTilesSpec
 
 import           Codec.Picture           (convertRGBA8, readImage)
 import           Data.Either.Combinators (fromRight')
-import           Data.Map                (empty, fromList)
+import           Data.Map                (empty, insert)
 import           Data.Maybe              (fromJust)
 import           System.Directory        (canonicalizePath)
 import           Test.Hspec              (Spec, describe, it, runIO, shouldBe)
@@ -16,8 +16,16 @@ spec = testAddTileFile
 testAddTileFile :: Spec
 testAddTileFile = do
     tileFile <- runIO $ canonicalizePath unitedImageFile
-    result <- fmap fromJust . runIO $ addTileFile tileFile empty
-    expected <- runIO $ readMultipleSeparatedFiles separatedFiles
+    result <-
+        fmap fromJust . runIO $
+        fmap fromJust (addTileFile tileFile empty) >>=
+        addTileFile "tests/images/tiles/separated_0.png"
+    expected <-
+        runIO $
+        insertMultipleSeparatedFiles separatedFiles unitedImageFile empty >>=
+        insertMultipleSeparatedFiles
+            ["tests/images/tiles/separated_0.png"]
+            "tests/images/tiles/separated_0.png"
     describe "addTileFile" $
         it
             "separate tile images in the tile file and adds all separated images." $
@@ -28,9 +36,9 @@ testAddTileFile = do
         fmap
             (\x -> "tests/images/tiles/separated_" ++ show x ++ ".png")
             [0 :: Int .. 5]
-    readMultipleSeparatedFiles fileNames =
-        fromList . zip fileNameAndIndex <$>
+    insertMultipleSeparatedFiles fileNames insertAs m =
+        foldl (\acc (k, v) -> insert k v acc) m . zip (zipWithIndex insertAs) <$>
         mapM readSingleSeparatedFile fileNames
-    fileNameAndIndex = zip (repeat unitedImageFile) [0 ..]
+    zipWithIndex name = zip (repeat name) [0 ..]
     readSingleSeparatedFile = fmap (convertRGBA8 . fromRight') . readImage
     unitedImageFile = "tests/images/tiles/united.png"
