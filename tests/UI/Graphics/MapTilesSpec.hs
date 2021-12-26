@@ -18,8 +18,8 @@ testAddTileFile = do
     tileFile <- runIO $ canonicalizePath unitedImageFile
     result <-
         fmap fromJust . runIO $
-        fmap fromJust (addTileFile tileFile empty) >>=
-        addTileFile "tests/images/tiles/separated_0.png"
+        addTileFile tileFile empty >>=
+        addTileFile "tests/images/tiles/separated_0.png" . fromJust
     expected <-
         runIO $
         insertMultipleSeparatedFiles separatedFiles unitedImageFile empty >>=
