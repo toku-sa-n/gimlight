@@ -29,6 +29,7 @@ testAddTileFile = do
             (\x -> "tests/images/tiles/separated_" ++ show x ++ ".png")
             [0 :: Int .. 5]
     readMultipleSeparatedFiles fileNames =
-        fromList . zip (zip (repeat "tests/images/tiles/united.png") [0 ..]) <$>
+        fromList . zip fileNameAndIndex <$>
         mapM readSingleSeparatedFile fileNames
+    fileNameAndIndex = zip (repeat "tests/images/tiles/united.png") [0 ..]
     readSingleSeparatedFile = fmap (convertRGBA8 . fromRight') . readImage
