@@ -14,7 +14,8 @@ import qualified Data.Vector      as V
 import           Dungeon.Map.Cell (CellMap, TileIdLayer (TileIdLayer), cellMap)
 import           Dungeon.Map.Tile (TileId)
 import           Linear.V2        (V2 (V2))
-import           System.Directory (canonicalizePath)
+import           System.Directory (canonicalizePath,
+                                   makeRelativeToCurrentDirectory)
 import           System.FilePath  (dropFileName, (</>))
 
 readMapFile :: FilePath -> IO (Maybe (CellMap, FilePath))
@@ -22,7 +23,8 @@ readMapFile path = do
     json <- readFile path
     case parseFile json of
         Just (tc, relativePath) -> do
-            canonicalized <- canonicalizePath relativePath
+            canonicalized <-
+                canonicalizePath relativePath >>= makeRelativeToCurrentDirectory
             return $ Just (tc, canonicalized)
         Nothing -> return Nothing
   where

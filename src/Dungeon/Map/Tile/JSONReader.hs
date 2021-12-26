@@ -9,7 +9,8 @@ import           Data.Aeson.Lens  (_Bool, _Integer, _String, key, values)
 import           Data.Array       (array, (//))
 import           Data.Text        (Text, unpack)
 import           Dungeon.Map.Tile (Tile, TileCollection, tile)
-import           System.Directory (canonicalizePath)
+import           System.Directory (canonicalizePath,
+                                   makeRelativeToCurrentDirectory)
 import           System.FilePath  (dropFileName, (</>))
 
 -- We set the initial values to prevent an `undefined element` panic on
@@ -19,7 +20,8 @@ readTileFile path = do
     json <- readFile path
     case parseTileFile json of
         Just (tc, relativePath) -> do
-            canonicalized <- canonicalizePath relativePath
+            canonicalized <-
+                canonicalizePath relativePath >>= makeRelativeToCurrentDirectory
             return $ Just (tc, canonicalized)
         Nothing -> return Nothing
   where
