@@ -15,7 +15,7 @@ spec = testAddTileFile
 
 testAddTileFile :: Spec
 testAddTileFile = do
-    tileFile <- runIO $ canonicalizePath "tests/images/tiles/united.png"
+    tileFile <- runIO $ canonicalizePath unitedImageFile
     result <- fmap fromJust . runIO $ addTileFile tileFile empty
     expected <- runIO $ readMultipleSeparatedFiles separatedFiles
     describe "addTileFile" $
@@ -31,5 +31,6 @@ testAddTileFile = do
     readMultipleSeparatedFiles fileNames =
         fromList . zip fileNameAndIndex <$>
         mapM readSingleSeparatedFile fileNames
-    fileNameAndIndex = zip (repeat "tests/images/tiles/united.png") [0 ..]
+    fileNameAndIndex = zip (repeat unitedImageFile) [0 ..]
     readSingleSeparatedFile = fmap (convertRGBA8 . fromRight') . readImage
+    unitedImageFile = "tests/images/tiles/united.png"
