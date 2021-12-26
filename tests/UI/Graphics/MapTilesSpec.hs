@@ -6,6 +6,7 @@ import           Codec.Picture           (convertRGBA8, readImage)
 import           Data.Either.Combinators (fromRight')
 import           Data.Map                (empty, fromList)
 import           Data.Maybe              (fromJust)
+import           System.Directory        (canonicalizePath)
 import           Test.Hspec              (Spec, describe, it, runIO, shouldBe)
 import           UI.Graphics.MapTiles    (addTileFile)
 
@@ -14,9 +15,8 @@ spec = testAddTileFile
 
 testAddTileFile :: Spec
 testAddTileFile = do
-    result <-
-        fmap fromJust . runIO $
-        addTileFile "tests/images/tiles/united.png" empty
+    tileFile <- runIO $ canonicalizePath "tests/images/tiles/united.png"
+    result <- fmap fromJust . runIO $ addTileFile tileFile empty
     expected <- runIO $ readMultipleSeparatedFiles separatedFiles
     describe "addTileFile" $
         it
