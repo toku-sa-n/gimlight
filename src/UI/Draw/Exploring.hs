@@ -119,7 +119,7 @@ mapWidget tiles eh = vstack rows
             (vectorToByteString $ imageData img)
             (imgSize img)
       where
-        img = tiles Map.! tileId
+        img = tiles Map.! ("images/map_tiles.png", tileId)
     imgSize img =
         Size (fromIntegral $ imageWidth img) (fromIntegral $ imageHeight img)
     shadowAt c = filler `styleBasic` [bgColor $ black & L.a .~ cellOpacity c]

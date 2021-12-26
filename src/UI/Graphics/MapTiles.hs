@@ -8,20 +8,30 @@ import           Codec.Picture       (Image (imageHeight, imageWidth),
                                       PixelRGBA8, convertRGBA8, readImage)
 import           Codec.Picture.Extra (crop)
 import           Data.Map            (Map, fromList, insert)
+import           System.Directory    (canonicalizePath,
+                                      makeRelativeToCurrentDirectory)
 import           UI.Draw.Config      (tileHeight, tileWidth)
 
-type MapTiles = Map Int (Image PixelRGBA8)
+type MapTiles = Map (FilePath, Int) (Image PixelRGBA8)
 
 addTileFile :: FilePath -> MapTiles -> IO (Maybe MapTiles)
-addTileFile path tiles =
-    fmap
-        (foldl (\acc (idx, img) -> insert idx img acc) tiles .
-         zip [0 ..] . cutTileMap) <$>
-    readTileMapFile path
+addTileFile path tiles = do
+    tileFile <- readTileMapFile path
+    canonicalizedPath <-
+        canonicalizePath path >>= makeRelativeToCurrentDirectory
+    return $
+        foldl (\acc (idx, img) -> insert idx img acc) tiles .
+        zip (zip (repeat canonicalizedPath) [0 ..]) . cutTileMap <$>
+        tileFile
 
 mapTiles :: FilePath -> IO (Maybe MapTiles)
-mapTiles path =
-    fmap (fromList . zip [0 ..] . cutTileMap) <$> readTileMapFile path
+mapTiles path = do
+    tileFile <- readTileMapFile path
+    canonicalizedPath <-
+        canonicalizePath path >>= makeRelativeToCurrentDirectory
+    return $
+        fromList . zip (zip (repeat canonicalizedPath) [0 ..]) . cutTileMap <$>
+        tileFile
 
 readTileMapFile :: FilePath -> IO (Maybe (Image PixelRGBA8))
 readTileMapFile path = do
