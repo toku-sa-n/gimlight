@@ -1,3 +1,4 @@
+{-# LANGUAGE LambdaCase        #-}
 {-# LANGUAGE OverloadedStrings #-}
 
 module Dungeon.Map.JSONReader
@@ -23,8 +24,7 @@ import           System.FilePath  (dropFileName, (</>))
 readMapFile :: FilePath -> IO (Maybe (CellMap, FilePath))
 readMapFile path = do
     json <- readFile path
-    canonicalizedPath <- tileFilePath json
-    case canonicalizedPath of
+    tileFilePath json >>= \case
         Just x ->
             case parseFile json x of
                 Just cm' -> return $ Just (cm', x)
