@@ -7,13 +7,15 @@ module GameStatus
     , newGameStatus
     ) where
 
+import           Control.Lens                 ()
 import           Data.Binary                  (Binary)
+import           Data.Map                     (empty)
 import           Data.Maybe                   (fromMaybe)
 import           Data.Tree                    (Tree (Node, rootLabel, subForest))
 import           Dungeon                      (addAscendingAndDescendingStiars,
                                                addDescendingStairs)
 import           Dungeon.Init                 (initDungeon)
-import           Dungeon.Map.Tile.JSONReader  (readTileFile)
+import           Dungeon.Map.Tile.JSONReader  (addTileFile)
 import           Dungeon.Predefined.BatsCave  (batsDungeon)
 import           Dungeon.Predefined.GlobalMap (globalMap)
 import           Dungeon.Stairs               (StairsPair (StairsPair))
@@ -51,7 +53,7 @@ newGameStatus = do
     g <- getStdGen
     tileCollection <-
         fst . fromMaybe (error "Failed to read the tile file.") <$>
-        readTileFile "maps/tiles.json"
+        addTileFile "maps/tiles.json" empty
     gm <- globalMap
     (beaeve, ig) <- initDungeon generator tileCollection
     let (stairsPosition, bats, _, _) = batsDungeon g ig tileCollection

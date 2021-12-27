@@ -3,6 +3,7 @@
 module Dungeon.Map.Tile
     ( Tile
     , TileCollection
+    , TileIdentifier
     , TileId
     , tile
     , isWalkable
@@ -17,8 +18,6 @@ import           Data.Binary  (Binary)
 import           Data.Map     (Map)
 import           GHC.Generics (Generic)
 
-type TileId = Int
-
 data Tile =
     Tile
         { walkable    :: Bool
@@ -28,7 +27,11 @@ data Tile =
 
 instance Binary Tile
 
-type TileCollection = Map Int Tile
+type TileCollection = Map TileIdentifier Tile
+
+type TileIdentifier = (FilePath, Int)
+
+type TileId = Int
 
 tile :: Bool -> Bool -> Tile
 tile = Tile
@@ -39,14 +42,14 @@ isWalkable = walkable
 isTransparent :: Tile -> Bool
 isTransparent = transparent
 
-floorTile :: TileId
-floorTile = 0
+floorTile :: TileIdentifier
+floorTile = ("maps/tiles.json", 0)
 
-wallTile :: TileId
-wallTile = 1
+wallTile :: TileIdentifier
+wallTile = ("maps/tiles.json", 1)
 
-upStairs :: TileId
-upStairs = 3
+upStairs :: TileIdentifier
+upStairs = ("maps/tiles.json", 3)
 
-downStairs :: TileId
-downStairs = 4
+downStairs :: TileIdentifier
+downStairs = ("maps/tiles.json", 4)

@@ -22,7 +22,7 @@ import           Dungeon.Map.Cell                (exploredMap, lower,
                                                   playerActor, playerFov,
                                                   positionsAndActors,
                                                   positionsAndItems,
-                                                  tileIdLayerAt, upper,
+                                                  tileIdentifierLayerAt, upper,
                                                   widthAndHeight)
 import           GameConfig                      (GameConfig)
 import           GameStatus.Exploring            (ExploringHandler,
@@ -112,14 +112,17 @@ mapWidget tiles eh = vstack rows
         zstack $ catMaybes [lowerLayerAt c, upperLayerAt c, Just $ shadowAt c]
     lowerLayerAt = layerOfAt lower
     upperLayerAt = layerOfAt upper
-    layerOfAt which c = tileIdToImageMem <$> getTileIdOfLayerAt which c
-    tileIdToImageMem tileId =
+    layerOfAt which c = tileIdToImageMem <$> getTileIdentifierOfLayerAt which c
+    tileIdToImageMem tileIdentifier =
         imageMem
-            (showt tileId)
+            (showt tileIdentifier)
             (vectorToByteString $ imageData img)
             (imgSize img)
       where
-        img = tiles Map.! ("images/map_tiles.png", tileId)
+        img =
+            case tiles Map.!? tileIdentifier of
+                Just x  -> x
+                Nothing -> error ("What!? " ++ show tileIdentifier)
     imgSize img =
         Size (fromIntegral $ imageWidth img) (fromIntegral $ imageHeight img)
     shadowAt c = filler `styleBasic` [bgColor $ black & L.a .~ cellOpacity c]
@@ -129,8 +132,8 @@ mapWidget tiles eh = vstack rows
         | otherwise = 1
     isVisible c = playerFov (d ^. cellMap) ! c
     isExplored c = exploredMap (d ^. cellMap) ! c
-    getTileIdOfLayerAt which c = tileIdLayer c >>= (^. which)
-    tileIdLayer c = tileIdLayerAt c $ d ^. cellMap
+    getTileIdentifierOfLayerAt which c = tileIdentifierLayer c >>= (^. which)
+    tileIdentifierLayer c = tileIdentifierLayerAt c $ d ^. cellMap
     V2 topLeftCoordX topLeftCoordY = topLeftCoord d
     d = getCurrentDungeon eh
 

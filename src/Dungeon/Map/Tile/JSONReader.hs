@@ -1,36 +1,39 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module Dungeon.Map.Tile.JSONReader
-    ( readTileFile
+    ( addTileFile
     ) where
 
 import           Control.Lens     (filtered, has, only, (^..), (^?))
+import           Control.Monad    ((>=>))
 import           Data.Aeson.Lens  (_Bool, _Integer, _String, key, values)
-import           Data.Map         (empty, insert)
+import           Data.Map         (insert)
 import           Data.Text        (Text, unpack)
 import           Dungeon.Map.Tile (Tile, TileCollection, tile)
 import           System.Directory (canonicalizePath,
                                    makeRelativeToCurrentDirectory)
 import           System.FilePath  (dropFileName, (</>))
 
--- We set the initial values to prevent an `undefined element` panic on
--- comparisons.
-readTileFile :: FilePath -> IO (Maybe (TileCollection, FilePath))
-readTileFile path = do
+addTileFile ::
+       FilePath -> TileCollection -> IO (Maybe (TileCollection, FilePath))
+addTileFile path tc = do
     json <- readFile path
-    case parseTileFile json of
-        Just (tc, relativePath) -> do
-            canonicalized <-
-                canonicalizePath relativePath >>= makeRelativeToCurrentDirectory
-            return $ Just (tc, canonicalized)
+    let relativePathToImageFile =
+            (\x -> dropFileName path </> unpack x) <$> getImagePath json
+    canonicalizedPathToJson <-
+        canonicalizePath path >>= makeRelativeToCurrentDirectory
+    case relativePathToImageFile of
+        Just x -> do
+            canonicalizedPath <-
+                (canonicalizePath >=> makeRelativeToCurrentDirectory) x
+            let newTc =
+                    foldl
+                        (\acc (idx, t) ->
+                             insert (canonicalizedPathToJson, idx) t acc)
+                        tc $
+                    indexAndTile json
+            return $ Just (newTc, canonicalizedPath)
         Nothing -> return Nothing
-  where
-    parseTileFile json = do
-        let tc =
-                foldl (\acc (idx, t) -> insert idx t acc) empty $
-                indexAndTile json
-        imagePath <- unpack <$> getImagePath json
-        return (tc, dropFileName path </> imagePath)
 
 getImagePath :: String -> Maybe Text
 getImagePath json = json ^? key "image" . _String
