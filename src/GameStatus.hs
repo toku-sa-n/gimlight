@@ -51,9 +51,7 @@ instance Binary GameStatus
 newGameStatus :: IO GameStatus
 newGameStatus = do
     g <- getStdGen
-    tileCollection <-
-        fst . fromMaybe (error "Failed to read the tile file.") <$>
-        addTileFile "maps/tiles.json" empty
+    tileCollection <- fst <$> addTileFile "maps/tiles.json" empty
     gm <- globalMap
     (beaeve, ig) <- initDungeon generator tileCollection
     let (stairsPosition, bats, _, _) = batsDungeon g ig tileCollection

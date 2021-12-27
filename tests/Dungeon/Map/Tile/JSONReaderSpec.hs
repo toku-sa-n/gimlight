@@ -3,7 +3,6 @@ module Dungeon.Map.Tile.JSONReaderSpec
     ) where
 
 import           Data.Map                    (empty, fromList)
-import           Data.Maybe                  (fromJust)
 import           Dungeon.Map.Tile            (tile)
 import           Dungeon.Map.Tile.JSONReader (addTileFile)
 import           Test.Hspec                  (Spec, describe, it, runIO,
@@ -17,9 +16,8 @@ spec = do
 testAddTileFile :: Spec
 testAddTileFile = do
     result <-
-        fmap (fst . fromJust) . runIO $
-        addTileFile unitedTileFile empty >>=
-        addTileFile separatedFile . fst . fromJust
+        fmap fst . runIO $
+        addTileFile unitedTileFile empty >>= addTileFile separatedFile . fst
     describe "addTileFile" $
         it "loads tile information from files." $ result `shouldBe` expected
   where
@@ -41,6 +39,6 @@ testAddTileFileReturnsImagePath = do
     result <- runIO $ addTileFile "maps/tiles.json" empty
     describe "readTileFile" $
         it "returns the path to the corresponding image file." $
-        snd (fromJust result) `shouldBe` expected
+        snd result `shouldBe` expected
   where
     expected = "images/map_tiles.png"
