@@ -2,24 +2,39 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module Dungeon.Map.JSONReader
-    ( readMapFile
+    ( readMapTileImage
+    , readMapFile
     ) where
 
-import           Control.Lens     (Ixed (ix), (^..), (^?))
-import           Control.Monad    (guard)
-import           Data.Aeson.Lens  (_Array, _Integer, _String, key, values)
-import           Data.Array       (array)
-import           Data.Text        (unpack)
-import           Data.Vector      (Vector, toList)
-import qualified Data.Vector      as V
-import           Dungeon.Map.Cell (CellMap,
-                                   TileIdentifierLayer (TileIdentifierLayer),
-                                   cellMap)
-import           Dungeon.Map.Tile (TileIdentifier)
-import           Linear.V2        (V2 (V2))
-import           System.Directory (canonicalizePath,
-                                   makeRelativeToCurrentDirectory)
-import           System.FilePath  (dropFileName, (</>))
+import           Control.Lens                (Ixed (ix), (^..), (^?))
+import           Control.Monad               (guard)
+import           Control.Monad.Trans.Maybe   (MaybeT (MaybeT))
+import           Data.Aeson.Lens             (_Array, _Integer, _String, key,
+                                              values)
+import           Data.Array                  (array)
+import           Data.Text                   (unpack)
+import           Data.Vector                 (Vector, toList)
+import qualified Data.Vector                 as V
+import           Dungeon.Map.Cell            (CellMap,
+                                              TileIdentifierLayer (TileIdentifierLayer),
+                                              cellMap)
+import           Dungeon.Map.Tile            (TileCollection, TileIdentifier)
+import           Dungeon.Map.Tile.JSONReader (addTileAndImage)
+import           Linear.V2                   (V2 (V2))
+import           System.Directory            (canonicalizePath,
+                                              makeRelativeToCurrentDirectory)
+import           System.FilePath             (dropFileName, (</>))
+import           UI.Graphics.MapTiles        (MapTiles)
+
+readMapTileImage ::
+       TileCollection
+    -> MapTiles
+    -> FilePath
+    -> MaybeT IO (CellMap, TileCollection, MapTiles)
+readMapTileImage tc mt path = do
+    (cm, tileJsonPath) <- MaybeT $ readMapFile path
+    (tc', mt') <- MaybeT $ addTileAndImage tileJsonPath tc mt
+    return (cm, tc', mt')
 
 readMapFile :: FilePath -> IO (Maybe (CellMap, FilePath))
 readMapFile path = do

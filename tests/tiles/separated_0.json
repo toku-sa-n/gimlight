@@ -4,6 +4,17 @@
  "imagewidth":48,
  "margin":0,
  "name":"separated_0",
+ "properties":[
+        {
+         "name":"transparent",
+         "type":"bool",
+         "value":true
+        }, 
+        {
+         "name":"walkable",
+         "type":"bool",
+         "value":true
+        }],
  "spacing":0,
  "tilecount":1,
  "tiledversion":"1.7.2",
