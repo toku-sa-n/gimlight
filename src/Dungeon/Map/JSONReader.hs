@@ -32,9 +32,8 @@ readMapFile path = do
                 Nothing  -> return Nothing
         Nothing -> return Nothing
   where
-    tileFilePath json = do
-        let uncanonicalized = getTileFilePath json
-        case uncanonicalized of
+    tileFilePath json =
+        case getTileFilePath json of
             Just x -> do
                 p <-
                     canonicalizePath (dropFileName path </> x) >>=
