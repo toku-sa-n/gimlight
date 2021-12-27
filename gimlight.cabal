@@ -51,6 +51,7 @@ Test-Suite spec
                       , Dungeon.Map.Tile.JSONReaderSpec
                       , FovSpec
                       , SetUp.Dungeon
+                      , UI.Graphics.MapTilesSpec
 
     build-depends:      gimlight
                       , hspec >= 2.9.1 && < 2.10
@@ -87,6 +88,7 @@ library
                       , Item
                       , Item.Heal
                       , Localization.Texts
+                      , UI.Graphics.MapTiles
 
     other-modules:      Actor.Friendly
                       , Actor.Friendly.Electria
@@ -140,7 +142,6 @@ library
                       , UI.Draw.Talking
                       , UI.Draw.Title
                       , UI.Graphics
-                      , UI.Graphics.MapTiles
                       , UI.Event
                       , UI.Types
 
