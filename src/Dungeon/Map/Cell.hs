@@ -85,12 +85,7 @@ instance Binary Cell
 
 isWalkable :: TileCollection -> Cell -> Bool
 isWalkable tc c =
-    fmap
-        (\x ->
-             case tc M.!? x of
-                 Just y  -> Tile.isWalkable y
-                 Nothing -> error (show c ++ "\n" ++ show tc))
-        (c ^. (tileIdentifierLayer . upper)) /=
+    fmap (Tile.isWalkable . (tc M.!)) (c ^. (tileIdentifierLayer . upper)) /=
     Just False &&
     isNothing (c ^. actor)
 
