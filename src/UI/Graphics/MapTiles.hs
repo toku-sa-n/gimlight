@@ -14,14 +14,12 @@ import           UI.Draw.Config      (tileHeight, tileWidth)
 
 type MapTiles = Map (FilePath, Int) (Image PixelRGBA8)
 
-addTileFile :: FilePath -> MapTiles -> IO (Maybe MapTiles)
-addTileFile path tiles = do
+addTileFile :: FilePath -> FilePath -> MapTiles -> IO (Maybe MapTiles)
+addTileFile jsonFile path tiles = do
     tileFile <- readTileMapFile path
-    canonicalizedPath <-
-        canonicalizePath path >>= makeRelativeToCurrentDirectory
     return $
         foldl (\acc (idx, img) -> insert idx img acc) tiles .
-        zip (zip (repeat canonicalizedPath) [0 ..]) . cutTileMap <$>
+        zip (zip (repeat jsonFile) [0 ..]) . cutTileMap <$>
         tileFile
 
 mapTiles :: FilePath -> IO (Maybe MapTiles)

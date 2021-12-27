@@ -16,12 +16,12 @@ testAddTileFile :: Spec
 testAddTileFile = do
     result <-
         fmap fromJust . runIO $
-        addTileFile unitedImageFile empty >>=
-        addTileFile (separatedFile 0) . fromJust
+        addTileFile dummyUnited unitedImageFile empty >>=
+        addTileFile dummySeparated (separatedFile 0) . fromJust
     expected <-
         runIO $
-        insertMultipleSeparatedFiles separatedFiles unitedImageFile empty >>=
-        insertMultipleSeparatedFiles [separatedFile 0] (separatedFile 0)
+        insertMultipleSeparatedFiles separatedFiles dummyUnited empty >>=
+        insertMultipleSeparatedFiles [separatedFile 0] dummySeparated
     describe "addTileFile" $
         it
             "separate tile images in the tile file and adds all separated images." $
@@ -37,3 +37,5 @@ testAddTileFile = do
     separatedFiles = fmap separatedFile [0 :: Int .. 5]
     separatedFile :: Int -> FilePath
     separatedFile n = "tests/images/tiles/separated_" ++ show n ++ ".png"
+    dummyUnited = "united.json"
+    dummySeparated = "separated.json"

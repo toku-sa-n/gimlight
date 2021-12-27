@@ -4,6 +4,7 @@ module UI.Graphics
     , getMapTiles
     ) where
 
+import           Data.Map             (empty)
 import           UI.Graphics.MapTiles (MapTiles)
 import qualified UI.Graphics.MapTiles as MapTiles
 
@@ -13,7 +14,7 @@ newtype Graphics =
 
 graphics :: IO (Maybe Graphics)
 graphics = do
-    mt <- MapTiles.mapTiles "images/map_tiles.png"
+    mt <- MapTiles.addTileFile "maps/tiles.json" "images/map_tiles.png" empty
     return $ Graphics <$> mt
 
 getMapTiles :: Graphics -> MapTiles
