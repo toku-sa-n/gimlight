@@ -1,15 +1,12 @@
 module UI.Graphics.MapTiles
     ( MapTiles
-    , mapTiles
     , addTileFile
     ) where
 
 import           Codec.Picture       (Image (imageHeight, imageWidth),
                                       PixelRGBA8, convertRGBA8, readImage)
 import           Codec.Picture.Extra (crop)
-import           Data.Map            (Map, fromList, insert)
-import           System.Directory    (canonicalizePath,
-                                      makeRelativeToCurrentDirectory)
+import           Data.Map            (Map, insert)
 import           UI.Draw.Config      (tileHeight, tileWidth)
 
 type MapTiles = Map (FilePath, Int) (Image PixelRGBA8)
@@ -20,15 +17,6 @@ addTileFile jsonFile path tiles = do
     return $
         foldl (\acc (idx, img) -> insert idx img acc) tiles .
         zip (zip (repeat jsonFile) [0 ..]) . cutTileMap <$>
-        tileFile
-
-mapTiles :: FilePath -> IO (Maybe MapTiles)
-mapTiles path = do
-    tileFile <- readTileMapFile path
-    canonicalizedPath <-
-        canonicalizePath path >>= makeRelativeToCurrentDirectory
-    return $
-        fromList . zip (zip (repeat canonicalizedPath) [0 ..]) . cutTileMap <$>
         tileFile
 
 readTileMapFile :: FilePath -> IO (Maybe (Image PixelRGBA8))
