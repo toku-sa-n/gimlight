@@ -25,9 +25,8 @@ readMapFile path = do
     json <- readFile path
     canonicalizedPath <- tileFilePath json
     case canonicalizedPath of
-        Just x -> do
-            let cm = parseFile json x
-            case cm of
+        Just x ->
+            case parseFile json x of
                 Just cm' -> return $ Just (cm', x)
                 Nothing  -> return Nothing
         Nothing -> return Nothing
