@@ -18,7 +18,7 @@ spec = do
 
 testReadMapFileReturnsTilePath :: Spec
 testReadMapFileReturnsTilePath = do
-    result <- runIO $ readMapFile "tests/maps/single_tile.json"
+    result <- runIO $ runMaybeT $ readMapFile "tests/maps/single_tile.json"
     describe "readMapFile" .
         it "returns the path to the corresponding tile file." $
         snd (fromJust result) `shouldBe` "tests/tiles/separated_0.json"
@@ -26,7 +26,7 @@ testReadMapFileReturnsTilePath = do
 testReadMapTileImage :: Spec
 testReadMapTileImage = do
     expectedCellMap <-
-        fmap (fst . fromJust) . runIO $
+        fmap (fst . fromJust) . runIO . runMaybeT $
         readMapFile "tests/maps/single_tile.json"
     expectedTile <-
         fmap fst . runIO $ addTileFile "tests/tiles/separated_0.json" empty

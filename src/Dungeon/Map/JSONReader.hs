@@ -1,4 +1,3 @@
-{-# LANGUAGE LambdaCase        #-}
 {-# LANGUAGE OverloadedStrings #-}
 
 module Dungeon.Map.JSONReader
@@ -32,28 +31,21 @@ readMapTileImage ::
     -> FilePath
     -> MaybeT IO (CellMap, TileCollection, MapTiles)
 readMapTileImage tc mt path = do
-    (cm, tileJsonPath) <- MaybeT $ readMapFile path
+    (cm, tileJsonPath) <- readMapFile path
     (tc', mt') <- addTileAndImage tileJsonPath tc mt
     return (cm, tc', mt')
 
-readMapFile :: FilePath -> IO (Maybe (CellMap, FilePath))
+readMapFile :: FilePath -> MaybeT IO (CellMap, FilePath)
 readMapFile path = do
-    json <- readFile path
-    tileFilePath json >>= \case
-        Just x ->
-            case parseFile json x of
-                Just cm' -> return $ Just (cm', x)
-                Nothing  -> return Nothing
-        Nothing -> return Nothing
+    json <- MaybeT . fmap return $ readFile path
+    tileFilePath <- getAndCanonicalizeTileFilePath json
+    cm <- MaybeT . return $ parseFile json tileFilePath
+    return (cm, tileFilePath)
   where
-    tileFilePath json =
-        case getTileFilePath json of
-            Just x -> do
-                p <-
-                    canonicalizePath (dropFileName path </> x) >>=
-                    makeRelativeToCurrentDirectory
-                return $ Just p
-            Nothing -> return Nothing
+    getAndCanonicalizeTileFilePath json = do
+        rawPath <- MaybeT . return $ getTileFilePath json
+        MaybeT . fmap return $ canonicalizePath (dropFileName path </> rawPath) >>=
+            makeRelativeToCurrentDirectory
     parseFile json canonicalizedPath = do
         V2 height width <- getMapSize json
         tiles <- getTiles json canonicalizedPath
