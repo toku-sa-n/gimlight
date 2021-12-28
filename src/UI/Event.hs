@@ -4,35 +4,36 @@ module UI.Event
     ( handleEvent
     ) where
 
-import           Control.Monad.Trans.Maybe (MaybeT (runMaybeT))
-import           Data.Maybe                (fromMaybe)
-import           Data.Text                 (Text)
-import           GameConfig                (Language (English, Japanese),
-                                            setLocale, writeConfig)
-import           GameModel                 (GameModel (GameModel, config, mapTiles, status))
-import           GameStatus                (GameStatus (Exploring, GameOver, ReadingBook, Scene, SelectingItem, SelectingLocale, Talking, Title),
-                                            newGameStatus)
-import           GameStatus.Exploring      (ascendStairsAtPlayerPosition,
-                                            descendStairsAtPlayerPosition,
-                                            processAfterPlayerTurn)
-import           GameStatus.ReadingBook    (finishReading)
-import           GameStatus.Scene          (nextSceneOrFinish)
-import           GameStatus.SelectingItem  (Reason (Drop, Use),
-                                            getExploringHandler, selectNextItem,
-                                            selectPrevItem)
-import           GameStatus.Talking        (proceedTalking, selectNextChoice,
-                                            selectPrevChoice)
-import           Linear.V2                 (V2 (V2))
-import           Monomer                   (EventResponse (Model, Task),
-                                            exitApplication)
-import           Player                    (handlePlayerAfterSelecting,
-                                            handlePlayerMoving,
-                                            handlePlayerPickingUp,
-                                            handlePlayerSelectingItem)
-import           Save                      (load, save)
-import           UI.Types                  (AppEvent (AppInit, AppKeyboardInput, AppLoadFinished, AppSaveFinished),
-                                            GameEventResponse, GameWidgetEnv,
-                                            GameWidgetNode)
+import           Control.Monad.Except     (runExceptT)
+import           Data.Either              (fromRight)
+import           Data.Maybe               (fromMaybe)
+import           Data.Text                (Text)
+import           GameConfig               (Language (English, Japanese),
+                                           setLocale, writeConfig)
+import           GameModel                (GameModel (GameModel, config, mapTiles, status))
+import           GameStatus               (GameStatus (Exploring, GameOver, ReadingBook, Scene, SelectingItem, SelectingLocale, Talking, Title),
+                                           newGameStatus)
+import           GameStatus.Exploring     (ascendStairsAtPlayerPosition,
+                                           descendStairsAtPlayerPosition,
+                                           processAfterPlayerTurn)
+import           GameStatus.ReadingBook   (finishReading)
+import           GameStatus.Scene         (nextSceneOrFinish)
+import           GameStatus.SelectingItem (Reason (Drop, Use),
+                                           getExploringHandler, selectNextItem,
+                                           selectPrevItem)
+import           GameStatus.Talking       (proceedTalking, selectNextChoice,
+                                           selectPrevChoice)
+import           Linear.V2                (V2 (V2))
+import           Monomer                  (EventResponse (Model, Task),
+                                           exitApplication)
+import           Player                   (handlePlayerAfterSelecting,
+                                           handlePlayerMoving,
+                                           handlePlayerPickingUp,
+                                           handlePlayerSelectingItem)
+import           Save                     (load, save)
+import           UI.Types                 (AppEvent (AppInit, AppKeyboardInput, AppLoadFinished, AppSaveFinished),
+                                           GameEventResponse, GameWidgetEnv,
+                                           GameWidgetNode)
 
 handleEvent ::
        GameWidgetEnv
@@ -138,8 +139,8 @@ handleKeyInputDuringTitle g k
     | k == "n" =
         [ Task $ do
               st <-
-                  fmap (fromMaybe (error "Failed to start a new game.")) .
-                  runMaybeT $
+                  fmap (fromRight (error "Failed to start a new game.")) .
+                  runExceptT $
                   startNewGame g
               return $ AppLoadFinished st
         ]

@@ -8,7 +8,7 @@ module GameStatus
     ) where
 
 import           Control.Lens                 ()
-import           Control.Monad.Trans.Maybe    (MaybeT)
+import           Control.Monad.Except         (ExceptT)
 import           Data.Binary                  (Binary)
 import           Data.Map                     (empty)
 import           Data.Maybe                   (fromMaybe)
@@ -49,7 +49,7 @@ data GameStatus
 
 instance Binary GameStatus
 
-newGameStatus :: MaybeT IO (GameStatus, MapTiles)
+newGameStatus :: ExceptT String IO (GameStatus, MapTiles)
 newGameStatus = do
     g <- getStdGen
     (gm, tc, mt) <- globalMap empty empty

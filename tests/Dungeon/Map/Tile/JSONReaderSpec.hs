@@ -3,10 +3,9 @@ module Dungeon.Map.Tile.JSONReaderSpec
     ) where
 
 import           Codec.Picture               (convertRGBA8, readImage)
-import           Control.Monad.Trans.Maybe   (MaybeT (runMaybeT))
+import           Control.Monad.Except        (runExceptT)
 import           Data.Either.Combinators     (fromRight')
 import           Data.Map                    (empty, fromList, insert)
-import           Data.Maybe                  (fromJust)
 import           Dungeon.Map.Tile            (tile)
 import           Dungeon.Map.Tile.JSONReader (addTileAndImage, addTileFile)
 import           Test.Hspec                  (Spec, describe, it, runIO,
@@ -51,7 +50,7 @@ testAddTileFileReturnsImagePath = do
 testAddTileAndImage :: Spec
 testAddTileAndImage = do
     (resultTiles, resultImages) <-
-        fmap fromJust . runIO . runMaybeT $ do
+        fmap fromRight' . runIO . runExceptT $ do
             (tc, mt) <- addTileAndImage "tests/tiles/united.json" empty empty
             addTileAndImage (separatedTileFile 0) tc mt
     expectedImages <-

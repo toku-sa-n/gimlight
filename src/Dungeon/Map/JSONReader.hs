@@ -6,11 +6,12 @@ module Dungeon.Map.JSONReader
     ) where
 
 import           Control.Lens                (Ixed (ix), (^..), (^?))
-import           Control.Monad               (guard)
-import           Control.Monad.Trans.Maybe   (MaybeT (MaybeT))
+import           Control.Monad               (unless)
+import           Control.Monad.Except        (ExceptT (ExceptT))
 import           Data.Aeson.Lens             (_Array, _Integer, _String, key,
                                               values)
 import           Data.Array                  (array)
+import           Data.Either.Combinators     (maybeToRight)
 import           Data.Text                   (unpack)
 import           Data.Vector                 (Vector, toList)
 import qualified Data.Vector                 as V
@@ -29,31 +30,42 @@ readMapTileImage ::
        TileCollection
     -> MapTiles
     -> FilePath
-    -> MaybeT IO (CellMap, TileCollection, MapTiles)
+    -> ExceptT String IO (CellMap, TileCollection, MapTiles)
 readMapTileImage tc mt path = do
     (cm, tileJsonPath) <- readMapFile path
     (tc', mt') <- addTileAndImage tileJsonPath tc mt
     return (cm, tc', mt')
 
-readMapFile :: FilePath -> MaybeT IO (CellMap, FilePath)
+readMapFile :: FilePath -> ExceptT String IO (CellMap, FilePath)
 readMapFile path = do
-    json <- MaybeT . fmap return $ readFile path
+    json <- ExceptT . fmap return $ readFile path
     tileFilePath <- getAndCanonicalizeTileFilePath json
-    cm <- MaybeT . return $ parseFile json tileFilePath
+    cm <- ExceptT . return $ parseFile json tileFilePath
     return (cm, tileFilePath)
   where
     getAndCanonicalizeTileFilePath json = do
-        rawPath <- MaybeT . return $ getTileFilePath json
-        MaybeT . fmap return $ canonicalizePath (dropFileName path </> rawPath) >>=
+        rawPath <-
+            ExceptT . return . maybeToRight tilePathNotContained $
+            getTileFilePath json
+        ExceptT . fmap return $ canonicalizePath (dropFileName path </> rawPath) >>=
             makeRelativeToCurrentDirectory
     parseFile json canonicalizedPath = do
-        V2 height width <- getMapSize json
+        V2 height width <- maybeToRight noWidthOrHeight $ getMapSize json
         tiles <- getTiles json canonicalizedPath
-        guard $ height * width == length tiles
-        Just
+        unless (height * width == length tiles) $ Left invalidWidthHeight
+        Right
             (cellMap $ array (V2 0 0, V2 (width - 1) (height - 1)) $
              zip [V2 x y | y <- [0 .. height - 1], x <- [0 .. width - 1]] $
              toList tiles)
+    tilePathNotContained =
+        "The map file " ++ path ++
+        " does not contain the paths to the tile files."
+    noWidthOrHeight =
+        "The map file " ++ path ++
+        " does not contain both `width` and `height` fields."
+    invalidWidthHeight =
+        "The multiplication of width and height of the map " ++ path ++
+        " does not equal to the number of tiles."
 
 getTileFilePath :: String -> Maybe FilePath
 getTileFilePath json =
@@ -65,11 +77,15 @@ getMapSize json =
         (Just w, Just h) -> Just $ fromIntegral <$> V2 w h
         _                -> Nothing
 
-getTiles :: String -> FilePath -> Maybe (Vector TileIdentifierLayer)
+getTiles :: String -> FilePath -> Either String (Vector TileIdentifierLayer)
 getTiles json path = V.zipWith TileIdentifierLayer <$> uppers <*> lowers
   where
-    lowers = getTileIdOfNthLayer 0 json path
-    uppers = getTileIdOfNthLayer 1 json path
+    lowers =
+        maybeToRight "The map file does not contain the lower layer." $
+        getTileIdOfNthLayer 0 json path
+    uppers =
+        maybeToRight "The map file does not contain the upper layer." $
+        getTileIdOfNthLayer 1 json path
 
 getTileIdOfNthLayer ::
        Int -> String -> FilePath -> Maybe (Vector (Maybe TileIdentifier))

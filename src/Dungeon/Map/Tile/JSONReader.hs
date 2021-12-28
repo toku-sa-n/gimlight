@@ -5,28 +5,27 @@ module Dungeon.Map.Tile.JSONReader
     , addTileAndImage
     ) where
 
-import           Control.Lens              (filtered, has, only, (^..), (^?))
-import           Control.Monad             ((>=>))
-import           Control.Monad.Trans.Maybe (MaybeT (MaybeT))
-import           Data.Aeson.Lens           (_Bool, _Integer, _String, key,
-                                            values)
-import           Data.Map                  (insert)
-import           Data.Maybe                (fromMaybe)
-import           Data.Text                 (Text, unpack)
-import           Dungeon.Map.Tile          (Tile, TileCollection, tile)
-import           System.Directory          (canonicalizePath,
-                                            makeRelativeToCurrentDirectory)
-import           System.FilePath           (dropFileName, (</>))
-import           UI.Graphics.MapTiles      (MapTiles)
-import qualified UI.Graphics.MapTiles      as MapTiles
+import           Control.Lens         (filtered, has, only, (^..), (^?))
+import           Control.Monad        ((>=>))
+import           Control.Monad.Except (ExceptT (ExceptT))
+import           Data.Aeson.Lens      (_Bool, _Integer, _String, key, values)
+import           Data.Map             (insert)
+import           Data.Maybe           (fromMaybe)
+import           Data.Text            (Text, unpack)
+import           Dungeon.Map.Tile     (Tile, TileCollection, tile)
+import           System.Directory     (canonicalizePath,
+                                       makeRelativeToCurrentDirectory)
+import           System.FilePath      (dropFileName, (</>))
+import           UI.Graphics.MapTiles (MapTiles)
+import qualified UI.Graphics.MapTiles as MapTiles
 
 addTileAndImage ::
        FilePath
     -> TileCollection
     -> MapTiles
-    -> MaybeT IO (TileCollection, MapTiles)
+    -> ExceptT String IO (TileCollection, MapTiles)
 addTileAndImage path tc mt = do
-    (tc', imgPath) <- MaybeT $ Just <$> addTileFile path tc
+    (tc', imgPath) <- ExceptT . fmap Right $ addTileFile path tc
     mt' <- MapTiles.addTileFile path imgPath mt
     return (tc', mt')
 

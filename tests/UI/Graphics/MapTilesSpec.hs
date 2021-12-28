@@ -2,13 +2,12 @@ module UI.Graphics.MapTilesSpec
     ( spec
     ) where
 
-import           Codec.Picture             (convertRGBA8, readImage)
-import           Control.Monad.Trans.Maybe (MaybeT (runMaybeT))
-import           Data.Either.Combinators   (fromRight')
-import           Data.Map                  (empty, insert)
-import           Data.Maybe                (fromJust)
-import           Test.Hspec                (Spec, describe, it, runIO, shouldBe)
-import           UI.Graphics.MapTiles      (addTileFile)
+import           Codec.Picture           (convertRGBA8, readImage)
+import           Control.Monad.Except    (runExceptT)
+import           Data.Either.Combinators (fromRight')
+import           Data.Map                (empty, insert)
+import           Test.Hspec              (Spec, describe, it, runIO, shouldBe)
+import           UI.Graphics.MapTiles    (addTileFile)
 
 spec :: Spec
 spec = testAddTileFile
@@ -16,7 +15,7 @@ spec = testAddTileFile
 testAddTileFile :: Spec
 testAddTileFile = do
     result <-
-        fmap fromJust . runIO . runMaybeT $
+        fmap fromRight' . runIO . runExceptT $
         addTileFile dummyUnited unitedImageFile empty >>=
         addTileFile dummySeparated (separatedFile 0)
     expected <-
