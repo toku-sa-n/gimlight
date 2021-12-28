@@ -31,7 +31,7 @@ testReadMapTileImage = do
     expectedTile <-
         fmap fst . runIO $ addTileFile "tests/tiles/separated_0.json" empty
     expectedImage <-
-        fmap fromJust . runIO $
+        fmap fromJust . runIO . runMaybeT $
         MapTiles.addTileFile
             "tests/tiles/separated_0.json"
             "tests/images/tiles/separated_0.png"

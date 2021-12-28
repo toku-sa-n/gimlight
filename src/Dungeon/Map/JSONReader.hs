@@ -33,7 +33,7 @@ readMapTileImage ::
     -> MaybeT IO (CellMap, TileCollection, MapTiles)
 readMapTileImage tc mt path = do
     (cm, tileJsonPath) <- MaybeT $ readMapFile path
-    (tc', mt') <- MaybeT $ addTileAndImage tileJsonPath tc mt
+    (tc', mt') <- addTileAndImage tileJsonPath tc mt
     return (cm, tc', mt')
 
 readMapFile :: FilePath -> IO (Maybe (CellMap, FilePath))

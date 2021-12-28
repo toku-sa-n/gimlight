@@ -3,35 +3,30 @@ module UI.Graphics.MapTiles
     , addTileFile
     ) where
 
-import           Codec.Picture       (Image (imageHeight, imageWidth),
-                                      PixelRGBA8, convertRGBA8, readImage)
-import           Codec.Picture.Extra (crop)
-import           Data.Map            (Map, insert)
-import           UI.Draw.Config      (tileHeight, tileWidth)
+import           Codec.Picture             (Image (imageHeight, imageWidth),
+                                            PixelRGBA8, convertRGBA8, readImage)
+import           Codec.Picture.Extra       (crop)
+import           Control.Monad             (guard)
+import           Control.Monad.Trans.Maybe (MaybeT (MaybeT))
+import           Data.Either.Combinators   (rightToMaybe)
+import           Data.Map                  (Map, insert)
+import           UI.Draw.Config            (tileHeight, tileWidth)
 
 type MapTiles = Map (FilePath, Int) (Image PixelRGBA8)
 
-addTileFile :: FilePath -> FilePath -> MapTiles -> IO (Maybe MapTiles)
+addTileFile :: FilePath -> FilePath -> MapTiles -> MaybeT IO MapTiles
 addTileFile jsonFile path tiles = do
     tileFile <- readTileMapFile path
     return $
         foldl (\acc (idx, img) -> insert idx img acc) tiles .
-        zip (zip (repeat jsonFile) [0 ..]) . cutTileMap <$>
-        tileFile
+        zip (zip (repeat jsonFile) [0 ..]) $
+        cutTileMap tileFile
 
-readTileMapFile :: FilePath -> IO (Maybe (Image PixelRGBA8))
+readTileMapFile :: FilePath -> MaybeT IO (Image PixelRGBA8)
 readTileMapFile path = do
-    tileFile <- readImage path
-    case tileFile of
-        Right x -> return $ convertAndCheck x
-        Left _  -> error "Failed to read a tile image file."
-  where
-    convertAndCheck img =
-        if isValidTileMapFile rgbaImage
-            then Just rgbaImage
-            else Nothing
-      where
-        rgbaImage = convertRGBA8 img
+    tileFile <- MaybeT $ fmap convertRGBA8 . rightToMaybe <$> readImage path
+    guard $ isValidTileMapFile tileFile
+    return tileFile
 
 isValidTileMapFile :: Image PixelRGBA8 -> Bool
 isValidTileMapFile img =
