@@ -23,14 +23,11 @@ initDungeon ::
     -> MaybeT IO (Dungeon, TileCollection, MapTiles, IndexGenerator)
 initDungeon tc mt ig = do
     (beaeve', tc', mt', ig'') <- beaeve tc mt ig'
-    d <-
-        MaybeT . return $
-        beaeve' &
-        cellMap %%~
-        (\x ->
-             rightToMaybe (execStateT (locateActorAt tc' player' (V2 5 5)) x) >>=
-             updatePlayerFov tc' >>=
-             Just . updateExploredMap)
+    d <- MaybeT . return $ beaeve' & cellMap %%~ initBeaeve tc'
     return (d, tc', mt', ig'')
   where
+    initBeaeve tc' cm' =
+        rightToMaybe (execStateT (locateActorAt tc' player' (V2 5 5)) cm') >>=
+        updatePlayerFov tc' >>=
+        Just . updateExploredMap
     (player', ig') = player ig
