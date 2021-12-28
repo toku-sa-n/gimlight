@@ -8,6 +8,7 @@ module GameStatus
     ) where
 
 import           Control.Lens                 ()
+import           Control.Monad.Trans.Maybe    (MaybeT (runMaybeT))
 import           Data.Binary                  (Binary)
 import           Data.Map                     (empty)
 import           Data.Maybe                   (fromMaybe)
@@ -15,7 +16,6 @@ import           Data.Tree                    (Tree (Node, rootLabel, subForest)
 import           Dungeon                      (addAscendingAndDescendingStiars,
                                                addDescendingStairs)
 import           Dungeon.Init                 (initDungeon)
-import           Dungeon.Map.Tile.JSONReader  (addTileFile)
 import           Dungeon.Predefined.BatsCave  (batsDungeon)
 import           Dungeon.Predefined.GlobalMap (globalMap)
 import           Dungeon.Stairs               (StairsPair (StairsPair))
@@ -34,6 +34,7 @@ import qualified Log                          as L
 import           Quest                        (questCollection)
 import           System.Random                (getStdGen)
 import           TreeZipper                   (appendTree, goDownBy, treeZipper)
+import           UI.Graphics.MapTiles         (MapTiles)
 
 data GameStatus
     = Exploring ExploringHandler
@@ -48,13 +49,14 @@ data GameStatus
 
 instance Binary GameStatus
 
-newGameStatus :: IO GameStatus
+newGameStatus :: IO (GameStatus, MapTiles)
 newGameStatus = do
     g <- getStdGen
-    tileCollection <- fst <$> addTileFile "maps/tiles.json" empty
     gm <- globalMap
-    (beaeve, ig) <- initDungeon generator tileCollection
-    let (stairsPosition, bats, _, _) = batsDungeon g ig tileCollection
+    (beaeve, tc, mt, ig) <-
+        fmap (fromMaybe (error "Failed to read the beaeve map.")) . runMaybeT $
+        initDungeon empty empty generator
+    let (stairsPosition, bats, _, _) = batsDungeon g ig tc
         (gmWithBatsStairs, batsRootMapWithParentMap) =
             addAscendingAndDescendingStiars
                 (StairsPair (V2 9 6) stairsPosition)
@@ -80,10 +82,11 @@ newGameStatus = do
                 initZipper
                 (foldr (L.addMessage . L.message) L.emptyLog [T.welcome])
                 questCollection
-                tileCollection
-    return $
-        Scene $
-        sceneHandler
-            "images/game_opening.png"
-            [withoutSpeaker T.title1, withoutSpeaker T.title2]
-            initExploring
+                tc
+    return
+        ( Scene $
+          sceneHandler
+              "images/game_opening.png"
+              [withoutSpeaker T.title1, withoutSpeaker T.title2]
+              initExploring
+        , mt)

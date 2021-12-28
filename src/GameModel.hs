@@ -5,14 +5,14 @@ module GameModel
     ( GameModel(..)
     ) where
 
-import           GameConfig  (GameConfig)
-import           GameStatus  (GameStatus)
-import           UI.Graphics (Graphics)
+import           GameConfig           (GameConfig)
+import           GameStatus           (GameStatus)
+import           UI.Graphics.MapTiles (MapTiles)
 
 data GameModel =
     GameModel
         { status   :: GameStatus
         , config   :: GameConfig
-        , graphics :: Graphics
+        , mapTiles :: MapTiles
         }
     deriving (Eq)

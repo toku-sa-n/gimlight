@@ -2,31 +2,29 @@ module Dungeon.Predefined.Beaeve
     ( beaeve
     ) where
 
-import           Actor.Friendly.Electria (electria)
-import           Control.Monad.State     (execStateT)
-import           Data.Maybe              (fromMaybe)
-import           Dungeon                 (Dungeon, dungeon)
-import           Dungeon.Identifier      (Identifier (Beaeve))
-import           Dungeon.Map.Cell        (CellMap, locateActorAt)
-import qualified Dungeon.Map.JSONReader  as JSONReader
-import           Dungeon.Map.Tile        (TileCollection)
-import           IndexGenerator          (IndexGenerator)
-import           Linear.V2               (V2 (V2))
+import           Actor.Friendly.Electria   (electria)
+import           Control.Monad.State       (execStateT)
+import           Control.Monad.Trans.Maybe (MaybeT (MaybeT))
+import           Data.Either.Combinators   (rightToMaybe)
+import           Dungeon                   (Dungeon, dungeon)
+import           Dungeon.Identifier        (Identifier (Beaeve))
+import           Dungeon.Map.Cell          (locateActorAt)
+import           Dungeon.Map.JSONReader    (readMapTileImage)
+import           Dungeon.Map.Tile          (TileCollection)
+import           IndexGenerator            (IndexGenerator)
+import           Linear.V2                 (V2 (V2))
+import           UI.Graphics.MapTiles      (MapTiles)
 
-beaeve :: TileCollection -> IndexGenerator -> IO (Dungeon, IndexGenerator)
-beaeve tc ig = do
-    tileMap <- readMapFile
-    let tileMap' =
-            case flip execStateT tileMap $ locateActorAt tc electria' (V2 4 5) of
-                Right x -> x
-                Left e ->
-                    error $ "Failed to generate the Beaeve map: " <> show e
-    return (dungeon tileMap' Beaeve, ig')
+beaeve ::
+       TileCollection
+    -> MapTiles
+    -> IndexGenerator
+    -> MaybeT IO (Dungeon, TileCollection, MapTiles, IndexGenerator)
+beaeve tc mt ig = do
+    (cm, tc', mt') <- readMapTileImage tc mt "maps/beaeve.json"
+    cm' <-
+        MaybeT . return . rightToMaybe . flip execStateT cm $
+        locateActorAt tc' electria' (V2 4 5)
+    return (dungeon cm' Beaeve, tc', mt', ig')
   where
     (electria', ig') = electria ig
-
-readMapFile :: IO CellMap
-readMapFile = do
-    tileMap <- JSONReader.readMapFile "maps/beaeve.json"
-    return . fst $
-        fromMaybe (error "Failed to read the map file of Beaeve") tileMap

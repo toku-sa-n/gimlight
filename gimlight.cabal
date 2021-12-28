@@ -141,7 +141,6 @@ library
                       , UI.Draw.SelectingItem
                       , UI.Draw.Talking
                       , UI.Draw.Title
-                      , UI.Graphics
                       , UI.Event
                       , UI.Types
 
