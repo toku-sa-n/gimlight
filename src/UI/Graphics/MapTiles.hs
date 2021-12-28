@@ -9,18 +9,18 @@ import           Codec.Picture.Extra       (crop)
 import           Control.Monad             (guard)
 import           Control.Monad.Trans.Maybe (MaybeT (MaybeT))
 import           Data.Either.Combinators   (rightToMaybe)
+import           Data.Functor              ((<&>))
 import           Data.Map                  (Map, insert)
 import           UI.Draw.Config            (tileHeight, tileWidth)
 
 type MapTiles = Map (FilePath, Int) (Image PixelRGBA8)
 
 addTileFile :: FilePath -> FilePath -> MapTiles -> MaybeT IO MapTiles
-addTileFile jsonFile path tiles = do
-    tileFile <- readTileMapFile path
-    return $
+addTileFile jsonFile path tiles = readTileMapFile path <&> tileFileToMap
+  where
+    tileFileToMap =
         foldl (\acc (idx, img) -> insert idx img acc) tiles .
-        zip (zip (repeat jsonFile) [0 ..]) $
-        cutTileMap tileFile
+        zip (zip (repeat jsonFile) [0 ..]) . cutTileMap
 
 readTileMapFile :: FilePath -> MaybeT IO (Image PixelRGBA8)
 readTileMapFile path = do
