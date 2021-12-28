@@ -8,7 +8,7 @@ module GameStatus
     ) where
 
 import           Control.Lens                 ()
-import           Control.Monad.Trans.Maybe    (MaybeT (runMaybeT))
+import           Control.Monad.Trans.Maybe    (MaybeT)
 import           Data.Binary                  (Binary)
 import           Data.Map                     (empty)
 import           Data.Maybe                   (fromMaybe)
@@ -29,7 +29,7 @@ import           GameStatus.SelectingItem     (SelectingItemHandler)
 import           GameStatus.Talking           (TalkingHandler)
 import           IndexGenerator               (generator)
 import           Linear.V2                    (V2 (V2))
-import qualified Localization.Texts           as T
+import qualified Localization.Texts.Scene     as T (title1, title2, welcome)
 import qualified Log                          as L
 import           Quest                        (questCollection)
 import           System.Random                (getStdGen)
@@ -49,14 +49,12 @@ data GameStatus
 
 instance Binary GameStatus
 
-newGameStatus :: IO (GameStatus, MapTiles)
+newGameStatus :: MaybeT IO (GameStatus, MapTiles)
 newGameStatus = do
     g <- getStdGen
-    gm <- globalMap
-    (beaeve, tc, mt, ig) <-
-        fmap (fromMaybe (error "Failed to read the beaeve map.")) . runMaybeT $
-        initDungeon empty empty generator
-    let (stairsPosition, bats, _, _) = batsDungeon g ig tc
+    (gm, tc, mt) <- globalMap empty empty
+    (beaeve, tc', mt', ig) <- initDungeon tc mt generator
+    let (stairsPosition, bats, _, _) = batsDungeon g ig tc'
         (gmWithBatsStairs, batsRootMapWithParentMap) =
             addAscendingAndDescendingStiars
                 (StairsPair (V2 9 6) stairsPosition)
@@ -82,11 +80,11 @@ newGameStatus = do
                 initZipper
                 (foldr (L.addMessage . L.message) L.emptyLog [T.welcome])
                 questCollection
-                tc
+                tc'
     return
         ( Scene $
           sceneHandler
               "images/game_opening.png"
               [withoutSpeaker T.title1, withoutSpeaker T.title2]
               initExploring
-        , mt)
+        , mt')

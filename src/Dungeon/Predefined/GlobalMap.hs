@@ -2,21 +2,17 @@ module Dungeon.Predefined.GlobalMap
     ( globalMap
     ) where
 
-import           Data.Maybe             (fromMaybe)
-import           Dungeon                (Dungeon, dungeon)
-import           Dungeon.Identifier     (Identifier (GlobalMap))
-import           Dungeon.Map.Cell       (CellMap)
-import qualified Dungeon.Map.JSONReader as JSONReader
+import           Control.Monad.Trans.Maybe (MaybeT)
+import           Dungeon                   (Dungeon, dungeon)
+import           Dungeon.Identifier        (Identifier (GlobalMap))
+import           Dungeon.Map.JSONReader    (readMapTileImage)
+import           Dungeon.Map.Tile          (TileCollection)
+import           UI.Graphics.MapTiles      (MapTiles)
 
-globalMap :: IO Dungeon
-globalMap = do
-    tileMap <- readMapFile
-    return $ dungeon tileMap GlobalMap
-
-readMapFile :: IO CellMap
-readMapFile = do
-    tileMap <- JSONReader.readMapFile "maps/global_map.json"
-    return . fst $
-        fromMaybe
-            (error "Failed to read the map file of the global map.")
-            tileMap
+globalMap ::
+       TileCollection
+    -> MapTiles
+    -> MaybeT IO (Dungeon, TileCollection, MapTiles)
+globalMap tc mt = do
+    (cm, tc', mt') <- readMapTileImage tc mt "maps/global_map.json"
+    return (dungeon cm GlobalMap, tc', mt')
