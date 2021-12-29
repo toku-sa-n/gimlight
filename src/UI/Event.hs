@@ -4,8 +4,6 @@ module UI.Event
     ( handleEvent
     ) where
 
-import           Control.Monad.Except     (runExceptT)
-import           Data.Either              (fromRight)
 import           Data.Maybe               (fromMaybe)
 import           Data.Text                (Text)
 import           GameConfig               (Language (English, Japanese),
@@ -138,10 +136,7 @@ handleKeyInputDuringTitle :: GameModel -> Text -> [GameEventResponse]
 handleKeyInputDuringTitle g k
     | k == "n" =
         [ Task $ do
-              st <-
-                  fmap (fromRight (error "Failed to start a new game.")) .
-                  runExceptT $
-                  startNewGame g
+              st <- startNewGame g
               return $ AppLoadFinished st
         ]
     | k == "l" =

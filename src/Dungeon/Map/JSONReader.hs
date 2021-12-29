@@ -1,3 +1,4 @@
+{-# LANGUAGE LambdaCase        #-}
 {-# LANGUAGE OverloadedStrings #-}
 
 module Dungeon.Map.JSONReader
@@ -7,7 +8,7 @@ module Dungeon.Map.JSONReader
 
 import           Control.Lens                (Ixed (ix), (^..), (^?))
 import           Control.Monad               (unless)
-import           Control.Monad.Except        (ExceptT (ExceptT))
+import           Control.Monad.Except        (ExceptT (ExceptT), runExceptT)
 import           Data.Aeson.Lens             (_Array, _Integer, _String, key,
                                               values)
 import           Data.Array                  (array)
@@ -30,11 +31,17 @@ readMapTileImage ::
        TileCollection
     -> MapTiles
     -> FilePath
-    -> ExceptT String IO (CellMap, TileCollection, MapTiles)
-readMapTileImage tc mt path = do
-    (cm, tileJsonPath) <- readMapFile path
-    (tc', mt') <- addTileAndImage tileJsonPath tc mt
-    return (cm, tc', mt')
+    -> IO (CellMap, TileCollection, MapTiles)
+readMapTileImage tc mt path =
+    result >>= \case
+        Right x -> return x
+        Left x  -> error x
+  where
+    result =
+        runExceptT $ do
+            (cm, tileJsonPath) <- readMapFile path
+            (tc', mt') <- addTileAndImage tileJsonPath tc mt
+            return (cm, tc', mt')
 
 readMapFile :: FilePath -> ExceptT String IO (CellMap, FilePath)
 readMapFile path = do

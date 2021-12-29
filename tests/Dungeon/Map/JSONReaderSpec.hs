@@ -37,8 +37,7 @@ testReadMapTileImage = do
             "tests/images/tiles/separated_0.png"
             empty
     (resultCellMap, resultTile, resultImage) <-
-        fmap fromRight' . runIO $
-        runExceptT $ readMapTileImage empty empty "tests/maps/single_tile.json"
+        runIO $ readMapTileImage empty empty "tests/maps/single_tile.json"
     describe "readMapTileImage" $ do
         it "loads the map file" $ resultCellMap `shouldBe` expectedCellMap
         it "loads the tile file" $ resultTile `shouldBe` expectedTile

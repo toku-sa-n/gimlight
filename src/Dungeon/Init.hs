@@ -1,10 +1,11 @@
+{-# LANGUAGE LambdaCase #-}
+
 module Dungeon.Init
     ( initDungeon
     ) where
 
 import           Actor                     (player)
 import           Control.Lens              ((%%~), (&))
-import           Control.Monad.Except      (ExceptT (ExceptT))
 import           Control.Monad.State       (execStateT)
 import           Data.Either.Combinators   (mapLeft, maybeToRight)
 import           Dungeon                   (Dungeon, cellMap)
@@ -20,12 +21,16 @@ initDungeon ::
        TileCollection
     -> MapTiles
     -> IndexGenerator
-    -> ExceptT String IO (Dungeon, TileCollection, MapTiles, IndexGenerator)
+    -> IO (Dungeon, TileCollection, MapTiles, IndexGenerator)
 initDungeon tc mt ig = do
     (beaeve', tc', mt', ig'') <- beaeve tc mt ig'
-    d <- ExceptT . return $ beaeve' & cellMap %%~ initBeaeve tc'
+    let d = unwrapRight $ beaeve' & cellMap %%~ initBeaeve tc'
     return (d, tc', mt', ig'')
   where
+    unwrapRight =
+        \case
+            Right x -> x
+            Left x  -> error x
     initBeaeve tc' cm' =
         mapLeft show (execStateT (locateActorAt tc' player' (V2 5 5)) cm') >>=
         maybeToRight "Failed to update the player FoV." . updatePlayerFov tc' >>=
