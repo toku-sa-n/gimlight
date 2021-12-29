@@ -7,7 +7,8 @@ import           Data.Either.Combinators     (fromRight')
 import           Data.Map                    (empty, fromList, insert, union)
 import           Dungeon.Map.Tile            (tile)
 import           Dungeon.Map.Tile.JSONReader (addTileAndImage, addTileFile)
-import           SetUp.ImageFile             (separatedTileImage)
+import           SetUp.ImageFile             (separatedTileImage,
+                                              unitedTileImageFile)
 import           SetUp.TileFile              (singleTileFile,
                                               tilesInSingleTileFile,
                                               unitedTileFile)
@@ -41,12 +42,10 @@ testAddTileFile = do
 
 testAddTileFileReturnsImagePath :: Spec
 testAddTileFileReturnsImagePath = do
-    result <- runIO $ addTileFile "maps/tiles.json" empty
+    result <- runIO $ addTileFile unitedTileFile empty
     describe "readTileFile" $
         it "returns the path to the corresponding image file." $
-        snd result `shouldBe` expected
-  where
-    expected = "images/map_tiles.png"
+        snd result `shouldBe` unitedTileImageFile
 
 testAddTileAndImage :: Spec
 testAddTileAndImage = do

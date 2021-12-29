@@ -1,5 +1,6 @@
 module SetUp.ImageFile
     ( separatedTileImage
+    , unitedTileImageFile
     ) where
 
 separatedTileImage :: Int -> FilePath
@@ -11,3 +12,6 @@ separatedTileImage n
 
 numOfSeparatedTileImages :: Int
 numOfSeparatedTileImages = 6
+
+unitedTileImageFile :: FilePath
+unitedTileImageFile = "tests/images/tiles/united.png"
