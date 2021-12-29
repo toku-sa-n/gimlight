@@ -7,6 +7,7 @@ import           Data.Either.Combinators     (fromRight')
 import           Data.Map                    (empty)
 import           Dungeon.Map.JSONReader      (readMapFile, readMapTileImage)
 import           Dungeon.Map.Tile.JSONReader (addTileFile)
+import           SetUp.MapFile               (singleTileMap)
 import           Test.Hspec                  (Spec, describe, it, runIO,
                                               shouldBe)
 import qualified UI.Graphics.MapTiles        as MapTiles
@@ -40,9 +41,6 @@ testReadMapTileImage = do
         it "loads the map file" $ resultCellMap `shouldBe` expectedCellMap
         it "loads the tile file" $ resultTile `shouldBe` expectedTile
         it "loads the image file" $ resultImage == expectedImage `shouldBe` True
-
-singleTileMap :: FilePath
-singleTileMap = "tests/maps/single_tile.json"
 
 separatedTileFile :: FilePath
 separatedTileFile = "tests/tiles/separated_0.json"

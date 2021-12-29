@@ -51,6 +51,7 @@ Test-Suite spec
                       , Dungeon.Map.Tile.JSONReaderSpec
                       , FovSpec
                       , SetUp.Dungeon
+                      , SetUp.MapFile
                       , UI.Graphics.MapTilesSpec
 
     build-depends:      gimlight
