@@ -1,6 +1,6 @@
 module SetUp.TileFile
-    ( separatedTileFile
+    ( singleTileFile
     ) where
 
-separatedTileFile :: FilePath
-separatedTileFile = "tests/tiles/single.json"
+singleTileFile :: FilePath
+singleTileFile = "tests/tiles/single.json"

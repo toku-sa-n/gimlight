@@ -9,7 +9,7 @@ import           Dungeon.Map.JSONReader      (readMapFile, readMapTileImage)
 import           Dungeon.Map.Tile.JSONReader (addTileFile)
 import           SetUp.ImageFile             (separatedTileImage)
 import           SetUp.MapFile               (singleTileMap)
-import           SetUp.TileFile              (separatedTileFile)
+import           SetUp.TileFile              (singleTileFile)
 import           Test.Hspec                  (Spec, describe, it, runIO,
                                               shouldBe)
 import qualified UI.Graphics.MapTiles        as MapTiles
@@ -24,16 +24,15 @@ testReadMapFileReturnsTilePath = do
     result <- runIO $ runExceptT $ readMapFile singleTileMap
     describe "readMapFile" .
         it "returns the path to the corresponding tile file." $
-        snd (fromRight' result) `shouldBe` separatedTileFile
+        snd (fromRight' result) `shouldBe` singleTileFile
 
 testReadMapTileImage :: Spec
 testReadMapTileImage = do
     expectedCellMap <-
         fmap (fst . fromRight') . runIO . runExceptT $ readMapFile singleTileMap
-    expectedTile <- fmap fst . runIO $ addTileFile separatedTileFile empty
+    expectedTile <- fmap fst . runIO $ addTileFile singleTileFile empty
     expectedImage <-
-        runIO $
-        MapTiles.addTileFile separatedTileFile (separatedTileImage 0) empty
+        runIO $ MapTiles.addTileFile singleTileFile (separatedTileImage 0) empty
     (resultCellMap, resultTile, resultImage) <-
         runIO $ readMapTileImage empty empty singleTileMap
     describe "readMapTileImage" $ do

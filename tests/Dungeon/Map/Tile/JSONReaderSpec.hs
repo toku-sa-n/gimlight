@@ -8,7 +8,7 @@ import           Data.Map                    (empty, fromList, insert)
 import           Dungeon.Map.Tile            (tile)
 import           Dungeon.Map.Tile.JSONReader (addTileAndImage, addTileFile)
 import           SetUp.ImageFile             (separatedTileImage)
-import           SetUp.TileFile              (separatedTileFile)
+import           SetUp.TileFile              (singleTileFile)
 import           Test.Hspec                  (Spec, describe, it, runIO,
                                               shouldBe)
 
@@ -22,11 +22,11 @@ testAddTileFile :: Spec
 testAddTileFile = do
     result <-
         fmap fst . runIO $
-        addTileFile unitedTileFile empty >>= addTileFile separatedTileFile . fst
+        addTileFile unitedTileFile empty >>= addTileFile singleTileFile . fst
     describe "addTileFile" $
         it "loads tile information from files." $ result `shouldBe` expected
   where
-    expected = fromList $ ((separatedTileFile, 0), tileOfIndex 0) : unitedList
+    expected = fromList $ ((singleTileFile, 0), tileOfIndex 0) : unitedList
     unitedList =
         zip
             (zip (repeat unitedTileFile) [0 ..])
@@ -52,11 +52,11 @@ testAddTileAndImage = do
     (resultTiles, resultImages) <-
         runIO $ do
             (tc, mt) <- addTileAndImage "tests/tiles/united.json" empty empty
-            addTileAndImage separatedTileFile tc mt
+            addTileAndImage singleTileFile tc mt
     expectedImages <-
         runIO $
         insertMultipleSeparatedFiles separatedFiles unitedTileFile empty >>=
-        insertMultipleSeparatedFiles [separatedTileImage 0] separatedTileFile
+        insertMultipleSeparatedFiles [separatedTileImage 0] singleTileFile
     describe "addTileAndImage" $
         it "loads both a tile file and an image file." $ do
             resultTiles `shouldBe` expectedTiles
@@ -65,7 +65,7 @@ testAddTileAndImage = do
     expectedTiles =
         fromList $
         zip
-            ((separatedTileFile, 0) : zip (repeat unitedTileFile) [0 ..])
+            ((singleTileFile, 0) : zip (repeat unitedTileFile) [0 ..])
             (tileOfIndex 0 : map tileOfIndex [0 .. tilesInUnited - 1])
     insertMultipleSeparatedFiles fileNames insertAs m =
         foldl (\acc (k, v) -> insert k v acc) m . zip (zipWithIndex insertAs) <$>
