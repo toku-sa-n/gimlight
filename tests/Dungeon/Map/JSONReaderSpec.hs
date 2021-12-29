@@ -21,18 +21,17 @@ testReadMapFileReturnsTilePath = do
     result <- runIO $ runExceptT $ readMapFile singleTileMap
     describe "readMapFile" .
         it "returns the path to the corresponding tile file." $
-        snd (fromRight' result) `shouldBe` "tests/tiles/separated_0.json"
+        snd (fromRight' result) `shouldBe` separatedTileFile
 
 testReadMapTileImage :: Spec
 testReadMapTileImage = do
     expectedCellMap <-
         fmap (fst . fromRight') . runIO . runExceptT $ readMapFile singleTileMap
-    expectedTile <-
-        fmap fst . runIO $ addTileFile "tests/tiles/separated_0.json" empty
+    expectedTile <- fmap fst . runIO $ addTileFile separatedTileFile empty
     expectedImage <-
         fmap fromRight' . runIO . runExceptT $
         MapTiles.addTileFile
-            "tests/tiles/separated_0.json"
+            separatedTileFile
             "tests/images/tiles/separated_0.png"
             empty
     (resultCellMap, resultTile, resultImage) <-
@@ -44,3 +43,6 @@ testReadMapTileImage = do
 
 singleTileMap :: FilePath
 singleTileMap = "tests/maps/single_tile.json"
+
+separatedTileFile :: FilePath
+separatedTileFile = "tests/tiles/separated_0.json"
