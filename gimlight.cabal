@@ -51,6 +51,7 @@ Test-Suite spec
                       , Dungeon.Map.Tile.JSONReaderSpec
                       , FovSpec
                       , SetUp.Dungeon
+                      , SetUp.ImageFile
                       , SetUp.MapFile
                       , SetUp.TileFile
                       , UI.Graphics.MapTilesSpec

@@ -7,6 +7,7 @@ import           Data.Either.Combinators     (fromRight')
 import           Data.Map                    (empty)
 import           Dungeon.Map.JSONReader      (readMapFile, readMapTileImage)
 import           Dungeon.Map.Tile.JSONReader (addTileFile)
+import           SetUp.ImageFile             (separatedTileImage)
 import           SetUp.MapFile               (singleTileMap)
 import           SetUp.TileFile              (separatedTileFile)
 import           Test.Hspec                  (Spec, describe, it, runIO,
@@ -32,10 +33,7 @@ testReadMapTileImage = do
     expectedTile <- fmap fst . runIO $ addTileFile separatedTileFile empty
     expectedImage <-
         runIO $
-        MapTiles.addTileFile
-            separatedTileFile
-            "tests/images/tiles/separated_0.png"
-            empty
+        MapTiles.addTileFile separatedTileFile (separatedTileImage 0) empty
     (resultCellMap, resultTile, resultImage) <-
         runIO $ readMapTileImage empty empty singleTileMap
     describe "readMapTileImage" $ do
