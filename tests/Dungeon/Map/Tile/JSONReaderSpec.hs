@@ -52,7 +52,7 @@ testAddTileAndImage :: Spec
 testAddTileAndImage = do
     (resultTiles, resultImages) <-
         runIO $ do
-            (tc, mt) <- addTileAndImage "tests/tiles/united.json" empty empty
+            (tc, mt) <- addTileAndImage unitedTileFile empty empty
             addTileAndImage singleTileFile tc mt
     expectedImages <-
         runIO $
