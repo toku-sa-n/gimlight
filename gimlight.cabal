@@ -52,6 +52,7 @@ Test-Suite spec
                       , FovSpec
                       , SetUp.Dungeon
                       , SetUp.MapFile
+                      , SetUp.TileFile
                       , UI.Graphics.MapTilesSpec
 
     build-depends:      gimlight
