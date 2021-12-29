@@ -4,11 +4,12 @@ module Dungeon.Map.Tile.JSONReaderSpec
 
 import           Codec.Picture               (convertRGBA8, readImage)
 import           Data.Either.Combinators     (fromRight')
-import           Data.Map                    (empty, fromList, insert)
+import           Data.Map                    (empty, fromList, insert, union)
 import           Dungeon.Map.Tile            (tile)
 import           Dungeon.Map.Tile.JSONReader (addTileAndImage, addTileFile)
 import           SetUp.ImageFile             (separatedTileImage)
-import           SetUp.TileFile              (singleTileFile)
+import           SetUp.TileFile              (singleTileFile,
+                                              tilesInSingleTileFile)
 import           Test.Hspec                  (Spec, describe, it, runIO,
                                               shouldBe)
 
@@ -26,7 +27,7 @@ testAddTileFile = do
     describe "addTileFile" $
         it "loads tile information from files." $ result `shouldBe` expected
   where
-    expected = fromList $ ((singleTileFile, 0), tileOfIndex 0) : unitedList
+    expected = union tilesInSingleTileFile $ fromList unitedList
     unitedList =
         zip
             (zip (repeat unitedTileFile) [0 ..])
