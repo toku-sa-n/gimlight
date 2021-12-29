@@ -9,7 +9,8 @@ import           Dungeon.Map.Tile            (tile)
 import           Dungeon.Map.Tile.JSONReader (addTileAndImage, addTileFile)
 import           SetUp.ImageFile             (separatedTileImage)
 import           SetUp.TileFile              (singleTileFile,
-                                              tilesInSingleTileFile)
+                                              tilesInSingleTileFile,
+                                              unitedTileFile)
 import           Test.Hspec                  (Spec, describe, it, runIO,
                                               shouldBe)
 
@@ -32,7 +33,6 @@ testAddTileFile = do
         zip
             (zip (repeat unitedTileFile) [0 ..])
             (map tileOfIndex [0 .. tilesInUnited - 1])
-    unitedTileFile = "tests/tiles/united.json"
     tileOfIndex n
         | n == unwalkableAndUntransparentTile = tile False False
         | otherwise = tile True True
@@ -78,5 +78,4 @@ testAddTileAndImage = do
         | n == unwalkableAndUntransparentTile = tile False False
         | otherwise = tile True True
     unwalkableAndUntransparentTile = 2
-    unitedTileFile = "tests/tiles/united.json"
     separatedFiles = fmap separatedTileImage [0 :: Int .. 5]
