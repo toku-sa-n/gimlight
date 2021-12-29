@@ -7,6 +7,7 @@ import           Data.Either.Combinators     (fromRight')
 import           Data.Map                    (empty, fromList, insert)
 import           Dungeon.Map.Tile            (tile)
 import           Dungeon.Map.Tile.JSONReader (addTileAndImage, addTileFile)
+import           SetUp.TileFile              (separatedTileFile)
 import           Test.Hspec                  (Spec, describe, it, runIO,
                                               shouldBe)
 
@@ -20,17 +21,16 @@ testAddTileFile :: Spec
 testAddTileFile = do
     result <-
         fmap fst . runIO $
-        addTileFile unitedTileFile empty >>= addTileFile separatedFile . fst
+        addTileFile unitedTileFile empty >>= addTileFile separatedTileFile . fst
     describe "addTileFile" $
         it "loads tile information from files." $ result `shouldBe` expected
   where
-    expected = fromList $ ((separatedFile, 0), tileOfIndex 0) : unitedList
+    expected = fromList $ ((separatedTileFile, 0), tileOfIndex 0) : unitedList
     unitedList =
         zip
             (zip (repeat unitedTileFile) [0 ..])
             (map tileOfIndex [0 .. tilesInUnited - 1])
     unitedTileFile = "tests/tiles/united.json"
-    separatedFile = "tests/tiles/separated_0.json"
     tileOfIndex n
         | n == unwalkableAndUntransparentTile = tile False False
         | otherwise = tile True True
@@ -51,11 +51,11 @@ testAddTileAndImage = do
     (resultTiles, resultImages) <-
         runIO $ do
             (tc, mt) <- addTileAndImage "tests/tiles/united.json" empty empty
-            addTileAndImage (separatedTileFile 0) tc mt
+            addTileAndImage separatedTileFile tc mt
     expectedImages <-
         runIO $
         insertMultipleSeparatedFiles separatedFiles unitedTileFile empty >>=
-        insertMultipleSeparatedFiles [separatedFile 0] (separatedTileFile 0)
+        insertMultipleSeparatedFiles [separatedFile 0] separatedTileFile
     describe "addTileAndImage" $
         it "loads both a tile file and an image file." $ do
             resultTiles `shouldBe` expectedTiles
@@ -64,7 +64,7 @@ testAddTileAndImage = do
     expectedTiles =
         fromList $
         zip
-            ((separatedTileFile 0, 0) : zip (repeat unitedTileFile) [0 ..])
+            ((separatedTileFile, 0) : zip (repeat unitedTileFile) [0 ..])
             (tileOfIndex 0 : map tileOfIndex [0 .. tilesInUnited - 1])
     insertMultipleSeparatedFiles fileNames insertAs m =
         foldl (\acc (k, v) -> insert k v acc) m . zip (zipWithIndex insertAs) <$>
@@ -80,5 +80,3 @@ testAddTileAndImage = do
     separatedFiles = fmap separatedFile [0 :: Int .. 5]
     separatedFile :: Int -> FilePath
     separatedFile n = "tests/images/tiles/separated_" ++ show n ++ ".png"
-    separatedTileFile :: Int -> FilePath
-    separatedTileFile n = "tests/tiles/separated_" ++ show n ++ ".json"
