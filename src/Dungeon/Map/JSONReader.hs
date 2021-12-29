@@ -40,7 +40,8 @@ readMapTileImage tc mt path =
     result =
         runExceptT $ do
             (cm, tileJsonPath) <- readMapFile path
-            (tc', mt') <- addTileAndImage tileJsonPath tc mt
+            (tc', mt') <-
+                ExceptT . fmap return $ addTileAndImage tileJsonPath tc mt
             return (cm, tc', mt')
 
 readMapFile :: FilePath -> ExceptT String IO (CellMap, FilePath)

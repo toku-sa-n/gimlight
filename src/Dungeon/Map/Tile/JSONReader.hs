@@ -7,7 +7,6 @@ module Dungeon.Map.Tile.JSONReader
 
 import           Control.Lens         (filtered, has, only, (^..), (^?))
 import           Control.Monad        ((>=>))
-import           Control.Monad.Except (ExceptT (ExceptT))
 import           Data.Aeson.Lens      (_Bool, _Integer, _String, key, values)
 import           Data.Map             (insert)
 import           Data.Maybe           (fromMaybe)
@@ -20,12 +19,9 @@ import           UI.Graphics.MapTiles (MapTiles)
 import qualified UI.Graphics.MapTiles as MapTiles
 
 addTileAndImage ::
-       FilePath
-    -> TileCollection
-    -> MapTiles
-    -> ExceptT String IO (TileCollection, MapTiles)
+       FilePath -> TileCollection -> MapTiles -> IO (TileCollection, MapTiles)
 addTileAndImage path tc mt = do
-    (tc', imgPath) <- ExceptT . fmap Right $ addTileFile path tc
+    (tc', imgPath) <- addTileFile path tc
     mt' <- MapTiles.addTileFile path imgPath mt
     return (tc', mt')
 

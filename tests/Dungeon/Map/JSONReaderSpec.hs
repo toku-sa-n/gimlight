@@ -29,7 +29,7 @@ testReadMapTileImage = do
         fmap (fst . fromRight') . runIO . runExceptT $ readMapFile singleTileMap
     expectedTile <- fmap fst . runIO $ addTileFile separatedTileFile empty
     expectedImage <-
-        fmap fromRight' . runIO . runExceptT $
+        runIO $
         MapTiles.addTileFile
             separatedTileFile
             "tests/images/tiles/separated_0.png"

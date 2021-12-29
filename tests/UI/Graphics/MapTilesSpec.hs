@@ -3,7 +3,6 @@ module UI.Graphics.MapTilesSpec
     ) where
 
 import           Codec.Picture           (convertRGBA8, readImage)
-import           Control.Monad.Except    (runExceptT)
 import           Data.Either.Combinators (fromRight')
 import           Data.Map                (empty, insert)
 import           Test.Hspec              (Spec, describe, it, runIO, shouldBe)
@@ -15,7 +14,7 @@ spec = testAddTileFile
 testAddTileFile :: Spec
 testAddTileFile = do
     result <-
-        fmap fromRight' . runIO . runExceptT $
+        runIO $
         addTileFile dummyUnited unitedImageFile empty >>=
         addTileFile dummySeparated (separatedFile 0)
     expected <-
