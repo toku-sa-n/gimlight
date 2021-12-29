@@ -1,10 +1,10 @@
 module SetUp.ImageFile
-    ( separatedTileImage
-    , unitedTileImageFile
+    ( separatedTileImagePath
+    , unitedTileImageFilePath
     ) where
 
-separatedTileImage :: Int -> FilePath
-separatedTileImage n
+separatedTileImagePath :: Int -> FilePath
+separatedTileImagePath n
     | n < numOfSeparatedTileImages = indexToPath
     | otherwise = "No such file: " ++ indexToPath
   where
@@ -13,5 +13,5 @@ separatedTileImage n
 numOfSeparatedTileImages :: Int
 numOfSeparatedTileImages = 6
 
-unitedTileImageFile :: FilePath
-unitedTileImageFile = "tests/images/tiles/united.png"
+unitedTileImageFilePath :: FilePath
+unitedTileImageFilePath = "tests/images/tiles/united.png"

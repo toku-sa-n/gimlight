@@ -7,8 +7,8 @@ import           Data.Either.Combinators     (fromRight')
 import           Data.Map                    (empty, fromList, insert, union)
 import           Dungeon.Map.Tile            (tile)
 import           Dungeon.Map.Tile.JSONReader (addTileAndImage, addTileFile)
-import           SetUp.ImageFile             (separatedTileImage,
-                                              unitedTileImageFile)
+import           SetUp.ImageFile             (separatedTileImagePath,
+                                              unitedTileImageFilePath)
 import           SetUp.TileFile              (singleTileFile,
                                               tilesInSingleTileFile,
                                               unitedTileFile)
@@ -45,7 +45,7 @@ testAddTileFileReturnsImagePath = do
     result <- runIO $ addTileFile unitedTileFile empty
     describe "readTileFile" $
         it "returns the path to the corresponding image file." $
-        snd result `shouldBe` unitedTileImageFile
+        snd result `shouldBe` unitedTileImageFilePath
 
 testAddTileAndImage :: Spec
 testAddTileAndImage = do
@@ -56,7 +56,7 @@ testAddTileAndImage = do
     expectedImages <-
         runIO $
         insertMultipleSeparatedFiles separatedFiles unitedTileFile empty >>=
-        insertMultipleSeparatedFiles [separatedTileImage 0] singleTileFile
+        insertMultipleSeparatedFiles [separatedTileImagePath 0] singleTileFile
     describe "addTileAndImage" $
         it "loads both a tile file and an image file." $ do
             resultTiles `shouldBe` expectedTiles
@@ -77,4 +77,4 @@ testAddTileAndImage = do
         | n == unwalkableAndUntransparentTile = tile False False
         | otherwise = tile True True
     unwalkableAndUntransparentTile = 2
-    separatedFiles = fmap separatedTileImage [0 :: Int .. 5]
+    separatedFiles = fmap separatedTileImagePath [0 :: Int .. 5]
