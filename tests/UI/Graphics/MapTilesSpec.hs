@@ -35,6 +35,6 @@ testAddTileFile = do
     unitedImageFile = "tests/images/tiles/united.png"
     separatedFiles = fmap separatedFile [0 :: Int .. 5]
     separatedFile :: Int -> FilePath
-    separatedFile n = "tests/images/tiles/separated_" ++ show n ++ ".png"
+    separatedFile n = "tests/images/tiles/single_" ++ show n ++ ".png"
     dummyUnited = "united.json"
     dummySeparated = "separated.json"
