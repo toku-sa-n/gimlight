@@ -11,6 +11,7 @@ import           SetUp.ImageFile             (separatedTileImagePath,
                                               unitedTileImageFilePath)
 import           SetUp.TileFile              (singleTileFile,
                                               tilesInSingleTileFile,
+                                              tilesInUnitedTileFile,
                                               unitedTileFile)
 import           Test.Hspec                  (Spec, describe, it, runIO,
                                               shouldBe)
@@ -62,19 +63,10 @@ testAddTileAndImage = do
             resultTiles `shouldBe` expectedTiles
             resultImages == expectedImages `shouldBe` True
   where
-    expectedTiles =
-        fromList $
-        zip
-            ((singleTileFile, 0) : zip (repeat unitedTileFile) [0 ..])
-            (tileOfIndex 0 : map tileOfIndex [0 .. tilesInUnited - 1])
+    expectedTiles = tilesInUnitedTileFile `union` tilesInSingleTileFile
     insertMultipleSeparatedFiles fileNames insertAs m =
         foldl (\acc (k, v) -> insert k v acc) m . zip (zipWithIndex insertAs) <$>
         mapM readSingleSeparatedFile fileNames
     readSingleSeparatedFile = fmap (convertRGBA8 . fromRight') . readImage
     zipWithIndex name = zip (repeat name) [0 ..]
-    tilesInUnited = 6 :: Int
-    tileOfIndex n
-        | n == unwalkableAndUntransparentTile = tile False False
-        | otherwise = tile True True
-    unwalkableAndUntransparentTile = 2
     separatedFiles = fmap separatedTileImagePath [0 :: Int .. 5]
