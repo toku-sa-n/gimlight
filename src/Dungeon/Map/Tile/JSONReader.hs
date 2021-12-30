@@ -57,7 +57,7 @@ indexAndTile path = do
     let imagePath = dropFileName path </> unpack (getImagePath json)
     fmap
         (zip (getIds json) . getZipList .
-         (tile <$> transparents json <*> walkables json <*>))
+         (tile <$> walkables json <*> transparents json <*>))
         (images imagePath)
   where
     images = fmap ZipList . readAndCutTileImageFile

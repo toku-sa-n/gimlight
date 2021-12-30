@@ -13,13 +13,16 @@ import           SetUp.ImageFile             (singleTileImage,
 import           SetUp.TileFile              (singleTileFile,
                                               tilesInSingleTileFile,
                                               tilesInUnitedTileFile,
-                                              unitedTileFile)
+                                              tilesInUnwalkableTileFile,
+                                              unitedTileFile,
+                                              unwalkableTileFile)
 import           Test.Hspec                  (Spec, describe, it, runIO,
                                               shouldBe)
 
 spec :: Spec
 spec = do
     testAddTileFile
+    testAddUnwalkableTileFile
     testAddTileAndImage
 
 testAddTileFile :: Spec
@@ -34,6 +37,15 @@ testAddTileFile = do
         (\(tc, path) -> fmap (second (: [path])) (addTileFile singleTileFile tc))
     describe "addTileFile" $
         it "loads tile information from files and returns the image paths." $
+        result `shouldBe` expected
+
+testAddUnwalkableTileFile :: Spec
+testAddUnwalkableTileFile = do
+    expected <- runIO $ fmap (, singleTileImagePath 0) tilesInUnwalkableTileFile
+    result <- runIO $ addTileFile unwalkableTileFile empty
+    describe "addTileFile" $
+        it
+            "loads tile information from files and returns the image paths. The tile is unwalkable but transparent." $
         result `shouldBe` expected
 
 testAddTileAndImage :: Spec

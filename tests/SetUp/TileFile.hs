@@ -3,8 +3,10 @@
 module SetUp.TileFile
     ( tilesInUnitedTileFile
     , tilesInSingleTileFile
+    , tilesInUnwalkableTileFile
     , unitedTileFile
     , singleTileFile
+    , unwalkableTileFile
     ) where
 
 import           Codec.Picture    (Image, PixelRGBA8, convertRGBA8, readImage)
@@ -26,11 +28,19 @@ tilesInSingleTileFile =
     fmap (fromList . (: [])) ((singleTileFile, 0), ) . tile True True <$>
     singleTileImage 0
 
+tilesInUnwalkableTileFile :: IO TileCollection
+tilesInUnwalkableTileFile =
+    fmap (fromList . (: [])) ((unwalkableTileFile, 0), ) . tile False True <$>
+    singleTileImage 0
+
 unitedTileFile :: FilePath
 unitedTileFile = "tests/tiles/united.json"
 
 singleTileFile :: FilePath
 singleTileFile = "tests/tiles/single.json"
+
+unwalkableTileFile :: FilePath
+unwalkableTileFile = "tests/tiles/unwalkable.json"
 
 singleTileImage :: Int -> IO (Image PixelRGBA8)
 singleTileImage =
