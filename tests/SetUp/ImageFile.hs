@@ -1,5 +1,6 @@
 module SetUp.ImageFile
     ( singleTileImage
+    , singleTileImagePath
     , unitedTileImageFilePath
     ) where
 
