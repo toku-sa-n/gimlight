@@ -120,10 +120,7 @@ mapWidget eh = vstack rows
             (vectorToByteString $ imageData img)
             (imgSize img)
       where
-        img =
-            case getTileCollection eh Map.!? tileIdentifier of
-                Just x  -> getImage x
-                Nothing -> error ("What!? " ++ show tileIdentifier)
+        img = getImage $ getTileCollection eh Map.! tileIdentifier
     imgSize img =
         Size (fromIntegral $ imageWidth img) (fromIntegral $ imageHeight img)
     shadowAt c = filler `styleBasic` [bgColor $ black & L.a .~ cellOpacity c]
