@@ -1,3 +1,5 @@
+{-# LANGUAGE TupleSections #-}
+
 module Dungeon.Map.Tile.JSONReaderSpec
     ( spec
     ) where
@@ -22,6 +24,10 @@ spec = do
 
 testAddTileFile :: Spec
 testAddTileFile = do
+    expected <-
+        runIO $
+        fmap (, [singleTileImagePath 0, unitedTileImageFilePath]) $
+        union <$> tilesInSingleTileFile <*> tilesInUnitedTileFile
     result <-
         runIO $
         addTileFile unitedTileFile empty >>=
@@ -29,13 +35,11 @@ testAddTileFile = do
     describe "addTileFile" $
         it "loads tile information from files and returns the image paths." $
         result `shouldBe` expected
-  where
-    expected =
-        ( tilesInSingleTileFile `union` tilesInUnitedTileFile
-        , [singleTileImagePath 0, unitedTileImageFilePath])
 
 testAddTileAndImage :: Spec
 testAddTileAndImage = do
+    expectedTiles <-
+        runIO $ union <$> tilesInUnitedTileFile <*> tilesInSingleTileFile
     (resultTiles, resultImages) <-
         runIO $
         addTileAndImage unitedTileFile empty empty >>=
@@ -49,7 +53,6 @@ testAddTileAndImage = do
             resultTiles `shouldBe` expectedTiles
             resultImages == expectedImages `shouldBe` True
   where
-    expectedTiles = tilesInUnitedTileFile `union` tilesInSingleTileFile
     insertMultipleSeparatedFiles indexes insertAs m =
         foldl (flip (uncurry insert)) m . zip (zip (repeat insertAs) indexes) <$>
         mapM singleTileImage indexes

@@ -91,6 +91,7 @@ library
                       , Item
                       , Item.Heal
                       , Localization.Texts
+                      , UI.Draw.Config
                       , UI.Graphics.MapTiles
 
     other-modules:      Actor.Friendly
@@ -134,7 +135,6 @@ library
                       , Save
                       , TreeZipper
                       , UI.Draw
-                      , UI.Draw.Config
                       , UI.Draw.Exploring
                       , UI.Draw.GameOver
                       , UI.Draw.KeyEvent

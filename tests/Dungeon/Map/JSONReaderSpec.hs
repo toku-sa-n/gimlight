@@ -32,8 +32,9 @@ testReadMapTileImage = do
         fromList <$> sequence [((singleTileFile, 0), ) <$> singleTileImage 0]
     (resultCellMap, resultTile, resultImage) <-
         runIO $ readMapTileImage empty empty singleTileMap
+    expectedTile <- runIO tilesInSingleTileFile
     describe "readMapTileImage" $ do
         it "loads the map file" $
             resultCellMap `shouldBe` cellMapOfSingleTileMap
-        it "loads the tile file" $ resultTile `shouldBe` tilesInSingleTileFile
+        it "loads the tile file" $ resultTile `shouldBe` expectedTile
         it "loads the image file" $ resultImage == expectedImage `shouldBe` True

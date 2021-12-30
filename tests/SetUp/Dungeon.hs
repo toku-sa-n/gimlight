@@ -17,6 +17,7 @@ import           Actor.Identifier    (Identifier (Orc))
 import           Actor.Monsters      (orc)
 import           Actor.Status        (status)
 import           Actor.Status.Hp     (hp)
+import           Codec.Picture       (PixelRGBA8 (PixelRGBA8), generateImage)
 import           Control.Lens        ((%~))
 import           Control.Monad.State (execStateT)
 import           Coord               (Coord)
@@ -33,6 +34,7 @@ import           IndexGenerator      (IndexGenerator, generator)
 import           Inventory           (addItem)
 import           Item                (herb, sampleBook)
 import           Linear.V2           (V2 (V2))
+import           UI.Draw.Config      (tileHeight, tileWidth)
 
 initCellMap :: CellMap
 initCellMap =
@@ -82,9 +84,11 @@ initCellMap =
 initTileCollection :: TileCollection
 initTileCollection =
     fromList
-        [ ((dummyTileFile, 0), tile True True)
-        , ((dummyTileFile, 1), tile False True)
+        [ ((dummyTileFile, 0), tile True True emptyImage)
+        , ((dummyTileFile, 1), tile False True emptyImage)
         ]
+  where
+    emptyImage = generateImage (\_ _ -> PixelRGBA8 0 0 0 0) tileWidth tileHeight
 
 strongestOrc :: IndexGenerator -> (Actor, IndexGenerator)
 strongestOrc g = monster g Orc (status (hp 100) 100 100) ""
