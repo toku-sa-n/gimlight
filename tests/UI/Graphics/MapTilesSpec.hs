@@ -7,7 +7,7 @@ import           Data.Either.Combinators (fromRight')
 import           Data.Map                (empty, insert)
 import           SetUp.ImageFile         (singleTileImagePath,
                                           unitedTileImageFilePath)
-import           SetUp.TileFile          (singleTileFile)
+import           SetUp.TileFile          (singleTileFile, unitedTileFile)
 import           Test.Hspec              (Spec, describe, it, runIO, shouldBe)
 import           UI.Graphics.MapTiles    (addTileFile)
 
@@ -18,11 +18,11 @@ testAddTileFile :: Spec
 testAddTileFile = do
     result <-
         runIO $
-        addTileFile dummyUnited unitedTileImageFilePath empty >>=
+        addTileFile unitedTileFile unitedTileImageFilePath empty >>=
         addTileFile singleTileFile (singleTileImagePath 0)
     expected <-
         runIO $
-        insertMultipleSeparatedFiles separatedFiles dummyUnited empty >>=
+        insertMultipleSeparatedFiles separatedFiles unitedTileFile empty >>=
         insertMultipleSeparatedFiles [singleTileImagePath 0] singleTileFile
     describe "addTileFile" $
         it
@@ -36,4 +36,3 @@ testAddTileFile = do
     zipWithIndex name = zip (repeat name) [0 ..]
     readSingleSeparatedFile = fmap (convertRGBA8 . fromRight') . readImage
     separatedFiles = fmap singleTileImagePath [0 :: Int .. 5]
-    dummyUnited = "united.json"
