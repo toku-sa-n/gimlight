@@ -1,7 +1,6 @@
 module SetUp.ImageFile
     ( singleTileImage
     , singleTileImagePath
-    , unitedTileImageFilePath
     ) where
 
 import           Codec.Picture (Image, PixelRGBA8, convertRGBA8, readImage)
@@ -22,6 +21,3 @@ singleTileImagePath n
 
 numOfSeparatedTileImages :: Int
 numOfSeparatedTileImages = 6
-
-unitedTileImageFilePath :: FilePath
-unitedTileImageFilePath = "tests/images/tiles/united.png"
