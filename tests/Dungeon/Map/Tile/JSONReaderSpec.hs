@@ -2,12 +2,10 @@ module Dungeon.Map.Tile.JSONReaderSpec
     ( spec
     ) where
 
-import           Codec.Picture               (convertRGBA8, readImage)
-import           Data.Either.Combinators     (fromRight')
 import           Data.Map                    (empty, fromList, insert, union)
 import           Dungeon.Map.Tile            (tile)
 import           Dungeon.Map.Tile.JSONReader (addTileAndImage, addTileFile)
-import           SetUp.ImageFile             (separatedTileImagePath,
+import           SetUp.ImageFile             (separatedTileImage,
                                               unitedTileImageFilePath)
 import           SetUp.TileFile              (singleTileFile,
                                               tilesInSingleTileFile,
@@ -56,17 +54,15 @@ testAddTileAndImage = do
             addTileAndImage singleTileFile tc mt
     expectedImages <-
         runIO $
-        insertMultipleSeparatedFiles separatedFiles unitedTileFile empty >>=
-        insertMultipleSeparatedFiles [separatedTileImagePath 0] singleTileFile
+        insertMultipleSeparatedFiles [0 .. 5] unitedTileFile empty >>=
+        insertMultipleSeparatedFiles [0] singleTileFile
     describe "addTileAndImage" $
         it "loads both a tile file and an image file." $ do
             resultTiles `shouldBe` expectedTiles
             resultImages == expectedImages `shouldBe` True
   where
     expectedTiles = tilesInUnitedTileFile `union` tilesInSingleTileFile
-    insertMultipleSeparatedFiles fileNames insertAs m =
-        foldl (\acc (k, v) -> insert k v acc) m . zip (zipWithIndex insertAs) <$>
-        mapM readSingleSeparatedFile fileNames
-    readSingleSeparatedFile = fmap (convertRGBA8 . fromRight') . readImage
-    zipWithIndex name = zip (repeat name) [0 ..]
-    separatedFiles = fmap separatedTileImagePath [0 :: Int .. 5]
+    insertMultipleSeparatedFiles indexes insertAs m =
+        foldl (\acc (k, v) -> insert k v acc) m .
+        zip (zip (repeat insertAs) indexes) <$>
+        mapM separatedTileImage indexes
