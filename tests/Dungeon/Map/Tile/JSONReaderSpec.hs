@@ -2,9 +2,11 @@ module Dungeon.Map.Tile.JSONReaderSpec
     ( spec
     ) where
 
+import           Control.Arrow               (Arrow (second))
 import           Data.Map                    (empty, insert, union)
 import           Dungeon.Map.Tile.JSONReader (addTileAndImage, addTileFile)
 import           SetUp.ImageFile             (singleTileImage,
+                                              singleTileImagePath,
                                               unitedTileImageFilePath)
 import           SetUp.TileFile              (singleTileFile,
                                               tilesInSingleTileFile,
@@ -16,25 +18,21 @@ import           Test.Hspec                  (Spec, describe, it, runIO,
 spec :: Spec
 spec = do
     testAddTileFile
-    testAddTileFileReturnsImagePath
     testAddTileAndImage
 
 testAddTileFile :: Spec
 testAddTileFile = do
     result <-
-        fmap fst . runIO $
-        addTileFile unitedTileFile empty >>= addTileFile singleTileFile . fst
+        runIO $
+        addTileFile unitedTileFile empty >>=
+        (\(tc, path) -> fmap (second (: [path])) (addTileFile singleTileFile tc))
     describe "addTileFile" $
-        it "loads tile information from files." $ result `shouldBe` expected
+        it "loads tile information from files and returns the image paths." $
+        result `shouldBe` expected
   where
-    expected = tilesInSingleTileFile `union` tilesInUnitedTileFile
-
-testAddTileFileReturnsImagePath :: Spec
-testAddTileFileReturnsImagePath = do
-    result <- runIO $ addTileFile unitedTileFile empty
-    describe "readTileFile" $
-        it "returns the path to the corresponding image file." $
-        snd result `shouldBe` unitedTileImageFilePath
+    expected =
+        ( tilesInSingleTileFile `union` tilesInUnitedTileFile
+        , [singleTileImagePath 0, unitedTileImageFilePath])
 
 testAddTileAndImage :: Spec
 testAddTileAndImage = do
