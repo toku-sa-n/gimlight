@@ -8,6 +8,7 @@ module Dungeon.Map.Tile
     , tile
     , isWalkable
     , isTransparent
+    , getImage
     , wallTile
     , floorTile
     , upStairs
@@ -61,6 +62,9 @@ type TileId = Int
 
 tile :: Bool -> Bool -> Image PixelRGBA8 -> Tile
 tile = Tile
+
+getImage :: Tile -> Image PixelRGBA8
+getImage = image
 
 isWalkable :: Tile -> Bool
 isWalkable = walkable

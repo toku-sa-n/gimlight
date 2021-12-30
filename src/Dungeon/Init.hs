@@ -15,17 +15,15 @@ import           Dungeon.Map.Tile          (TileCollection)
 import           Dungeon.Predefined.Beaeve (beaeve)
 import           IndexGenerator            (IndexGenerator)
 import           Linear.V2                 (V2 (V2))
-import           UI.Graphics.MapTiles      (MapTiles)
 
 initDungeon ::
        TileCollection
-    -> MapTiles
     -> IndexGenerator
-    -> IO (Dungeon, TileCollection, MapTiles, IndexGenerator)
-initDungeon tc mt ig = do
-    (beaeve', tc', mt', ig'') <- beaeve tc mt ig'
+    -> IO (Dungeon, TileCollection, IndexGenerator)
+initDungeon tc ig = do
+    (beaeve', tc', ig'') <- beaeve tc ig'
     let d = unwrapRight $ beaeve' & cellMap %%~ initBeaeve tc'
-    return (d, tc', mt', ig'')
+    return (d, tc', ig'')
   where
     unwrapRight =
         \case

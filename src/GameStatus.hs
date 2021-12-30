@@ -33,7 +33,6 @@ import qualified Log                          as L
 import           Quest                        (questCollection)
 import           System.Random                (getStdGen)
 import           TreeZipper                   (appendTree, goDownBy, treeZipper)
-import           UI.Graphics.MapTiles         (MapTiles)
 
 data GameStatus
     = Exploring ExploringHandler
@@ -48,11 +47,11 @@ data GameStatus
 
 instance Binary GameStatus
 
-newGameStatus :: IO (GameStatus, MapTiles)
+newGameStatus :: IO GameStatus
 newGameStatus = do
     g <- getStdGen
-    (gm, tc, mt) <- globalMap empty empty
-    (beaeve, tc', mt', ig) <- initDungeon tc mt generator
+    (gm, tc) <- globalMap empty
+    (beaeve, tc', ig) <- initDungeon tc generator
     let (stairsPosition, bats, _, _) = batsDungeon g ig tc'
         (gmWithBatsStairs, batsRootMapWithParentMap) =
             addAscendingAndDescendingStiars
@@ -80,10 +79,8 @@ newGameStatus = do
                 (foldr (L.addMessage . L.message) L.emptyLog [T.welcome])
                 questCollection
                 tc'
-    return
-        ( Scene $
-          sceneHandler
-              "images/game_opening.png"
-              [withoutSpeaker T.title1, withoutSpeaker T.title2]
-              initExploring
-        , mt')
+    return . Scene $
+        sceneHandler
+            "images/game_opening.png"
+            [withoutSpeaker T.title1, withoutSpeaker T.title2]
+            initExploring

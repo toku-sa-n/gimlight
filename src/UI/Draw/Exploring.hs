@@ -24,10 +24,12 @@ import           Dungeon.Map.Cell                (exploredMap, lower,
                                                   positionsAndItems,
                                                   tileIdentifierLayerAt, upper,
                                                   widthAndHeight)
+import           Dungeon.Map.Tile                (getImage)
 import           GameConfig                      (GameConfig)
 import           GameStatus.Exploring            (ExploringHandler,
                                                   getCurrentDungeon,
-                                                  getMessageLog, getPlayerActor)
+                                                  getMessageLog, getPlayerActor,
+                                                  getTileCollection)
 import qualified Item                            as I
 import           Linear.V2                       (V2 (V2), _x, _y)
 import           Localization                    (getLocalizedText)
@@ -48,16 +50,15 @@ import           UI.Draw.Config                  (logRows, tileColumns,
                                                   tileHeight, tileRows,
                                                   tileWidth, windowWidth)
 import           UI.Draw.KeyEvent                (withKeyEvents)
-import           UI.Graphics.MapTiles            (MapTiles)
 import           UI.Types                        (GameWidgetNode)
 
-drawExploring :: MapTiles -> ExploringHandler -> GameConfig -> GameWidgetNode
-drawExploring tileGraphics eh c =
+drawExploring :: ExploringHandler -> GameConfig -> GameWidgetNode
+drawExploring eh c =
     withKeyEvents $ vstack [statusAndMapGrid, messageLogArea eh c]
   where
     statusAndMapGrid =
         hstack
-            [ mapGrid tileGraphics eh
+            [ mapGrid eh
             , statusGrid eh c `styleBasic`
               [width $ fromIntegral $ windowWidth - tileWidth * tileColumns]
             ]
@@ -68,9 +69,9 @@ messageLogArea eh c =
     fmap (\x -> label_ (getLocalizedText c x) [multiline]) $
     take logRows $ getMessageLog eh
 
-mapGrid :: MapTiles -> ExploringHandler -> GameWidgetNode
-mapGrid tileGraphics eh =
-    zstack (mapWidget tileGraphics eh : (mapItems eh ++ mapActors eh)) `styleBasic`
+mapGrid :: ExploringHandler -> GameWidgetNode
+mapGrid eh =
+    zstack (mapWidget eh : (mapItems eh ++ mapActors eh)) `styleBasic`
     [ width $ fromIntegral mapDrawingWidth
     , height $ fromIntegral mapDrawingHeight
     ]
@@ -99,8 +100,8 @@ statusGrid eh c =
     atk = getLocalizedText c T.attack
     defence = getLocalizedText c T.defence
 
-mapWidget :: MapTiles -> ExploringHandler -> GameWidgetNode
-mapWidget tiles eh = vstack rows
+mapWidget :: ExploringHandler -> GameWidgetNode
+mapWidget eh = vstack rows
   where
     rows = [row y | y <- [topLeftCoordY .. topLeftCoordY + tileRows - 1]]
     row y = hstack $ columns y
@@ -120,8 +121,8 @@ mapWidget tiles eh = vstack rows
             (imgSize img)
       where
         img =
-            case tiles Map.!? tileIdentifier of
-                Just x  -> x
+            case getTileCollection eh Map.!? tileIdentifier of
+                Just x  -> getImage x
                 Nothing -> error ("What!? " ++ show tileIdentifier)
     imgSize img =
         Size (fromIntegral $ imageWidth img) (fromIntegral $ imageHeight img)

@@ -54,7 +54,6 @@ Test-Suite spec
                       , SetUp.ImageFile
                       , SetUp.MapFile
                       , SetUp.TileFile
-                      , UI.Graphics.MapTilesSpec
 
     build-depends:      gimlight
                       , hspec >= 2.9.1 && < 2.10
@@ -92,7 +91,6 @@ library
                       , Item.Heal
                       , Localization.Texts
                       , UI.Draw.Config
-                      , UI.Graphics.MapTiles
 
     other-modules:      Actor.Friendly
                       , Actor.Friendly.Electria

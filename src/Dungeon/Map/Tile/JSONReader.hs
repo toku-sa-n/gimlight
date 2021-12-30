@@ -2,46 +2,30 @@
 
 module Dungeon.Map.Tile.JSONReader
     ( addTileFile
-    , addTileAndImage
     ) where
 
-import           Codec.Picture        (Image (imageHeight, imageWidth),
-                                       PixelRGBA8, convertRGBA8, readImage)
-import           Codec.Picture.Extra  (crop)
-import           Control.Applicative  (ZipList (ZipList, getZipList))
-import           Control.Lens         (filtered, has, only, (^..), (^?))
-import           Control.Monad        (guard, (>=>))
-import           Data.Aeson.Lens      (_Bool, _Integer, _String, key, values)
-import           Data.Either          (fromRight)
-import           Data.Map             (insert)
-import           Data.Maybe           (fromMaybe)
-import           Data.Text            (Text, unpack)
-import           Dungeon.Map.Tile     (Tile, TileCollection, tile)
-import           System.Directory     (canonicalizePath,
-                                       makeRelativeToCurrentDirectory)
-import           System.FilePath      (dropFileName, (</>))
-import           UI.Draw.Config       (tileHeight, tileWidth)
-import           UI.Graphics.MapTiles (MapTiles)
-import qualified UI.Graphics.MapTiles as MapTiles
+import           Codec.Picture       (Image (imageHeight, imageWidth),
+                                      PixelRGBA8, convertRGBA8, readImage)
+import           Codec.Picture.Extra (crop)
+import           Control.Applicative (ZipList (ZipList, getZipList))
+import           Control.Lens        (filtered, has, only, (^..), (^?))
+import           Control.Monad       (guard, (>=>))
+import           Data.Aeson.Lens     (_Bool, _Integer, _String, key, values)
+import           Data.Either         (fromRight)
+import           Data.Map            (insert)
+import           Data.Maybe          (fromMaybe)
+import           Data.Text           (Text, unpack)
+import           Dungeon.Map.Tile    (Tile, TileCollection, tile)
+import           System.Directory    (canonicalizePath,
+                                      makeRelativeToCurrentDirectory)
+import           System.FilePath     (dropFileName, (</>))
+import           UI.Draw.Config      (tileHeight, tileWidth)
 
-addTileAndImage ::
-       FilePath -> TileCollection -> MapTiles -> IO (TileCollection, MapTiles)
-addTileAndImage path tc mt = do
-    (tc', imgPath) <- addTileFile path tc
-    mt' <- MapTiles.addTileFile path imgPath mt
-    return (tc', mt')
-
-addTileFile :: FilePath -> TileCollection -> IO (TileCollection, FilePath)
+addTileFile :: FilePath -> TileCollection -> IO TileCollection
 addTileFile path tc = do
-    json <- readFile path
     canonicalizedPathToJson <- canonicalizeAsRelative path
-    canonicalizedPathToImage <-
-        canonicalizeAsRelative $ dropFileName path </>
-        unpack (getImagePath json)
-    newTc <-
-        foldl (\acc (idx, t) -> insert (canonicalizedPathToJson, idx) t acc) tc <$>
+    foldl (\acc (idx, t) -> insert (canonicalizedPathToJson, idx) t acc) tc <$>
         indexAndTile path
-    return (newTc, canonicalizedPathToImage)
   where
     canonicalizeAsRelative = canonicalizePath >=> makeRelativeToCurrentDirectory
 

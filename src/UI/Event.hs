@@ -8,7 +8,7 @@ import           Data.Maybe               (fromMaybe)
 import           Data.Text                (Text)
 import           GameConfig               (Language (English, Japanese),
                                            setLocale, writeConfig)
-import           GameModel                (GameModel (GameModel, config, mapTiles, status))
+import           GameModel                (GameModel (GameModel, config, status))
 import           GameStatus               (GameStatus (Exploring, GameOver, ReadingBook, Scene, SelectingItem, SelectingLocale, Talking, Title),
                                            newGameStatus)
 import           GameStatus.Exploring     (ascendStairsAtPlayerPosition,
@@ -148,8 +148,8 @@ handleKeyInputDuringTitle g k
     | otherwise = []
   where
     startNewGame GameModel {config = c} = do
-        (st, mt) <- newGameStatus
-        return g {status = st, config = c, mapTiles = mt}
+        st <- newGameStatus
+        return g {status = st, config = c}
 
 handleKeyInputDuringSelectingLanguage ::
        GameModel -> Text -> [GameEventResponse]

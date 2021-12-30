@@ -4,9 +4,8 @@ module Game
     ( start
     ) where
 
-import           Data.Map       (empty)
 import           GameConfig     (getLocale, readConfigOrDefault)
-import           GameModel      (GameModel (GameModel, config, mapTiles, status))
+import           GameModel      (GameModel (GameModel, config, status))
 import           GameStatus     (GameStatus (SelectingLocale, Title))
 import           Monomer        (MainWindowState (MainWindowNormal), appFontDef,
                                  appInitEvent, appTheme, appWindowResizable,
@@ -28,9 +27,7 @@ start = do
                 case getLocale initConfig of
                     Just _  -> Title
                     Nothing -> SelectingLocale
-        return
-            GameModel
-                {status = initStatus, config = initConfig, mapTiles = empty}
+        return GameModel {status = initStatus, config = initConfig}
     handleEvent = E.handleEvent
     buildUI = drawUI
     initUIConfig =

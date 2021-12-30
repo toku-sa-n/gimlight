@@ -13,7 +13,6 @@ import qualified Dungeon.Map.JSONReaderSpec
 import qualified Dungeon.Map.Tile.JSONReaderSpec
 import qualified FovSpec
 import           Test.Hspec                      (Spec, describe, hspec)
-import qualified UI.Graphics.MapTilesSpec
 
 main :: IO ()
 main = hspec spec
@@ -30,4 +29,3 @@ spec = do
     describe "Dungeon.Map.JSONReader" Dungeon.Map.JSONReaderSpec.spec
     describe "Dungeon.Map.Tile.JSONReader" Dungeon.Map.Tile.JSONReaderSpec.spec
     describe "Fov" FovSpec.spec
-    describe "UI.Graphics.MapTilesSpec" UI.Graphics.MapTilesSpec.spec

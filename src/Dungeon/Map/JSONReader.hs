@@ -20,19 +20,14 @@ import           Dungeon.Map.Cell            (CellMap,
                                               TileIdentifierLayer (TileIdentifierLayer),
                                               cellMap)
 import           Dungeon.Map.Tile            (TileCollection, TileIdentifier)
-import           Dungeon.Map.Tile.JSONReader (addTileAndImage)
+import           Dungeon.Map.Tile.JSONReader (addTileFile)
 import           Linear.V2                   (V2 (V2))
 import           System.Directory            (canonicalizePath,
                                               makeRelativeToCurrentDirectory)
 import           System.FilePath             (dropFileName, (</>))
-import           UI.Graphics.MapTiles        (MapTiles)
 
-readMapTileImage ::
-       TileCollection
-    -> MapTiles
-    -> FilePath
-    -> IO (CellMap, TileCollection, MapTiles)
-readMapTileImage tc mt path =
+readMapTileImage :: TileCollection -> FilePath -> IO (CellMap, TileCollection)
+readMapTileImage tc path =
     result >>= \case
         Right x -> return x
         Left x  -> error x
@@ -40,9 +35,8 @@ readMapTileImage tc mt path =
     result =
         runExceptT $ do
             (cm, tileJsonPath) <- readMapFile path
-            (tc', mt') <-
-                ExceptT . fmap return $ addTileAndImage tileJsonPath tc mt
-            return (cm, tc', mt')
+            tc' <- ExceptT . fmap return $ addTileFile tileJsonPath tc
+            return (cm, tc')
 
 readMapFile :: FilePath -> ExceptT String IO (CellMap, FilePath)
 readMapFile path = do

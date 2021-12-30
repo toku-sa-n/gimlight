@@ -2,7 +2,7 @@ module UI.Draw
     ( drawUI
     ) where
 
-import           GameModel               (GameModel (GameModel, config, mapTiles, status))
+import           GameModel               (GameModel (GameModel, config, status))
 import           GameStatus              (GameStatus (Exploring, GameOver, ReadingBook, Scene, SelectingItem, SelectingLocale, Talking, Title))
 import           UI.Draw.Exploring       (drawExploring)
 import           UI.Draw.GameOver        (drawGameOver)
@@ -15,10 +15,10 @@ import           UI.Draw.Title           (drawTitle)
 import           UI.Types                (GameWidgetEnv, GameWidgetNode)
 
 drawUI :: GameWidgetEnv -> GameModel -> GameWidgetNode
-drawUI _ GameModel {status = s, config = c, mapTiles = mt} =
+drawUI _ GameModel {status = s, config = c} =
     case s of
-        Exploring eh    -> drawExploring mt eh c
-        Talking th      -> drawTalking mt th c
+        Exploring eh    -> drawExploring eh c
+        Talking th      -> drawTalking th c
         Scene hs        -> drawScene hs c
         SelectingItem h -> drawSelectingItem h c
         ReadingBook h   -> drawReadingBook h c
