@@ -30,7 +30,7 @@ testAddTileFile = do
         result == expected `shouldBe` True
   where
     insertMultipleSeparatedFiles fileNames insertAs m =
-        foldl (\acc (k, v) -> insert k v acc) m . zip (zipWithIndex insertAs) <$>
+        foldl (flip (uncurry insert)) m . zip (zipWithIndex insertAs) <$>
         mapM readSingleSeparatedFile fileNames
     zipWithIndex name = zip (repeat name) [0 ..]
     readSingleSeparatedFile = fmap (convertRGBA8 . fromRight') . readImage
