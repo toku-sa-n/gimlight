@@ -5,7 +5,7 @@ module Dungeon.Map.Tile.JSONReaderSpec
 import           Data.Map                    (empty, fromList, insert, union)
 import           Dungeon.Map.Tile            (tile)
 import           Dungeon.Map.Tile.JSONReader (addTileAndImage, addTileFile)
-import           SetUp.ImageFile             (separatedTileImage,
+import           SetUp.ImageFile             (singleTileImage,
                                               unitedTileImageFilePath)
 import           SetUp.TileFile              (singleTileFile,
                                               tilesInSingleTileFile,
@@ -64,4 +64,4 @@ testAddTileAndImage = do
     expectedTiles = tilesInUnitedTileFile `union` tilesInSingleTileFile
     insertMultipleSeparatedFiles indexes insertAs m =
         foldl (flip (uncurry insert)) m . zip (zip (repeat insertAs) indexes) <$>
-        mapM separatedTileImage indexes
+        mapM singleTileImage indexes

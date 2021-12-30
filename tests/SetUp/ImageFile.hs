@@ -1,13 +1,13 @@
 module SetUp.ImageFile
-    ( separatedTileImage
+    ( singleTileImage
     , separatedTileImagePath
     , unitedTileImageFilePath
     ) where
 
 import           Codec.Picture (Image, PixelRGBA8, convertRGBA8, readImage)
 
-separatedTileImage :: Int -> IO (Image PixelRGBA8)
-separatedTileImage =
+singleTileImage :: Int -> IO (Image PixelRGBA8)
+singleTileImage =
     fmap (convertRGBA8 . rightOrError) . readImage . separatedTileImagePath
   where
     rightOrError (Right x) = x
