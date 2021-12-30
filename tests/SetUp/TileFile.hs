@@ -9,9 +9,9 @@ module SetUp.TileFile
     , unwalkableTileFile
     ) where
 
-import           Codec.Picture    (Image, PixelRGBA8, convertRGBA8, readImage)
 import           Data.Map         (fromList)
 import           Dungeon.Map.Tile (TileCollection, tile)
+import           SetUp.ImageFile  (singleTileImage)
 
 tilesInUnitedTileFile :: IO TileCollection
 tilesInUnitedTileFile =
@@ -41,20 +41,3 @@ singleTileFile = "tests/tiles/single.json"
 
 unwalkableTileFile :: FilePath
 unwalkableTileFile = "tests/tiles/unwalkable.json"
-
-singleTileImage :: Int -> IO (Image PixelRGBA8)
-singleTileImage =
-    fmap (convertRGBA8 . rightOrError) . readImage . singleTileImagePath
-  where
-    rightOrError (Right x) = x
-    rightOrError (Left x)  = error $ "Failed to load an image: " ++ x
-
-singleTileImagePath :: Int -> FilePath
-singleTileImagePath n
-    | n < numOfSeparatedTileImages = indexToPath
-    | otherwise = "No such file: " ++ indexToPath
-  where
-    indexToPath = "tests/images/tiles/single_" ++ show n ++ ".png"
-
-numOfSeparatedTileImages :: Int
-numOfSeparatedTileImages = 6
