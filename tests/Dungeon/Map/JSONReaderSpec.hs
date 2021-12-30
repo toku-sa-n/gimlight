@@ -1,18 +1,19 @@
+{-# LANGUAGE TupleSections #-}
+
 module Dungeon.Map.JSONReaderSpec
     ( spec
     ) where
 
 import           Control.Monad.Except        (runExceptT)
 import           Data.Either.Combinators     (fromRight')
-import           Data.Map                    (empty)
+import           Data.Map                    (empty, fromList)
 import           Dungeon.Map.JSONReader      (readMapFile, readMapTileImage)
 import           Dungeon.Map.Tile.JSONReader (addTileFile)
-import           SetUp.ImageFile             (separatedTileImagePath)
+import           SetUp.ImageFile             (separatedTileImage)
 import           SetUp.MapFile               (singleTileMap)
 import           SetUp.TileFile              (singleTileFile)
 import           Test.Hspec                  (Spec, describe, it, runIO,
                                               shouldBe)
-import qualified UI.Graphics.MapTiles        as MapTiles
 
 spec :: Spec
 spec = do
@@ -33,7 +34,7 @@ testReadMapTileImage = do
     expectedTile <- fmap fst . runIO $ addTileFile singleTileFile empty
     expectedImage <-
         runIO $
-        MapTiles.addTileFile singleTileFile (separatedTileImagePath 0) empty
+        fromList <$> sequence [((singleTileFile, 0), ) <$> separatedTileImage 0]
     (resultCellMap, resultTile, resultImage) <-
         runIO $ readMapTileImage empty empty singleTileMap
     describe "readMapTileImage" $ do

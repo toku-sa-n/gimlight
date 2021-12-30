@@ -1,7 +1,17 @@
 module SetUp.ImageFile
-    ( separatedTileImagePath
+    ( separatedTileImage
+    , separatedTileImagePath
     , unitedTileImageFilePath
     ) where
+
+import           Codec.Picture (Image, PixelRGBA8, convertRGBA8, readImage)
+
+separatedTileImage :: Int -> IO (Image PixelRGBA8)
+separatedTileImage =
+    fmap (convertRGBA8 . rightOrError) . readImage . separatedTileImagePath
+  where
+    rightOrError (Right x) = x
+    rightOrError (Left x)  = error $ "Failed to load an image: " ++ x
 
 separatedTileImagePath :: Int -> FilePath
 separatedTileImagePath n
