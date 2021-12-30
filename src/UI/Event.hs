@@ -134,11 +134,7 @@ handleKeyInputDuringReadingBook _ _ = error "We are not reading a book."
 
 handleKeyInputDuringTitle :: GameModel -> Text -> [GameEventResponse]
 handleKeyInputDuringTitle g k
-    | k == "n" =
-        [ Task $ do
-              st <- startNewGame g
-              return $ AppLoadFinished st
-        ]
+    | k == "n" = [Task $ AppLoadFinished <$> startNewGame g]
     | k == "l" =
         [ Task $ do
               s <- load
