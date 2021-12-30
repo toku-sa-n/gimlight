@@ -3,7 +3,6 @@
 
 module Dungeon.Map.JSONReader
     ( readMapTileImage
-    , readMapFile
     ) where
 
 import           Control.Lens                (Ixed (ix), (^..), (^?))
