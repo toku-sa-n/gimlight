@@ -83,11 +83,11 @@ getTiles :: String -> FilePath -> Either String (Vector TileIdentifierLayer)
 getTiles json path = V.zipWith TileIdentifierLayer <$> uppers <*> lowers
   where
     lowers =
-        maybeToRight "The map file does not contain the lower layer." $
-        getTileIdOfNthLayer 0 json path
+        maybeToRight (missingLayer "lower") $ getTileIdOfNthLayer 0 json path
     uppers =
-        maybeToRight "The map file does not contain the upper layer." $
-        getTileIdOfNthLayer 1 json path
+        maybeToRight (missingLayer "upper") $ getTileIdOfNthLayer 1 json path
+    missingLayer which =
+        "The map file does not contain the " ++ which ++ " layer."
 
 getTileIdOfNthLayer ::
        Int -> String -> FilePath -> Maybe (Vector (Maybe TileIdentifier))
