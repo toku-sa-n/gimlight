@@ -63,6 +63,5 @@ testAddTileAndImage = do
   where
     expectedTiles = tilesInUnitedTileFile `union` tilesInSingleTileFile
     insertMultipleSeparatedFiles indexes insertAs m =
-        foldl (\acc (k, v) -> insert k v acc) m .
-        zip (zip (repeat insertAs) indexes) <$>
+        foldl (flip (uncurry insert)) m . zip (zip (repeat insertAs) indexes) <$>
         mapM separatedTileImage indexes
