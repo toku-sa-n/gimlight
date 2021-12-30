@@ -2,8 +2,7 @@ module Dungeon.Map.Tile.JSONReaderSpec
     ( spec
     ) where
 
-import           Data.Map                    (empty, fromList, insert, union)
-import           Dungeon.Map.Tile            (tile)
+import           Data.Map                    (empty, insert, union)
 import           Dungeon.Map.Tile.JSONReader (addTileAndImage, addTileFile)
 import           SetUp.ImageFile             (singleTileImage,
                                               unitedTileImageFilePath)
@@ -28,16 +27,7 @@ testAddTileFile = do
     describe "addTileFile" $
         it "loads tile information from files." $ result `shouldBe` expected
   where
-    expected = union tilesInSingleTileFile $ fromList unitedList
-    unitedList =
-        zip
-            (zip (repeat unitedTileFile) [0 ..])
-            (map tileOfIndex [0 .. tilesInUnited - 1])
-    tileOfIndex n
-        | n == unwalkableAndUntransparentTile = tile False False
-        | otherwise = tile True True
-    unwalkableAndUntransparentTile = 2
-    tilesInUnited = 6 :: Int
+    expected = tilesInSingleTileFile `union` tilesInUnitedTileFile
 
 testAddTileFileReturnsImagePath :: Spec
 testAddTileFileReturnsImagePath = do
