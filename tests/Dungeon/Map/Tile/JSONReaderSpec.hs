@@ -37,9 +37,9 @@ testAddTileFile = do
 testAddTileAndImage :: Spec
 testAddTileAndImage = do
     (resultTiles, resultImages) <-
-        runIO $ do
-            (tc, mt) <- addTileAndImage unitedTileFile empty empty
-            addTileAndImage singleTileFile tc mt
+        runIO $
+        addTileAndImage unitedTileFile empty empty >>=
+        uncurry (addTileAndImage singleTileFile)
     expectedImages <-
         runIO $
         insertMultipleSeparatedFiles [0 .. 5] unitedTileFile empty >>=
