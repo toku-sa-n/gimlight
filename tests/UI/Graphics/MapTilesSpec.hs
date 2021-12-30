@@ -5,7 +5,8 @@ module UI.Graphics.MapTilesSpec
 import           Codec.Picture           (convertRGBA8, readImage)
 import           Data.Either.Combinators (fromRight')
 import           Data.Map                (empty, insert)
-import           SetUp.ImageFile         (singleTileImagePath)
+import           SetUp.ImageFile         (singleTileImagePath,
+                                          unitedTileImageFilePath)
 import           Test.Hspec              (Spec, describe, it, runIO, shouldBe)
 import           UI.Graphics.MapTiles    (addTileFile)
 
@@ -16,7 +17,7 @@ testAddTileFile :: Spec
 testAddTileFile = do
     result <-
         runIO $
-        addTileFile dummyUnited unitedImageFile empty >>=
+        addTileFile dummyUnited unitedTileImageFilePath empty >>=
         addTileFile dummySeparated (singleTileImagePath 0)
     expected <-
         runIO $
@@ -33,7 +34,6 @@ testAddTileFile = do
         mapM readSingleSeparatedFile fileNames
     zipWithIndex name = zip (repeat name) [0 ..]
     readSingleSeparatedFile = fmap (convertRGBA8 . fromRight') . readImage
-    unitedImageFile = "tests/images/tiles/united.png"
     separatedFiles = fmap singleTileImagePath [0 :: Int .. 5]
     dummyUnited = "united.json"
     dummySeparated = "separated.json"
