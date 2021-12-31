@@ -115,7 +115,7 @@ getTileIdOfNthLayer n json pathToMap =
         second (ident -) $
         fromMaybe
             (error ("Invalid tile GID: " ++ show ident))
-            (find (\(_, firstGid) -> ident >= firstGid) sourceAndGid)
+            (find ((ident >=) . snd) sourceAndGid)
     canonicalizeIdentifier path =
         canonicalizePath (dropFileName pathToMap </> path) >>=
         makeRelativeToCurrentDirectory
