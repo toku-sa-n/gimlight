@@ -91,14 +91,13 @@ getTiles json pathToMap =
                 Right . V.zipWith TileIdentifierLayer x' <$> y
         _ -> error ""
   where
-    lowers =
-        maybeToRight (missingLayer "lower") $
-        getTileIdOfNthLayer 0 json pathToMap
-    uppers =
-        maybeToRight (missingLayer "upper") $
-        getTileIdOfNthLayer 1 json pathToMap
+    lowers = getTileIdOfNthLayerOrErr 0
+    uppers = getTileIdOfNthLayerOrErr 1
+    getTileIdOfNthLayerOrErr n =
+        maybeToRight (missingLayer $ show n) $
+        getTileIdOfNthLayer n json pathToMap
     missingLayer which =
-        "The map file does not contain the " ++ which ++ " layer."
+        "The map file does not contain the level " ++ which ++ " layer."
 
 getTileIdOfNthLayer ::
        Int -> String -> FilePath -> Maybe (IO (Vector (Maybe TileIdentifier)))
