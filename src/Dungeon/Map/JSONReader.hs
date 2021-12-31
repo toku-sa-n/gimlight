@@ -1,17 +1,18 @@
 {-# LANGUAGE LambdaCase        #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE TupleSections     #-}
 
 module Dungeon.Map.JSONReader
     ( readMapTileImage
     ) where
 
-import           Control.Arrow               (Arrow (second))
 import           Control.Lens                (Ixed (ix), (^..), (^?))
 import           Control.Monad               (MonadPlus (mzero), unless)
 import           Control.Monad.Except        (ExceptT (ExceptT), runExceptT)
 import           Data.Aeson.Lens             (_Array, _Integer, _String, key,
                                               values)
 import           Data.Array                  (array)
+import           Data.Bifunctor              (Bifunctor (second))
 import           Data.Either.Combinators     (maybeToRight)
 import           Data.Foldable               (foldlM)
 import           Data.List                   (find, sortBy)
@@ -110,15 +111,14 @@ getTileIdOfNthLayer n json pathToMap =
   where
     rawIdToIdentifier 0 = return Nothing
     rawIdToIdentifier ident =
-        fmap Just $ canonicalizeIdentifier $ second (ident -) $
+        (fmap Just . (\(x, y) -> (, y) <$> canonicalizeIdentifier x)) .
+        second (ident -) $
         fromMaybe
             (error ("Invalid tile GID: " ++ show ident))
             (find (\(_, firstGid) -> ident >= firstGid) sourceAndGid)
-    canonicalizeIdentifier (path, gid) = do
-        newPath <-
-            canonicalizePath (dropFileName pathToMap </> path) >>=
-            makeRelativeToCurrentDirectory
-        return (newPath, gid)
+    canonicalizeIdentifier path =
+        canonicalizePath (dropFileName pathToMap </> path) >>=
+        makeRelativeToCurrentDirectory
     sourceAndGid = getSourceAndFirstGid json
 
 getSourceAndFirstGid :: String -> [(FilePath, Int)]
