@@ -104,9 +104,7 @@ getTileIdOfNthLayer ::
        Int -> String -> FilePath -> Maybe (IO (Vector (Maybe TileIdentifier)))
 getTileIdOfNthLayer n json pathToMap =
     case getDataOfNthLayer n json of
-        Just x -> do
-            let newData = mapM rawIdToIdentifier x
-            Just newData
+        Just x  -> Just $ mapM rawIdToIdentifier x
         Nothing -> mzero
   where
     rawIdToIdentifier 0 = return Nothing
