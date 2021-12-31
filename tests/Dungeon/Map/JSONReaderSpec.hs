@@ -14,7 +14,8 @@ import           SetUp.MapFile          (cellMapContainingMultipleFilesTile,
                                          singleTileMap)
 import           SetUp.TileFile         (tilesInSingleTileFile,
                                          tilesInUnitedTileFile)
-import           Test.Hspec             (Spec, describe, it, runIO, shouldBe)
+import           Test.Hspec             (Spec, context, describe, it, runIO,
+                                         shouldBe)
 
 spec :: Spec
 spec = do
@@ -24,16 +25,19 @@ spec = do
 
 testSingleTileMap :: Spec
 testSingleTileMap =
+    context "Single tile map" $
     runIO tilesInSingleTileFile >>=
     testReadMapTileImage singleTileMap cellMapOfSingleTileMap
 
 testReadRectangleButNotSquareMap :: Spec
 testReadRectangleButNotSquareMap =
+    context "Not square map" $
     runIO tilesInSingleTileFile >>=
     testReadMapTileImage rectangleButNotSquareMap rectangleButNotSquareCellMap
 
 testReadMapUsingMultipleTileFiles :: Spec
 testReadMapUsingMultipleTileFiles =
+    context "Map using multiple tile files." $
     runIO (union <$> tilesInSingleTileFile <*> tilesInUnitedTileFile) >>=
     testReadMapTileImage
         mapUsingMultipleTileFiles
