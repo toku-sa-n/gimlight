@@ -1,7 +1,7 @@
 module SetUp.MapFile
-    ( rectangleButNotSquareCellMap
-    , cellMapContainingMultipleFilesTile
+    ( cellMapContainingMultipleFilesTile
     , cellMapOfSingleTileMap
+    , rectangleButNotSquareCellMap
     , mapUsingMultipleTileFiles
     , singleTileMap
     , rectangleButNotSquareMap
