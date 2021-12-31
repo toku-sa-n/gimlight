@@ -9,6 +9,7 @@ module Dungeon.Map.JSONReader
 import           Control.Lens                (Ixed (ix), (^..), (^?))
 import           Control.Monad               (MonadPlus (mzero), unless)
 import           Control.Monad.Except        (ExceptT (ExceptT), runExceptT)
+import           Control.Monad.Trans.Maybe   (MaybeT (MaybeT), maybeToExceptT)
 import           Data.Aeson.Lens             (_Array, _Integer, _String, key,
                                               values)
 import           Data.Array                  (array)
@@ -83,27 +84,21 @@ getMapSize json =
         _                -> Nothing
 
 getTiles :: String -> FilePath -> ExceptT String IO (Vector TileIdentifierLayer)
-getTiles json pathToMap =
-    case (uppers, lowers) of
-        (Right x, Right y) ->
-            ExceptT $ do
-                x' <- x
-                Right . V.zipWith TileIdentifierLayer x' <$> y
-        _ -> error ""
+getTiles json pathToMap = V.zipWith TileIdentifierLayer <$> uppers <*> lowers
   where
     lowers = getTileIdOfNthLayerOrErr 0
     uppers = getTileIdOfNthLayerOrErr 1
     getTileIdOfNthLayerOrErr n =
-        maybeToRight (missingLayer $ show n) $
+        maybeToExceptT (missingLayer $ show n) $
         getTileIdOfNthLayer n json pathToMap
     missingLayer which =
         "The map file does not contain the level " ++ which ++ " layer."
 
 getTileIdOfNthLayer ::
-       Int -> String -> FilePath -> Maybe (IO (Vector (Maybe TileIdentifier)))
+       Int -> String -> FilePath -> MaybeT IO (Vector (Maybe TileIdentifier))
 getTileIdOfNthLayer n json pathToMap =
     case getDataOfNthLayer n json of
-        Just x  -> Just $ mapM rawIdToIdentifier x
+        Just x  -> MaybeT $ Just <$> mapM rawIdToIdentifier x
         Nothing -> mzero
   where
     rawIdToIdentifier 0 = return Nothing
