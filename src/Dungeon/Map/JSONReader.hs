@@ -47,8 +47,7 @@ readMapFile :: FilePath -> ExceptT String IO (CellMap, [FilePath])
 readMapFile path = do
     json <- ExceptT . fmap return $ readFile path
     tileFilePath <- ExceptT . fmap return $ getAndCanonicalizeTileFilePath json
-    tiles <- getTiles json path
-    cm <- ExceptT . return $ parseFile json tiles
+    cm <- getTiles json path >>= ExceptT . return . parseFile json
     return (cm, tileFilePath)
   where
     getAndCanonicalizeTileFilePath json = do
