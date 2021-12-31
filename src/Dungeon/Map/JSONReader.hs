@@ -79,9 +79,11 @@ getTileFilePath json =
 
 getMapSize :: String -> Maybe (V2 Int)
 getMapSize json =
-    case (json ^? key "width" . _Integer, json ^? key "height" . _Integer) of
+    case (fetch "width", fetch "height") of
         (Just w, Just h) -> Just $ fromIntegral <$> V2 w h
         _                -> Nothing
+  where
+    fetch k = json ^? key k . _Integer
 
 getTiles :: String -> FilePath -> ExceptT String IO (Vector TileIdentifierLayer)
 getTiles json pathToMap = V.zipWith TileIdentifierLayer <$> uppers <*> lowers
