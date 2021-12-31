@@ -32,21 +32,16 @@ testReadRectangleButNotSquareMap =
     runIO tilesInSingleTileFile >>=
     testReadMapTileImage rectangleButNotSquareMap rectangleButNotSquareCellMap
 
+testReadMapUsingMultipleTileFiles :: Spec
+testReadMapUsingMultipleTileFiles =
+    runIO (union <$> tilesInSingleTileFile <*> tilesInUnitedTileFile) >>=
+    testReadMapTileImage
+        mapUsingMultipleTileFiles
+        cellMapContainingMultipleFilesTile
+
 testReadMapTileImage :: FilePath -> CellMap -> TileCollection -> Spec
 testReadMapTileImage path cm tc = do
     (resultCellMap, resultTile) <- runIO $ readMapTileImage empty path
     describe "readMapTileImage" $ do
         it "loads the map file" $ resultCellMap `shouldBe` cm
         it "loads the tile file" $ resultTile `shouldBe` tc
-
-testReadMapUsingMultipleTileFiles :: Spec
-testReadMapUsingMultipleTileFiles = do
-    (resultCellMap, resultTile) <-
-        runIO $ readMapTileImage empty mapUsingMultipleTileFiles
-    expectedTile <-
-        runIO $ union <$> tilesInSingleTileFile <*> tilesInUnitedTileFile
-    describe "readMapTileImage" $ do
-        it "loads the map file" $
-            resultCellMap `shouldBe` cellMapContainingMultipleFilesTile
-        it "loads the all necessary tile files." $
-            resultTile `shouldBe` expectedTile
