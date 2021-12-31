@@ -5,13 +5,17 @@ module Dungeon.Map.JSONReader
     ( readMapTileImage
     ) where
 
+import           Control.Arrow               (Arrow (second))
 import           Control.Lens                (Ixed (ix), (^..), (^?))
-import           Control.Monad               (unless)
+import           Control.Monad               (MonadPlus (mzero), unless)
 import           Control.Monad.Except        (ExceptT (ExceptT), runExceptT)
 import           Data.Aeson.Lens             (_Array, _Integer, _String, key,
                                               values)
 import           Data.Array                  (array)
 import           Data.Either.Combinators     (maybeToRight)
+import           Data.Foldable               (foldlM)
+import           Data.List                   (find, sortBy)
+import           Data.Maybe                  (fromMaybe)
 import           Data.Text                   (unpack)
 import           Data.Vector                 (Vector, toList)
 import qualified Data.Vector                 as V
@@ -34,33 +38,33 @@ readMapTileImage tc path =
     result =
         runExceptT $ do
             (cm, tileJsonPath) <- readMapFile path
-            tc' <- ExceptT . fmap return $ addTileFile tileJsonPath tc
+            tc' <-
+                ExceptT . fmap return $
+                foldlM (flip addTileFile) tc tileJsonPath
             return (cm, tc')
 
-readMapFile :: FilePath -> ExceptT String IO (CellMap, FilePath)
+readMapFile :: FilePath -> ExceptT String IO (CellMap, [FilePath])
 readMapFile path = do
     json <- ExceptT . fmap return $ readFile path
-    tileFilePath <- getAndCanonicalizeTileFilePath json
-    cm <- ExceptT . return $ parseFile json tileFilePath
+    tileFilePath <- ExceptT . fmap return $ getAndCanonicalizeTileFilePath json
+    tiles <- getTiles json path
+    cm <- ExceptT . return $ parseFile json tiles
     return (cm, tileFilePath)
   where
     getAndCanonicalizeTileFilePath json = do
-        rawPath <-
-            ExceptT . return . maybeToRight tilePathNotContained $
-            getTileFilePath json
-        ExceptT . fmap return $ canonicalizePath (dropFileName path </> rawPath) >>=
-            makeRelativeToCurrentDirectory
-    parseFile json canonicalizedPath = do
+        let paths = getTileFilePath json
+        mapM
+            (\x ->
+                 canonicalizePath (dropFileName path </> x) >>=
+                 makeRelativeToCurrentDirectory)
+            paths
+    parseFile json tiles = do
         V2 width height <- maybeToRight noWidthOrHeight $ getMapSize json
-        tiles <- getTiles json canonicalizedPath
         unless (height * width == length tiles) $ Left invalidWidthHeight
         Right
             (cellMap $ array (V2 0 0, V2 (width - 1) (height - 1)) $
              zip [V2 x y | y <- [0 .. height - 1], x <- [0 .. width - 1]] $
              toList tiles)
-    tilePathNotContained =
-        "The map file " ++ path ++
-        " does not contain the paths to the tile files."
     noWidthOrHeight =
         "The map file " ++ path ++
         " does not contain both `width` and `height` fields."
@@ -68,9 +72,9 @@ readMapFile path = do
         "The multiplication of width and height of the map " ++ path ++
         " does not equal to the number of tiles."
 
-getTileFilePath :: String -> Maybe FilePath
+getTileFilePath :: String -> [FilePath]
 getTileFilePath json =
-    fmap unpack $ json ^? key "tilesets" . values . key "source" . _String
+    fmap unpack $ json ^.. key "tilesets" . values . key "source" . _String
 
 getMapSize :: String -> Maybe (V2 Int)
 getMapSize json =
@@ -78,22 +82,55 @@ getMapSize json =
         (Just w, Just h) -> Just $ fromIntegral <$> V2 w h
         _                -> Nothing
 
-getTiles :: String -> FilePath -> Either String (Vector TileIdentifierLayer)
-getTiles json path = V.zipWith TileIdentifierLayer <$> uppers <*> lowers
+getTiles :: String -> FilePath -> ExceptT String IO (Vector TileIdentifierLayer)
+getTiles json pathToMap =
+    case (uppers, lowers) of
+        (Right x, Right y) ->
+            ExceptT $ do
+                x' <- x
+                Right . V.zipWith TileIdentifierLayer x' <$> y
+        _ -> error ""
   where
     lowers =
-        maybeToRight (missingLayer "lower") $ getTileIdOfNthLayer 0 json path
+        maybeToRight (missingLayer "lower") $
+        getTileIdOfNthLayer 0 json pathToMap
     uppers =
-        maybeToRight (missingLayer "upper") $ getTileIdOfNthLayer 1 json path
+        maybeToRight (missingLayer "upper") $
+        getTileIdOfNthLayer 1 json pathToMap
     missingLayer which =
         "The map file does not contain the " ++ which ++ " layer."
 
 getTileIdOfNthLayer ::
-       Int -> String -> FilePath -> Maybe (Vector (Maybe TileIdentifier))
-getTileIdOfNthLayer n json path = fmap rawIdToMaybe <$> getDataOfNthLayer n json
+       Int -> String -> FilePath -> Maybe (IO (Vector (Maybe TileIdentifier)))
+getTileIdOfNthLayer n json pathToMap =
+    case getDataOfNthLayer n json of
+        Just x -> do
+            let newData = mapM rawIdToIdentifier x
+            Just newData
+        Nothing -> mzero
   where
-    rawIdToMaybe 0 = Nothing
-    rawIdToMaybe x = Just (path, x - 1)
+    rawIdToIdentifier 0 = return Nothing
+    rawIdToIdentifier ident =
+        fmap Just $ canonicalizeIdentifier $ second (ident -) $
+        fromMaybe
+            (error ("Invalid tile GID: " ++ show ident))
+            (find (\(_, firstGid) -> ident >= firstGid) sourceAndGid)
+    canonicalizeIdentifier (path, gid) = do
+        newPath <-
+            canonicalizePath (dropFileName pathToMap </> path) >>=
+            makeRelativeToCurrentDirectory
+        return (newPath, gid)
+    sourceAndGid = getSourceAndFirstGid json
+
+getSourceAndFirstGid :: String -> [(FilePath, Int)]
+getSourceAndFirstGid json =
+    sortBy (\(_, a) (_, b) -> compare b a) $ zip sources firstGids
+  where
+    sources =
+        fmap unpack $ json ^.. key "tilesets" . values . key "source" . _String
+    firstGids =
+        fmap fromIntegral $ json ^.. key "tilesets" . values . key "firstgid" .
+        _Integer
 
 getDataOfNthLayer :: Int -> String -> Maybe (Vector Int)
 getDataOfNthLayer n json = getDataOfAllLayer json >>= (^? ix n)
