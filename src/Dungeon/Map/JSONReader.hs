@@ -7,7 +7,7 @@ module Dungeon.Map.JSONReader
     ) where
 
 import           Control.Lens                (Ixed (ix), (^..), (^?))
-import           Control.Monad               (MonadPlus (mzero), unless)
+import           Control.Monad               (unless)
 import           Control.Monad.Except        (ExceptT (ExceptT), runExceptT)
 import           Control.Monad.Trans.Maybe   (MaybeT (MaybeT), maybeToExceptT)
 import           Data.Aeson.Lens             (_Array, _Integer, _String, key,
@@ -97,9 +97,7 @@ getTiles json pathToMap = V.zipWith TileIdentifierLayer <$> uppers <*> lowers
 getTileIdOfNthLayer ::
        Int -> String -> FilePath -> MaybeT IO (Vector (Maybe TileIdentifier))
 getTileIdOfNthLayer n json pathToMap =
-    case getDataOfNthLayer n json of
-        Just x  -> MaybeT $ Just <$> mapM rawIdToIdentifier x
-        Nothing -> mzero
+    MaybeT . traverse (mapM rawIdToIdentifier) $ getDataOfNthLayer n json
   where
     rawIdToIdentifier 0 = return Nothing
     rawIdToIdentifier ident =
