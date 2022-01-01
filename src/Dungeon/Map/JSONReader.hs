@@ -7,7 +7,7 @@ module Dungeon.Map.JSONReader
     ) where
 
 import           Control.Lens                (Ixed (ix), (^..), (^?))
-import           Control.Monad               (unless)
+import           Control.Monad               (unless, (>=>))
 import           Control.Monad.Except        (ExceptT (ExceptT), runExceptT)
 import           Control.Monad.Trans.Maybe   (MaybeT (MaybeT), maybeToExceptT)
 import           Data.Aeson.Lens             (_Array, _Integer, _String, key,
@@ -52,13 +52,11 @@ readMapFile path = do
     cm <- getTiles json path >>= ExceptT . return . parseFile json
     return (cm, tileFilePath)
   where
-    getAndCanonicalizeTileFilePath json = do
-        let paths = getTileFilePath json
+    getAndCanonicalizeTileFilePath json =
         mapM
-            (\x ->
-                 canonicalizePath (dropFileName path </> x) >>=
-                 makeRelativeToCurrentDirectory)
-            paths
+            (makeRelativeToCurrentDirectory >=> canonicalizePath .
+             (</>) (dropFileName path)) $
+        getTileFilePath json
     parseFile json tiles = do
         V2 width height <- maybeToRight noWidthOrHeight $ getMapSize json
         unless (height * width == length tiles) $ Left invalidWidthHeight
