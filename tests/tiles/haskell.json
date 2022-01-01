@@ -8,6 +8,21 @@
  "tilecount":1,
  "tiledversion":"1.7.2",
  "tileheight":48,
+ "tiles":[
+        {
+         "id":0,
+         "properties":[
+                {
+                 "name":"transparent",
+                 "type":"bool",
+                 "value":true
+                }, 
+                {
+                 "name":"walkable",
+                 "type":"bool",
+                 "value":true
+                }]
+        }],
  "tilewidth":48,
  "transformations":
     {

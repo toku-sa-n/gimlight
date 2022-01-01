@@ -1,16 +1,16 @@
 { "compressionlevel":-1,
- "height":2,
+ "height":1,
  "infinite":false,
  "layers":[
         {
          "data":[1, 2147483649, 1073741825, 3221225473, 536870913, 2684354561, 1610612737, 3758096385],
-         "height":2,
+         "height":1,
          "id":1,
          "name":"\u30bf\u30a4\u30eb\u30ec\u30a4\u30e4\u30fc1",
          "opacity":1,
          "type":"tilelayer",
          "visible":true,
-         "width":4,
+         "width":8,
          "x":0,
          "y":0
         }],
@@ -28,5 +28,5 @@
  "tilewidth":48,
  "type":"map",
  "version":"1.6",
- "width":4
+ "width":8
 }

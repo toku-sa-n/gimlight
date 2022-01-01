@@ -4,6 +4,7 @@ module SetUp.TileFile
     ( tilesInUnitedTileFile
     , tilesInSingleTileFile
     , tilesInUnwalkableTileFile
+    , haskellTile
     , unitedTileFile
     , singleTileFile
     , unwalkableTileFile
@@ -11,7 +12,7 @@ module SetUp.TileFile
 
 import           Data.Map         (fromList)
 import           Dungeon.Map.Tile (TileCollection, tile)
-import           SetUp.ImageFile  (singleTileImage)
+import           SetUp.ImageFile  (haskellTileImage, singleTileImage)
 
 tilesInUnitedTileFile :: IO TileCollection
 tilesInUnitedTileFile =
@@ -33,6 +34,11 @@ tilesInUnwalkableTileFile =
     fmap (fromList . (: [])) ((unwalkableTileFile, 0), ) . tile False True <$>
     singleTileImage 0
 
+haskellTile :: IO TileCollection
+haskellTile =
+    fmap (fromList . (: [])) ((haskellTilePath, 0), ) . tile True True <$>
+    haskellTileImage
+
 unitedTileFile :: FilePath
 unitedTileFile = "tests/tiles/united.json"
 
@@ -41,3 +47,6 @@ singleTileFile = "tests/tiles/single.json"
 
 unwalkableTileFile :: FilePath
 unwalkableTileFile = "tests/tiles/unwalkable.json"
+
+haskellTilePath :: FilePath
+haskellTilePath = "tests/tiles/haskell.json"
