@@ -117,13 +117,13 @@ tileIdMultiplier :: Bool -> Bool -> Bool -> Int -> Int
 tileIdMultiplier d v h =
     ((if d
           then bit 29
-          else 1) .|.
+          else 0) .|.
      (if v
           then bit 30
-          else 1) .|.
+          else 0) .|.
      (if h
           then bit 31
-          else 1) .|.)
+          else 0) .|.)
 
 diagonalVertialHorizontal :: [(Bool, Bool, Bool)]
 diagonalVertialHorizontal =

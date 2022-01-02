@@ -76,13 +76,13 @@ generateTransformedTiles =
     tileIdMultiplier d v h =
         ((if d
               then bit 29
-              else 1) .|.
+              else 0) .|.
          (if v
               then bit 30
-              else 1) .|.
+              else 0) .|.
          (if h
               then bit 31
-              else 1) .|.)
+              else 0) .|.)
     diagonalVertialHorizontal =
         (,,) <$> [False, True] <*> [False, True] <*> [False, True]
 
