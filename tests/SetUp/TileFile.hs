@@ -90,7 +90,7 @@ identifierAndTileForDVH ::
     -> (Bool, Bool, Bool)
     -> (TileIdentifier, Tile)
 identifierAndTileForDVH path idx tileGen img (d, v, h) =
-    ((path, tileIdMultiplier d v h idx), tileGen (transformImage d v h img))
+    ((path, tileFlagsSetter d v h idx), tileGen (transformImage d v h img))
 
 transformImage :: Bool -> Bool -> Bool -> Image PixelRGBA8 -> Image PixelRGBA8
 transformImage d v h =
@@ -113,8 +113,8 @@ swapImageXY img =
                    chunksOf tileWidth $ chunksOf 4 $ V.toList $ imageData img)
         }
 
-tileIdMultiplier :: Bool -> Bool -> Bool -> Int -> Int
-tileIdMultiplier d v h =
+tileFlagsSetter :: Bool -> Bool -> Bool -> Int -> Int
+tileFlagsSetter d v h =
     (setBitWhen d 29 .|. setBitWhen v 30 .|. setBitWhen h 31 .|.)
   where
     setBitWhen cond b =
