@@ -4,28 +4,35 @@ module Dungeon.Map.Tile.JSONReader
     ( addTileFile
     ) where
 
-import           Codec.Picture       (Image (imageHeight, imageWidth),
-                                      PixelRGBA8, convertRGBA8, readImage)
-import           Codec.Picture.Extra (crop)
-import           Control.Applicative (ZipList (ZipList, getZipList))
-import           Control.Lens        (filtered, has, only, (^..), (^?))
-import           Control.Monad       (guard, (>=>))
-import           Data.Aeson.Lens     (_Bool, _Integer, _String, key, values)
-import           Data.Either         (fromRight)
-import           Data.Map            (insert)
-import           Data.Maybe          (fromMaybe)
-import           Data.Text           (Text, unpack)
-import           Dungeon.Map.Tile    (Tile, TileCollection, tile)
-import           System.Directory    (canonicalizePath,
-                                      makeRelativeToCurrentDirectory)
-import           System.FilePath     (dropFileName, (</>))
-import           UI.Draw.Config      (tileHeight, tileWidth)
+import           Codec.Picture        (Image (imageData, imageHeight, imageWidth),
+                                       PixelRGBA8, convertRGBA8, readImage)
+import           Codec.Picture.Extra  (crop, flipHorizontally, flipVertically)
+import           Control.Applicative  (ZipList (ZipList, getZipList))
+import           Control.Lens         (filtered, has, only, (^..), (^?))
+import           Control.Monad        (guard, (>=>))
+import           Data.Aeson.Lens      (_Bool, _Integer, _String, key, values)
+import           Data.Bits            (Bits (bit), (.|.))
+import           Data.Either          (fromRight)
+import           Data.List            (transpose)
+import           Data.List.Split      (chunksOf)
+import           Data.Map             (insert)
+import           Data.Maybe           (fromMaybe)
+import           Data.Text            (Text, unpack)
+import qualified Data.Vector.Storable as V
+import           Dungeon.Map.Tile     (Tile, TileCollection, getImage,
+                                       isTransparent, isWalkable, tile)
+import           System.Directory     (canonicalizePath,
+                                       makeRelativeToCurrentDirectory)
+import           System.FilePath      (dropFileName, (</>))
+import           UI.Draw.Config       (tileHeight, tileWidth)
 
 addTileFile :: FilePath -> TileCollection -> IO TileCollection
 addTileFile path tc = do
     canonicalizedPathToJson <- canonicalizeAsRelative path
-    foldl (\acc (idx, t) -> insert (canonicalizedPathToJson, idx) t acc) tc <$>
-        indexAndTile path
+    fmap
+        (foldl (\acc (idx, t) -> insert (canonicalizedPathToJson, idx) t acc) tc .
+         generateTransformedTiles)
+        (indexAndTile path)
   where
     canonicalizeAsRelative = canonicalizePath >=> makeRelativeToCurrentDirectory
 
@@ -34,6 +41,50 @@ getImagePath json =
     fromMaybe
         (error "A tile file must associate with an image file.")
         (json ^? key "image" . _String)
+
+generateTransformedTiles :: [(Int, Tile)] -> [(Int, Tile)]
+generateTransformedTiles =
+    concatMap
+        (\(idx, t) ->
+             [ ( tileIdMultiplier d v h idx
+               , tile
+                     (isWalkable t)
+                     (isTransparent t)
+                     (transformImage d v h (getImage t)))
+             | (d, v, h) <- diagonalVertialHorizontal
+             ])
+  where
+    transformImage d v h =
+        (if h
+             then flipHorizontally
+             else id) .
+        (if v
+             then flipVertically
+             else id) .
+        (if d
+             then swapImageXY
+             else id)
+    swapImageXY :: Image PixelRGBA8 -> Image PixelRGBA8
+    swapImageXY img =
+        img
+            { imageData =
+                  V.fromList
+                      (concat $ transpose $ chunksOf tileWidth $ V.toList $
+                       imageData img)
+            }
+    tileIdMultiplier :: Bool -> Bool -> Bool -> Int -> Int
+    tileIdMultiplier d v h =
+        ((if d
+              then bit 29
+              else 1) .|.
+         (if v
+              then bit 30
+              else 1) .|.
+         (if h
+              then bit 31
+              else 1) .|.)
+    diagonalVertialHorizontal =
+        (,,) <$> [False, True] <*> [False, True] <*> [False, True]
 
 indexAndTile :: FilePath -> IO [(Int, Tile)]
 indexAndTile path = do
