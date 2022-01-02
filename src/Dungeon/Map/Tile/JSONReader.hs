@@ -46,7 +46,7 @@ generateTransformedTiles :: [(Int, Tile)] -> [(Int, Tile)]
 generateTransformedTiles =
     concatMap
         (\(idx, t) ->
-             [ ( tileIdMultiplier d v h idx
+             [ ( transformationFlagsSetter d v h idx
                , tile
                      (isWalkable t)
                      (isTransparent t)
@@ -74,8 +74,8 @@ generateTransformedTiles =
                        V.toList $
                        imageData img)
             }
-    tileIdMultiplier :: Bool -> Bool -> Bool -> Int -> Int
-    tileIdMultiplier d v h =
+    transformationFlagsSetter :: Bool -> Bool -> Bool -> Int -> Int
+    transformationFlagsSetter d v h =
         ((if d
               then bit 29
               else 0) .|.
