@@ -9,16 +9,14 @@ module SetUp.MapFile
     , mapUsingRotatedTiles
     ) where
 
-import           Codec.Picture    (Image, PixelRGBA8, imagePixels)
-import           Control.Lens     ((%~), (&))
 import           Data.Array       (array)
-import           Data.Bits        (Bits (bit))
+import           Data.Bits        (Bits (bit, (.|.)))
 import           Dungeon.Map.Cell (CellMap,
                                    TileIdentifierLayer (TileIdentifierLayer),
                                    cellMap)
-import           Dungeon.Map.Tile (tile)
 import           Linear.V2        (V2 (V2))
-import           SetUp.TileFile   (singleTileFile, unitedTileFile)
+import           SetUp.TileFile   (haskellTilePath, singleTileFile,
+                                   unitedTileFile)
 
 cellMapContainingMultipleFilesTile :: CellMap
 cellMapContainingMultipleFilesTile =
@@ -46,24 +44,35 @@ rectangleButNotSquareCellMap =
         ]
 
 cellMapUsingRotatedTiles :: CellMap
-cellMapUsingRotatedTiles = cellMap $ array (V2 0 0, V2 7 0) $ zip [0 .. 7] tiles
+cellMapUsingRotatedTiles =
+    cellMap $
+    array (V2 0 0, V2 7 0) $ zipWith (\x t -> (V2 x 0, t)) [0 .. 7] tiles
   where
-    tiles = [tile True True | (d, v, h) <- diagonalVertialHorizontal]
-    swapImageXY :: Image PixelRGBA8 -> Image PixelRGBA8
-    swapImageXY img = img & imagePixels %~ (\x -> x)
-    -- (x,y)->(y,x)
-    -- y*w+x <- x*w+y
-    -- tileAfterRotating (d,v,h) = (if
-    tileIdMultiplier (d, v, h) =
+    tiles =
+        [ TileIdentifierLayer
+            Nothing
+            (Just (haskellTilePath, tileIdMultiplier d v h 0))
+        | (d, v, h) <- diagonalVertialHorizontal
+        ]
+    -- Transformation order is important. Tiled's specification says
+    --
+    -- > When rendering an orthographic or isometric tile, the order of
+    --   operations matters. The diagonal flip is done first, followed by the
+    --   horizontal and vertical flips. The diagonal flip should flip the
+    --   bottom left and top right corners of the tile, and can be thought of
+    --   as an x/y axis swap. For hexagonal tiles, the order does not matter.
+    --
+    -- See: https://docs.mapeditor.org/en/stable/reference/global-tile-ids/#gid-tile-flipping
+    tileIdMultiplier d v h =
         ((if d
               then bit 29
-              else 1) *
+              else 0) .|.
          (if v
               then bit 30
-              else 1) *
+              else 0) .|.
          (if h
               then bit 31
-              else 1) *)
+              else 0) .|.)
     diagonalVertialHorizontal =
         (,,) <$> [False, True] <*> [False, True] <*> [False, True]
 
