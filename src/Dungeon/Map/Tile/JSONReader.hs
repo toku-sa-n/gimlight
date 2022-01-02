@@ -69,7 +69,9 @@ generateTransformedTiles =
         img
             { imageData =
                   V.fromList
-                      (concat $ transpose $ chunksOf tileWidth $ V.toList $
+                      (concat $ concat $ transpose $ chunksOf tileWidth $
+                       chunksOf 4 $
+                       V.toList $
                        imageData img)
             }
     tileIdMultiplier :: Bool -> Bool -> Bool -> Int -> Int
