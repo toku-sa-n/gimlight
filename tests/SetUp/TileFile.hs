@@ -115,15 +115,12 @@ swapImageXY img =
 
 tileIdMultiplier :: Bool -> Bool -> Bool -> Int -> Int
 tileIdMultiplier d v h =
-    ((if d
-          then bit 29
-          else 0) .|.
-     (if v
-          then bit 30
-          else 0) .|.
-     (if h
-          then bit 31
-          else 0) .|.)
+    (setBitWhen d 29 .|. setBitWhen v 30 .|. setBitWhen h 31 .|.)
+  where
+    setBitWhen cond b =
+        if cond
+            then bit b
+            else 0
 
 diagonalVertialHorizontal :: [(Bool, Bool, Bool)]
 diagonalVertialHorizontal =
