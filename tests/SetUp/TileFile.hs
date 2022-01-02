@@ -94,15 +94,13 @@ identifierAndTileForDVH path idx tileGen img (d, v, h) =
 
 transformImage :: Bool -> Bool -> Bool -> Image PixelRGBA8 -> Image PixelRGBA8
 transformImage d v h =
-    (if h
-         then flipHorizontally
-         else id) .
-    (if v
-         then flipVertically
-         else id) .
-    (if d
-         then swapImageXY
-         else id)
+    applyFunctionWhen h flipHorizontally .
+    applyFunctionWhen v flipVertically . applyFunctionWhen d swapImageXY
+  where
+    applyFunctionWhen cond f =
+        if cond
+            then f
+            else id
 
 swapImageXY :: Image PixelRGBA8 -> Image PixelRGBA8
 swapImageXY img =

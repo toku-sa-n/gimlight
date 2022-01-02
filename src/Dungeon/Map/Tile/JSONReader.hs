@@ -76,15 +76,10 @@ generateTransformedTiles =
             }
     transformationFlagsSetter :: Bool -> Bool -> Bool -> Int -> Int
     transformationFlagsSetter d v h =
-        ((if d
-              then bit 29
-              else 0) .|.
-         (if v
-              then bit 30
-              else 0) .|.
-         (if h
-              then bit 31
-              else 0) .|.)
+        (setBitIf d 29 .|. setBitIf v 30 .|. setBitIf h 31 .|.)
+    setBitIf cond b
+        | cond = bit b
+        | otherwise = 0
     diagonalVertialHorizontal =
         (,,) <$> [False, True] <*> [False, True] <*> [False, True]
 
