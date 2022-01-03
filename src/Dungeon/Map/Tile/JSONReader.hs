@@ -8,7 +8,7 @@ import           Codec.Picture        (Image (imageData, imageHeight, imageWidth
                                        PixelRGBA8, convertRGBA8, readImage)
 import           Codec.Picture.Extra  (crop, flipHorizontally, flipVertically)
 import           Control.Applicative  (ZipList (ZipList, getZipList))
-import           Control.Lens         (filtered, has, only, (^..), (^?))
+import           Control.Lens         (filtered, has, only, (&), (^..), (^?))
 import           Control.Monad        (guard, unless, (>=>))
 import           Data.Aeson.Lens      (_Bool, _Integer, _String, key, values)
 import           Data.Bits            (Bits (bit), (.|.))
@@ -89,7 +89,7 @@ indexAndTile path = do
 
 allTilesHaveNecessaryProperties :: String -> Bool
 allTilesHaveNecessaryProperties json =
-    all ((== tileCount) . length) [getTransparent json, getWalkable json]
+    all ((== tileCount) . length . (json &)) [getTransparent, getWalkable]
   where
     tileCount = getTileCount json
 
