@@ -54,16 +54,10 @@ cellMapUsingRotatedTiles =
             (Just (haskellTilePath, tileIdMultiplier d v h 0))
         | (d, v, h) <- diagonalVertialHorizontal
         ]
-    tileIdMultiplier d v h =
-        ((if d
-              then bit 29
-              else 0) .|.
-         (if v
-              then bit 30
-              else 0) .|.
-         (if h
-              then bit 31
-              else 0) .|.)
+    tileIdMultiplier d v h = (bitIf d 29 .|. bitIf v 30 .|. bitIf h 31 .|.)
+    bitIf cond b
+        | cond = bit b
+        | otherwise = 0
     diagonalVertialHorizontal =
         (,,) <$> [False, True] <*> [False, True] <*> [False, True]
 
