@@ -49,11 +49,10 @@ cellMapUsingRotatedTiles =
     array (V2 0 0, V2 7 0) $ zipWith (\x t -> (V2 x 0, t)) [0 .. 7] tiles
   where
     tiles =
-        [ TileIdentifierLayer
-            Nothing
-            (Just (haskellTilePath, tileIdMultiplier d v h 0))
+        [ TileIdentifierLayer Nothing (Just $ tileIdentifierFromDVH d v h)
         | (d, v, h) <- diagonalVertialHorizontal
         ]
+    tileIdentifierFromDVH d v h = (haskellTilePath, tileIdMultiplier d v h 0)
     tileIdMultiplier d v h = (bitIf d 29 .|. bitIf v 30 .|. bitIf h 31 .|.)
     bitIf cond b
         | cond = bit b
