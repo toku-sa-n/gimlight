@@ -55,15 +55,8 @@ generateTransformedTiles =
              ])
   where
     transformImage d v h =
-        (if h
-             then flipHorizontally
-             else id) .
-        (if v
-             then flipVertically
-             else id) .
-        (if d
-             then swapImageXY
-             else id)
+        applyFunctionIf h flipHorizontally . applyFunctionIf v flipVertically .
+        applyFunctionIf d swapImageXY
     swapImageXY :: Image PixelRGBA8 -> Image PixelRGBA8
     swapImageXY img =
         img
@@ -80,6 +73,9 @@ generateTransformedTiles =
     setBitIf cond b
         | cond = bit b
         | otherwise = 0
+    applyFunctionIf cond f
+        | cond = f
+        | otherwise = id
     diagonalVertialHorizontal =
         (,,) <$> [False, True] <*> [False, True] <*> [False, True]
 
