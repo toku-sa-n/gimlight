@@ -43,14 +43,13 @@ getImagePath json =
         (json ^? key "image" . _String)
 
 generateTransformedTiles :: [(Int, Tile)] -> [(Int, Tile)]
-generateTransformedTiles =
-    concatMap
-        (\(idx, t) ->
-             [ ( transformationFlagsSetter d v h idx
-               , mapTileImage (transformImage d v h) t)
-             | (d, v, h) <- diagonalVertialHorizontal
-             ])
+generateTransformedTiles = concatMap $ uncurry generatePossibleTransformations
   where
+    generatePossibleTransformations idx t =
+        [ ( transformationFlagsSetter d v h idx
+          , mapTileImage (transformImage d v h) t)
+        | (d, v, h) <- diagonalVertialHorizontal
+        ]
     mapTileImage f t = tile (isWalkable t) (isTransparent t) (f $ getImage t)
     transformImage d v h =
         applyFunctionIf h flipHorizontally . applyFunctionIf v flipVertically .
