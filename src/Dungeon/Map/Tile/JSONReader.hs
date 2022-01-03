@@ -9,7 +9,7 @@ import           Codec.Picture        (Image (imageData, imageHeight, imageWidth
 import           Codec.Picture.Extra  (crop, flipHorizontally, flipVertically)
 import           Control.Applicative  (ZipList (ZipList, getZipList))
 import           Control.Lens         (filtered, has, only, (^..), (^?))
-import           Control.Monad        (guard, (>=>))
+import           Control.Monad        (guard, when, (>=>))
 import           Data.Aeson.Lens      (_Bool, _Integer, _String, key, values)
 import           Data.Bits            (Bits (bit), (.|.))
 import           Data.Either          (fromRight)
@@ -35,6 +35,12 @@ addTileFile path tc = do
         (indexAndTile path)
   where
     canonicalizeAsRelative = canonicalizePath >=> makeRelativeToCurrentDirectory
+
+getTileCount :: String -> Int
+getTileCount json =
+    fromInteger $ fromMaybe (error "No tilecount entry.") $ json ^?
+    key "tilecount" .
+    _Integer
 
 getImagePath :: String -> Text
 getImagePath json =
@@ -76,6 +82,10 @@ indexAndTile :: FilePath -> IO [(Int, Tile)]
 indexAndTile path = do
     json <- readFile path
     let imagePath = dropFileName path </> unpack (getImagePath json)
+    when
+        (getTileCount json /= length (getTransparent json) || getTileCount json /=
+         length (getWalkable json)) $
+        error "Some tiles miss necessary properties."
     fmap
         (zip (getIds json) . getZipList .
          (tile <$> walkables json <*> transparents json <*>))
