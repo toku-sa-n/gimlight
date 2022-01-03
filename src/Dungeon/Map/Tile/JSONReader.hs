@@ -18,6 +18,7 @@ import           Data.List.Split      (chunksOf)
 import           Data.Map             (insert)
 import           Data.Maybe           (fromMaybe)
 import           Data.Text            (Text, unpack)
+import           Data.Vector.Storable (Storable, Vector)
 import qualified Data.Vector.Storable as V
 import           Dungeon.Map.Tile     (Tile, TileCollection, getImage,
                                        isTransparent, isWalkable, tile)
@@ -58,15 +59,12 @@ generateTransformedTiles =
         applyFunctionIf h flipHorizontally . applyFunctionIf v flipVertically .
         applyFunctionIf d swapImageXY
     swapImageXY :: Image PixelRGBA8 -> Image PixelRGBA8
-    swapImageXY img =
-        img
-            { imageData =
-                  V.fromList
-                      (concat $ concat $ transpose $ chunksOf tileWidth $
-                       chunksOf 4 $
-                       V.toList $
-                       imageData img)
-            }
+    swapImageXY img = img {imageData = swapVectorXY $ imageData img}
+    swapVectorXY :: (Storable a) => Vector a -> Vector a
+    swapVectorXY =
+        V.fromList . concat . concat . transpose . chunksOf tileWidth .
+        chunksOf 4 .
+        V.toList
     transformationFlagsSetter :: Bool -> Bool -> Bool -> Int -> Int
     transformationFlagsSetter d v h =
         (setBitIf d 29 .|. setBitIf v 30 .|. setBitIf h 31 .|.)
