@@ -36,12 +36,6 @@ addTileFile path tc = do
   where
     canonicalizeAsRelative = canonicalizePath >=> makeRelativeToCurrentDirectory
 
-getTileCount :: String -> Int
-getTileCount json =
-    fromInteger $ fromMaybe (error "No tilecount entry.") $ json ^?
-    key "tilecount" .
-    _Integer
-
 getImagePath :: String -> Text
 getImagePath json =
     fromMaybe
@@ -94,6 +88,12 @@ indexAndTile path = do
     images = fmap ZipList . readAndCutTileImageFile
     transparents = ZipList . getTransparent
     walkables = ZipList . getWalkable
+
+getTileCount :: String -> Int
+getTileCount json =
+    fromInteger $ fromMaybe (error "No tilecount entry.") $ json ^?
+    key "tilecount" .
+    _Integer
 
 getIds :: String -> [Int]
 getIds json =
