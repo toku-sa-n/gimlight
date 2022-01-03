@@ -46,7 +46,8 @@ rectangleButNotSquareCellMap =
 cellMapUsingRotatedTiles :: CellMap
 cellMapUsingRotatedTiles =
     cellMap $
-    array (V2 0 0, V2 7 0) $ zipWith (\x t -> (V2 x 0, t)) [0 .. 7] tiles
+    array (V2 0 0, V2 (mapWidth - 1) 0) $
+    zipWith (\x t -> (V2 x 0, t)) [0 .. mapWidth - 1] tiles
   where
     tiles = [layerFromDVH d v h | (d, v, h) <- diagonalVertialHorizontal]
     layerFromDVH d v =
@@ -58,6 +59,7 @@ cellMapUsingRotatedTiles =
         | otherwise = 0
     diagonalVertialHorizontal =
         (,,) <$> [False, True] <*> [False, True] <*> [False, True]
+    mapWidth = 8
 
 mapUsingMultipleTileFiles :: FilePath
 mapUsingMultipleTileFiles = "tests/maps/multiple_tile_files.json"
