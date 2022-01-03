@@ -40,7 +40,7 @@ import           Data.Array          (Array, array, assocs, bounds, (!), (//))
 import           Data.Binary         (Binary)
 import           Data.Foldable       (find)
 import qualified Data.Map            as M
-import           Data.Maybe          (fromMaybe, isJust, isNothing, mapMaybe)
+import           Data.Maybe          (isJust, isNothing, mapMaybe)
 import           Dungeon.Map.Tile    (TileCollection, TileIdentifier, floorTile,
                                       wallTile)
 import qualified Dungeon.Map.Tile    as Tile
@@ -85,9 +85,7 @@ instance Binary Cell
 
 isWalkable :: TileCollection -> Cell -> Bool
 isWalkable tc c =
-    fmap
-        (Tile.isWalkable . (fromMaybe (error $ show c) . (tc M.!?)))
-        (c ^. (tileIdentifierLayer . upper)) /=
+    fmap (Tile.isWalkable . (tc M.!)) (c ^. (tileIdentifierLayer . upper)) /=
     Just False &&
     isNothing (c ^. actor)
 
