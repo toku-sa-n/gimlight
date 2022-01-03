@@ -48,13 +48,11 @@ generateTransformedTiles =
     concatMap
         (\(idx, t) ->
              [ ( transformationFlagsSetter d v h idx
-               , tile
-                     (isWalkable t)
-                     (isTransparent t)
-                     (transformImage d v h (getImage t)))
+               , mapTileImage (transformImage d v h) t)
              | (d, v, h) <- diagonalVertialHorizontal
              ])
   where
+    mapTileImage f t = tile (isWalkable t) (isTransparent t) (f $ getImage t)
     transformImage d v h =
         applyFunctionIf h flipHorizontally . applyFunctionIf v flipVertically .
         applyFunctionIf d swapImageXY
