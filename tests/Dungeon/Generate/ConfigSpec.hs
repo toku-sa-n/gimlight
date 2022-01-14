@@ -4,7 +4,8 @@ module Dungeon.Generate.ConfigSpec
 
 import           Control.Exception       (evaluate)
 import           Dungeon.Generate.Config (config, mapHeightIsTooSmall,
-                                          mapWidthIsTooSmall)
+                                          mapWidthIsTooSmall,
+                                          roomMinIsLargerThanRoomMax)
 import           Linear.V2               (V2 (V2))
 import           Test.Hspec              (Spec, describe, errorCall, it,
                                           shouldThrow)
@@ -38,4 +39,4 @@ testPanicIfRoomMinSizeIsLargerThanRoomMaxSize =
     describe "config" $
     it "panics if the given room minimum size is larger than the room maximum size" $
     evaluate (config 1 1 2 1 (V2 100 100)) `shouldThrow`
-    errorCall "The room minimum size 2 is larger than the room maximum size 1."
+    errorCall (roomMinIsLargerThanRoomMax 2 1)

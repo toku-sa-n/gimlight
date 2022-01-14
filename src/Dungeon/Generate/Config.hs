@@ -3,6 +3,7 @@ module Dungeon.Generate.Config
     , config
     , mapWidthIsTooSmall
     , mapHeightIsTooSmall
+    , roomMinIsLargerThanRoomMax
     ) where
 
 import           Linear.V2      (V2 (V2))
