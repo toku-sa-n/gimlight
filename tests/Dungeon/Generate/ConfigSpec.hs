@@ -15,6 +15,7 @@ spec :: Spec
 spec =
     describe "config" $ do
         testPanicIfNumOfFloorsIsNotPositive
+        testPanicIfMaxRoomsIsNotPositive
         testPanicIfWidthIsTooSmall
         testPanicIfHeightIsTooSmall
         testPanicIfRoomMinSizeIsLargerThanRoomMaxSize
@@ -24,6 +25,12 @@ testPanicIfNumOfFloorsIsNotPositive =
     it "panics if the given number of floors is not positive." $
     evaluate (config 0 1 1 1 (V2 100 100)) `shouldThrow`
     errorCall numOfFloorsMustBePositive
+
+testPanicIfMaxRoomsIsNotPositive :: Spec
+testPanicIfMaxRoomsIsNotPositive =
+    it "panics if the given number of floors is not positive." $
+    evaluate (config 1 0 1 1 (V2 100 100)) `shouldThrow`
+    errorCall "The maximum number of rooms must be positive."
 
 testPanicIfWidthIsTooSmall :: Spec
 testPanicIfWidthIsTooSmall =
