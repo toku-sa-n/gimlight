@@ -3,6 +3,7 @@ module Dungeon.Generate.Config
     , config
     , numOfFloorsMustBePositive
     , maxRoomMustBePositive
+    , roomMinSizeMustBePositive
     , mapWidthIsTooSmall
     , mapHeightIsTooSmall
     , roomMinIsLargerThanRoomMax
@@ -24,7 +25,7 @@ config :: Int -> Int -> Int -> Int -> V2 Int -> Config
 config nf mr rmin rmax ms@(V2 mw mh)
     | nf <= 0 = error numOfFloorsMustBePositive
     | mr <= 0 = error maxRoomMustBePositive
-    | rmin <= 0 = error "The minimum room size must be positive."
+    | rmin <= 0 = error roomMinSizeMustBePositive
     | mw < tileColumns = error $ mapWidthIsTooSmall mw
     | mh < tileRows = error $ mapHeightIsTooSmall mh
     | rmin > rmax = error $ roomMinIsLargerThanRoomMax rmin rmax
@@ -35,6 +36,9 @@ numOfFloorsMustBePositive = "The number of floors must be positive."
 
 maxRoomMustBePositive :: String
 maxRoomMustBePositive = "The maximum number of rooms must be positive."
+
+roomMinSizeMustBePositive :: String
+roomMinSizeMustBePositive = "The minimum room size must be positive."
 
 mapWidthIsTooSmall :: Int -> String
 mapWidthIsTooSmall w =

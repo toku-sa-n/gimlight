@@ -7,7 +7,8 @@ import           Dungeon.Generate.Config (config, mapHeightIsTooSmall,
                                           mapWidthIsTooSmall,
                                           maxRoomMustBePositive,
                                           numOfFloorsMustBePositive,
-                                          roomMinIsLargerThanRoomMax)
+                                          roomMinIsLargerThanRoomMax,
+                                          roomMinSizeMustBePositive)
 import           Linear.V2               (V2 (V2))
 import           Test.Hspec              (Spec, describe, errorCall, it,
                                           shouldThrow)
@@ -38,7 +39,7 @@ testPanicIfRoomMinSizeIsNotPositive :: Spec
 testPanicIfRoomMinSizeIsNotPositive =
     it "panics if the given number of minimum room size is not positive." $
     evaluate (config 1 1 0 1 (V2 100 100)) `shouldThrow`
-    errorCall "The minimum room size must be positive."
+    errorCall roomMinSizeMustBePositive
 
 testPanicIfWidthIsTooSmall :: Spec
 testPanicIfWidthIsTooSmall =
