@@ -5,6 +5,7 @@ module Dungeon.Generate.ConfigSpec
 import           Control.Exception       (evaluate)
 import           Dungeon.Generate.Config (config, mapHeightIsTooSmall,
                                           mapWidthIsTooSmall,
+                                          maxRoomMustBePositive,
                                           numOfFloorsMustBePositive,
                                           roomMinIsLargerThanRoomMax)
 import           Linear.V2               (V2 (V2))
@@ -31,7 +32,7 @@ testPanicIfMaxRoomsIsNotPositive :: Spec
 testPanicIfMaxRoomsIsNotPositive =
     it "panics if the given number of maximum rooms is not positive." $
     evaluate (config 1 0 1 1 (V2 100 100)) `shouldThrow`
-    errorCall "The maximum number of rooms must be positive."
+    errorCall maxRoomMustBePositive
 
 testPanicIfRoomMinSizeIsNotPositive :: Spec
 testPanicIfRoomMinSizeIsNotPositive =
