@@ -13,14 +13,14 @@ import           Test.Hspec              (Spec, describe, errorCall, it,
 spec :: Spec
 spec =
     describe "config" $ do
-        testPanicIfNumOfFloorsIsNegativeOrZero
+        testPanicIfNumOfFloorsIsNotPositive
         testPanicIfWidthIsTooSmall
         testPanicIfHeightIsTooSmall
         testPanicIfRoomMinSizeIsLargerThanRoomMaxSize
 
-testPanicIfNumOfFloorsIsNegativeOrZero :: Spec
-testPanicIfNumOfFloorsIsNegativeOrZero =
-    it "panics if the given number of floors is negative." $
+testPanicIfNumOfFloorsIsNotPositive :: Spec
+testPanicIfNumOfFloorsIsNotPositive =
+    it "panics if the given number of floors is not positive." $
     evaluate (config 0 1 1 1 (V2 100 100)) `shouldThrow`
     errorCall "The number of floors must be positive."
 
