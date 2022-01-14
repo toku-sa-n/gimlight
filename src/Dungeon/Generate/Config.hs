@@ -38,4 +38,5 @@ mapHeightIsTooSmall h =
 roomMinIsLargerThanRoomMax :: Int -> Int -> String
 roomMinIsLargerThanRoomMax rmin rmax =
     "The room minimum size " ++
-    show rmin ++ " is larger than the room maximum size " ++ show rmax ++ "."
+    show rmin ++
+    " is larger than or equal to the room maximum size " ++ show rmax ++ "."
