@@ -25,7 +25,7 @@ testSizeIsCorrect = do
     tc <- runIO $ addTileFile "tiles/tiles.json" empty
     describe "generateMultipleFloorsDungeon" $
         it "generates a dungeon with the specified map size" $
-        result tc `shouldBe` V2 10 10
+        result tc `shouldBe` sz
   where
     result tc =
         let Node d _ =
@@ -43,5 +43,6 @@ testSizeIsCorrect = do
             , maxRooms = 3
             , roomMinSize = 2
             , roomMaxSize = 3
-            , mapSize = V2 10 10
+            , mapSize = sz
             }
+    sz = V2 10 10
