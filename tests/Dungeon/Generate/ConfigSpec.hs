@@ -17,7 +17,7 @@ spec = do
 testPanicIfWidthIsTooSmall :: Spec
 testPanicIfWidthIsTooSmall =
     describe "config" $
-    it "panics if the given map size is too small" $
+    it "panics if the given map width is too small" $
     evaluate (config 1 1 1 1 (V2 width 1)) `shouldThrow`
     errorCall (mapWidthIsTooSmall width)
   where
@@ -26,7 +26,7 @@ testPanicIfWidthIsTooSmall =
 testPanicIfHeightIsTooSmall :: Spec
 testPanicIfHeightIsTooSmall =
     describe "config" $
-    it "panics if the given map size is too small" $
+    it "panics if the given map height is too small" $
     evaluate (config 1 1 1 1 (V2 100 height)) `shouldThrow`
     errorCall (mapHeightIsTooSmall height)
   where
