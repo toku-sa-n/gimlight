@@ -5,6 +5,7 @@ module Dungeon.Generate.ConfigSpec
 import           Control.Exception       (evaluate)
 import           Dungeon.Generate.Config (config, mapHeightIsTooSmall,
                                           mapWidthIsTooSmall,
+                                          numOfFloorsMustBePositive,
                                           roomMinIsLargerThanRoomMax)
 import           Linear.V2               (V2 (V2))
 import           Test.Hspec              (Spec, describe, errorCall, it,
@@ -22,7 +23,7 @@ testPanicIfNumOfFloorsIsNotPositive :: Spec
 testPanicIfNumOfFloorsIsNotPositive =
     it "panics if the given number of floors is not positive." $
     evaluate (config 0 1 1 1 (V2 100 100)) `shouldThrow`
-    errorCall "The number of floors must be positive."
+    errorCall numOfFloorsMustBePositive
 
 testPanicIfWidthIsTooSmall :: Spec
 testPanicIfWidthIsTooSmall =
