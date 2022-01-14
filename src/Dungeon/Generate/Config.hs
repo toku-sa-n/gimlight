@@ -20,6 +20,7 @@ data Config =
 
 config :: Int -> Int -> Int -> Int -> V2 Int -> Config
 config nf mr rmin rmax ms@(V2 mw mh)
+    | nf <= 0 = error "The number of floors must be positive."
     | mw < tileColumns = error $ mapWidthIsTooSmall mw
     | mh < tileRows = error $ mapHeightIsTooSmall mh
     | rmin > rmax = error $ roomMinIsLargerThanRoomMax rmin rmax
