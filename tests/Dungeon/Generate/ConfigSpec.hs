@@ -3,11 +3,11 @@ module Dungeon.Generate.ConfigSpec
     ) where
 
 import           Control.Exception       (evaluate)
-import           Dungeon.Generate.Config (config, mapWidthIsTooSmall)
+import           Dungeon.Generate.Config (config, mapHeightIsTooSmall,
+                                          mapWidthIsTooSmall)
 import           Linear.V2               (V2 (V2))
 import           Test.Hspec              (Spec, describe, errorCall, it,
                                           shouldThrow)
-import           UI.Draw.Config          (tileRows)
 
 spec :: Spec
 spec = do
@@ -28,8 +28,6 @@ testPanicIfHeightIsTooSmall =
     describe "config" $
     it "panics if the given map size is too small" $
     evaluate (config 1 1 1 1 (V2 100 height)) `shouldThrow`
-    errorCall
-        ("Map height is expected to be larger than or equal to " ++
-         show tileRows ++ " but the actual value is " ++ show height ++ ".")
+    errorCall (mapHeightIsTooSmall height)
   where
     height = 1

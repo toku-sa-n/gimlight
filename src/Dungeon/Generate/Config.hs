@@ -2,6 +2,7 @@ module Dungeon.Generate.Config
     ( Config(..)
     , config
     , mapWidthIsTooSmall
+    , mapHeightIsTooSmall
     ) where
 
 import           Linear.V2      (V2 (V2))
@@ -19,13 +20,15 @@ data Config =
 config :: Int -> Int -> Int -> Int -> V2 Int -> Config
 config nf mr rmin rmax ms@(V2 mw mh)
     | mw < tileColumns = error $ mapWidthIsTooSmall mw
-    | mh < tileRows =
-        error $
-        "Map height is expected to be larger than or equal to " ++
-        show tileRows ++ " but the actual value is " ++ show mh ++ "."
+    | mh < tileRows = error $ mapHeightIsTooSmall mh
     | otherwise = Config nf mr rmin rmax ms
 
 mapWidthIsTooSmall :: Int -> String
 mapWidthIsTooSmall w =
     "Map width is expected to be larger than or equal to " ++
     show tileColumns ++ " but the actual value is " ++ show w ++ "."
+
+mapHeightIsTooSmall :: Int -> String
+mapHeightIsTooSmall h =
+    "Map height is expected to be larger than or equal to " ++
+    show tileColumns ++ " but the actual value is " ++ show h ++ "."
