@@ -11,14 +11,14 @@ import           Test.Hspec              (Spec, describe, errorCall, it,
                                           shouldThrow)
 
 spec :: Spec
-spec = do
-    testPanicIfWidthIsTooSmall
-    testPanicIfHeightIsTooSmall
-    testPanicIfRoomMinSizeIsLargerThanRoomMaxSize
+spec =
+    describe "config" $ do
+        testPanicIfWidthIsTooSmall
+        testPanicIfHeightIsTooSmall
+        testPanicIfRoomMinSizeIsLargerThanRoomMaxSize
 
 testPanicIfWidthIsTooSmall :: Spec
 testPanicIfWidthIsTooSmall =
-    describe "config" $
     it "panics if the given map width is too small" $
     evaluate (config 1 1 1 1 (V2 width 1)) `shouldThrow`
     errorCall (mapWidthIsTooSmall width)
@@ -27,7 +27,6 @@ testPanicIfWidthIsTooSmall =
 
 testPanicIfHeightIsTooSmall :: Spec
 testPanicIfHeightIsTooSmall =
-    describe "config" $
     it "panics if the given map height is too small" $
     evaluate (config 1 1 1 1 (V2 100 height)) `shouldThrow`
     errorCall (mapHeightIsTooSmall height)
@@ -36,7 +35,6 @@ testPanicIfHeightIsTooSmall =
 
 testPanicIfRoomMinSizeIsLargerThanRoomMaxSize :: Spec
 testPanicIfRoomMinSizeIsLargerThanRoomMaxSize =
-    describe "config" $
     it "panics if the given room minimum size is larger than the room maximum size" $
     evaluate (config 1 1 rmin rmax (V2 100 100)) `shouldThrow`
     errorCall (roomMinIsLargerThanRoomMax rmin rmax)
