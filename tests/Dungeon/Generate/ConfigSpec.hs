@@ -13,6 +13,7 @@ spec :: Spec
 spec = do
     testPanicIfWidthIsTooSmall
     testPanicIfHeightIsTooSmall
+    testPanicIfRoomMinSizeIsLargerThanRoomMaxSize
 
 testPanicIfWidthIsTooSmall :: Spec
 testPanicIfWidthIsTooSmall =
@@ -31,3 +32,10 @@ testPanicIfHeightIsTooSmall =
     errorCall (mapHeightIsTooSmall height)
   where
     height = 1
+
+testPanicIfRoomMinSizeIsLargerThanRoomMaxSize :: Spec
+testPanicIfRoomMinSizeIsLargerThanRoomMaxSize =
+    describe "config" $
+    it "panics if the given room minimum size is larger than the room maximum size" $
+    evaluate (config 1 1 2 1 (V2 100 100)) `shouldThrow`
+    errorCall "The room minimum size 2 is larger than the room maximum size 1."
