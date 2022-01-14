@@ -28,7 +28,7 @@ testPanicIfNumOfFloorsIsNotPositive =
 
 testPanicIfMaxRoomsIsNotPositive :: Spec
 testPanicIfMaxRoomsIsNotPositive =
-    it "panics if the given number of floors is not positive." $
+    it "panics if the given number of maximum rooms is not positive." $
     evaluate (config 1 0 1 1 (V2 100 100)) `shouldThrow`
     errorCall "The maximum number of rooms must be positive."
 
