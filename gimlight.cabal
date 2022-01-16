@@ -99,7 +99,6 @@ library
     other-modules:      Actor.Friendly
                       , Actor.Friendly.Electria
                       , Actor.Status.Experience
-                      , Dungeon.Generate
                       , Dungeon.Generate.Room
                       , Dungeon.Init
                       , Dungeon.PathFinder

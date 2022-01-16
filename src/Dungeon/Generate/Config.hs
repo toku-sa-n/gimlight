@@ -1,5 +1,10 @@
 module Dungeon.Generate.Config
-    ( Config(..)
+    ( Config
+    , getNumOfFloors
+    , getMaxRooms
+    , getRoomMinSize
+    , getRoomMaxSize
+    , getMapSize
     , config
     , numOfFloorsMustBePositive
     , maxRoomMustBePositive
@@ -21,6 +26,21 @@ data Config =
         , mapSize     :: V2 Int
         }
 
+getNumOfFloors :: Config -> Int
+getNumOfFloors = numOfFloors
+
+getMaxRooms :: Config -> Int
+getMaxRooms = maxRooms
+
+getRoomMinSize :: Config -> Int
+getRoomMinSize = roomMinSize
+
+getRoomMaxSize :: Config -> Int
+getRoomMaxSize = roomMaxSize
+
+getMapSize :: Config -> V2 Int
+getMapSize = mapSize
+
 config :: Int -> Int -> Int -> Int -> V2 Int -> Config
 config nf mr rmin rmax ms@(V2 mw mh)
     | nf <= 0 = error numOfFloorsMustBePositive
@@ -28,7 +48,7 @@ config nf mr rmin rmax ms@(V2 mw mh)
     | rmin <= 0 = error roomMinSizeMustBePositive
     | mw < tileColumns = error $ mapWidthIsTooSmall mw
     | mh < tileRows = error $ mapHeightIsTooSmall mh
-    | rmin > rmax = error $ roomMinIsLargerThanRoomMax rmin rmax
+    | rmin > rmax = error $ roomMinIsLargerThanRoomMax rmin rmax -- No need to check if `rmin <= 0` as this ensures that `0 < rmin < rmax`.
     | otherwise = Config nf mr rmin rmax ms
 
 numOfFloorsMustBePositive :: String
