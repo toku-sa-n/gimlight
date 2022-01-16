@@ -47,6 +47,7 @@ Test-Suite spec
                       , Action.PickUpSpec
                       , Action.WaitSpec
                       , Dungeon.GenerateSpec
+                      , Dungeon.Generate.ConfigSpec
                       , Dungeon.Map.CellSpec
                       , Dungeon.Map.JSONReaderSpec
                       , Dungeon.Map.Tile.JSONReaderSpec
@@ -98,6 +99,7 @@ library
     other-modules:      Actor.Friendly
                       , Actor.Friendly.Electria
                       , Actor.Status.Experience
+                      , Dungeon.Generate
                       , Dungeon.Generate.Room
                       , Dungeon.Init
                       , Dungeon.PathFinder
