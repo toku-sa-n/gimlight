@@ -5,7 +5,8 @@ module Dungeon.Generate
 import           Actor                   (Actor)
 import           Actor.Monsters          (orc, troll)
 import           Control.Lens            ((%~), (&), (.~), (?~), (^.))
-import           Control.Monad.State     (execStateT)
+import           Control.Monad.State     (MonadState (get, put), State,
+                                          execStateT, runState)
 import           Coord                   (Coord)
 import           Data.Either             (fromRight)
 import           Data.Maybe              (fromMaybe)
@@ -29,7 +30,8 @@ import           Dungeon.Stairs          (StairsPair (StairsPair))
 import           IndexGenerator          (IndexGenerator)
 import           Item                    (herb, sampleBook)
 import           Linear.V2               (V2 (..), _x, _y)
-import           System.Random           (Random (randomR), StdGen, random)
+import           System.Random           (Random (randomR), RandomGen, StdGen,
+                                          random)
 import           TreeZipper              (TreeZipper, appendNode, getFocused,
                                           goDownBy, goToRootAndGetTree, modify,
                                           treeZipper)
@@ -195,7 +197,7 @@ placeEnemies tc cm g ig r n = placeEnemies tc newMap g''' ig' r (n - 1)
   where
     (x, g') = randomR (x1 r, x2 r - 1) g
     (y, g'') = randomR (y1 r, y2 r - 1) g'
-    ((enemy, ig'), g''') = newMonster g'' ig
+    ((enemy, ig'), g''') = flip runState g'' $ newMonster ig
     newMap = fromRight cm $ flip execStateT cm $ locateActorAt tc enemy (V2 x y)
 
 placeItems ::
@@ -212,12 +214,20 @@ placeItems cm tc g r n = placeItems newMap tc g''' r (n - 1)
         | prob < 0.8 = herb
         | otherwise = sampleBook
 
-newMonster :: StdGen -> IndexGenerator -> ((Actor, IndexGenerator), StdGen)
-newMonster g ig =
-    let (r, g') = random g :: (Float, StdGen)
-     in if r < 0.8
-            then (orc ig, g')
-            else (troll ig, g')
+newMonster :: IndexGenerator -> State StdGen (Actor, IndexGenerator)
+newMonster ig = do
+    r <- randomST :: State StdGen Float
+    return $
+        if r < 0.8
+            then orc ig
+            else troll ig
+
+randomST :: (RandomGen g, Random a) => State g a
+randomST = do
+    g <- get
+    let (v, g') = random g
+    put g'
+    return v
 
 maxMonstersPerRoom :: Int
 maxMonstersPerRoom = 1
