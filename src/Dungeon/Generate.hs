@@ -113,13 +113,13 @@ generateDungeon g tc ig cfg ident =
     , g'
     , ig')
   where
-    (tiles, enterPosition, g', ig') =
+    ((tiles, enterPosition, ig'), g') =
+        flip runState g $
         generateDungeonAccum
             []
             tc
             (allWallTiles $ getMapSize cfg)
             (V2 0 0)
-            g
             ig
             cfg
             (getMaxRooms cfg)
@@ -129,44 +129,33 @@ generateDungeonAccum ::
     -> TileCollection
     -> CellMap
     -> Coord
-    -> StdGen
     -> IndexGenerator
     -> Config
     -> Int
-    -> (CellMap, V2 Int, StdGen, IndexGenerator)
-generateDungeonAccum _ _ tileMap playerPos g ig _ 0 =
-    (tileMap, playerPos, g, ig)
-generateDungeonAccum acc tc tileMap playerPos g ig cfg rooms =
-    generateDungeonAccum
-        newAcc
-        tc
-        newMap
-        newPlayerPos
-        g''''''
-        ig'
-        cfg
-        (rooms - 1)
-  where
-    (newMap, newAcc, newPlayerPos)
-        | usable = (mapWithItems, room : acc, center room)
-        | otherwise = (tileMap, acc, playerPos)
-    usable = not $ any (roomOverlaps room) acc
-    appendRoom
-        | null acc = createRoom room tileMap
-        | otherwise =
-            tunnelBetween (center room) (center $ head acc) $
-            createRoom room tileMap
-    (roomWidth, g') = randomR (getRoomMinSize cfg, getRoomMaxSize cfg) g
-    (roomHeight, g'') = randomR (getRoomMinSize cfg, getRoomMaxSize cfg) g'
-    (x, g''') = randomR (0, width - roomWidth - 1) g''
-    (y, g'''') = randomR (0, height - roomHeight - 1) g'''
-    room = roomFromWidthHeight (V2 x y) (V2 roomWidth roomHeight)
-    ((mapWithNewEnemies, ig'), g''''') =
-        flip runState g'''' $
+    -> State StdGen (CellMap, V2 Int, IndexGenerator)
+generateDungeonAccum _ _ tileMap playerPos ig _ 0 =
+    return (tileMap, playerPos, ig)
+generateDungeonAccum acc tc tileMap playerPos ig cfg rooms = do
+    roomWidth <- randomRST (getRoomMinSize cfg, getRoomMaxSize cfg)
+    roomHeight <- randomRST (getRoomMinSize cfg, getRoomMaxSize cfg)
+    x <- randomRST (0, width - roomWidth - 1)
+    y <- randomRST (0, height - roomHeight - 1)
+    let room = roomFromWidthHeight (V2 x y) (V2 roomWidth roomHeight)
+        appendRoom =
+            if null acc
+                then createRoom room tileMap
+                else tunnelBetween (center room) (center $ head acc) $
+                     createRoom room tileMap
+    (mapWithNewEnemies, ig') <-
         placeEnemies tc appendRoom ig room maxMonstersPerRoom
-    (mapWithItems, g'''''') =
-        flip runState g''''' $
-        placeItems mapWithNewEnemies tc room maxItemsPerRoom
+    mapWithItems <- placeItems mapWithNewEnemies tc room maxItemsPerRoom
+    let usable = not $ any (roomOverlaps room) acc
+        (newMap, newAcc, newPlayerPos) =
+            if usable
+                then (mapWithItems, room : acc, center room)
+                else (tileMap, acc, playerPos)
+    generateDungeonAccum newAcc tc newMap newPlayerPos ig' cfg (rooms - 1)
+  where
     V2 width height = widthAndHeight tileMap
 
 createRoom :: Room -> CellMap -> CellMap
