@@ -6,9 +6,10 @@ import           Actor                   (Actor)
 import           Actor.Monsters          (orc, troll)
 import           Control.Lens            ((%~), (&), (.~), (?~), (^.))
 import           Control.Monad.State     (MonadState (get, put), State,
-                                          execStateT, runState)
+                                          execStateT)
 import           Coord                   (Coord)
 import           Data.Either             (fromRight)
+import           Data.Foldable           (foldlM)
 import           Data.Maybe              (fromMaybe)
 import           Data.Tree               (Tree (Node, rootLabel, subForest))
 import           Dungeon                 (Dungeon,
@@ -37,26 +38,23 @@ import           TreeZipper              (TreeZipper, appendNode, getFocused,
                                           treeZipper)
 
 generateMultipleFloorsDungeon ::
-       StdGen
-    -> IndexGenerator
+       IndexGenerator
     -> TileCollection
     -> Config
     -> Identifier
-    -> (Tree Dungeon, Coord, StdGen, IndexGenerator)
-generateMultipleFloorsDungeon g ig ts cfg ident =
-    (goToRootAndGetTree dungeonZipper, ascendingStairsInFirstFloor, g'', ig'')
-  where
-    ((firstFloor, ascendingStairsInFirstFloor, ig'), g') =
-        flip runState g $ generateDungeon ts ig cfg ident
-    treeWithFirstFloor = Node {rootLabel = firstFloor, subForest = []}
-    zipperWithFirstFloor = treeZipper treeWithFirstFloor
-    ((dungeonZipper, ig''), g'') =
-        foldl
-            (\((dacc, igacc), gacc) _ ->
-                 flip runState gacc $
+    -> State StdGen (Tree Dungeon, Coord, IndexGenerator)
+generateMultipleFloorsDungeon ig ts cfg ident = do
+    (firstFloor, ascendingStairsInFirstFloor, ig') <-
+        generateDungeon ts ig cfg ident
+    let treeWithFirstFloor = Node {rootLabel = firstFloor, subForest = []}
+        zipperWithFirstFloor = treeZipper treeWithFirstFloor
+    (dungeonZipper, ig'') <-
+        foldlM
+            (\(dacc, igacc) _ ->
                  generateDungeonAndAppend dacc igacc ts cfg ident)
-            ((zipperWithFirstFloor, ig'), g')
+            (zipperWithFirstFloor, ig')
             [1 .. getNumOfFloors cfg - 1]
+    return (goToRootAndGetTree dungeonZipper, ascendingStairsInFirstFloor, ig'')
 
 generateDungeonAndAppend ::
        TreeZipper Dungeon
