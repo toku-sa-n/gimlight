@@ -164,7 +164,8 @@ generateDungeonAccum acc tc tileMap playerPos g ig cfg rooms =
     (mapWithNewEnemies, ig', g''''') =
         placeEnemies tc appendRoom g'''' ig room maxMonstersPerRoom
     (mapWithItems, g'''''') =
-        placeItems mapWithNewEnemies tc g''''' room maxItemsPerRoom
+        flip runState g''''' $
+        placeItems mapWithNewEnemies tc room maxItemsPerRoom
     V2 width height = widthAndHeight tileMap
 
 createRoom :: Room -> CellMap -> CellMap
@@ -200,19 +201,19 @@ placeEnemies tc cm g ig r n = placeEnemies tc newMap g''' ig' r (n - 1)
     ((enemy, ig'), g''') = flip runState g'' $ newMonster ig
     newMap = fromRight cm $ flip execStateT cm $ locateActorAt tc enemy (V2 x y)
 
-placeItems ::
-       CellMap -> TileCollection -> StdGen -> Room -> Int -> (CellMap, StdGen)
-placeItems cm _ g _ 0 = (cm, g)
-placeItems cm tc g r n = placeItems newMap tc g''' r (n - 1)
-  where
-    newMap =
-        fromRight cm $ flip execStateT cm $ locateItemAt tc newItem (V2 x y)
-    (x, g') = randomR (x1 r, x2 r - 1) g
-    (y, g'') = randomR (y1 r, y2 r - 1) g'
-    (prob, g''') = random g'' :: (Float, StdGen)
-    newItem
-        | prob < 0.8 = herb
-        | otherwise = sampleBook
+placeItems :: CellMap -> TileCollection -> Room -> Int -> State StdGen CellMap
+placeItems cm _ _ 0 = return cm
+placeItems cm tc r n = do
+    x <- randomRST (x1 r, x2 r - 1)
+    y <- randomRST (y1 r, y2 r - 1)
+    prob <- randomST :: State StdGen Float
+    let newItem =
+            if prob < 0.8
+                then herb
+                else sampleBook
+        newMap =
+            fromRight cm $ flip execStateT cm $ locateItemAt tc newItem (V2 x y)
+    placeItems newMap tc r (n - 1)
 
 newMonster :: IndexGenerator -> State StdGen (Actor, IndexGenerator)
 newMonster ig = do
@@ -221,6 +222,13 @@ newMonster ig = do
         if r < 0.8
             then orc ig
             else troll ig
+
+randomRST :: (Random a, RandomGen g) => (a, a) -> State g a
+randomRST range = do
+    g <- get
+    let (v, g') = randomR range g
+    put g'
+    return v
 
 randomST :: (RandomGen g, Random a) => State g a
 randomST = do
