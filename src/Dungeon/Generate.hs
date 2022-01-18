@@ -50,47 +50,45 @@ generateMultipleFloorsDungeon g ig ts cfg ident =
         flip runState g $ generateDungeon ts ig cfg ident
     treeWithFirstFloor = Node {rootLabel = firstFloor, subForest = []}
     zipperWithFirstFloor = treeZipper treeWithFirstFloor
-    (dungeonZipper, g'', ig'') =
+    ((dungeonZipper, ig''), g'') =
         foldl
-            (\(dacc, gacc, igacc) _ ->
-                 generateDungeonAndAppend dacc gacc igacc ts cfg ident)
-            (zipperWithFirstFloor, g', ig')
+            (\((dacc, igacc), gacc) _ ->
+                 flip runState gacc $
+                 generateDungeonAndAppend dacc igacc ts cfg ident)
+            ((zipperWithFirstFloor, ig'), g')
             [1 .. getNumOfFloors cfg - 1]
 
 generateDungeonAndAppend ::
        TreeZipper Dungeon
-    -> StdGen
     -> IndexGenerator
     -> TileCollection
     -> Config
     -> Identifier
-    -> (TreeZipper Dungeon, StdGen, IndexGenerator)
-generateDungeonAndAppend zipper g ig ts cfg ident =
-    (zipperFocusingNext, g'', ig')
-  where
-    ((generatedDungeon, lowerStairsPosition, ig'), g') =
-        flip runState g $ generateDungeon ts ig cfg ident
-    (upperStairsPosition, g'') =
-        flip runState g' $ newStairsPosition ts $ getFocused zipper
-    (newUpperDungeon, newLowerDungeon) =
-        addAscendingAndDescendingStiars
-            (StairsPair upperStairsPosition lowerStairsPosition)
-            (getFocused zipper, generatedDungeon)
-    newZipper =
-        appendNode newLowerDungeon $
-        modify
-            (\x ->
-                 x &
-                 cellMap %~
-                 (fromMaybe (error "Failed to change the tile.") .
-                  changeTileAt
-                      (\tile -> tile & upper ?~ downStairs)
-                      upperStairsPosition)) $
-        modify (const newUpperDungeon) zipper
-    zipperFocusingNext =
-        fromMaybe
-            (error "unreachable.")
-            (goDownBy (== newLowerDungeon) newZipper)
+    -> State StdGen (TreeZipper Dungeon, IndexGenerator)
+generateDungeonAndAppend zipper ig ts cfg ident = do
+    (generatedDungeon, lowerStairsPosition, ig') <-
+        generateDungeon ts ig cfg ident
+    upperStairsPosition <- newStairsPosition ts $ getFocused zipper
+    let (newUpperDungeon, newLowerDungeon) =
+            addAscendingAndDescendingStiars
+                (StairsPair upperStairsPosition lowerStairsPosition)
+                (getFocused zipper, generatedDungeon)
+        newZipper =
+            appendNode newLowerDungeon $
+            modify
+                (\x ->
+                     x &
+                     cellMap %~
+                     (fromMaybe (error "Failed to change the tile.") .
+                      changeTileAt
+                          (\tile -> tile & upper ?~ downStairs)
+                          upperStairsPosition)) $
+            modify (const newUpperDungeon) zipper
+        zipperFocusingNext =
+            fromMaybe
+                (error "unreachable.")
+                (goDownBy (== newLowerDungeon) newZipper)
+    return (zipperFocusingNext, ig')
 
 newStairsPosition :: TileCollection -> Dungeon -> State StdGen Coord
 newStairsPosition ts d = do
