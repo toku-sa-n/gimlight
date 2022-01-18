@@ -15,7 +15,7 @@ module Dungeon.Generate.Config
     ) where
 
 import           Linear.V2      (V2)
-import           UI.Draw.Config (tileColumns)
+import           UI.Draw.Config (tileColumns, tileRows)
 
 data Config =
     Config
