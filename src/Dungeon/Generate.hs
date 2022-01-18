@@ -161,8 +161,9 @@ generateDungeonAccum acc tc tileMap playerPos g ig cfg rooms =
     (x, g''') = randomR (0, width - roomWidth - 1) g''
     (y, g'''') = randomR (0, height - roomHeight - 1) g'''
     room = roomFromWidthHeight (V2 x y) (V2 roomWidth roomHeight)
-    (mapWithNewEnemies, ig', g''''') =
-        placeEnemies tc appendRoom g'''' ig room maxMonstersPerRoom
+    ((mapWithNewEnemies, ig'), g''''') =
+        flip runState g'''' $
+        placeEnemies tc appendRoom ig room maxMonstersPerRoom
     (mapWithItems, g'''''') =
         flip runState g''''' $
         placeItems mapWithNewEnemies tc room maxItemsPerRoom
@@ -188,18 +189,18 @@ tunnelBetween start end d = createRoom path1 $ createRoom path2 d
 placeEnemies ::
        TileCollection
     -> CellMap
-    -> StdGen
     -> IndexGenerator
     -> Room
     -> Int
-    -> (CellMap, IndexGenerator, StdGen)
-placeEnemies _ cm g ig _ 0 = (cm, ig, g)
-placeEnemies tc cm g ig r n = placeEnemies tc newMap g''' ig' r (n - 1)
-  where
-    (x, g') = randomR (x1 r, x2 r - 1) g
-    (y, g'') = randomR (y1 r, y2 r - 1) g'
-    ((enemy, ig'), g''') = flip runState g'' $ newMonster ig
-    newMap = fromRight cm $ flip execStateT cm $ locateActorAt tc enemy (V2 x y)
+    -> State StdGen (CellMap, IndexGenerator)
+placeEnemies _ cm ig _ 0 = return (cm, ig)
+placeEnemies tc cm ig r n = do
+    x <- randomRST (x1 r, x2 r - 1)
+    y <- randomRST (y1 r, y2 r - 1)
+    (enemy, ig') <- newMonster ig
+    let newMap =
+            fromRight cm $ flip execStateT cm $ locateActorAt tc enemy (V2 x y)
+    placeEnemies tc newMap ig' r (n - 1)
 
 placeItems :: CellMap -> TileCollection -> Room -> Int -> State StdGen CellMap
 placeItems cm _ _ 0 = return cm
