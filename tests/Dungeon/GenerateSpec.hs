@@ -36,10 +36,9 @@ testSizeIsCorrect = do
         return $ dungeonSize tc (V2 width height) == V2 width height
     dungeonSize tc sz =
         let Node d _ =
-                flip
-                    runState
-                    (mkStdGen 0)
-                    (generateMultipleFloorsDungeon generator tc (cfg sz) Beaeve) ^.
+                runState
+                    (generateMultipleFloorsDungeon generator tc (cfg sz) Beaeve)
+                    (mkStdGen 0) ^.
                 _1 .
                 _1
          in widthAndHeight $ d ^. D.cellMap
