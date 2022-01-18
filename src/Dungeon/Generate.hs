@@ -70,7 +70,8 @@ generateDungeonAndAppend zipper g ig ts cfg ident =
   where
     ((generatedDungeon, lowerStairsPosition, ig'), g') =
         flip runState g $ generateDungeon ts ig cfg ident
-    (upperStairsPosition, g'') = newStairsPosition g' ts $ getFocused zipper
+    (upperStairsPosition, g'') =
+        flip runState g' $ newStairsPosition ts $ getFocused zipper
     (newUpperDungeon, newLowerDungeon) =
         addAscendingAndDescendingStiars
             (StairsPair upperStairsPosition lowerStairsPosition)
@@ -91,11 +92,12 @@ generateDungeonAndAppend zipper g ig ts cfg ident =
             (error "unreachable.")
             (goDownBy (== newLowerDungeon) newZipper)
 
-newStairsPosition :: StdGen -> TileCollection -> Dungeon -> (Coord, StdGen)
-newStairsPosition g ts d = (candidates !! index, g')
+newStairsPosition :: TileCollection -> Dungeon -> State StdGen Coord
+newStairsPosition ts d = do
+    index <- randomRST (0, length candidates - 1)
+    return $ candidates !! index
   where
     candidates = stairsPositionCandidates ts d
-    (index, g') = randomR (0, length candidates - 1) g
 
 generateDungeon ::
        TileCollection
