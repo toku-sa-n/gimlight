@@ -46,8 +46,8 @@ generateMultipleFloorsDungeon ::
 generateMultipleFloorsDungeon g ig ts cfg ident =
     (goToRootAndGetTree dungeonZipper, ascendingStairsInFirstFloor, g'', ig'')
   where
-    (firstFloor, ascendingStairsInFirstFloor, g', ig') =
-        generateDungeon g ts ig cfg ident
+    ((firstFloor, ascendingStairsInFirstFloor, ig'), g') =
+        flip runState g $ generateDungeon ts ig cfg ident
     treeWithFirstFloor = Node {rootLabel = firstFloor, subForest = []}
     zipperWithFirstFloor = treeZipper treeWithFirstFloor
     (dungeonZipper, g'', ig'') =
@@ -68,8 +68,8 @@ generateDungeonAndAppend ::
 generateDungeonAndAppend zipper g ig ts cfg ident =
     (zipperFocusingNext, g'', ig')
   where
-    (generatedDungeon, lowerStairsPosition, g', ig') =
-        generateDungeon g ts ig cfg ident
+    ((generatedDungeon, lowerStairsPosition, ig'), g') =
+        flip runState g $ generateDungeon ts ig cfg ident
     (upperStairsPosition, g'') = newStairsPosition g' ts $ getFocused zipper
     (newUpperDungeon, newLowerDungeon) =
         addAscendingAndDescendingStiars
@@ -98,23 +98,13 @@ newStairsPosition g ts d = (candidates !! index, g')
     (index, g') = randomR (0, length candidates - 1) g
 
 generateDungeon ::
-       StdGen
-    -> TileCollection
+       TileCollection
     -> IndexGenerator
     -> Config
     -> Identifier
-    -> (Dungeon, Coord, StdGen, IndexGenerator)
-generateDungeon g tc ig cfg ident =
-    ( dungeon
-          (fromMaybe (error "Failed to change the tile.") $
-           changeTileAt (\tile -> tile & upper ?~ upStairs) enterPosition tiles)
-          ident
-    , enterPosition
-    , g'
-    , ig')
-  where
-    ((tiles, enterPosition, ig'), g') =
-        flip runState g $
+    -> State StdGen (Dungeon, Coord, IndexGenerator)
+generateDungeon tc ig cfg ident = do
+    (tiles, enterPosition, ig') <-
         generateDungeonAccum
             []
             tc
@@ -123,6 +113,16 @@ generateDungeon g tc ig cfg ident =
             ig
             cfg
             (getMaxRooms cfg)
+    return
+        ( dungeon
+              (fromMaybe (error "Failed to change the tile.") $
+               changeTileAt
+                   (\tile -> tile & upper ?~ upStairs)
+                   enterPosition
+                   tiles)
+              ident
+        , enterPosition
+        , ig')
 
 generateDungeonAccum ::
        [Room]
