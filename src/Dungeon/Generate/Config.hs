@@ -9,13 +9,10 @@ module Dungeon.Generate.Config
     , numOfFloorsMustBePositive
     , maxRoomMustBePositive
     , roomMinSizeMustBePositive
-    , mapWidthIsTooSmall
-    , mapHeightIsTooSmall
     , roomMinIsLargerThanRoomMax
     ) where
 
-import           Linear.V2      (V2)
-import           UI.Draw.Config (tileColumns, tileRows)
+import           Linear.V2 (V2)
 
 data Config =
     Config
@@ -57,16 +54,6 @@ maxRoomMustBePositive = "The maximum number of rooms must be positive."
 
 roomMinSizeMustBePositive :: String
 roomMinSizeMustBePositive = "The minimum room size must be positive."
-
-mapWidthIsTooSmall :: Int -> String
-mapWidthIsTooSmall w =
-    "Map width is expected to be larger than or equal to " ++
-    show tileColumns ++ " but the actual value is " ++ show w ++ "."
-
-mapHeightIsTooSmall :: Int -> String
-mapHeightIsTooSmall h =
-    "Map height is expected to be larger than or equal to " ++
-    show tileRows ++ " but the actual value is " ++ show h ++ "."
 
 roomMinIsLargerThanRoomMax :: Int -> Int -> String
 roomMinIsLargerThanRoomMax rmin rmax =
