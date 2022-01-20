@@ -25,7 +25,9 @@ spec = testSizeIsCorrect
 
 testSizeIsCorrect :: Spec
 testSizeIsCorrect = do
-    tc <- runIO $ addTileFile "tiles/tiles.json" empty
+    tc <-
+        runIO $
+        addTileFile "tiles/tiles.json" empty >>= addTileFile "tiles/stairs.json"
     describe "generateMultipleFloorsDungeon" $
         it "generates a dungeon with the specified map size" $
         forAll ((,) <$> generateConfig <*> arbitrary) $ propertyFunc tc
