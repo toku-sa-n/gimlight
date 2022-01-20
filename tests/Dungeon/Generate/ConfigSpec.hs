@@ -57,11 +57,17 @@ testPanicIfRoomMinSizeIsLargerThanRoomMaxSize =
 testPanicIfRoomMinSizeIsLargerThanMapWidth :: Spec
 testPanicIfRoomMinSizeIsLargerThanMapWidth =
     it "panics if the given room minimum size is larger than the room width" $
-    evaluate (config 1 1 5 5 (V2 4 6)) `shouldThrow`
-    errorCall (roomMinSizeIsLargerThanRoomWidth 5 4)
+    evaluate (config 1 1 rmin 5 (V2 width 6)) `shouldThrow`
+    errorCall (roomMinSizeIsLargerThanRoomWidth rmin width)
+  where
+    rmin = 5
+    width = 4
 
 testPanicIfRoomMinSizeIsLargerThanMapHeight :: Spec
 testPanicIfRoomMinSizeIsLargerThanMapHeight =
     it "panics if the given room minimum size is larger than the room height" $
-    evaluate (config 1 1 5 5 (V2 6 4)) `shouldThrow`
-    errorCall (roomMinSizeIsLargerThanRoomHeight 5 4)
+    evaluate (config 1 1 rmin 5 (V2 6 height)) `shouldThrow`
+    errorCall (roomMinSizeIsLargerThanRoomHeight rmin height)
+  where
+    rmin = 5
+    height = 4
