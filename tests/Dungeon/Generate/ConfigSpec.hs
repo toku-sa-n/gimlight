@@ -7,11 +7,12 @@ import           Dungeon.Generate.Config (config, maxRoomMustBePositive,
                                           numOfFloorsMustBePositive,
                                           roomMinIsLargerThanRoomMax,
                                           roomMinSizeMustBePositive)
+import           Generator               (generateNonPositive,
+                                          generatePositiveBigSmallNumbers)
 import           Linear.V2               (V2 (V2))
 import           Test.Hspec              (Spec, describe, errorCall, it,
                                           shouldThrow)
-import           Test.QuickCheck         (Arbitrary (arbitrary), Gen, forAll,
-                                          suchThat)
+import           Test.QuickCheck         (forAll)
 
 spec :: Spec
 spec =
@@ -48,9 +49,3 @@ testPanicIfRoomMinSizeIsLargerThanRoomMaxSize =
     forAll generatePositiveBigSmallNumbers $ \(rmin, rmax) ->
         evaluate (config 1 1 rmin rmax (V2 100 100)) `shouldThrow`
         errorCall (roomMinIsLargerThanRoomMax rmin rmax)
-
-generateNonPositive :: Gen Int
-generateNonPositive = negate . abs <$> arbitrary
-
-generatePositiveBigSmallNumbers :: Gen (Int, Int)
-generatePositiveBigSmallNumbers = arbitrary `suchThat` \(a, b) -> a > b && b > 0
