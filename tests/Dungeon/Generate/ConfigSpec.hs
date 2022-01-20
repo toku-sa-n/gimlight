@@ -3,7 +3,7 @@ module Dungeon.Generate.ConfigSpec
     ) where
 
 import           Control.Exception       (evaluate)
-import           Dungeon.Generate.Config (Config, config, maxRoomMustBePositive,
+import           Dungeon.Generate.Config (config, maxRoomMustBePositive,
                                           numOfFloorsMustBePositive,
                                           roomMinIsLargerThanRoomMax,
                                           roomMinSizeIsLargerThanRoomHeight,
@@ -57,14 +57,11 @@ testPanicIfRoomMinSizeIsLargerThanRoomMaxSize =
 testPanicIfRoomMinSizeIsLargerThanMapWidth :: Spec
 testPanicIfRoomMinSizeIsLargerThanMapWidth =
     it "panics if the given room minimum size is larger than the room width" $
-    evaluate (configFromMapSize $ V2 4 6) `shouldThrow`
+    evaluate (config 1 1 5 5 (V2 4 6)) `shouldThrow`
     errorCall (roomMinSizeIsLargerThanRoomWidth 5 4)
 
 testPanicIfRoomMinSizeIsLargerThanMapHeight :: Spec
 testPanicIfRoomMinSizeIsLargerThanMapHeight =
     it "panics if the given room minimum size is larger than the room height" $
-    evaluate (configFromMapSize $ V2 6 4) `shouldThrow`
+    evaluate (config 1 1 5 5 (V2 6 4)) `shouldThrow`
     errorCall (roomMinSizeIsLargerThanRoomHeight 5 4)
-
-configFromMapSize :: V2 Int -> Config
-configFromMapSize = config 1 1 5 5
