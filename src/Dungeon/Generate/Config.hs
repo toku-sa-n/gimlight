@@ -12,7 +12,7 @@ module Dungeon.Generate.Config
     , roomMinIsLargerThanRoomMax
     ) where
 
-import           Linear.V2 (V2)
+import           Linear.V2 (V2 (V2))
 
 data Config =
     Config
@@ -39,11 +39,16 @@ getMapSize :: Config -> V2 Int
 getMapSize = mapSize
 
 config :: Int -> Int -> Int -> Int -> V2 Int -> Config
-config nf mr rmin rmax ms
+config nf mr rmin rmax ms@(V2 width _)
     | nf <= 0 = error numOfFloorsMustBePositive
     | mr <= 0 = error maxRoomMustBePositive
     | rmin <= 0 = error roomMinSizeMustBePositive
     | rmin > rmax = error $ roomMinIsLargerThanRoomMax rmin rmax -- No need to check if `rmax <= 0` as this ensures that `0 < rmin <= rmax`.
+    | rmin > width =
+        error $
+        "The room minimum size " ++
+        show rmin ++
+        " is larger than or equal to the map width " ++ show width ++ "."
     | otherwise = Config nf mr rmin rmax ms
 
 numOfFloorsMustBePositive :: String
