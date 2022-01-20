@@ -8,17 +8,17 @@ import           Data.Map                    (empty)
 import           Data.Tree                   (Tree (Node))
 import qualified Dungeon                     as D
 import           Dungeon.Generate            (generateMultipleFloorsDungeon)
-import           Dungeon.Generate.Config     (config)
+import           Dungeon.Generate.Config     (Config, config, getMapSize)
 import           Dungeon.Identifier          (Identifier (Beaeve))
 import           Dungeon.Map.Cell            (CellMap, widthAndHeight)
 import           Dungeon.Map.Tile            (TileCollection)
 import           Dungeon.Map.Tile.JSONReader (addTileFile)
 import           IndexGenerator              (generator)
 import           Linear.V2                   (V2 (V2))
-import           System.Random               (mkStdGen)
+import           System.Random               (StdGen, mkStdGen)
 import           Test.Hspec                  (Spec, describe, it, runIO)
-import           Test.QuickCheck             (Testable (property), chooseInt)
-import           UI.Draw.Config              (tileColumns, tileRows)
+import           Test.QuickCheck             (Arbitrary (arbitrary), Gen,
+                                              forAll, suchThat)
 
 spec :: Spec
 spec = testSizeIsCorrect
@@ -28,22 +28,30 @@ testSizeIsCorrect = do
     tc <- runIO $ addTileFile "tiles/tiles.json" empty
     describe "generateMultipleFloorsDungeon" $
         it "generates a dungeon with the specified map size" $
-        property $ propertyFunc tc
+        forAll ((,) <$> generateConfig <*> generateSeed) $ propertyFunc tc
   where
-    propertyFunc tc = do
-        width <- chooseInt (tileColumns, 100)
-        height <- chooseInt (tileRows, 100)
-        return $ dungeonSize tc (V2 width height) == V2 width height
-    dungeonSize tc = widthAndHeight . generateMap tc
+    propertyFunc tc (cfg, g) = dungeonSize tc cfg g == getMapSize cfg
+    dungeonSize tc cfg = widthAndHeight . generateMap tc cfg
 
-generateMap :: TileCollection -> V2 Int -> CellMap
-generateMap tc sz = d ^. D.cellMap
+generateMap :: TileCollection -> Config -> StdGen -> CellMap
+generateMap tc cfg g = d ^. D.cellMap
   where
     Node d _ =
         evalState
-            (evalStateT
-                 (generateMultipleFloorsDungeon tc (cfg sz) Beaeve)
-                 generator)
-            (mkStdGen 0) ^.
+            (evalStateT (generateMultipleFloorsDungeon tc cfg Beaeve) generator)
+            g ^.
         _1
-    cfg = config 1 3 2 3
+
+generateConfig :: Gen Config
+generateConfig = fmap tupleToConfig $ arbitrary `suchThat` validValue
+  where
+    validValue (numOfFloors, maxRooms, roomMinSize, roomMaxSize, width, height) =
+        numOfFloors > 0 &&
+        maxRooms > 0 &&
+        roomMinSize > 0 &&
+        roomMaxSize > roomMinSize && width > roomMaxSize && height > roomMaxSize
+    tupleToConfig (nf, mr, rmin, rmax, width, height) =
+        config nf mr rmin rmax (V2 width height)
+
+generateSeed :: Gen StdGen
+generateSeed = fmap mkStdGen arbitrary
