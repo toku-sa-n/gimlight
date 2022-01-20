@@ -10,6 +10,8 @@ module Dungeon.Generate.Config
     , maxRoomMustBePositive
     , roomMinSizeMustBePositive
     , roomMinIsLargerThanRoomMax
+    , roomMinSizeIsLargerThanRoomWidth
+    , roomMinSizeIsLargerThanRoomHeight
     ) where
 
 import           Linear.V2 (V2 (V2))
