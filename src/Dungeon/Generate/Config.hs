@@ -44,11 +44,7 @@ config nf mr rmin rmax ms@(V2 width _)
     | mr <= 0 = error maxRoomMustBePositive
     | rmin <= 0 = error roomMinSizeMustBePositive
     | rmin > rmax = error $ roomMinIsLargerThanRoomMax rmin rmax -- No need to check if `rmax <= 0` as this ensures that `0 < rmin <= rmax`.
-    | rmin > width =
-        error $
-        "The room minimum size " ++
-        show rmin ++
-        " is larger than or equal to the map width " ++ show width ++ "."
+    | rmin > width = error $ roomMinSizeIsLargerThanRoomWidth rmin width
     | otherwise = Config nf mr rmin rmax ms
 
 numOfFloorsMustBePositive :: String
@@ -65,3 +61,9 @@ roomMinIsLargerThanRoomMax rmin rmax =
     "The room minimum size " ++
     show rmin ++
     " is larger than or equal to the room maximum size " ++ show rmax ++ "."
+
+roomMinSizeIsLargerThanRoomWidth :: Int -> Int -> String
+roomMinSizeIsLargerThanRoomWidth rmin width =
+    "The room minimum size " ++
+    show rmin ++
+    " is larger than or equal to the map width " ++ show width ++ "."
