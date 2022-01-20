@@ -15,7 +15,7 @@ import           Dungeon.Map.Tile            (TileCollection)
 import           Dungeon.Map.Tile.JSONReader (addTileFile)
 import           IndexGenerator              (generator)
 import           Linear.V2                   (V2 (V2))
-import           System.Random               (StdGen, mkStdGen)
+import           System.Random               (mkStdGen)
 import           Test.Hspec                  (Spec, describe, it, runIO)
 import           Test.QuickCheck             (Arbitrary (arbitrary), Gen,
                                               forAll, suchThat)
@@ -28,18 +28,18 @@ testSizeIsCorrect = do
     tc <- runIO $ addTileFile "tiles/tiles.json" empty
     describe "generateMultipleFloorsDungeon" $
         it "generates a dungeon with the specified map size" $
-        forAll ((,) <$> generateConfig <*> generateSeed) $ propertyFunc tc
+        forAll ((,) <$> generateConfig <*> arbitrary) $ propertyFunc tc
   where
     propertyFunc tc (cfg, g) = dungeonSize tc cfg g == getMapSize cfg
     dungeonSize tc cfg = widthAndHeight . generateMap tc cfg
 
-generateMap :: TileCollection -> Config -> StdGen -> CellMap
+generateMap :: TileCollection -> Config -> Int -> CellMap
 generateMap tc cfg g = d ^. D.cellMap
   where
     Node d _ =
         evalState
             (evalStateT (generateMultipleFloorsDungeon tc cfg Beaeve) generator)
-            g ^.
+            (mkStdGen g) ^.
         _1
 
 generateConfig :: Gen Config
@@ -52,6 +52,3 @@ generateConfig = fmap tupleToConfig $ arbitrary `suchThat` validValue
         roomMaxSize > roomMinSize && width > roomMaxSize && height > roomMaxSize
     tupleToConfig (nf, mr, rmin, rmax, width, height) =
         config nf mr rmin rmax (V2 width height)
-
-generateSeed :: Gen StdGen
-generateSeed = fmap mkStdGen arbitrary
