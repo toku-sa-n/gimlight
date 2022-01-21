@@ -17,6 +17,7 @@ import           IndexGenerator              (generator)
 import           Linear.V2                   (V2 (V2))
 import           System.Random               (mkStdGen)
 import           Test.Hspec                  (Spec, describe, it, runIO)
+import           Test.Hspec.QuickCheck       (modifyMaxSuccess)
 import           Test.QuickCheck             (Arbitrary (arbitrary), Gen,
                                               forAll, suchThat)
 
@@ -28,7 +29,8 @@ testSizeIsCorrect = do
     tc <-
         runIO $
         addTileFile "tiles/tiles.json" empty >>= addTileFile "tiles/stairs.json"
-    describe "generateMultipleFloorsDungeon" $
+    modifyMaxSuccess (const 1) $
+        describe "generateMultipleFloorsDungeon" $
         it "generates a dungeon with the specified map size" $
         forAll ((,) <$> generateConfig <*> arbitrary) $ propertyFunc tc
   where
