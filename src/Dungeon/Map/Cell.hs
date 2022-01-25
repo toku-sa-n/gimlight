@@ -144,8 +144,7 @@ cellMap :: Array (V2 Int) TileIdentifierLayer -> CellMap
 cellMap = CellMap . fmap (\x -> Cell x Nothing Nothing False False)
 
 allWallTiles :: V2 Int -> CellMap
-allWallTiles (V2 width height) =
-    CellMap $ listArray (V2 0 0, V2 width height - V2 1 1) $ repeat cell
+allWallTiles wh = CellMap $ listArray (V2 0 0, wh - V2 1 1) $ repeat cell
   where
     cell =
         Cell
