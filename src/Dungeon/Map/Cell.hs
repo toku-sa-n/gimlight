@@ -252,10 +252,10 @@ removeItemAt c =
         return (itm, cm & rawCellMap %~ (// [(c, cell)]))
 
 removeActorIf :: (Actor -> Bool) -> StateT CellMap (Either Error) Actor
-removeActorIf f = do
-    gets (fmap fst . find (f . snd) . positionsAndActors) >>= \case
-        Just x  -> removeActorAt x
-        Nothing -> lift $ Left ActorNotFound
+removeActorIf f =
+    gets (fmap fst . find (f . snd) . positionsAndActors) >>= lift .
+    maybeToRight ActorNotFound >>=
+    removeActorAt
 
 tileIdentifierLayerAt :: Coord -> CellMap -> Maybe TileIdentifierLayer
 tileIdentifierLayerAt c = preview (rawCellMap . ix c . tileIdentifierLayer)
