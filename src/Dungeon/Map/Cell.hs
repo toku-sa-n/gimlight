@@ -36,7 +36,8 @@ import           Control.Lens        (Ixed (ix), makeLenses, view, (%%~), (%~),
                                       (&), (.~), (?~), (^.), (^?))
 import           Control.Monad.State (StateT (StateT), gets)
 import           Coord               (Coord)
-import           Data.Array          (Array, array, assocs, bounds, (!), (//))
+import           Data.Array          (Array, assocs, bounds, listArray, (!),
+                                      (//))
 import           Data.Binary         (Binary)
 import           Data.Foldable       (find)
 import qualified Data.Map            as M
@@ -142,10 +143,7 @@ cellMap = CellMap . fmap (\x -> Cell x Nothing Nothing False False)
 
 allWallTiles :: V2 Int -> CellMap
 allWallTiles (V2 width height) =
-    CellMap $
-    array
-        (V2 0 0, V2 width height - V2 1 1)
-        [(V2 x y, cell) | x <- [0 .. width - 1], y <- [0 .. height - 1]]
+    CellMap $ listArray (V2 0 0, V2 width height - V2 1 1) $ repeat cell
   where
     cell =
         Cell
