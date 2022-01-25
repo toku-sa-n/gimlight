@@ -36,7 +36,8 @@ import           Actor                   (Actor, isPlayer)
 import           Control.Lens            (Ixed (ix), makeLenses, preview, view,
                                           (%%~), (%~), (&), (.~), (?~), (^.),
                                           (^?))
-import           Control.Monad.State     (StateT (StateT), gets)
+import           Control.Monad.State     (MonadTrans (lift), StateT (StateT),
+                                          gets)
 import           Coord                   (Coord)
 import           Data.Array              (Array, assocs, bounds, listArray, (!),
                                           (//))
@@ -254,7 +255,7 @@ removeActorIf :: (Actor -> Bool) -> StateT CellMap (Either Error) Actor
 removeActorIf f = do
     gets (fmap fst . find (f . snd) . positionsAndActors) >>= \case
         Just x  -> removeActorAt x
-        Nothing -> StateT $ const $ Left ActorNotFound
+        Nothing -> lift $ Left ActorNotFound
 
 tileIdentifierLayerAt :: Coord -> CellMap -> Maybe TileIdentifierLayer
 tileIdentifierLayerAt c = preview (rawCellMap . ix c . tileIdentifierLayer)
