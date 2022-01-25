@@ -91,9 +91,9 @@ isWalkable tc c =
     isNothing (c ^. actor)
 
 isTransparent :: TileCollection -> Cell -> Bool
-isTransparent tc c =
-    fmap (Tile.isTransparent . (tc M.!)) (c ^. tileIdentifierLayer . upper) /=
-    Just False
+isTransparent tc =
+    (/= Just False) . fmap (Tile.isTransparent . (tc M.!)) .
+    view (tileIdentifierLayer . upper)
 
 isTileWalkable :: TileCollection -> Cell -> Bool
 isTileWalkable tc c =
