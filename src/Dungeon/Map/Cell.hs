@@ -124,15 +124,11 @@ locateItem tc i c
 
 removeActor :: Cell -> Either Error (Actor, Cell)
 removeActor c =
-    case c ^. actor of
-        Just a  -> Right (a, c & actor .~ Nothing)
-        Nothing -> Left ActorNotFound
+    fmap (, c & actor .~ Nothing) . maybeToRight ActorNotFound $ c ^. actor
 
 removeItem :: Cell -> Either Error (Item, Cell)
 removeItem c =
-    case c ^. item of
-        Just i  -> Right (i, c & item .~ Nothing)
-        Nothing -> Left ItemNotFound
+    fmap (, c & item .~ Nothing) . maybeToRight ItemNotFound $ c ^. item
 
 newtype CellMap =
     CellMap
