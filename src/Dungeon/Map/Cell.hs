@@ -32,8 +32,8 @@ module Dungeon.Map.Cell
     ) where
 
 import           Actor               (Actor, isPlayer)
-import           Control.Lens        (Ixed (ix), makeLenses, (%%~), (%~), (&),
-                                      (.~), (?~), (^.), (^?))
+import           Control.Lens        (Ixed (ix), makeLenses, view, (%%~), (%~),
+                                      (&), (.~), (?~), (^.), (^?))
 import           Control.Monad.State (StateT (StateT), gets)
 import           Coord               (Coord)
 import           Data.Array          (Array, array, assocs, bounds, (!), (//))
@@ -156,7 +156,7 @@ allWallTiles (V2 width height) =
             False
 
 widthAndHeight :: CellMap -> V2 Int
-widthAndHeight m = snd (bounds $ m ^. rawCellMap) + V2 1 1
+widthAndHeight = (+ V2 1 1) . snd . bounds . view rawCellMap
 
 isPositionInMap :: Coord -> CellMap -> Bool
 isPositionInMap (V2 x y) cm = x >= 0 && x < w && y >= 0 && y < h
