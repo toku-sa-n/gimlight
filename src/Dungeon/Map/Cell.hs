@@ -218,7 +218,7 @@ positionsAndActors cm = mapMaybe mapStep $ assocs $ cm ^. rawCellMap
     mapStep (coord, cell) = (coord, ) <$> cell ^. actor
 
 positionsAndItems :: CellMap -> [(Coord, Item)]
-positionsAndItems cm = mapMaybe mapStep $ assocs $ cm ^. rawCellMap
+positionsAndItems = mapMaybe mapStep . assocs . view rawCellMap
   where
     mapStep (coord, cell) = (coord, ) <$> cell ^. item
 
