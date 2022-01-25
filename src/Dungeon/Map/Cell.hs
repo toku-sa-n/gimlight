@@ -177,7 +177,7 @@ walkableFloors :: TileCollection -> CellMap -> Array (V2 Int) Bool
 walkableFloors tc = fmap (isWalkable tc) . view rawCellMap
 
 exploredMap :: CellMap -> Array (V2 Int) Bool
-exploredMap cm = (^. explored) <$> cm ^. rawCellMap
+exploredMap = fmap (view explored) . view rawCellMap
 
 playerFov :: CellMap -> Array (V2 Int) Bool
 playerFov cm = (^. visibleFromPlayer) <$> cm ^. rawCellMap
