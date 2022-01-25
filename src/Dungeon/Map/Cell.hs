@@ -32,8 +32,8 @@ module Dungeon.Map.Cell
     ) where
 
 import           Actor               (Actor, isPlayer)
-import           Control.Lens        (Ixed (ix), makeLenses, view, (%%~), (%~),
-                                      (&), (.~), (?~), (^.), (^?))
+import           Control.Lens        (Ixed (ix), makeLenses, preview, view,
+                                      (%%~), (%~), (&), (.~), (?~), (^.), (^?))
 import           Control.Monad.State (StateT (StateT), gets)
 import           Coord               (Coord)
 import           Data.Array          (Array, assocs, bounds, listArray, (!),
@@ -262,4 +262,4 @@ removeActorIf f = do
         Nothing -> StateT $ const $ Left ActorNotFound
 
 tileIdentifierLayerAt :: Coord -> CellMap -> Maybe TileIdentifierLayer
-tileIdentifierLayerAt c cm = cm ^? rawCellMap . ix c . tileIdentifierLayer
+tileIdentifierLayerAt c = preview (rawCellMap . ix c . tileIdentifierLayer)
