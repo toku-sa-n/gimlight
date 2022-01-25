@@ -33,14 +33,15 @@ module Dungeon.Map.Cell
     ) where
 
 import           Actor                   (Actor, isPlayer)
-import           Control.Lens            (Ixed (ix), makeLenses, preview, view,
-                                          (%%~), (%~), (&), (.~), (?~), (^.),
-                                          (^?))
+import           Control.Lens            (Ixed (ix), makeLenses, over, preview,
+                                          view, (%%~), (%~), (&), (.~), (<&>),
+                                          (?~), (^.), (^?))
 import           Control.Monad.State     (MonadTrans (lift), StateT (StateT),
                                           gets)
 import           Coord                   (Coord)
 import           Data.Array              (Array, assocs, bounds, listArray, (!),
                                           (//))
+import           Data.Bifunctor          (Bifunctor (second))
 import           Data.Binary             (Binary)
 import           Data.Either.Combinators (maybeToRight)
 import           Data.Foldable           (find)
@@ -235,17 +236,15 @@ locateItemAt tc i c =
 
 removeActorAt :: Coord -> StateT CellMap (Either Error) Actor
 removeActorAt c =
-    StateT $ \cm -> do
-        (a, cell) <-
-            maybeToRight ActorNotFound (cm ^? rawCellMap . ix c) >>= removeActor
-        return (a, cm & rawCellMap %~ (// [(c, cell)]))
+    StateT $ \cm ->
+        (maybeToRight ActorNotFound (cm ^? rawCellMap . ix c) >>= removeActor) <&>
+        second (\cell -> over rawCellMap (// [(c, cell)]) cm)
 
 removeItemAt :: Coord -> StateT CellMap (Either Error) Item
 removeItemAt c =
-    StateT $ \cm -> do
-        (itm, cell) <-
-            maybeToRight ItemNotFound (cm ^? rawCellMap . ix c) >>= removeItem
-        return (itm, cm & rawCellMap %~ (// [(c, cell)]))
+    StateT $ \cm ->
+        (maybeToRight ItemNotFound (cm ^? rawCellMap . ix c) >>= removeItem) <&>
+        second (\cell -> cm & rawCellMap %~ (// [(c, cell)]))
 
 removeActorIf :: (Actor -> Bool) -> StateT CellMap (Either Error) Actor
 removeActorIf f =
