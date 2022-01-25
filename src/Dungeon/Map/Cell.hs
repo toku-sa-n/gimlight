@@ -1,4 +1,5 @@
 {-# LANGUAGE DeriveGeneric   #-}
+{-# LANGUAGE LambdaCase      #-}
 {-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE TupleSections   #-}
 
@@ -251,8 +252,7 @@ removeItemAt c =
 
 removeActorIf :: (Actor -> Bool) -> StateT CellMap (Either Error) Actor
 removeActorIf f = do
-    position <- gets $ fmap fst . find (f . snd) . positionsAndActors
-    case position of
+    gets (fmap fst . find (f . snd) . positionsAndActors) >>= \case
         Just x  -> removeActorAt x
         Nothing -> StateT $ const $ Left ActorNotFound
 
