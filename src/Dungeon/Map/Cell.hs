@@ -213,7 +213,7 @@ updatePlayerFov tc cm =
     playerPosition = fst <$> playerActor cm
 
 positionsAndActors :: CellMap -> [(Coord, Actor)]
-positionsAndActors cm = mapMaybe mapStep $ assocs $ cm ^. rawCellMap
+positionsAndActors = mapMaybe mapStep . assocs . view rawCellMap
   where
     mapStep (coord, cell) = (coord, ) <$> cell ^. actor
 
