@@ -118,17 +118,17 @@ locateItem tc i c
             Just x  -> Left $ ItemAlreadyExists x
             Nothing -> Right $ c & item ?~ i
 
-removeActor :: Cell -> (Either Error Actor, Cell)
+removeActor :: Cell -> Either Error (Actor, Cell)
 removeActor c =
     case c ^. actor of
-        Just a  -> (Right a, c & actor .~ Nothing)
-        Nothing -> (Left ActorNotFound, c)
+        Just a  -> Right (a, c & actor .~ Nothing)
+        Nothing -> Left ActorNotFound
 
-removeItem :: Cell -> (Either Error Item, Cell)
+removeItem :: Cell -> Either Error (Item, Cell)
 removeItem c =
     case c ^. item of
-        Just i  -> (Right i, c & item .~ Nothing)
-        Nothing -> (Left ItemNotFound, c)
+        Just i  -> Right (i, c & item .~ Nothing)
+        Nothing -> Left ItemNotFound
 
 newtype CellMap =
     CellMap
@@ -239,9 +239,9 @@ removeActorAt c =
         case cm ^? rawCellMap . ix c of
             Just x ->
                 case removeActor x of
-                    (Right removed, newCell) ->
+                    Right (removed, newCell) ->
                         Right (removed, cm & rawCellMap %~ (// [(c, newCell)]))
-                    (Left e, _) -> Left e
+                    Left e -> Left e
             Nothing -> Left ActorNotFound
 
 removeItemAt :: Coord -> StateT CellMap (Either Error) Item
@@ -250,9 +250,9 @@ removeItemAt c =
         case cm ^? rawCellMap . ix c of
             Just x ->
                 case removeItem x of
-                    (Right removed, newCell) ->
+                    Right (removed, newCell) ->
                         Right (removed, cm & rawCellMap %~ (// [(c, newCell)]))
-                    (Left e, _) -> Left e
+                    Left e -> Left e
             Nothing -> Left ItemNotFound
 
 removeActorIf :: (Actor -> Bool) -> StateT CellMap (Either Error) Actor
