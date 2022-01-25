@@ -174,7 +174,7 @@ changeTileAt f c m
     newTile = (m ^. rawCellMap) ! c & tileIdentifierLayer %~ f
 
 walkableFloors :: TileCollection -> CellMap -> Array (V2 Int) Bool
-walkableFloors tc cm = isWalkable tc <$> cm ^. rawCellMap
+walkableFloors tc = fmap (isWalkable tc) . view rawCellMap
 
 exploredMap :: CellMap -> Array (V2 Int) Bool
 exploredMap cm = (^. explored) <$> cm ^. rawCellMap
