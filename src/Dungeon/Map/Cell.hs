@@ -86,13 +86,13 @@ instance Binary Cell
 
 isWalkable :: TileCollection -> Cell -> Bool
 isWalkable tc c =
-    fmap (Tile.isWalkable . (tc M.!)) (c ^. (tileIdentifierLayer . upper)) /=
+    fmap (Tile.isWalkable . (tc M.!)) (c ^. tileIdentifierLayer . upper) /=
     Just False &&
     isNothing (c ^. actor)
 
 isTransparent :: TileCollection -> Cell -> Bool
 isTransparent tc c =
-    fmap (Tile.isTransparent . (tc M.!)) (c ^. (tileIdentifierLayer . upper)) /=
+    fmap (Tile.isTransparent . (tc M.!)) (c ^. tileIdentifierLayer . upper) /=
     Just False
 
 isTileWalkable :: TileCollection -> Cell -> Bool
@@ -209,7 +209,7 @@ updatePlayerFov tc cm =
         visibilityList
   where
     visibilityList = fmap assocs fov
-    fov = (\x -> calculateFov x (transparentMap tc cm)) <$> playerPosition
+    fov = (`calculateFov` transparentMap tc cm) <$> playerPosition
     playerPosition = fst <$> playerActor cm
 
 positionsAndActors :: CellMap -> [(Coord, Actor)]
@@ -225,17 +225,17 @@ positionsAndItems cm = mapMaybe mapStep $ assocs $ cm ^. rawCellMap
 locateActorAt ::
        TileCollection -> Actor -> Coord -> StateT CellMap (Either Error) ()
 locateActorAt tc a c =
-    StateT $ \cm -> fmap ((), ) $ cm & (rawCellMap . ix c) %%~ locateActor tc a
+    StateT $ \cm -> fmap ((), ) $ cm & rawCellMap . ix c %%~ locateActor tc a
 
 locateItemAt ::
        TileCollection -> Item -> Coord -> StateT CellMap (Either Error) ()
 locateItemAt tc i c =
-    StateT $ \cm -> fmap ((), ) $ cm & (rawCellMap . ix c) %%~ locateItem tc i
+    StateT $ \cm -> fmap ((), ) $ cm & rawCellMap . ix c %%~ locateItem tc i
 
 removeActorAt :: Coord -> StateT CellMap (Either Error) Actor
 removeActorAt c =
     StateT $ \cm ->
-        case cm ^? (rawCellMap . ix c) of
+        case cm ^? rawCellMap . ix c of
             Just x ->
                 case removeActor x of
                     (Right removed, newCell) ->
@@ -246,7 +246,7 @@ removeActorAt c =
 removeItemAt :: Coord -> StateT CellMap (Either Error) Item
 removeItemAt c =
     StateT $ \cm ->
-        case cm ^? (rawCellMap . ix c) of
+        case cm ^? rawCellMap . ix c of
             Just x ->
                 case removeItem x of
                     (Right removed, newCell) ->
@@ -262,4 +262,4 @@ removeActorIf f = do
         Nothing -> StateT $ const $ Left ActorNotFound
 
 tileIdentifierLayerAt :: Coord -> CellMap -> Maybe TileIdentifierLayer
-tileIdentifierLayerAt c cm = cm ^? (rawCellMap . ix c . tileIdentifierLayer)
+tileIdentifierLayerAt c cm = cm ^? rawCellMap . ix c . tileIdentifierLayer
