@@ -86,9 +86,11 @@ instance Binary Cell
 
 isWalkable :: TileCollection -> Cell -> Bool
 isWalkable tc c =
-    fmap (Tile.isWalkable . (tc M.!)) (c ^. tileIdentifierLayer . upper) /=
-    Just False &&
-    isNothing (c ^. actor)
+    all ($ c)
+        [ (/= Just False) . fmap (Tile.isWalkable . (tc M.!)) .
+          view (tileIdentifierLayer . upper)
+        , isNothing . view actor
+        ]
 
 isTransparent :: TileCollection -> Cell -> Bool
 isTransparent tc =
