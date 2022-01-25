@@ -31,24 +31,26 @@ module Dungeon.Map.Cell
     , tileIdentifierLayerAt
     ) where
 
-import           Actor               (Actor, isPlayer)
-import           Control.Lens        (Ixed (ix), makeLenses, preview, view,
-                                      (%%~), (%~), (&), (.~), (?~), (^.), (^?))
-import           Control.Monad.State (StateT (StateT), gets)
-import           Coord               (Coord)
-import           Data.Array          (Array, assocs, bounds, listArray, (!),
-                                      (//))
-import           Data.Binary         (Binary)
-import           Data.Foldable       (find)
-import qualified Data.Map            as M
-import           Data.Maybe          (isJust, isNothing, mapMaybe)
-import           Dungeon.Map.Tile    (TileCollection, TileIdentifier, floorTile,
-                                      wallTile)
-import qualified Dungeon.Map.Tile    as Tile
-import           Fov                 (calculateFov)
-import           GHC.Generics        (Generic)
-import           Item                (Item)
-import           Linear.V2           (V2 (V2))
+import           Actor                   (Actor, isPlayer)
+import           Control.Lens            (Ixed (ix), makeLenses, preview, view,
+                                          (%%~), (%~), (&), (.~), (?~), (^.),
+                                          (^?))
+import           Control.Monad.State     (StateT (StateT), gets)
+import           Coord                   (Coord)
+import           Data.Array              (Array, assocs, bounds, listArray, (!),
+                                          (//))
+import           Data.Binary             (Binary)
+import           Data.Either.Combinators (maybeToRight)
+import           Data.Foldable           (find)
+import qualified Data.Map                as M
+import           Data.Maybe              (isJust, isNothing, mapMaybe)
+import           Dungeon.Map.Tile        (TileCollection, TileIdentifier,
+                                          floorTile, wallTile)
+import qualified Dungeon.Map.Tile        as Tile
+import           Fov                     (calculateFov)
+import           GHC.Generics            (Generic)
+import           Item                    (Item)
+import           Linear.V2               (V2 (V2))
 
 data Error
     = OutOfRange
@@ -246,14 +248,10 @@ removeActorAt c =
 
 removeItemAt :: Coord -> StateT CellMap (Either Error) Item
 removeItemAt c =
-    StateT $ \cm ->
-        case cm ^? rawCellMap . ix c of
-            Just x ->
-                case removeItem x of
-                    Right (removed, newCell) ->
-                        Right (removed, cm & rawCellMap %~ (// [(c, newCell)]))
-                    Left e -> Left e
-            Nothing -> Left ItemNotFound
+    StateT $ \cm -> do
+        cell <- maybeToRight ItemNotFound $ cm ^? rawCellMap . ix c
+        (itm, cell') <- removeItem cell
+        return (itm, cm & rawCellMap %~ (// [(c, cell')]))
 
 removeActorIf :: (Actor -> Bool) -> StateT CellMap (Either Error) Actor
 removeActorIf f = do
