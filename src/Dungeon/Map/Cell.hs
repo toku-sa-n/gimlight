@@ -249,9 +249,9 @@ removeActorAt c =
 removeItemAt :: Coord -> StateT CellMap (Either Error) Item
 removeItemAt c =
     StateT $ \cm -> do
-        cell <- maybeToRight ItemNotFound $ cm ^? rawCellMap . ix c
-        (itm, cell') <- removeItem cell
-        return (itm, cm & rawCellMap %~ (// [(c, cell')]))
+        (itm, cell) <-
+            maybeToRight ItemNotFound (cm ^? rawCellMap . ix c) >>= removeItem
+        return (itm, cm & rawCellMap %~ (// [(c, cell)]))
 
 removeActorIf :: (Actor -> Bool) -> StateT CellMap (Either Error) Actor
 removeActorIf f = do
