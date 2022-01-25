@@ -180,7 +180,7 @@ exploredMap :: CellMap -> Array (V2 Int) Bool
 exploredMap = fmap (view explored) . view rawCellMap
 
 playerFov :: CellMap -> Array (V2 Int) Bool
-playerFov cm = (^. visibleFromPlayer) <$> cm ^. rawCellMap
+playerFov = fmap (view visibleFromPlayer) . view rawCellMap
 
 playerActor :: CellMap -> Maybe (Coord, Actor)
 playerActor = find (isPlayer . snd) . positionsAndActors
