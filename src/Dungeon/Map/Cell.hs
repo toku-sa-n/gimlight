@@ -237,14 +237,10 @@ locateItemAt tc i c =
 
 removeActorAt :: Coord -> StateT CellMap (Either Error) Actor
 removeActorAt c =
-    StateT $ \cm ->
-        case cm ^? rawCellMap . ix c of
-            Just x ->
-                case removeActor x of
-                    Right (removed, newCell) ->
-                        Right (removed, cm & rawCellMap %~ (// [(c, newCell)]))
-                    Left e -> Left e
-            Nothing -> Left ActorNotFound
+    StateT $ \cm -> do
+        (a, cell) <-
+            maybeToRight ActorNotFound (cm ^? rawCellMap . ix c) >>= removeActor
+        return (a, cm & rawCellMap %~ (// [(c, cell)]))
 
 removeItemAt :: Coord -> StateT CellMap (Either Error) Item
 removeItemAt c =
