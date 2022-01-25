@@ -186,7 +186,7 @@ playerActor :: CellMap -> Maybe (Coord, Actor)
 playerActor = find (isPlayer . snd) . positionsAndActors
 
 transparentMap :: TileCollection -> CellMap -> Array (V2 Int) Bool
-transparentMap tc cm = isTransparent tc <$> cm ^. rawCellMap
+transparentMap tc = fmap (isTransparent tc) . view rawCellMap
 
 updateExploredMap :: CellMap -> CellMap
 updateExploredMap cm =
