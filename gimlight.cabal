@@ -84,6 +84,7 @@ library
                       , Gimlight.Actor.Status
                       , Gimlight.Actor.Status.Hp
                       , Gimlight.Coord
+                      , Gimlight.Data.Array
                       , Gimlight.Data.List
                       , Gimlight.Dungeon
                       , Gimlight.Dungeon.Generate
