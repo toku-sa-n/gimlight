@@ -160,7 +160,7 @@ instance Show CellMap where
         fileIdAndTiles =
             catMaybes $ concatMap (toList . fileIdAndTileIdOf) [upper, lower]
         fileIdAndTileIdInTwoDimensionalListOf =
-            ((hsep ++ "\n") ++) . (++ hsep) . intercalate (hsep ++ "\n") .
+            init . intercalateIncludingHeadTail (hsep ++ "\n") .
             fmap ((++ "|\n") . ("|" ++) . intercalate "|") .
             toRowsList .
             fmap (maybe (replicate cellWidth ' ') show)
