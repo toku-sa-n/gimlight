@@ -39,12 +39,15 @@ import           Control.Monad.State       (MonadTrans (lift), StateT (StateT),
                                             gets)
 import           Data.Array                (Array, assocs, bounds, listArray,
                                             (!), (//))
-import           Data.Bifunctor            (Bifunctor (second))
+import           Data.Bifunctor            (Bifunctor (first, second))
 import           Data.Binary               (Binary)
 import           Data.Either.Combinators   (maybeToRight)
-import           Data.Foldable             (find)
+import           Data.Foldable             (Foldable (toList), find)
+import           Data.List                 (elemIndex, intercalate, sortBy)
+import           Data.List.Split           (chunksOf)
 import qualified Data.Map                  as M
-import           Data.Maybe                (isJust, isNothing, mapMaybe)
+import           Data.Maybe                (catMaybes, fromJust, isJust,
+                                            isNothing, mapMaybe)
 import           GHC.Generics              (Generic)
 import           Gimlight.Actor            (Actor, isPlayer)
 import           Gimlight.Coord            (Coord)
@@ -135,11 +138,47 @@ newtype CellMap =
     CellMap
         { _rawCellMap :: Array (V2 Int) Cell
         }
-    deriving (Show, Ord, Eq, Generic)
+    deriving (Ord, Eq, Generic)
+
+makeLenses ''CellMap
 
 instance Binary CellMap
 
-makeLenses ''CellMap
+instance Show CellMap where
+    show (CellMap cm) =
+        "Upper layer:\n" ++
+        fileIdAndTileIdInTwoDimensionalListOf (fileIdAndTileIdOf upper) ++
+        "\n\nLower layer:\n" ++
+        fileIdAndTileIdInTwoDimensionalListOf (fileIdAndTileIdOf lower) ++
+        "\n\nTile files:\n" ++
+        tileList
+      where
+        hsep =
+            '+' :
+            reverse
+                (concat $ replicate mapWidth ('+' : replicate cellWidth '-'))
+        cellWidth = maximum $ fmap (length . show) fileIdAndTiles
+        fileIdAndTiles =
+            catMaybes $ concatMap (toList . fileIdAndTileIdOf) [upper, lower]
+        fileIdAndTileIdInTwoDimensionalListOf =
+            ((hsep ++ "\n") ++) . (++ hsep) . intercalate (hsep ++ "\n") .
+            fmap ((++ "|\n") . ("|" ++) . intercalate "|") .
+            chunksOf mapWidth .
+            fmap (maybe (replicate cellWidth ' ') show . snd) .
+            sortBy (\(V2 _ a, _) (V2 _ b, _) -> compare a b) .
+            toList .
+            assocs
+        fileIdAndTileIdOf = fmap (fmap (first pathToId)) . tileIdentifiersOf
+        pathToId = fromJust . flip elemIndex tileFiles
+        tileIdentifiersOf layer = fmap (view (tileIdentifierLayer . layer)) cm
+        tileList =
+            init $
+            unlines
+                (zipWith (\n -> (++) (show n ++ ": ")) [0 :: Int ..] tileFiles)
+        tileFiles = concatMap tileFilesOfLayer [upper, lower]
+        tileFilesOfLayer layer =
+            fmap fst . mapMaybe (view (tileIdentifierLayer . layer)) $ toList cm
+        V2 mapWidth _ = widthAndHeight $ CellMap cm
 
 cellMap :: Array (V2 Int) TileIdentifierLayer -> CellMap
 cellMap = CellMap . fmap (\x -> Cell x Nothing Nothing False False)
@@ -237,13 +276,13 @@ locateItemAt tc i c =
 removeActorAt :: Coord -> StateT CellMap (Either Error) Actor
 removeActorAt c =
     StateT $ \cm ->
-        (maybeToRight OutOfRange (cm ^? rawCellMap . ix c) >>= removeActor) <&>
+        maybeToRight OutOfRange (cm ^? rawCellMap . ix c) >>= removeActor <&>
         second (\cell -> over rawCellMap (// [(c, cell)]) cm)
 
 removeItemAt :: Coord -> StateT CellMap (Either Error) Item
 removeItemAt c =
     StateT $ \cm ->
-        (maybeToRight OutOfRange (cm ^? rawCellMap . ix c) >>= removeItem) <&>
+        maybeToRight OutOfRange (cm ^? rawCellMap . ix c) >>= removeItem <&>
         second (\cell -> cm & rawCellMap %~ (// [(c, cell)]))
 
 removeActorIf :: (Actor -> Bool) -> StateT CellMap (Either Error) Actor

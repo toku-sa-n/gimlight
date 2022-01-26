@@ -1,17 +1,23 @@
+{-# LANGUAGE QuasiQuotes #-}
+
 module Gimlight.Dungeon.Map.CellSpec
     ( spec
     ) where
 
 import           Control.Lens              ((^.))
+import           Data.String.QQ            (s)
 import           Gimlight.Dungeon.Map.Cell (allWallTiles, tileIdentifierLayerAt,
                                             upper)
 import           Gimlight.Dungeon.Map.Tile (wallTile)
+import           Gimlight.SetUp.CellMap    (initCellMap)
 import           Linear.V2                 (V2 (V2))
-import           Test.Hspec                (Spec, describe, it)
+import           Test.Hspec                (Spec, describe, it, shouldBe)
 import           Test.QuickCheck           (property)
 
 spec :: Spec
-spec = testAllWallTiles
+spec = do
+    testAllWallTiles
+    testShowCellMap
 
 testAllWallTiles :: Spec
 testAllWallTiles =
@@ -29,3 +35,36 @@ testAllWallTiles =
             False
             ((== Just wallTile) . (^. upper))
             (tileIdentifierLayerAt c cellMap)
+
+testShowCellMap :: Spec
+testShowCellMap = do
+    describe "CellMap" $
+        it "show prints the detailed cell map information." $
+        show initCellMap `shouldBe` expected
+  where
+    expected =
+        [s|
+Upper layer:
++-----+-----+-----+
+|     |     |     |
++-----+-----+-----+
+|(0,1)|     |     |
++-----+-----+-----+
+|     |     |     |
++-----+-----+-----+
+|     |     |     |
++-----+-----+-----+
+
+Lower layer:
++-----+-----+-----+
+|     |     |     |
++-----+-----+-----+
+|     |     |     |
++-----+-----+-----+
+|     |     |     |
++-----+-----+-----+
+|     |     |     |
++-----+-----+-----+
+
+Tile files:
+0: dummy.json|]
