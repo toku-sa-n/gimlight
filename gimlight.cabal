@@ -49,6 +49,7 @@ Test-Suite spec
                       , Gimlight.Action.PickUpSpec
                       , Gimlight.Action.WaitSpec
                       , Gimlight.Data.ArraySpec
+                      , Gimlight.Data.ListSpec
                       , Gimlight.Dungeon.GenerateSpec
                       , Gimlight.Dungeon.Generate.ConfigSpec
                       , Gimlight.Dungeon.Map.CellSpec
@@ -83,6 +84,7 @@ library
                       , Gimlight.Actor.Status
                       , Gimlight.Actor.Status.Hp
                       , Gimlight.Coord
+                      , Gimlight.Data.List
                       , Gimlight.Dungeon
                       , Gimlight.Dungeon.Generate
                       , Gimlight.Dungeon.Generate.Config
