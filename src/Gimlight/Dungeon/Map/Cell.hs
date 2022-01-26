@@ -43,14 +43,14 @@ import           Data.Bifunctor            (Bifunctor (first, second))
 import           Data.Binary               (Binary)
 import           Data.Either.Combinators   (maybeToRight)
 import           Data.Foldable             (Foldable (toList), find)
-import           Data.List                 (elemIndex, intercalate, sortBy)
-import           Data.List.Split           (chunksOf)
+import           Data.List                 (elemIndex, intercalate)
 import qualified Data.Map                  as M
 import           Data.Maybe                (catMaybes, fromJust, isJust,
                                             isNothing, mapMaybe)
 import           GHC.Generics              (Generic)
 import           Gimlight.Actor            (Actor, isPlayer)
 import           Gimlight.Coord            (Coord)
+import           Gimlight.Data.Array       (toRowsList)
 import           Gimlight.Data.List        (intercalateIncludingHeadTail)
 import           Gimlight.Dungeon.Map.Tile (TileCollection, TileIdentifier,
                                             floorTile, wallTile)
@@ -162,11 +162,8 @@ instance Show CellMap where
         fileIdAndTileIdInTwoDimensionalListOf =
             ((hsep ++ "\n") ++) . (++ hsep) . intercalate (hsep ++ "\n") .
             fmap ((++ "|\n") . ("|" ++) . intercalate "|") .
-            chunksOf mapWidth .
-            fmap (maybe (replicate cellWidth ' ') show . snd) .
-            sortBy (\(V2 _ a, _) (V2 _ b, _) -> compare a b) .
-            toList .
-            assocs
+            toRowsList .
+            fmap (maybe (replicate cellWidth ' ') show)
         fileIdAndTileIdOf = fmap (fmap (first pathToId)) . tileIdentifiersOf
         pathToId = fromJust . flip elemIndex tileFiles
         tileIdentifiersOf layer = fmap (view (tileIdentifierLayer . layer)) cm
