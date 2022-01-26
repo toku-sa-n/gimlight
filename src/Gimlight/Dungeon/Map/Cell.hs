@@ -51,6 +51,7 @@ import           Data.Maybe                (catMaybes, fromJust, isJust,
 import           GHC.Generics              (Generic)
 import           Gimlight.Actor            (Actor, isPlayer)
 import           Gimlight.Coord            (Coord)
+import           Gimlight.Data.List        (intercalateIncludingHeadTail)
 import           Gimlight.Dungeon.Map.Tile (TileCollection, TileIdentifier,
                                             floorTile, wallTile)
 import qualified Gimlight.Dungeon.Map.Tile as Tile
@@ -153,10 +154,8 @@ instance Show CellMap where
         "\n\nTile files:\n" ++
         tileList
       where
-        hsep =
-            '+' :
-            reverse
-                (concat $ replicate mapWidth ('+' : replicate cellWidth '-'))
+        hsep = intercalateIncludingHeadTail "+" $ replicate mapWidth cellhsep
+        cellhsep = replicate cellWidth '-'
         cellWidth = maximum $ fmap (length . show) fileIdAndTiles
         fileIdAndTiles =
             catMaybes $ concatMap (toList . fileIdAndTileIdOf) [upper, lower]
