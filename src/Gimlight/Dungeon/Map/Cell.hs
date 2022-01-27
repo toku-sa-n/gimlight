@@ -160,10 +160,10 @@ instance Show CellMap where
         fileIdAndTiles =
             catMaybes $ concatMap (toList . fileIdAndTileIdOf) [upper, lower]
         fileIdAndTileIdInTwoDimensionalListOf =
-            insertHseps . fmap ((++ "\n") . intercalateIncludingHeadTail "|") .
-            toRowsList .
+            insertHseps . fmap insertVseps . toRowsList .
             fmap tileIdentifierToString
         insertHseps = init . intercalateIncludingHeadTail (hsep ++ "\n")
+        insertVseps = (++ "\n") . intercalateIncludingHeadTail "|"
         tileIdentifierToString = maybe (replicate cellWidth ' ') show
         fileIdAndTileIdOf = fmap (fmap (first pathToId)) . tileIdentifiersOf
         pathToId = fromJust . flip elemIndex tileFiles
