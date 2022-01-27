@@ -147,13 +147,12 @@ instance Binary CellMap
 
 instance Show CellMap where
     show (CellMap cm) =
-        "Upper layer:\n" ++
-        fileIdAndTileIdInTwoDimensionalListOf (fileIdAndTileIdOf upper) ++
-        "\n\nLower layer:\n" ++
-        fileIdAndTileIdInTwoDimensionalListOf (fileIdAndTileIdOf lower) ++
+        "Upper layer:\n" ++ tileTableOf upper ++ "\n\nLower layer:\n" ++
+        tileTableOf lower ++
         "\n\nTile files:\n" ++
         tileList
       where
+        tileTableOf = fileIdAndTileIdInTwoDimensionalListOf . fileIdAndTileIdOf
         hsep = intercalateIncludingHeadTail "+" $ replicate mapWidth cellhsep
         cellhsep = replicate cellWidth '-'
         cellWidth = maximum $ fmap (length . show) fileIdAndTiles
@@ -172,7 +171,7 @@ instance Show CellMap where
         appendNumbers = zipWith (\n -> (++) (show n ++ ": ")) [0 :: Int ..]
         tileFiles = concatMap tileFilesOfLayer [upper, lower]
         tileFilesOfLayer layer =
-            fmap fst . mapMaybe (view (tileIdentifierLayer . layer)) $ toList cm
+            mapMaybe (fmap fst . view (tileIdentifierLayer . layer)) $ toList cm
         V2 mapWidth _ = widthAndHeight $ CellMap cm
 
 cellMap :: Array (V2 Int) TileIdentifierLayer -> CellMap
