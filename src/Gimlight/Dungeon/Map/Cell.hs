@@ -167,10 +167,8 @@ instance Show CellMap where
         fileIdAndTileIdOf = fmap (fmap (first pathToId)) . tileIdentifiersOf
         pathToId = fromJust . flip elemIndex tileFiles
         tileIdentifiersOf layer = fmap (view (tileIdentifierLayer . layer)) cm
-        tileList =
-            init $
-            unlines
-                (zipWith (\n -> (++) (show n ++ ": ")) [0 :: Int ..] tileFiles)
+        tileList = init $ unlines $ appendNumbers tileFiles
+        appendNumbers = zipWith (\n -> (++) (show n ++ ": ")) [0 :: Int ..]
         tileFiles = concatMap tileFilesOfLayer [upper, lower]
         tileFilesOfLayer layer =
             fmap fst . mapMaybe (view (tileIdentifierLayer . layer)) $ toList cm
