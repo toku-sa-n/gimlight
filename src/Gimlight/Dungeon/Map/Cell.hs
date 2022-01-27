@@ -45,8 +45,8 @@ import           Data.Either.Combinators   (maybeToRight)
 import           Data.Foldable             (Foldable (toList), find)
 import           Data.List                 (elemIndex)
 import qualified Data.Map                  as M
-import           Data.Maybe                (catMaybes, fromJust, isJust,
-                                            isNothing, mapMaybe)
+import           Data.Maybe                (catMaybes, fromJust, fromMaybe,
+                                            isJust, isNothing, mapMaybe)
 import           GHC.Generics              (Generic)
 import           Gimlight.Actor            (Actor, isPlayer)
 import           Gimlight.Coord            (Coord)
@@ -153,19 +153,22 @@ instance Show CellMap where
         tileList
       where
         tileTableOf = fileIdAndTileIdInTwoDimensionalListOf . fileIdAndTileIdOf
+        fileIdAndTileIdInTwoDimensionalListOf =
+            insertSeps . toRowsList . fmap tileIdentifierToString
+        fileIdAndTileIdOf = fmap (fmap (first pathToId)) . tileIdentifiersOf
+        tileIdentifierToString = maybe blankCell show
+        blankCell = replicate cellWidth ' '
+        insertSeps = insertHseps . fmap insertVseps
         hsep = intercalateIncludingHeadTail "+" $ replicate mapWidth cellhsep
         cellhsep = replicate cellWidth '-'
         cellWidth = maximum $ fmap (length . show) fileIdAndTiles
         fileIdAndTiles =
             catMaybes $ concatMap (toList . fileIdAndTileIdOf) [upper, lower]
-        fileIdAndTileIdInTwoDimensionalListOf =
-            insertSeps . toRowsList . fmap tileIdentifierToString
-        insertSeps = insertHseps . fmap insertVseps
         insertHseps = init . intercalateIncludingHeadTail (hsep ++ "\n")
         insertVseps = (++ "\n") . intercalateIncludingHeadTail "|"
-        tileIdentifierToString = maybe (replicate cellWidth ' ') show
-        fileIdAndTileIdOf = fmap (fmap (first pathToId)) . tileIdentifiersOf
-        pathToId = fromJust . flip elemIndex tileFiles
+        pathToId path =
+            fromMaybe (error $ "No such path: " ++ path) $
+            elemIndex path tileFiles
         tileIdentifiersOf layer = fmap (view (tileIdentifierLayer . layer)) cm
         tileList = init $ unlines $ appendNumbers tileFiles
         appendNumbers = zipWith (\n -> (++) (show n ++ ": ")) [0 :: Int ..]
