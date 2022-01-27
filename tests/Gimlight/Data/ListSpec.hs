@@ -11,6 +11,6 @@ spec = testIntercalateIncludingHeadTail
 testIntercalateIncludingHeadTail :: Spec
 testIntercalateIncludingHeadTail =
     describe "intercalateIncludingHeadTail" $
-    it "inserts a list between lists of the second argument, append it, and prepend it." $
+    it "inserts a list between lists of the second argument, append it, prepend it, and concat them." $
     intercalateIncludingHeadTail "|" ["Ester", "Menyahnya", "Shinobu"] `shouldBe`
     "|Ester|Menyahnya|Shinobu|"
