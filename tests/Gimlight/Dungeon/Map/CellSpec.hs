@@ -41,10 +41,30 @@ testAllWallTiles =
 testShowCellMap :: Spec
 testShowCellMap =
     describe "CellMap" $
-    it "show prints the detailed cell map information." $
-    show initCellMap `shouldBe` expected
+    it "show prints the detailed cell map information." $ mapM_ testFunc pairs
   where
-    expected =
+    testFunc (m, expected) = show m `shouldBe` expected
+    pairs =
+        [ (initCellMap, expectedForInitCellMap)
+        , ( cellMapContainingMultipleFilesTile
+          , expectedForCellMapContainingMultipleFilesTile)
+        ]
+    expectedForCellMapContainingMultipleFilesTile =
+        [s|
+Upper layer:
++-----+-----+
+|     |     |
++-----+-----+
+
+Lower layer:
++-----+-----+
+|(0,0)|(1,1)|
++-----+-----+
+
+Tile files:
+0: tests/tiles/single.json
+1: tests/tiles/united.json|]
+    expectedForInitCellMap =
         [s|
 Upper layer:
 +-----+-----+-----+
