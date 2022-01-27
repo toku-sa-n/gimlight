@@ -45,13 +45,14 @@ import           Data.Either.Combinators   (maybeToRight)
 import           Data.Foldable             (Foldable (toList), find)
 import           Data.List                 (elemIndex)
 import qualified Data.Map                  as M
-import           Data.Maybe                (catMaybes, fromMaybe, isJust,
-                                            isNothing, mapMaybe)
+import           Data.Maybe                (catMaybes, isJust, isNothing,
+                                            mapMaybe)
 import           GHC.Generics              (Generic)
 import           Gimlight.Actor            (Actor, isPlayer)
 import           Gimlight.Coord            (Coord)
 import           Gimlight.Data.Array       (toRowsList)
 import           Gimlight.Data.List        (intercalateIncludingHeadTail)
+import           Gimlight.Data.Maybe       (expectJust)
 import           Gimlight.Dungeon.Map.Tile (TileCollection, TileIdentifier,
                                             floorTile, wallTile)
 import qualified Gimlight.Dungeon.Map.Tile as Tile
@@ -167,8 +168,7 @@ instance Show CellMap where
         insertHseps = init . intercalateIncludingHeadTail (hsep ++ "\n")
         insertVseps = (++ "\n") . intercalateIncludingHeadTail "|"
         pathToId path =
-            fromMaybe (error $ "No such path: " ++ path) $
-            elemIndex path tileFiles
+            expectJust ("No such path: " ++ path) $ elemIndex path tileFiles
         tileIdentifiersOf layer = fmap (view (tileIdentifierLayer . layer)) cm
         tileList = init $ unlines $ appendNumbers tileFiles
         appendNumbers = zipWith (\n -> (++) (show n ++ ": ")) [0 :: Int ..]
