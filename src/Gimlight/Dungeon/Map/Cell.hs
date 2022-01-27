@@ -163,7 +163,8 @@ instance Show CellMap where
             init . intercalateIncludingHeadTail (hsep ++ "\n") .
             fmap ((++ "\n") . intercalateIncludingHeadTail "|") .
             toRowsList .
-            fmap (maybe (replicate cellWidth ' ') show)
+            fmap tileIdentifierToString
+        tileIdentifierToString = maybe (replicate cellWidth ' ') show
         fileIdAndTileIdOf = fmap (fmap (first pathToId)) . tileIdentifiersOf
         pathToId = fromJust . flip elemIndex tileFiles
         tileIdentifiersOf layer = fmap (view (tileIdentifierLayer . layer)) cm
