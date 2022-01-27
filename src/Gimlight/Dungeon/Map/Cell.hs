@@ -45,8 +45,8 @@ import           Data.Either.Combinators   (maybeToRight)
 import           Data.Foldable             (Foldable (toList), find)
 import           Data.List                 (elemIndex)
 import qualified Data.Map                  as M
-import           Data.Maybe                (catMaybes, fromJust, fromMaybe,
-                                            isJust, isNothing, mapMaybe)
+import           Data.Maybe                (catMaybes, fromMaybe, isJust,
+                                            isNothing, mapMaybe)
 import           GHC.Generics              (Generic)
 import           Gimlight.Actor            (Actor, isPlayer)
 import           Gimlight.Coord            (Coord)
