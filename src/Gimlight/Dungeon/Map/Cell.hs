@@ -43,7 +43,7 @@ import           Data.Bifunctor            (Bifunctor (first, second))
 import           Data.Binary               (Binary)
 import           Data.Either.Combinators   (maybeToRight)
 import           Data.Foldable             (Foldable (toList), find)
-import           Data.List                 (elemIndex, intercalate)
+import           Data.List                 (elemIndex)
 import qualified Data.Map                  as M
 import           Data.Maybe                (catMaybes, fromJust, isJust,
                                             isNothing, mapMaybe)
@@ -161,7 +161,7 @@ instance Show CellMap where
             catMaybes $ concatMap (toList . fileIdAndTileIdOf) [upper, lower]
         fileIdAndTileIdInTwoDimensionalListOf =
             init . intercalateIncludingHeadTail (hsep ++ "\n") .
-            fmap ((++ "|\n") . ("|" ++) . intercalate "|") .
+            fmap ((++ "\n") . intercalateIncludingHeadTail "|") .
             toRowsList .
             fmap (maybe (replicate cellWidth ' ') show)
         fileIdAndTileIdOf = fmap (fmap (first pathToId)) . tileIdentifiersOf
