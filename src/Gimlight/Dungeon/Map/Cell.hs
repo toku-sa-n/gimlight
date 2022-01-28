@@ -151,7 +151,7 @@ instance Show CellMap where
         "Upper layer:\n" ++ tileTableOf upper ++ "\n\nLower layer:\n" ++
         tileTableOf lower ++
         "\n\nTile files:\n" ++
-        tileList
+        renderedTileList
       where
         tileTableOf = fileIdAndTileIdInTwoDimensionalListOf . fileIdAndTileIdOf
         fileIdAndTileIdInTwoDimensionalListOf =
@@ -164,7 +164,7 @@ instance Show CellMap where
             catMaybes $ concatMap (toList . fileIdAndTileIdOf) [upper, lower]
         pathToId path =
             expectJust ("No such path: " ++ path) $ elemIndex path tileFiles
-        tileList = init $ unlines $ appendNumbers tileFiles
+        renderedTileList = init $ unlines $ appendNumbers tileFiles
         appendNumbers = zipWith (\n -> (++) (show n ++ ": ")) [0 :: Int ..]
         tileFiles = concatMap tileFilesOfLayer [upper, lower]
         tileFilesOfLayer = fmap fst . catMaybes . toList . tileIdentifiersOf
