@@ -15,6 +15,7 @@ spec = do
         testMakeTableWithFilledTable
         testMakeTableContainingEmptyList
         testMakeTableEmptyList
+        testMakeTableListOfEmptyList
 
 testIntercalateIncludingHeadTail :: Spec
 testIntercalateIncludingHeadTail =
@@ -58,3 +59,18 @@ testMakeTableContainingEmptyList =
 testMakeTableEmptyList :: Spec
 testMakeTableEmptyList =
     it "returns + if an empty list is passed." $ makeTable [] `shouldBe` "+"
+
+testMakeTableListOfEmptyList :: Spec
+testMakeTableListOfEmptyList =
+    it "returns a vertical list if an list of empty lists is passed." $
+    makeTable [[], [], []] `shouldBe` expected
+  where
+    expected =
+        [s|
+++
+||
+++
+||
+++
+||
+++|]
