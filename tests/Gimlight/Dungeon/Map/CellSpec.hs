@@ -10,7 +10,8 @@ import           Gimlight.Dungeon.Map.Cell (allWallTiles, tileIdentifierLayerAt,
                                             upper)
 import           Gimlight.Dungeon.Map.Tile (wallTile)
 import           Gimlight.SetUp.CellMap    (initCellMap)
-import           Gimlight.SetUp.MapFile    (cellMapContainingMultipleFilesTile)
+import           Gimlight.SetUp.MapFile    (cellMapContainingMultipleFilesTile,
+                                            rectangleButNotSquareCellMap)
 import           Linear.V2                 (V2 (V2))
 import           Test.Hspec                (Spec, describe, it, shouldBe)
 import           Test.QuickCheck           (property)
@@ -47,6 +48,7 @@ testShowCellMap =
         [ (initCellMap, expectedForInitCellMap)
         , ( cellMapContainingMultipleFilesTile
           , expectedForCellMapContainingMultipleFilesTile)
+        , (rectangleButNotSquareCellMap, expectedRectangleButNotSquareMap)
         ]
     expectedForCellMapContainingMultipleFilesTile =
         [s|
@@ -89,3 +91,17 @@ Lower layer:
 
 Tile files:
 0: dummy.json|]
+    expectedRectangleButNotSquareMap =
+        [s|
+Upper layer:
++-----+-----+
+|     |     |
++-----+-----+
+
+Lower layer:
++-----+-----+
+|(0,0)|(0,0)|
++-----+-----+
+
+Tile files:
+0: tests/tiles/single.json|]
