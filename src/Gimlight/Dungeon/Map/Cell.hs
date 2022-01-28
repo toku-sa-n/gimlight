@@ -51,7 +51,7 @@ import           GHC.Generics              (Generic)
 import           Gimlight.Actor            (Actor, isPlayer)
 import           Gimlight.Coord            (Coord)
 import           Gimlight.Data.Array       (toRowsList)
-import           Gimlight.Data.List        (intercalateIncludingHeadTail)
+import           Gimlight.Data.List        (makeTable)
 import           Gimlight.Data.Maybe       (expectJust)
 import           Gimlight.Dungeon.Map.Tile (TileCollection, TileIdentifier,
                                             floorTile, wallTile)
@@ -155,18 +155,13 @@ instance Show CellMap where
       where
         tileTableOf = fileIdAndTileIdInTwoDimensionalListOf . fileIdAndTileIdOf
         fileIdAndTileIdInTwoDimensionalListOf =
-            insertSeps . toRowsList . fmap tileIdentifierToString
+            makeTable . toRowsList . fmap tileIdentifierToString
         fileIdAndTileIdOf = fmap (fmap (first pathToId)) . tileIdentifiersOf
         tileIdentifierToString = maybe blankCell show
         blankCell = replicate cellWidth ' '
-        insertSeps = insertHseps . fmap insertVseps
-        hsep = intercalateIncludingHeadTail "+" $ replicate mapWidth cellhsep
-        cellhsep = replicate cellWidth '-'
         cellWidth = maximum $ fmap (length . show) fileIdAndTiles
         fileIdAndTiles =
             catMaybes $ concatMap (toList . fileIdAndTileIdOf) [upper, lower]
-        insertHseps = init . intercalateIncludingHeadTail (hsep ++ "\n")
-        insertVseps = (++ "\n") . intercalateIncludingHeadTail "|"
         pathToId path =
             expectJust ("No such path: " ++ path) $ elemIndex path tileFiles
         tileIdentifiersOf layer = fmap (view (tileIdentifierLayer . layer)) cm
@@ -175,7 +170,6 @@ instance Show CellMap where
         tileFiles = concatMap tileFilesOfLayer [upper, lower]
         tileFilesOfLayer layer =
             mapMaybe (fmap fst . view (tileIdentifierLayer . layer)) $ toList cm
-        V2 mapWidth _ = widthAndHeight $ CellMap cm
 
 cellMap :: Array (V2 Int) TileIdentifierLayer -> CellMap
 cellMap = CellMap . fmap (\x -> Cell x Nothing Nothing False False)
