@@ -14,7 +14,9 @@ testExpectJust :: Spec
 testExpectJust =
     describe "expectJust" $ do
         it "returns the inner value if it receives a `Just` value." $
-            expectJust "We need a Marion." (Just "Marion") `shouldBe` "Marion"
+            expectJust msg (Just v) `shouldBe` v
         it "panics if it receives a `Nothing` value." $
-            evaluate (expectJust "We need a Marion." Nothing) `shouldThrow`
-            errorCall "We need a Marion."
+            evaluate (expectJust msg Nothing) `shouldThrow` errorCall msg
+  where
+    v = "Marion"
+    msg = "We need a Marion."
