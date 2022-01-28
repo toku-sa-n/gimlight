@@ -155,12 +155,12 @@ instance Show CellMap where
       where
         tileTableOf = listToTable . fileIdAndTileIdOf
         listToTable = makeTable . toRowsList . fmap tileIdentifierToString
-        fileIdAndTileIdOf = fmap (fmap (first pathToId)) . tileIdentifiersOf
         tileIdentifierToString = maybe blankCell show
         blankCell = replicate cellWidth ' '
         cellWidth = maximum $ fmap (length . show) fileIdAndTileIds
         fileIdAndTileIds =
             catMaybes $ concatMap (toList . fileIdAndTileIdOf) [upper, lower]
+        fileIdAndTileIdOf = fmap (fmap (first pathToId)) . tileIdentifiersOf
         pathToId path =
             expectJust ("No such path: " ++ path) $ elemIndex path tileFiles
         renderedTileList = init $ unlines $ appendNumbers tileFiles
