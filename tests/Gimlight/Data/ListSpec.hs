@@ -11,8 +11,9 @@ import           Test.Hspec         (Spec, describe, it, shouldBe)
 spec :: Spec
 spec = do
     testIntercalateIncludingHeadTail
-    testMakeTableWithFilledTable
-    testMakeTableContainingEmptyList
+    describe "makeTable" $ do
+        testMakeTableWithFilledTable
+        testMakeTableContainingEmptyList
 
 testIntercalateIncludingHeadTail :: Spec
 testIntercalateIncludingHeadTail =
@@ -23,7 +24,6 @@ testIntercalateIncludingHeadTail =
 
 testMakeTableWithFilledTable :: Spec
 testMakeTableWithFilledTable =
-    describe "makeTable" $
     it "fills all cells if the all rows have the same length." $
     result `shouldBe` expected
   where
@@ -40,7 +40,6 @@ testMakeTableWithFilledTable =
 
 testMakeTableContainingEmptyList :: Spec
 testMakeTableContainingEmptyList =
-    describe "makeTable" $
     it "leaves cells as blank if a list is shorter than the longest one." $
     result `shouldBe` expected
   where
