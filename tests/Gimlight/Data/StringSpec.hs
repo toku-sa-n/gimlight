@@ -10,16 +10,16 @@ import           Test.Hspec           (Spec, describe, it, shouldBe)
 
 spec :: Spec
 spec = do
-    testAddPad
+    testAdjustLength
     describe "makeTable" $ do
         testMakeTableWithFilledTable
         testMakeTableContainingEmptyList
         testMakeTableEmptyList
         testMakeTableListOfEmptyList
 
-testAddPad :: Spec
-testAddPad =
-    describe "addPad" $
+testAdjustLength :: Spec
+testAdjustLength =
+    describe "adjustLength" $
     it "appends spaces so that the length is adjusted to the given number." $
     adjustLength 10 "Marion" `shouldBe` "Marion    "
 
