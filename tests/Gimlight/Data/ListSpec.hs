@@ -1,12 +1,17 @@
+{-# LANGUAGE QuasiQuotes #-}
+
 module Gimlight.Data.ListSpec
     ( spec
     ) where
 
-import           Gimlight.Data.List (intercalateIncludingHeadTail)
+import           Data.String.QQ     (s)
+import           Gimlight.Data.List (intercalateIncludingHeadTail, makeTable)
 import           Test.Hspec         (Spec, describe, it, shouldBe)
 
 spec :: Spec
-spec = testIntercalateIncludingHeadTail
+spec = do
+    testIntercalateIncludingHeadTail
+    testMakeTable
 
 testIntercalateIncludingHeadTail :: Spec
 testIntercalateIncludingHeadTail =
@@ -14,3 +19,20 @@ testIntercalateIncludingHeadTail =
     it "inserts a list between lists of the second argument, append it, prepend it, and concat them." $
     intercalateIncludingHeadTail "|" ["Ester", "Menyahnya", "Shinobu"] `shouldBe`
     "|Ester|Menyahnya|Shinobu|"
+
+testMakeTable :: Spec
+testMakeTable =
+    describe "makeTable" $
+    it "fills all cells if the all rows have the same length." $
+    result `shouldBe` expected
+  where
+    result =
+        makeTable
+            [["Derich", "Rosemary", "Beroberos"], ["Hapico", "Mussle", "Fuku"]]
+    expected =
+        [s|
++---------+---------+---------+
+|Derich   |Rosemary |Beroberos|
++---------+---------+---------+
+|Hapico   |Mussle   |Fuku     |
++---------+---------+---------+|]
