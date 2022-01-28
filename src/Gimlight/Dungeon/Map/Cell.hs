@@ -153,14 +153,13 @@ instance Show CellMap where
         "\n\nTile files:\n" ++
         renderedTileList
       where
-        tileTableOf = fileIdAndTileIdInTwoDimensionalListOf . fileIdAndTileIdOf
-        fileIdAndTileIdInTwoDimensionalListOf =
-            makeTable . toRowsList . fmap tileIdentifierToString
+        tileTableOf = listToTable . fileIdAndTileIdOf
+        listToTable = makeTable . toRowsList . fmap tileIdentifierToString
         fileIdAndTileIdOf = fmap (fmap (first pathToId)) . tileIdentifiersOf
         tileIdentifierToString = maybe blankCell show
         blankCell = replicate cellWidth ' '
-        cellWidth = maximum $ fmap (length . show) fileIdAndTiles
-        fileIdAndTiles =
+        cellWidth = maximum $ fmap (length . show) fileIdAndTileIds
+        fileIdAndTileIds =
             catMaybes $ concatMap (toList . fileIdAndTileIdOf) [upper, lower]
         pathToId path =
             expectJust ("No such path: " ++ path) $ elemIndex path tileFiles
