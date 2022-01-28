@@ -5,16 +5,23 @@ module Gimlight.Data.StringSpec
     ) where
 
 import           Data.String.QQ       (s)
-import           Gimlight.Data.String (makeTable)
+import           Gimlight.Data.String (adjustLength, makeTable)
 import           Test.Hspec           (Spec, describe, it, shouldBe)
 
 spec :: Spec
-spec =
+spec = do
+    testAddPad
     describe "makeTable" $ do
         testMakeTableWithFilledTable
         testMakeTableContainingEmptyList
         testMakeTableEmptyList
         testMakeTableListOfEmptyList
+
+testAddPad :: Spec
+testAddPad =
+    describe "addPad" $
+    it "appends spaces so that the length is adjusted to the given number." $
+    adjustLength 10 "Marion" `shouldBe` "Marion    "
 
 testMakeTableWithFilledTable :: Spec
 testMakeTableWithFilledTable =
