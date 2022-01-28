@@ -155,8 +155,7 @@ instance Show CellMap where
       where
         tileTableOf = listToTable . fileIdAndTileIdOf
         listToTable = makeTable . toRowsList . fmap tileIdentifierToString
-        tileIdentifierToString = maybe blankCell (adjustLength cellWidth . show)
-        blankCell = replicate cellWidth ' '
+        tileIdentifierToString = adjustLength cellWidth . maybe "" show
         cellWidth = maximum $ fmap (length . show) fileIdAndTileIds
         fileIdAndTileIds =
             catMaybes $ concatMap (toList . fileIdAndTileIdOf) [upper, lower]
