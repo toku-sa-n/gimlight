@@ -164,12 +164,11 @@ instance Show CellMap where
             catMaybes $ concatMap (toList . fileIdAndTileIdOf) [upper, lower]
         pathToId path =
             expectJust ("No such path: " ++ path) $ elemIndex path tileFiles
-        tileIdentifiersOf layer = fmap (view (tileIdentifierLayer . layer)) cm
         tileList = init $ unlines $ appendNumbers tileFiles
         appendNumbers = zipWith (\n -> (++) (show n ++ ": ")) [0 :: Int ..]
         tileFiles = concatMap tileFilesOfLayer [upper, lower]
-        tileFilesOfLayer layer =
-            mapMaybe (fmap fst . view (tileIdentifierLayer . layer)) $ toList cm
+        tileFilesOfLayer = fmap fst . catMaybes . toList . tileIdentifiersOf
+        tileIdentifiersOf layer = fmap (view (tileIdentifierLayer . layer)) cm
 
 cellMap :: Array (V2 Int) TileIdentifierLayer -> CellMap
 cellMap = CellMap . fmap (\x -> Cell x Nothing Nothing False False)
