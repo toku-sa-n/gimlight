@@ -19,7 +19,6 @@ spec :: Spec
 spec = do
     testAllWallTiles
     testShowCellMap
-    testShowCellMap'
 
 testAllWallTiles :: Spec
 testAllWallTiles =
@@ -90,25 +89,3 @@ Lower layer:
 
 Tile files:
 0: dummy.json|]
-
-testShowCellMap' :: Spec
-testShowCellMap' =
-    describe "CellMap" $
-    it "show prints the detailed cell map information." $
-    show cellMapContainingMultipleFilesTile `shouldBe` expected
-  where
-    expected =
-        [s|
-Upper layer:
-+-----+-----+
-|     |     |
-+-----+-----+
-
-Lower layer:
-+-----+-----+
-|(0,0)|(1,1)|
-+-----+-----+
-
-Tile files:
-0: tests/tiles/single.json
-1: tests/tiles/united.json|]
