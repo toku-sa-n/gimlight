@@ -9,6 +9,7 @@ intercalateIncludingHeadTail :: [a] -> [[a]] -> [a]
 intercalateIncludingHeadTail x xs = x ++ intercalate x xs ++ x
 
 makeTable :: [[String]] -> String
+makeTable [] = "+"
 makeTable rows = insertSeps canonicalized
   where
     canonicalized = fmap (fmap addPad . addEmptyElements) rows
