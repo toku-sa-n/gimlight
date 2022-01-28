@@ -12,6 +12,7 @@ spec :: Spec
 spec = do
     testIntercalateIncludingHeadTail
     testMakeTable
+    testMakeTable'
 
 testIntercalateIncludingHeadTail :: Spec
 testIntercalateIncludingHeadTail =
@@ -36,3 +37,20 @@ testMakeTable =
 +---------+---------+---------+
 |Hapico   |Mussle   |Fuku     |
 +---------+---------+---------+|]
+
+testMakeTable' :: Spec
+testMakeTable' =
+    describe "makeTable" $
+    it "fills all cells if the all rows have the same length." $
+    result `shouldBe` expected
+  where
+    result = makeTable [[], ["Foo", "Bar"], ["Baz"]]
+    expected =
+        [s|
++---+---+
+|   |   |
++---+---+
+|Foo|Bar|
++---+---+
+|Baz|   |
++---+---+|]

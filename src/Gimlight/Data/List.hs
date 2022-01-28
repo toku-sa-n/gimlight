@@ -9,14 +9,15 @@ intercalateIncludingHeadTail :: [a] -> [[a]] -> [a]
 intercalateIncludingHeadTail x xs = x ++ intercalate x xs ++ x
 
 makeTable :: [[String]] -> String
-makeTable rows = insertSeps paddedRows
+makeTable rows = insertSeps canonicalized
   where
-    paddedRows = fmap (fmap addPad) rows
+    canonicalized = fmap (fmap addPad . addEmptyElements) rows
     insertSeps = insertHseps . fmap insertVseps
     insertHseps = init . intercalateIncludingHeadTail (hsep ++ "\n")
     insertVseps = (++ "\n") . intercalateIncludingHeadTail "|"
     hsep = intercalateIncludingHeadTail "+" $ replicate numCols cellHsep
     cellHsep = replicate cellWidth '-'
-    cellWidth = maximum $ fmap (maximum . fmap length) rows
+    cellWidth = maximum $ fmap (foldl max 0 . fmap length) rows -- Do not replicate `foldl max 0` with `maximum` as the latter will panic if the list is empty.
     numCols = maximum $ fmap length rows
+    addEmptyElements xs = xs ++ replicate (numCols - length xs) []
     addPad s = s ++ replicate (cellWidth - length s) ' '
