@@ -88,8 +88,8 @@ library
                       , Gimlight.Coord
                       , Gimlight.Data.Array
                       , Gimlight.Data.List
-                      , Gimlight.Data.String
                       , Gimlight.Data.Maybe
+                      , Gimlight.Data.String
                       , Gimlight.Dungeon
                       , Gimlight.Dungeon.Generate
                       , Gimlight.Dungeon.Generate.Config
