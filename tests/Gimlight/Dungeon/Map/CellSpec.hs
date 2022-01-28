@@ -41,17 +41,17 @@ testAllWallTiles =
 testShowCellMap :: Spec
 testShowCellMap =
     describe "CellMap" $
-    it "show prints the detailed cell map information." $ mapM_ testFunc pairs
+    it "show prints the detailed cell map information." $
+    mapM_ testFunc $ zip cellMaps expectations
   where
     testFunc (m, expected) = show m `shouldBe` expected
-    pairs =
-        [ (initCellMap, expectedForInitCellMap)
-        , ( cellMapContainingMultipleFilesTile
-          , expectedForCellMapContainingMultipleFilesTile)
-        , (rectangleButNotSquareCellMap, expectedRectangleButNotSquareMap)
+    cellMaps =
+        [ cellMapContainingMultipleFilesTile
+        , initCellMap
+        , rectangleButNotSquareCellMap
         ]
-    expectedForCellMapContainingMultipleFilesTile =
-        [s|
+    expectations =
+        [ [s|
 Upper layer:
 +-----+-----+
 |     |     |
@@ -65,8 +65,7 @@ Lower layer:
 Tile files:
 0: tests/tiles/single.json
 1: tests/tiles/united.json|]
-    expectedForInitCellMap =
-        [s|
+        , [s|
 Upper layer:
 +-----+-----+-----+
 |     |     |     |
@@ -91,8 +90,7 @@ Lower layer:
 
 Tile files:
 0: dummy.json|]
-    expectedRectangleButNotSquareMap =
-        [s|
+        , [s|
 Upper layer:
 +-----+-----+
 |     |     |
@@ -105,3 +103,4 @@ Lower layer:
 
 Tile files:
 0: tests/tiles/single.json|]
+        ]
