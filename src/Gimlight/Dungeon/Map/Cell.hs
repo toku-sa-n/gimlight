@@ -155,7 +155,7 @@ instance Show CellMap where
       where
         tileTableOf = listToTable . fileIdAndTileIdOf
         listToTable = makeTable . toRowsList . fmap tileIdentifierToString
-        tileIdentifierToString = maybe blankCell show
+        tileIdentifierToString = maybe blankCell (addPad . show)
         blankCell = replicate cellWidth ' '
         cellWidth = maximum $ fmap (length . show) fileIdAndTileIds
         fileIdAndTileIds =
@@ -168,6 +168,7 @@ instance Show CellMap where
         tileFiles = nub $ concatMap tileFilesOfLayer [upper, lower]
         tileFilesOfLayer = fmap fst . catMaybes . toList . tileIdentifiersOf
         tileIdentifiersOf layer = fmap (view (tileIdentifierLayer . layer)) cm
+        addPad xs = xs ++ replicate (cellWidth - length xs) ' '
 
 cellMap :: Array (V2 Int) TileIdentifierLayer -> CellMap
 cellMap = CellMap . fmap (\x -> Cell x Nothing Nothing False False)
