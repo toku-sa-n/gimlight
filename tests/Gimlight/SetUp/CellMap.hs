@@ -16,7 +16,7 @@ import           Codec.Picture             (PixelRGBA8 (PixelRGBA8),
                                             generateImage)
 import           Control.Lens              ((%~))
 import           Control.Monad.State       (State, evalState, execStateT)
-import           Data.Array                (array, (//))
+import           Data.Array                (listArray, (//))
 import           Data.Either               (fromRight)
 import           Data.Map                  (fromList)
 import           Data.Maybe                (fromJust)
@@ -58,12 +58,7 @@ initCellMap =
   where
     emptyMap =
         cellMap $
-        array
-            (V2 0 0, V2 (mapWidth - 1) (mapHeight - 1))
-            [ (V2 x y, emptyTile)
-            | x <- [0 .. mapWidth - 1]
-            , y <- [0 .. mapHeight - 1]
-            ] //
+        listArray (V2 0 0, V2 (mapWidth - 1) (mapHeight - 1)) (repeat emptyTile) //
         [(V2 0 1, unwalkable)]
     (p, w, i, s, orcWithoutItems, orcWithFullItems, orcWithHerb) =
         flip evalState generator $ (,,,,,,) <$>
