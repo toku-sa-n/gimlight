@@ -45,16 +45,16 @@ initCellMap =
         mapM_
             (locateItemAt initTileCollection herb)
             [playerPosition, orcWithFullItemsPosition]
-        locateActorAt initTileCollection p playerPosition
-        locateActorAt initTileCollection orcWithoutItems orcWithoutItemsPosition
-        locateActorAt
-            initTileCollection
-            orcWithFullItems
-            orcWithFullItemsPosition
-        locateActorAt initTileCollection s strongestOrcPosition
-        locateActorAt initTileCollection i intermediateOrcPosition
-        locateActorAt initTileCollection w weakestOrcPosition
-        locateActorAt initTileCollection orcWithHerb orcWithHerbPosition
+        mapM_
+            (uncurry (locateActorAt initTileCollection))
+            [ (p, playerPosition)
+            , (orcWithoutItems, orcWithoutItemsPosition)
+            , (orcWithFullItems, orcWithFullItemsPosition)
+            , (s, strongestOrcPosition)
+            , (i, intermediateOrcPosition)
+            , (w, weakestOrcPosition)
+            , (orcWithHerb, orcWithHerbPosition)
+            ]
   where
     emptyMap =
         cellMap $
