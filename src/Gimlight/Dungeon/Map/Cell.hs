@@ -54,7 +54,8 @@ import           Gimlight.Actor            (Actor, getIdentifier, getIndex,
 import           Gimlight.Coord            (Coord)
 import           Gimlight.Data.Array       (toRowsList)
 import           Gimlight.Data.Maybe       (expectJust)
-import           Gimlight.Data.String      (adjustLength, makeTable)
+import           Gimlight.Data.String      (adjustLength, makeTable,
+                                            unlinesWithoutTrailingNewline)
 import           Gimlight.Dungeon.Map.Tile (TileCollection, TileIdentifier,
                                             floorTile, wallTile)
 import qualified Gimlight.Dungeon.Map.Tile as Tile
@@ -155,9 +156,7 @@ instance Show CellMap where
         "\n\nTile files:\n" ++
         renderedTileList ++
         "\n\nActors:\n" ++
-        if null actorsList
-            then ""
-            else init (unlines actorsList)
+        actorsList
       where
         tileTableOf = listToTable . fileIdAndTileIdOf
         listToTable = makeTable . toRowsList . fmap tileIdentifierToString
@@ -168,12 +167,14 @@ instance Show CellMap where
         fileIdAndTileIdOf = fmap (fmap (first pathToId)) . tileIdentifiersOf
         pathToId path =
             expectJust ("No such path: " ++ path) $ elemIndex path tileFiles
-        renderedTileList = init $ unlines $ appendNumbers tileFiles
+        renderedTileList =
+            unlinesWithoutTrailingNewline $ appendNumbers tileFiles
         appendNumbers = zipWith (\n -> (++) (show n ++ ": ")) [0 :: Int ..]
         tileFiles = nub $ concatMap tileFilesOfLayer [upper, lower]
         tileFilesOfLayer = fmap fst . catMaybes . toList . tileIdentifiersOf
         tileIdentifiersOf layer = fmap (view (tileIdentifierLayer . layer)) cm
-        actorsList = mapMaybe cellToActorName $ assocs cm
+        actorsList =
+            unlinesWithoutTrailingNewline $ mapMaybe cellToActorName $ assocs cm
         cellToActorName (V2 x y, a) =
             (\a' ->
                  show (x, y) ++ ": " ++ show (getIdentifier a') ++ "(Index=" ++
