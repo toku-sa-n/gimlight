@@ -42,8 +42,9 @@ initCellMap :: CellMap
 initCellMap =
     fromRight (error "Failed to set up the test environment.") $
     flip execStateT emptyMap $ do
-        locateItemAt initTileCollection herb playerPosition
-        locateItemAt initTileCollection herb orcWithFullItemsPosition
+        mapM_
+            (locateItemAt initTileCollection herb)
+            [playerPosition, orcWithFullItemsPosition]
         locateActorAt initTileCollection p playerPosition
         locateActorAt initTileCollection orcWithoutItems orcWithoutItemsPosition
         locateActorAt
