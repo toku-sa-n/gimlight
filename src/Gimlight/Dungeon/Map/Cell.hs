@@ -49,7 +49,8 @@ import qualified Data.Map                  as M
 import           Data.Maybe                (catMaybes, isJust, isNothing,
                                             mapMaybe)
 import           GHC.Generics              (Generic)
-import           Gimlight.Actor            (Actor, getIdentifier, isPlayer)
+import           Gimlight.Actor            (Actor, getIdentifier, getIndex,
+                                            isPlayer)
 import           Gimlight.Coord            (Coord)
 import           Gimlight.Data.Array       (toRowsList)
 import           Gimlight.Data.Maybe       (expectJust)
@@ -151,16 +152,17 @@ instance Show CellMap where
     show (CellMap cm) =
         "Upper layer:\n" ++ tileTableOf upper ++ "\n\nLower layer:\n" ++
         tileTableOf lower ++
-        "\n\nActors:\n" ++
-        makeTable (toRowsList actorsTable) ++
         "\n\nTile files:\n" ++
-        renderedTileList
+        renderedTileList ++
+        "\n\nActors:\n" ++
+        if null actorsList
+            then ""
+            else init (unlines actorsList)
       where
         tileTableOf = listToTable . fileIdAndTileIdOf
         listToTable = makeTable . toRowsList . fmap tileIdentifierToString
         tileIdentifierToString = adjustLength cellWidth . maybe "" show
-        cellWidth =
-            max (maximum $ fmap (length . show) fileIdAndTileIds) longestName
+        cellWidth = maximum $ fmap (length . show) fileIdAndTileIds
         fileIdAndTileIds =
             catMaybes $ concatMap (toList . fileIdAndTileIdOf) [upper, lower]
         fileIdAndTileIdOf = fmap (fmap (first pathToId)) . tileIdentifiersOf
@@ -171,9 +173,13 @@ instance Show CellMap where
         tileFiles = nub $ concatMap tileFilesOfLayer [upper, lower]
         tileFilesOfLayer = fmap fst . catMaybes . toList . tileIdentifiersOf
         tileIdentifiersOf layer = fmap (view (tileIdentifierLayer . layer)) cm
-        actorsTable = fmap (adjustLength cellWidth . cellToActorName) cm
-        cellToActorName = maybe "" (show . getIdentifier) . view actor
-        longestName = maximum $ fmap (length . cellToActorName) cm
+        actorsList = mapMaybe cellToActorName $ assocs cm
+        cellToActorName (V2 x y, a) =
+            (\a' ->
+                 show (x, y) ++ ": " ++ show (getIdentifier a') ++ "(Index=" ++
+                 show (getIndex a') ++
+                 ")") <$>
+            view actor a
 
 cellMap :: Array (V2 Int) TileIdentifierLayer -> CellMap
 cellMap = CellMap . fmap (\x -> Cell x Nothing Nothing False False)
