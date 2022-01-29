@@ -65,16 +65,14 @@ initCellMap =
             ] //
         [(V2 0 1, unwalkable)]
     (p, w, i, s, orcWithoutItems, orcWithFullItems, orcWithHerb) =
-        flip evalState generator $ do
-            (,,,,,,) <$>
-                ((inventoryItems %~ fromJust . addItem sampleBook) <$> player) <*>
-                weakestOrc <*>
-                intermediateOrc <*>
-                strongestOrc <*>
-                orc <*>
-                ((!! 5) . iterate (inventoryItems %~ (fromJust . addItem herb)) <$>
-                 orc) <*>
-                ((inventoryItems %~ fromJust . addItem herb) <$> orc)
+        flip evalState generator $ (,,,,,,) <$>
+        ((inventoryItems %~ fromJust . addItem sampleBook) <$> player) <*>
+        weakestOrc <*>
+        intermediateOrc <*>
+        strongestOrc <*>
+        orc <*>
+        ((!! 5) . iterate (inventoryItems %~ fromJust . addItem herb) <$> orc) <*>
+        ((inventoryItems %~ fromJust . addItem herb) <$> orc)
     emptyTile = TileIdentifierLayer Nothing Nothing
     unwalkable = TileIdentifierLayer (Just (dummyTileFile, 1)) Nothing
     mapWidth = 3
