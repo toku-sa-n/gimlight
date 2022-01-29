@@ -2,7 +2,7 @@ module Gimlight.Dungeon.Generate
     ( generateMultipleFloorsDungeon
     ) where
 
-import           Control.Lens                     (over, set, (&), (.~), (^.))
+import           Control.Lens                     (over, set, (^.))
 import           Control.Monad.Morph              (MFunctor (hoist), generalize)
 import           Control.Monad.State              (MonadState (get, put),
                                                    MonadTrans (lift), State,
@@ -156,7 +156,7 @@ createRoom room r =
         (\acc x ->
              fromMaybe
                  (error "Failed to change a tile.")
-                 (changeTileAt (\tile -> tile & upper .~ Nothing) x acc))
+                 (changeTileAt (set upper Nothing) x acc))
         r
         [V2 x y | x <- [x1 room .. x2 room - 1], y <- [y1 room .. y2 room - 1]]
 
