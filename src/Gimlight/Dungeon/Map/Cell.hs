@@ -46,8 +46,8 @@ import           Data.Either.Combinators   (maybeToRight)
 import           Data.Foldable             (Foldable (toList), find)
 import           Data.List                 (elemIndex, nub)
 import qualified Data.Map                  as M
-import           Data.Maybe                (catMaybes, fromMaybe, isJust,
-                                            isNothing, mapMaybe)
+import           Data.Maybe                (catMaybes, isJust, isNothing,
+                                            mapMaybe)
 import           GHC.Generics              (Generic)
 import           Gimlight.Actor            (Actor, getIdentifier, isPlayer)
 import           Gimlight.Coord            (Coord)
@@ -171,15 +171,9 @@ instance Show CellMap where
         tileFiles = nub $ concatMap tileFilesOfLayer [upper, lower]
         tileFilesOfLayer = fmap fst . catMaybes . toList . tileIdentifiersOf
         tileIdentifiersOf layer = fmap (view (tileIdentifierLayer . layer)) cm
-        actorsTable =
-            fmap
-                ((adjustLength cellWidth . fromMaybe "") .
-                 fmap (show . getIdentifier) .
-                 view actor)
-                cm
-        longestName =
-            maximum $
-            fmap (maybe 0 (length . show . getIdentifier) . view actor) cm
+        actorsTable = fmap (adjustLength cellWidth . cellToActorName) cm
+        cellToActorName = maybe "" (show . getIdentifier) . view actor
+        longestName = maximum $ fmap (length . cellToActorName) cm
 
 cellMap :: Array (V2 Int) TileIdentifierLayer -> CellMap
 cellMap = CellMap . fmap (\x -> Cell x Nothing Nothing False False)
