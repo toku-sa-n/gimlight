@@ -1,5 +1,6 @@
 module Gimlight.Data.String
     ( adjustLength
+    , unlinesWithoutTrailingNewline
     , makeTable
     ) where
 
@@ -7,6 +8,10 @@ import           Gimlight.Data.List (intercalateIncludingHeadTail)
 
 adjustLength :: Int -> String -> String
 adjustLength n s = s ++ replicate (n - length s) ' '
+
+unlinesWithoutTrailingNewline :: [String] -> String
+unlinesWithoutTrailingNewline [] = ""
+unlinesWithoutTrailingNewline xs = init $ unlines xs
 
 makeTable :: [[String]] -> String
 makeTable [] = "+"

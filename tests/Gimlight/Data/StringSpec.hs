@@ -5,12 +5,14 @@ module Gimlight.Data.StringSpec
     ) where
 
 import           Data.String.QQ       (s)
-import           Gimlight.Data.String (adjustLength, makeTable)
+import           Gimlight.Data.String (adjustLength, makeTable,
+                                       unlinesWithoutTrailingNewline)
 import           Test.Hspec           (Spec, describe, it, shouldBe)
 
 spec :: Spec
 spec = do
     testAdjustLength
+    testUnlinesWithoutTrailingNewline
     describe "makeTable" $ do
         testMakeTableWithFilledTable
         testMakeTableContainingEmptyList
@@ -22,6 +24,15 @@ testAdjustLength =
     describe "adjustLength" $
     it "appends spaces so that the length is adjusted to the given number." $
     adjustLength 10 "Marion" `shouldBe` "Marion    "
+
+testUnlinesWithoutTrailingNewline :: Spec
+testUnlinesWithoutTrailingNewline =
+    describe "unlinesWithoutTrailingNewline" $ do
+        it "returns an empty string if the given list is empty." $
+            unlinesWithoutTrailingNewline [] `shouldBe` ""
+        it "unlines a list but does not append the trailing newline." $
+            unlinesWithoutTrailingNewline ["Zucchi", "Prisila", "Kana-chan"] `shouldBe`
+            "Zucchi\nPrisila\nKana-chan"
 
 testMakeTableWithFilledTable :: Spec
 testMakeTableWithFilledTable =
