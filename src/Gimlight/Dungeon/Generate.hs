@@ -5,7 +5,7 @@ module Gimlight.Dungeon.Generate
     ) where
 
 import           Control.Lens                     (Ixed (ix), over, set, (&),
-                                                   (.~), (^.))
+                                                   (.~), (?~), (^.))
 import           Control.Monad.Morph              (MFunctor (hoist), generalize)
 import           Control.Monad.State              (MonadState (get, put),
                                                    MonadTrans (lift), State,
@@ -115,9 +115,8 @@ generateDungeon tc cfg ident = do
             (getMaxRooms cfg)
     return
         ( dungeon
-              (set (ix enterPosition . tileIdentifierLayer . upper)
-                   (Just upStairs)
-                   tiles)
+              (tiles & ix enterPosition . tileIdentifierLayer . upper ?~
+               upStairs)
               ident
         , enterPosition)
 
