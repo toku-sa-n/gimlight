@@ -188,15 +188,13 @@ updateExploredMap cm =
     visibleList = map fst $ filter snd $ assocs $ playerFov cm
 
 updatePlayerFov :: TileCollection -> CellMap -> Maybe CellMap
-updatePlayerFov tc cm =
-    fmap
-        (\xs ->
-             cm //
-             [ (pos, cm ! pos & visibleFromPlayer .~ isVisible)
-             | (pos, isVisible) <- xs
-             ])
-        visibilityList
+updatePlayerFov tc cm = fmap markAsVisible visibilityList
   where
+    markAsVisible xs =
+        cm //
+        [ (pos, cm ! pos & visibleFromPlayer .~ isVisible)
+        | (pos, isVisible) <- xs
+        ]
     visibilityList = fmap assocs fov
     fov = (`calculateFov` transparentMap tc cm) <$> playerPosition
     playerPosition = fst <$> playerActor cm
