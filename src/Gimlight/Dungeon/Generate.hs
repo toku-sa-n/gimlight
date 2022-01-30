@@ -31,8 +31,7 @@ import           Gimlight.Dungeon.Generate.Room   (Room (..), center,
                                                    roomOverlaps)
 import           Gimlight.Dungeon.Identifier      (Identifier)
 import           Gimlight.Dungeon.Map.Cell        (CellMap, allWallTiles,
-                                                   changeTileAt, locateActorAt,
-                                                   locateItemAt,
+                                                   locateActorAt, locateItemAt,
                                                    tileIdentifierLayer, upper,
                                                    widthAndHeight)
 import           Gimlight.Dungeon.Map.Tile        (TileCollection, downStairs,
@@ -83,10 +82,8 @@ generateDungeonAndAppend zipper ts cfg ident = do
                 (const $
                  over
                      cellMap
-                     (fromMaybe (error "Failed to change the tile.") .
-                      changeTileAt
-                          (set upper (Just downStairs))
-                          upperStairsPosition)
+                     (set (ix upperStairsPosition . tileIdentifierLayer . upper)
+                          (Just downStairs))
                      newUpperDungeon)
                 zipper
         zipperFocusingNext =
@@ -118,8 +115,9 @@ generateDungeon tc cfg ident = do
             (getMaxRooms cfg)
     return
         ( dungeon
-              (fromMaybe (error "Failed to change the tile.") $
-               changeTileAt (set upper (Just upStairs)) enterPosition tiles)
+              (set (ix enterPosition . tileIdentifierLayer . upper)
+                   (Just upStairs)
+                   tiles)
               ident
         , enterPosition)
 
