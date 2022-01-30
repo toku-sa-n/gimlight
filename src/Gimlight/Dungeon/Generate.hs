@@ -4,8 +4,8 @@ module Gimlight.Dungeon.Generate
     ( generateMultipleFloorsDungeon
     ) where
 
-import           Control.Lens                     (Ixed (ix), over, set, (&),
-                                                   (.~), (?~), (^.))
+import           Control.Lens                     (Ixed (ix), (&), (.~), (?~),
+                                                   (^.))
 import           Control.Monad.Morph              (MFunctor (hoist), generalize)
 import           Control.Monad.State              (MonadState (get, put),
                                                    MonadTrans (lift), State,
@@ -79,12 +79,10 @@ generateDungeonAndAppend zipper ts cfg ident = do
         newZipper =
             appendNode newLowerDungeon $
             modify
-                (const $
-                 over
-                     cellMap
-                     (set (ix upperStairsPosition . tileIdentifierLayer . upper)
-                          (Just downStairs))
-                     newUpperDungeon)
+                (const $ newUpperDungeon & cellMap . ix upperStairsPosition .
+                 tileIdentifierLayer .
+                 upper ?~
+                 downStairs)
                 zipper
         zipperFocusingNext =
             fromMaybe
