@@ -5,8 +5,8 @@ module Gimlight.Dungeon.Predefined.Beaeve
 import           Control.Monad.Morph              (MFunctor (hoist), generalize)
 import           Control.Monad.State              (MonadTrans (lift), StateT,
                                                    execStateT)
-import           Data.Either.Combinators          (fromRight)
 import           Gimlight.Actor.Friendly.Electria (electria)
+import           Gimlight.Data.Either             (expectRight)
 import           Gimlight.Dungeon                 (Dungeon, dungeon)
 import           Gimlight.Dungeon.Identifier      (Identifier (Beaeve))
 import           Gimlight.Dungeon.Map.Cell        (locateActorAt)
@@ -20,6 +20,6 @@ beaeve tc = do
     electria' <- hoist generalize electria
     cm <- lift $ readMapFile "maps/beaeve.json"
     let cm' =
-            fromRight (error "Failed to place a NPC.") . flip execStateT cm $
+            expectRight "Failed to place a NPC." . flip execStateT cm $
             locateActorAt tc electria' (V2 4 5)
     return $ dungeon cm' Beaeve
