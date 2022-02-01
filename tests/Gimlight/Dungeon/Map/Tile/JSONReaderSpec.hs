@@ -2,8 +2,10 @@ module Gimlight.Dungeon.Map.Tile.JSONReaderSpec
     ( spec
     ) where
 
+import           Data.Foldable                        (foldlM)
 import           Data.Map                             (empty, union)
-import           Gimlight.Dungeon.Map.Tile.JSONReader (addTileFile)
+import           Gimlight.Dungeon.Map.Tile.JSONReader (addTileFile,
+                                                       readTileFileRecursive)
 import           Gimlight.SetUp.TileFile              (singleTileFile,
                                                        tileWithoutProperties,
                                                        tilesInSingleTileFile,
@@ -17,9 +19,26 @@ import           Test.Hspec                           (Spec, describe,
 
 spec :: Spec
 spec = do
+    testReadTileFilesRecursive
     testAddTileFile
     testAddUnwalkableTileFile
     testErrorOnReadingTileWithoutProperties
+
+testReadTileFilesRecursive :: Spec
+testReadTileFilesRecursive = do
+    expected <- runIO $ foldlM (flip addTileFile) empty files
+    result <- runIO $ readTileFileRecursive "tests/tiles/"
+    describe "readTileFilesRecursive" $
+        it "reads all tile files in a directory recursively." $
+        result `shouldBe` expected
+  where
+    files =
+        [ "tests/tiles/haskell.json"
+        , "tests/tiles/no_properties.json"
+        , "tests/tiles/single.json"
+        , "tests/tiles/united.json"
+        , "tests/tiles/unwalkable.json"
+        ]
 
 testAddTileFile :: Spec
 testAddTileFile = do
