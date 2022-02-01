@@ -50,6 +50,7 @@ Test-Suite spec
                       , Gimlight.Action.PickUpSpec
                       , Gimlight.Action.WaitSpec
                       , Gimlight.Data.ArraySpec
+                      , Gimlight.Data.EitherSpec
                       , Gimlight.Data.ListSpec
                       , Gimlight.Data.MaybeSpec
                       , Gimlight.Data.StringSpec
@@ -88,6 +89,7 @@ library
                       , Gimlight.Actor.Status.Hp
                       , Gimlight.Coord
                       , Gimlight.Data.Array
+                      , Gimlight.Data.Either
                       , Gimlight.Data.List
                       , Gimlight.Data.Maybe
                       , Gimlight.Data.String
