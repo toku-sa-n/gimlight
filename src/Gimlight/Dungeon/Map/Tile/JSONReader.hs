@@ -33,9 +33,8 @@ import           System.Directory.Recursive (getFilesRecursive)
 import           System.FilePath            (dropFileName, (</>))
 
 readTileFileRecursive :: FilePath -> IO TileCollection
-readTileFileRecursive dir = do
-    filePaths <- getFilesRecursive dir
-    foldlM (flip addTileFile) empty filePaths
+readTileFileRecursive dir =
+    getFilesRecursive dir >>= foldlM (flip addTileFile) empty
 
 addTileFile :: FilePath -> TileCollection -> IO TileCollection
 addTileFile path tc = do
