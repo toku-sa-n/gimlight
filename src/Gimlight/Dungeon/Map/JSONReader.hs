@@ -3,64 +3,47 @@
 {-# LANGUAGE TupleSections     #-}
 
 module Gimlight.Dungeon.Map.JSONReader
-    ( readMapTileImage
+    ( readMapFile
     ) where
 
-import           Control.Lens                         (Ixed (ix), (^..), (^?))
-import           Control.Monad                        (unless, (>=>))
-import           Control.Monad.Except                 (ExceptT (ExceptT),
-                                                       runExceptT)
-import           Control.Monad.Trans.Maybe            (MaybeT (MaybeT),
-                                                       maybeToExceptT)
-import           Data.Aeson.Lens                      (_Array, _Integer,
-                                                       _String, key, values)
-import           Data.Array                           (array)
-import           Data.Bifunctor                       (Bifunctor (second))
-import           Data.Bits                            (Bits (clearBit))
-import           Data.Either.Combinators              (maybeToRight)
-import           Data.Foldable                        (foldlM)
-import           Data.List                            (find, sortBy)
-import           Data.Maybe                           (fromMaybe)
-import           Data.Text                            (unpack)
-import           Data.Vector                          (Vector, toList)
-import qualified Data.Vector                          as V
-import           Gimlight.Dungeon.Map.Cell            (CellMap,
-                                                       TileIdentifierLayer (TileIdentifierLayer),
-                                                       cellMap)
-import           Gimlight.Dungeon.Map.Tile            (TileCollection,
-                                                       TileIdentifier)
-import           Gimlight.Dungeon.Map.Tile.JSONReader (addTileFile)
-import           Linear.V2                            (V2 (V2))
-import           System.Directory                     (canonicalizePath,
-                                                       makeRelativeToCurrentDirectory)
-import           System.FilePath                      (dropFileName, (</>))
+import           Control.Lens              (Ixed (ix), (^..), (^?))
+import           Control.Monad             (unless)
+import           Control.Monad.Except      (ExceptT (ExceptT), runExceptT)
+import           Control.Monad.Trans.Maybe (MaybeT (MaybeT), maybeToExceptT)
+import           Data.Aeson.Lens           (_Array, _Integer, _String, key,
+                                            values)
+import           Data.Array                (array)
+import           Data.Bifunctor            (Bifunctor (second))
+import           Data.Bits                 (Bits (clearBit))
+import           Data.Either.Combinators   (maybeToRight)
+import           Data.List                 (find, sortBy)
+import           Data.Maybe                (fromMaybe)
+import           Data.Text                 (unpack)
+import           Data.Vector               (Vector, toList)
+import qualified Data.Vector               as V
+import           Gimlight.Dungeon.Map.Cell (CellMap,
+                                            TileIdentifierLayer (TileIdentifierLayer),
+                                            cellMap)
+import           Gimlight.Dungeon.Map.Tile (TileIdentifier)
+import           Linear.V2                 (V2 (V2))
+import           System.Directory          (canonicalizePath,
+                                            makeRelativeToCurrentDirectory)
+import           System.FilePath           (dropFileName, (</>))
 
-readMapTileImage :: TileCollection -> FilePath -> IO (CellMap, TileCollection)
-readMapTileImage tc path =
-    result >>= \case
-        Right x -> return x
-        Left x  -> error x
-  where
-    result =
-        runExceptT $ do
-            (cm, tileJsonPath) <- readMapFile path
-            tc' <-
-                ExceptT . fmap return $
-                foldlM (flip addTileFile) tc tileJsonPath
-            return (cm, tc')
+readMapFile :: FilePath -> IO CellMap
+readMapFile =
+    fmap
+        (\case
+             Right x -> x
+             Left x  -> error x) .
+    runExceptT .
+    readMapFileOrFail
 
-readMapFile :: FilePath -> ExceptT String IO (CellMap, [FilePath])
-readMapFile path = do
+readMapFileOrFail :: FilePath -> ExceptT String IO CellMap
+readMapFileOrFail path = do
     json <- ExceptT . fmap return $ readFile path
-    tileFilePath <- ExceptT . fmap return $ getAndCanonicalizeTileFilePath json
-    cm <- getTiles json path >>= ExceptT . return . parseFile json
-    return (cm, tileFilePath)
+    getTiles json path >>= ExceptT . return . parseFile json
   where
-    getAndCanonicalizeTileFilePath json =
-        mapM
-            (makeRelativeToCurrentDirectory >=> canonicalizePath .
-             (</>) (dropFileName path)) $
-        getTileFilePath json
     parseFile json tiles = do
         V2 width height <- maybeToRight noWidthOrHeight $ getMapSize json
         unless (height * width == length tiles) $ Left invalidWidthHeight
@@ -74,10 +57,6 @@ readMapFile path = do
     invalidWidthHeight =
         "The multiplication of width and height of the map " ++ path ++
         " does not equal to the number of tiles."
-
-getTileFilePath :: String -> [FilePath]
-getTileFilePath json =
-    fmap unpack $ json ^.. key "tilesets" . values . key "source" . _String
 
 getMapSize :: String -> Maybe (V2 Int)
 getMapSize json =
