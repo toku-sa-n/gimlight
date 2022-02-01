@@ -1,4 +1,3 @@
-{-# LANGUAGE LambdaCase        #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE TupleSections     #-}
 
@@ -21,6 +20,7 @@ import           Data.Maybe                (fromMaybe)
 import           Data.Text                 (unpack)
 import           Data.Vector               (Vector, toList)
 import qualified Data.Vector               as V
+import           Gimlight.Data.Either      (expectRight)
 import           Gimlight.Dungeon.Map.Cell (CellMap,
                                             TileIdentifierLayer (TileIdentifierLayer),
                                             cellMap)
@@ -31,13 +31,9 @@ import           System.Directory          (canonicalizePath,
 import           System.FilePath           (dropFileName, (</>))
 
 readMapFile :: FilePath -> IO CellMap
-readMapFile =
-    fmap
-        (\case
-             Right x -> x
-             Left x  -> error x) .
-    runExceptT .
-    readMapFileOrFail
+readMapFile p = fmap (expectRight msg) $ runExceptT $ readMapFileOrFail p
+  where
+    msg = "Failed to load a map: " ++ p
 
 readMapFileOrFail :: FilePath -> ExceptT String IO CellMap
 readMapFileOrFail path = do
