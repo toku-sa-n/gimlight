@@ -27,17 +27,16 @@ spec = do
 testReadTileFilesRecursive :: Spec
 testReadTileFilesRecursive = do
     expected <- runIO $ foldlM (flip addTileFile) empty files
-    result <- runIO $ readTileFileRecursive "tests/tiles/"
+    result <- runIO $ readTileFileRecursive "tests/tiles/valid/"
     describe "readTileFilesRecursive" $
         it "reads all tile files in a directory recursively." $
         result `shouldBe` expected
   where
     files =
-        [ "tests/tiles/haskell.json"
-        , "tests/tiles/no_properties.json"
-        , "tests/tiles/single.json"
-        , "tests/tiles/united.json"
-        , "tests/tiles/unwalkable.json"
+        [ "tests/tiles/valid/haskell.json"
+        , "tests/tiles/valid/single.json"
+        , "tests/tiles/valid/united.json"
+        , "tests/tiles/valid/unwalkable.json"
         ]
 
 testAddTileFile :: Spec
