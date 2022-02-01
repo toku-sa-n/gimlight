@@ -22,8 +22,7 @@ initDungeon :: TileCollection -> StateT IndexGenerator IO Dungeon
 initDungeon tc = do
     beaeve' <- beaeve tc
     player' <- hoist generalize player
-    let d = beaeve' & cellMap %~ initBeaeve player'
-    return d
+    return $ beaeve' & cellMap %~ initBeaeve player'
   where
     initBeaeve p cm' =
         updateExploredMap .
