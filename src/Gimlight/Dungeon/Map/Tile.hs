@@ -4,7 +4,7 @@ module Gimlight.Dungeon.Map.Tile
     ( Tile
     , TileCollection
     , TileIdentifier
-    , TileId
+    , TileIndex
     , tile
     , isWalkable
     , isTransparent
@@ -58,7 +58,7 @@ type TileCollection = Map TileIdentifier Tile
 
 type TileIdentifier = (FilePath, Int)
 
-type TileId = Int
+type TileIndex = Int
 
 tile :: Bool -> Bool -> Image PixelRGBA8 -> Tile
 tile = Tile
