@@ -85,7 +85,7 @@ generateDungeonAndAppend zipper ts cfg ident = do
                 (getFocused zipper, generatedDungeon)
         upperWithStairs =
             newUpperDungeon & cellMap . upperAt upperStairsPosition ?~
-            (getTileFilePath cfg, downStairs)
+            (getTileFilePath cfg, downStairsIndex)
         newZipper =
             appendNode newLowerDungeon $ modify (const upperWithStairs) zipper
         zipperFocusingNext =
@@ -110,7 +110,7 @@ generateDungeon tc cfg ident = do
     let d =
             dungeon
                 (addWallsAndEdges cfg tiles & upperAt enterPosition ?~
-                 (getTileFilePath cfg, upStairs))
+                 (getTileFilePath cfg, upStairsIndex))
                 ident
     return (d, enterPosition)
   where
@@ -189,7 +189,7 @@ addEdgeTiles cfg cm = foldl updateTileId cm ceilTiles
     -- tile.
     blobBase = [0, 1, 5, 7, 17, 21, 23, 29, 31, 85, 87, 95, 119, 127, 255]
     ceilTiles = filter isCeil allCoordsInMap
-    isCeil = (Just (Just (getTileFilePath cfg, ceilTile)) ==) . upperTileAt
+    isCeil = (Just (Just (getTileFilePath cfg, ceilTileIndex)) ==) . upperTileAt
     isEmpty = (== Just Nothing) . upperTileAt
     isWall = tileIdSatisfies isWallId
     isStairs = tileIdSatisfies isStairsId
@@ -203,16 +203,17 @@ addWallTiles cfg cm = foldl changeTile cm wallCoords
   where
     changeTile cm' pos = cm' & ix pos . tileIdLayer . upper .~ changeTo pos
     changeTo c
-        | isLeftEmpty c && isRightEmpty c = Just (getTileFilePath cfg, edgeWall)
-        | isLeftEmpty c = Just (getTileFilePath cfg, leftWall)
-        | isRightEmpty c = Just (getTileFilePath cfg, rightWall)
-        | otherwise = Just (getTileFilePath cfg, centerWall)
+        | isLeftEmpty c && isRightEmpty c =
+            Just (getTileFilePath cfg, edgeWallIndex)
+        | isLeftEmpty c = Just (getTileFilePath cfg, leftWallIndex)
+        | isRightEmpty c = Just (getTileFilePath cfg, rightWallIndex)
+        | otherwise = Just (getTileFilePath cfg, centerWallIndex)
     isRightEmpty c@(V2 x _) = x + 1 < width && isEmptyTile (c + V2 1 0)
     isLeftEmpty c@(V2 x _) = x - 1 >= 0 && isEmptyTile (c + V2 (-1) 0)
     wallCoords =
         subtract (V2 0 1) <$> filterAll [isAboveTileCeil, isEmptyTile] coords
     isAboveTileCeil =
-        (Just ceilTile ==) . fmap snd . upperTileAt . subtract (V2 0 1)
+        (Just ceilTileIndex ==) . fmap snd . upperTileAt . subtract (V2 0 1)
     isEmptyTile = isNothing . upperTileAt
     upperTileAt = (fmap (view (tileIdLayer . upper)) cm !)
     coords = [V2 x y | x <- [0 .. width - 1], y <- [1 .. height - 1]] -- Exclude the first line otherwise an index out of bounds error will happen.
@@ -286,38 +287,39 @@ randomST = do
 initialTile :: Config -> TileIdLayer
 initialTile cfg = TileIdLayer u l
   where
-    u = Just (getTileFilePath cfg, ceilTile)
-    l = Just (getTileFilePath cfg, floorTile)
+    u = Just (getTileFilePath cfg, ceilTileIndex)
+    l = Just (getTileFilePath cfg, floorTileIndex)
 
 isStairsId :: TileIndex -> Bool
-isStairsId = (`elem` [downStairs, upStairs])
+isStairsId = (`elem` [downStairsIndex, upStairsIndex])
 
 isWallId :: TileIndex -> Bool
-isWallId = (`elem` [leftWall, centerWall, rightWall, edgeWall])
+isWallId =
+    (`elem` [leftWallIndex, centerWallIndex, rightWallIndex, edgeWallIndex])
 
-floorTile :: TileIndex
-floorTile = 0
+floorTileIndex :: TileIndex
+floorTileIndex = 0
 
-ceilTile :: TileIndex
-ceilTile = 14
+ceilTileIndex :: TileIndex
+ceilTileIndex = 14
 
-leftWall :: TileIndex
-leftWall = 15
+leftWallIndex :: TileIndex
+leftWallIndex = 15
 
-centerWall :: TileIndex
-centerWall = 16
+centerWallIndex :: TileIndex
+centerWallIndex = 16
 
-rightWall :: TileIndex
-rightWall = 17
+rightWallIndex :: TileIndex
+rightWallIndex = 17
 
-edgeWall :: TileIndex
-edgeWall = 18
+edgeWallIndex :: TileIndex
+edgeWallIndex = 18
 
-downStairs :: TileIndex
-downStairs = 22
+downStairsIndex :: TileIndex
+downStairsIndex = 22
 
-upStairs :: TileIndex
-upStairs = 23
+upStairsIndex :: TileIndex
+upStairsIndex = 23
 
 maxMonstersPerRoom :: Int
 maxMonstersPerRoom = 1
