@@ -161,9 +161,9 @@ addEdgeTiles cfg cm = foldl updateTileId cm ceilTiles
     blobToIdAndLeftRotation b =
         case fmap (`elemIndex` blobBase) (candidates b) of
             [Just x, _, _, _] -> x
-            [_, Just x, _, _] -> (flags !! 0) .|. (flags !! 1) .|. x
-            [_, _, Just x, _] -> (flags !! 1) .|. (flags !! 2) .|. x
-            [_, _, _, Just x] -> (flags !! 2) .|. (flags !! 0) .|. x
+            [_, Just x, _, _] -> head flags .|. flags !! 1 .|. x
+            [_, _, Just x, _] -> flags !! 1 .|. flags !! 2 .|. x
+            [_, _, _, Just x] -> flags !! 2 .|. head flags .|. x
             _                 -> error "Unmatched."
     candidates b = take 4 $ iterate ((`mod` 255) . (* 4)) b
     flags = cycle $ fmap bit [29, 30, 31]
