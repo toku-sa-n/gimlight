@@ -42,7 +42,8 @@ import           Gimlight.Dungeon.Map.Cell        (CellMap,
                                                    tileIdLayer, upper, upperAt,
                                                    widthAndHeight)
 import qualified Gimlight.Dungeon.Map.Cell        as C
-import           Gimlight.Dungeon.Map.Tile        (TileCollection, TileIndex)
+import           Gimlight.Dungeon.Map.Tile        (TileCollection, TileId,
+                                                   TileIndex)
 import           Gimlight.Dungeon.Stairs          (StairsPair (StairsPair))
 import           Gimlight.IndexGenerator          (IndexGenerator)
 import           Gimlight.Item                    (herb, sampleBook)
@@ -85,7 +86,7 @@ generateDungeonAndAppend zipper ts cfg ident = do
                 (getFocused zipper, generatedDungeon)
         upperWithStairs =
             newUpperDungeon & cellMap . upperAt upperStairsPosition ?~
-            (getTileFilePath cfg, downStairsIndex)
+            downStairsId cfg
         newZipper =
             appendNode newLowerDungeon $ modify (const upperWithStairs) zipper
         zipperFocusingNext =
@@ -314,6 +315,9 @@ rightWallIndex = 17
 
 edgeWallIndex :: TileIndex
 edgeWallIndex = 18
+
+downStairsId :: Config -> TileId
+downStairsId cfg = (getTileFilePath cfg, downStairsIndex)
 
 downStairsIndex :: TileIndex
 downStairsIndex = 22
