@@ -13,10 +13,11 @@ module Gimlight.GameStatus.Scene
   )
 where
 
-import Control.Lens (makeLenses, view, (%~), (&), (^.))
+import Control.Lens (Ixed (ix), makeLenses, view, (&), (+~), (^.), (^?))
 import Data.Binary (Binary)
 import Data.Text (Text)
 import GHC.Generics (Generic)
+import Gimlight.Data.Maybe (expectJust)
 import Gimlight.GameStatus.Exploring (ExploringHandler)
 import Gimlight.Localization (MultilingualText)
 
@@ -27,7 +28,8 @@ newtype SceneElement
 instance Binary SceneElement
 
 data SceneHandler = SceneHandler
-  { _backgroundImage :: Text,
+  { _current :: Int,
+    _backgroundImage :: Text,
     _elements :: [SceneElement],
     _afterScene :: ExploringHandler
   }
@@ -47,12 +49,15 @@ getBackgroundImagePath :: SceneHandler -> Text
 getBackgroundImagePath = view backgroundImage
 
 getCurrentScene :: SceneHandler -> SceneElement
-getCurrentScene = head . view elements
+getCurrentScene sh = expectJust "Index out of bounds" $ sh ^? elements . ix (sh ^. current)
 
 sceneHandler :: Text -> [SceneElement] -> ExploringHandler -> SceneHandler
-sceneHandler = SceneHandler
+sceneHandler = SceneHandler 0
 
 nextSceneOrFinish :: SceneHandler -> Either ExploringHandler SceneHandler
 nextSceneOrFinish sh
-  | length (sh ^. elements) == 1 = Left $ sh ^. afterScene
-  | otherwise = Right $ sh & elements %~ tail
+  | nextSceneExists sh = Right $ sh & current +~ 1
+  | otherwise = Left $ sh ^. afterScene
+
+nextSceneExists :: SceneHandler -> Bool
+nextSceneExists sh = sh ^. current + 1 < length (sh ^. elements)
