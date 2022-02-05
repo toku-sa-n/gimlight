@@ -41,7 +41,8 @@ start = do
     initUIConfig =
       [ appWindowTitle "Roguelike",
         appTheme darkTheme,
-        appFontDef "Regular" "third_party/noto-cjk/NotoSansCJK-VF.otf.ttc",
+        appFontDef "Regular" "third_party/Noto_Sans_JP/NotoSansJP-Light.otf",
+        appFontDef "Bold" "third_party/Noto_Sans_JP/NotoSansJP-Bold.otf",
         appInitEvent AppInit,
         appWindowState $ MainWindowNormal (windowWidth, windowHeight),
         appWindowResizable False
