@@ -62,3 +62,8 @@ jobs:
 
     - name: Check format
       uses: mrkkrp/ormolu-action@v5
+      with:
+        pattern: |
+          src/**/*.hs
+          app/**/*.hs
+          tests/**/*.hs
