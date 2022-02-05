@@ -147,6 +147,7 @@ library
                       , Gimlight.Save
                       , Gimlight.TreeZipper
                       , Gimlight.UI.Draw
+                      , Gimlight.UI.Draw.Containers
                       , Gimlight.UI.Draw.Exploring
                       , Gimlight.UI.Draw.GameOver
                       , Gimlight.UI.Draw.KeyEvent
