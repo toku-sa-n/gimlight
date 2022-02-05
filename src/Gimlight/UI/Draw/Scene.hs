@@ -14,6 +14,7 @@ import Gimlight.GameStatus.Scene
     text,
   )
 import Gimlight.Localization (getLocalizedText)
+import Gimlight.UI.Draw.Fonts (bold)
 import Gimlight.UI.Draw.KeyEvent (withKeyEvents)
 import Gimlight.UI.Types (GameWidgetNode)
 import Monomer
@@ -56,7 +57,7 @@ drawText sh c =
         [ filler `styleBasic` [bgColor $ black & L.a .~ 0.5],
           box_ [alignTop, alignLeft] $
             label_ (getLocalizedText c $ text $ getCurrentScene sh) [multiline]
-              `styleBasic` [textColor white, textSize 20, padding 20, textFont "Bold"]
+              `styleBasic` [textColor white, textSize 20, padding 20, textFont bold]
         ]
         `styleBasic` [height 200]
     ]
