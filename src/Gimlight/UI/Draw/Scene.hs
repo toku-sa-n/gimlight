@@ -3,6 +3,7 @@ module Gimlight.UI.Draw.Scene
   )
 where
 
+import Control.Lens ((&), (.~))
 import Gimlight.GameConfig (GameConfig)
 import Gimlight.GameStatus.Scene
   ( SceneHandler,
@@ -14,20 +15,40 @@ import Gimlight.Localization (getLocalizedText)
 import Gimlight.UI.Draw.KeyEvent (withKeyEvents)
 import Gimlight.UI.Types (GameWidgetNode)
 import Monomer
-  ( CmbMultiline (multiline),
+  ( CmbAlignBottom (alignBottom),
+    CmbBgColor (bgColor),
+    CmbHeight (height),
+    CmbMultiline (multiline),
     CmbStyleBasic (styleBasic),
     CmbTextColor (textColor),
-    black,
+    box_,
+    filler,
+    gray,
     image,
     label_,
+    vstack,
+    white,
     zstack,
   )
+import qualified Monomer.Lens as L
 
 drawScene :: SceneHandler -> GameConfig -> GameWidgetNode
 drawScene sh c =
   withKeyEvents $
     zstack
       [ image $ getBackgroundImagePath sh,
-        label_ (getLocalizedText c $ text $ getCurrentScene sh) [multiline]
-          `styleBasic` [textColor black]
+        box_ [alignBottom] (drawText sh c)
+          `styleBasic` [height 10]
       ]
+
+drawText :: SceneHandler -> GameConfig -> GameWidgetNode
+drawText sh c =
+  vstack
+    [ filler,
+      zstack
+        [ filler `styleBasic` [bgColor $ gray & L.a .~ 0.5],
+          label_ (getLocalizedText c $ text $ getCurrentScene sh) [multiline]
+            `styleBasic` [textColor white]
+        ]
+        `styleBasic` [height 200]
+    ]
