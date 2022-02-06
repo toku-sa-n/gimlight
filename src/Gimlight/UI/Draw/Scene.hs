@@ -30,6 +30,7 @@ import Monomer
     CmbTextColor (textColor),
     CmbTextFont (textFont),
     CmbTextSize (textSize),
+    WidgetNode,
     animFadeIn,
     animFadeOut_,
     black,
@@ -68,7 +69,9 @@ drawText sh c = widgetTree
             ]
             `styleBasic` [height 200]
         ]
-    fadeInOut content = outer
-      where
-        inner = animFadeIn content `nodeKey` "sceneFadeIn"
-        outer = animFadeOut_ [onFinished ShowNextScene] inner `nodeKey` "sceneFadeOut"
+
+fadeInOut :: WidgetNode s AppEvent -> WidgetNode s AppEvent
+fadeInOut content = outer
+  where
+    inner = animFadeIn content `nodeKey` "sceneFadeIn"
+    outer = animFadeOut_ [onFinished ShowNextScene] inner `nodeKey` "sceneFadeOut"
