@@ -58,17 +58,18 @@ drawText :: SceneHandler -> GameConfig -> GameWidgetNode
 drawText sh c = widgetTree
   where
     widgetTree =
-      vstack
-        [ filler,
-          zstack
-            [ filler `styleBasic` [bgColor $ black & L.a .~ 0.5],
-              fadeInOut $
-                box_ [alignTop, alignLeft] $
-                  label_ (getLocalizedText c $ text $ getCurrentScene sh) [multiline]
-                    `styleBasic` [textColor white, textSize 20, padding 20, textFont bold]
-            ]
-            `styleBasic` [height 200]
-        ]
+      fixToBottom $
+        zstack
+          [ filler `styleBasic` [bgColor $ black & L.a .~ 0.5],
+            fadeInOut $
+              box_ [alignTop, alignLeft] $
+                label_ (getLocalizedText c $ text $ getCurrentScene sh) [multiline]
+                  `styleBasic` [textColor white, textSize 20, padding 20, textFont bold]
+          ]
+          `styleBasic` [height 200]
+
+fixToBottom :: WidgetNode s e -> WidgetNode s e
+fixToBottom content = vstack [filler, content]
 
 fadeInOut :: WidgetNode s AppEvent -> WidgetNode s AppEvent
 fadeInOut content = outer
