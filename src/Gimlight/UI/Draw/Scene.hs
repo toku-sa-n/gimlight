@@ -58,14 +58,12 @@ drawText :: SceneHandler -> GameConfig -> GameWidgetNode
 drawText sh c = widgetTree
   where
     widgetTree =
-      fixToBottom $
-        shadeBox
-          ( fadeInOut $
-              box_ [alignTop, alignLeft] $
-                label_ (getLocalizedText c $ text $ getCurrentScene sh) [multiline]
-                  `styleBasic` textStyle
-          )
-          `styleBasic` [height 200]
+      container
+        ( label_ (getLocalizedText c $ text $ getCurrentScene sh) [multiline]
+            `styleBasic` textStyle
+        )
+        `styleBasic` [height 200]
+    container = fixToBottom . shadeBox . fadeInOut . box_ [alignTop, alignLeft]
     textStyle = [textColor white, textSize 20, padding 20, textFont bold]
 
 shadeBox :: WidgetNode s e -> WidgetNode s e
