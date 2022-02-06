@@ -59,14 +59,17 @@ drawText sh c = widgetTree
   where
     widgetTree =
       fixToBottom $
-        zstack
-          [ filler `styleBasic` [bgColor $ black & L.a .~ 0.5],
-            fadeInOut $
+        shadeBox
+          ( fadeInOut $
               box_ [alignTop, alignLeft] $
                 label_ (getLocalizedText c $ text $ getCurrentScene sh) [multiline]
-                  `styleBasic` [textColor white, textSize 20, padding 20, textFont bold]
-          ]
+                  `styleBasic` textStyle
+          )
           `styleBasic` [height 200]
+    textStyle = [textColor white, textSize 20, padding 20, textFont bold]
+
+shadeBox :: WidgetNode s e -> WidgetNode s e
+shadeBox content = zstack [filler `styleBasic` [bgColor $ black & L.a .~ 0.5], content]
 
 fixToBottom :: WidgetNode s e -> WidgetNode s e
 fixToBottom content = vstack [filler, content]
