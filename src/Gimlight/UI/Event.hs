@@ -73,7 +73,7 @@ handleEvent _ _ gameStatus evt =
       case nextSceneOrFinish sh of
         Right r -> [Model g {status = Scene r}, Message (WidgetKey "sceneFadeIn") AnimationStart]
         Left l -> [Model g {status = Exploring l}]
-    nextStatus _ = undefined
+    nextStatus _ = error "No handling scene."
 
 handleKeyInput :: GameModel -> Text -> [GameEventResponse]
 handleKeyInput e@GameModel {status = s} k =
