@@ -85,12 +85,9 @@ emphasizeSelection h labels =
         Just x  -> labels & ix x %~ (`styleBasic` baseStyle <> [textFont bold])
         Nothing -> labels
 
-dialogWidth :: Double
-dialogWidth = fromIntegral windowWidth * 0.7
-
 windowStyle :: [StyleState]
 windowStyle =
-    [ width $ fromIntegral windowWidth * 0.7
+    [ width dialogWidth
     , paddingH $ fromIntegral windowWidth * 0.05
     , paddingV $ fromIntegral windowHeight * 0.1
     , bgColor (Color 0x0c 0x0c 0x0c 1)
@@ -108,3 +105,6 @@ nameStyle =
 
 baseStyle :: [StyleState]
 baseStyle = [textColor white, textSize 24]
+
+dialogWidth :: Double
+dialogWidth = fromIntegral windowWidth * 0.7
