@@ -68,16 +68,17 @@ talkingWindow _ _ _ = error "Unable to draw."
 talkingContent :: GameConfig -> Actor -> SelectionHandler -> GameWidgetNode
 talkingContent c a h =
     box_ [alignCenter] $
-    vstack
-        (nameWidget c a :
-         filler :
-         (label_ (getLocalizedText c $ getQuestion h) [multiline] `styleBasic`
-          baseStyle) :
-         filler : selections c h)
+    vstack $
+    nameWidget c a : filler : selectionsWidget c h : filler : selections c h
 
 nameWidget :: GameConfig -> Actor -> GameWidgetNode
 nameWidget c a =
     label (getLocalizedText c $ toName $ getIdentifier a) `styleBasic` nameStyle
+
+selectionsWidget :: GameConfig -> SelectionHandler -> GameWidgetNode
+selectionsWidget c h =
+    label_ (getLocalizedText c $ getQuestion h) [multiline] `styleBasic`
+    baseStyle
 
 selections :: GameConfig -> SelectionHandler -> [GameWidgetNode]
 selections c h =
