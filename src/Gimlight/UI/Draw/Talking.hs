@@ -79,8 +79,7 @@ talkingContent c a h =
 selections :: GameConfig -> SelectionHandler -> [GameWidgetNode]
 selections c h =
     emphasizeSelection h $
-    (`styleBasic` [textColor white, textSize 24]) . label . getLocalizedText c <$>
-    getChoices h
+    (`styleBasic` baseStyle) . label . getLocalizedText c <$> getChoices h
 
 emphasizeSelection :: SelectionHandler -> [GameWidgetNode] -> [GameWidgetNode]
 emphasizeSelection h labels =
