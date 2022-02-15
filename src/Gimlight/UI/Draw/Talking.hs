@@ -28,6 +28,7 @@ import           Monomer                          (CmbAlignCenter (alignCenter),
                                                    CmbAlignMiddle (alignMiddle),
                                                    CmbBgColor (bgColor),
                                                    CmbBorderB (borderB),
+                                                   CmbFitHeight (fitHeight),
                                                    CmbMultiline (multiline),
                                                    CmbStyleBasic (styleBasic),
                                                    CmbTextColor (textColor),
@@ -54,9 +55,10 @@ drawTalking th c =
     afterGameStatus = getExploringHandler th
 
 talkingWindow :: GameConfig -> Actor -> TalkingPart -> GameWidgetNode
-talkingWindow c a (Selection h) =
-    hstack [image_ (a ^. standingImagePath) [alignCenter, alignMiddle], window]
+talkingWindow c a (Selection h) = hstack [standingPicture, window]
   where
+    standingPicture =
+        image_ (a ^. standingImagePath) [alignCenter, alignMiddle, fitHeight]
     window = talkingContent c a h `styleBasic` windowStyle
 talkingWindow _ _ _ = error "Unable to draw."
 
