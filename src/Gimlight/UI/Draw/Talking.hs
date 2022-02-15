@@ -69,12 +69,15 @@ talkingContent :: GameConfig -> Actor -> SelectionHandler -> GameWidgetNode
 talkingContent c a h =
     box_ [alignCenter] $
     vstack
-        ((label (getLocalizedText c $ toName $ getIdentifier a) `styleBasic`
-          nameStyle) :
+        (nameWidget c a :
          filler :
          (label_ (getLocalizedText c $ getQuestion h) [multiline] `styleBasic`
           baseStyle) :
          filler : selections c h)
+
+nameWidget :: GameConfig -> Actor -> GameWidgetNode
+nameWidget c a =
+    label (getLocalizedText c $ toName $ getIdentifier a) `styleBasic` nameStyle
 
 selections :: GameConfig -> SelectionHandler -> [GameWidgetNode]
 selections c h =
