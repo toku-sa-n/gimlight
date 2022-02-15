@@ -56,13 +56,7 @@ talkingWindow :: GameConfig -> Actor -> TalkingPart -> GameWidgetNode
 talkingWindow c a (Selection h) =
     hstack [image (a ^. standingImagePath), window]
   where
-    window =
-        talkingContent c a h `styleBasic`
-        [ width $ fromIntegral windowWidth * 0.7
-        , paddingH $ fromIntegral windowWidth * 0.05
-        , paddingV $ fromIntegral windowHeight * 0.1
-        , bgColor (Color 0x0c 0x0c 0x0c 1)
-        ]
+    window = talkingContent c a h `styleBasic` windowStyle
 talkingWindow _ _ _ = error "Unable to draw."
 
 talkingContent :: GameConfig -> Actor -> SelectionHandler -> GameWidgetNode
@@ -93,6 +87,14 @@ emphasizeSelection h labels =
 
 dialogWidth :: Double
 dialogWidth = fromIntegral windowWidth * 0.7
+
+windowStyle :: [StyleState]
+windowStyle =
+    [ width $ fromIntegral windowWidth * 0.7
+    , paddingH $ fromIntegral windowWidth * 0.05
+    , paddingV $ fromIntegral windowHeight * 0.1
+    , bgColor (Color 0x0c 0x0c 0x0c 1)
+    ]
 
 nameStyle :: [StyleState]
 nameStyle =
