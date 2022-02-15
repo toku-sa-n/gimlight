@@ -25,6 +25,7 @@ import           Gimlight.UI.Draw.Fonts           (bold)
 import           Gimlight.UI.Draw.KeyEvent        (withKeyEvents)
 import           Gimlight.UI.Types                (GameWidgetNode)
 import           Monomer                          (CmbAlignCenter (alignCenter),
+                                                   CmbAlignMiddle (alignMiddle),
                                                    CmbBgColor (bgColor),
                                                    CmbBorderB (borderB),
                                                    CmbMultiline (multiline),
@@ -35,7 +36,7 @@ import           Monomer                          (CmbAlignCenter (alignCenter),
                                                    CmbWidth (width),
                                                    Color (Color), StyleState,
                                                    black, box_, filler, hstack,
-                                                   image, label, label_,
+                                                   image_, label, label_,
                                                    paddingH, paddingV, vstack,
                                                    white, zstack)
 import qualified Monomer.Lens                     as L
@@ -54,7 +55,7 @@ drawTalking th c =
 
 talkingWindow :: GameConfig -> Actor -> TalkingPart -> GameWidgetNode
 talkingWindow c a (Selection h) =
-    hstack [image (a ^. standingImagePath), window]
+    hstack [image_ (a ^. standingImagePath) [alignCenter, alignMiddle], window]
   where
     window = talkingContent c a h `styleBasic` windowStyle
 talkingWindow _ _ _ = error "Unable to draw."
