@@ -12,7 +12,8 @@ import           Gimlight.GameStatus.SelectingItem (Reason (Drop, Use),
                                                     getItems, getReason,
                                                     getSelectingIndex)
 import           Gimlight.Item                     (getName)
-import           Gimlight.Localization             (getLocalizedText)
+import           Gimlight.Localization             (MultilingualText,
+                                                    getLocalizedText)
 import qualified Gimlight.Localization.Texts       as T
 import           Gimlight.UI.Draw.Config           (windowHeight, windowWidth)
 import           Gimlight.UI.Draw.Exploring        (drawExploring)
@@ -71,8 +72,10 @@ drawSelectingItem sh c =
             [0 ..] $
         map (getLocalizedText c) itemNames
     itemNames = map getName $ getItems sh
-    topLabel = getLocalizedText c topLabelText
-    topLabelText =
-        case getReason sh of
-            Use  -> T.whatToUse
-            Drop -> T.whatToDrop
+    topLabel = getLocalizedText c $ topLabelText sh
+
+topLabelText :: SelectingItemHandler -> MultilingualText
+topLabelText sh =
+    case getReason sh of
+        Use  -> T.whatToUse
+        Drop -> T.whatToDrop
