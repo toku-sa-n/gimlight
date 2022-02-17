@@ -13,7 +13,7 @@ import           Gimlight.Localization             (MultilingualText,
                                                     getLocalizedText)
 import qualified Gimlight.Localization.Texts       as T
 import           Gimlight.UI.Draw.Config           (windowHeight, windowWidth)
-import           Gimlight.UI.Draw.Dialog           (dialogStyle, heading)
+import           Gimlight.UI.Draw.Dialog           (heading)
 import qualified Gimlight.UI.Draw.Dialog           as Dialog
 import           Gimlight.UI.Draw.Exploring        (drawExploring)
 import           Gimlight.UI.Draw.KeyEvent         (withKeyEvents)
@@ -23,8 +23,9 @@ import           Monomer                           (CmbAlignCenter (alignCenter)
                                                     CmbAlignMiddle (alignMiddle),
                                                     CmbHeight (height),
                                                     CmbStyleBasic (styleBasic),
-                                                    CmbWidth (width), box_,
-                                                    vstack, zstack)
+                                                    CmbWidth (width),
+                                                    StyleState, box_, vstack,
+                                                    zstack)
 
 drawSelectingItem :: SelectingItemHandler -> GameConfig -> GameWidgetNode
 drawSelectingItem sh c =
@@ -34,10 +35,7 @@ drawSelectingItem sh c =
         , shadow
         , box_
               [alignMiddle, alignCenter]
-              (vstack labels `styleBasic` dialogStyle <>
-               [ width $ fromIntegral windowWidth * 0.8
-               , height $ fromIntegral windowHeight * 0.8
-               ])
+              (vstack labels `styleBasic` dialogStyle)
         ]
   where
     eh = getExploringHandler sh
@@ -47,6 +45,13 @@ drawSelectingItem sh c =
             Just x  -> [Dialog.selections x $ getLocalizedText c <$> itemNames]
             Nothing -> []
     itemNames = map getName $ getItems sh
+
+dialogStyle :: [StyleState]
+dialogStyle =
+    Dialog.dialogStyle <>
+    [ width $ fromIntegral windowWidth * 0.8
+    , height $ fromIntegral windowHeight * 0.8
+    ]
 
 titleLabelText :: SelectingItemHandler -> MultilingualText
 titleLabelText sh =
