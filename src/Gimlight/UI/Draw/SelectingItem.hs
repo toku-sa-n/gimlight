@@ -1,10 +1,8 @@
-{-# LANGUAGE OverloadedStrings #-}
-
 module Gimlight.UI.Draw.SelectingItem
     ( drawSelectingItem
     ) where
 
-import           Control.Lens                      ((&), (.~))
+import           Control.Lens                      (Ixed (ix), (%~), (&), (.~))
 import           Gimlight.GameConfig               (GameConfig)
 import           Gimlight.GameStatus.SelectingItem (Reason (Drop, Use),
                                                     SelectingItemHandler,
@@ -31,11 +29,11 @@ import           Monomer                           (CmbAlignCenter (alignCenter)
                                                     CmbTextFont (textFont),
                                                     CmbTextSize (textSize),
                                                     CmbWidth (width),
-                                                    Color (Color), black, box_,
-                                                    filler, label, paddingV,
-                                                    vstack, white, zstack)
+                                                    Color (Color), StyleState,
+                                                    black, box_, filler, label,
+                                                    paddingV, vstack, white,
+                                                    zstack)
 import qualified Monomer.Lens                      as L
-import           TextShow                          (TextShow (showt))
 
 drawSelectingItem :: SelectingItemHandler -> GameConfig -> GameWidgetNode
 drawSelectingItem sh c =
@@ -54,28 +52,38 @@ drawSelectingItem sh c =
         ]
   where
     eh = getExploringHandler sh
-    labels =
-        (label topLabel `styleBasic`
-         [ textColor white
-         , textSize 32
-         , textFont bold
-         , borderB 1 white
-         , paddingV 4
-         ]) :
-        map label addAsterlist
-    addAsterlist =
-        zipWith
-            (\idx x ->
-                 if Just idx == getSelectingIndex sh
-                     then "* " <> showt idx <> " " <> x
-                     else showt idx <> " " <> x)
-            [0 ..] $
-        map (getLocalizedText c) itemNames
+    labels = titleLabel sh c : itemLabels
+    itemLabels =
+        emphasizeSelection sh $
+        fmap
+            (\x -> label (getLocalizedText c x) `styleBasic` baseStyle)
+            itemNames
     itemNames = map getName $ getItems sh
-    topLabel = getLocalizedText c $ topLabelText sh
 
-topLabelText :: SelectingItemHandler -> MultilingualText
-topLabelText sh =
+emphasizeSelection ::
+       SelectingItemHandler -> [GameWidgetNode] -> [GameWidgetNode]
+emphasizeSelection h labels =
+    case getSelectingIndex h of
+        Just x  -> labels & ix x %~ (`styleBasic` baseStyle <> [textFont bold])
+        Nothing -> labels
+
+titleLabel :: SelectingItemHandler -> GameConfig -> GameWidgetNode
+titleLabel sh c = node `styleBasic` style
+  where
+    node = label $ getLocalizedText c $ titleLabelText sh
+    style =
+        [ textColor white
+        , textSize 32
+        , textFont bold
+        , borderB 1 white
+        , paddingV 4
+        ]
+
+titleLabelText :: SelectingItemHandler -> MultilingualText
+titleLabelText sh =
     case getReason sh of
         Use  -> T.whatToUse
         Drop -> T.whatToDrop
+
+baseStyle :: [StyleState]
+baseStyle = [textColor white, textSize 24]
