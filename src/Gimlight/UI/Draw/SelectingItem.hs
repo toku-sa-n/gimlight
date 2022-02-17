@@ -14,6 +14,7 @@ import           Gimlight.GameStatus.SelectingItem (Reason (Drop, Use),
 import           Gimlight.Item                     (getName)
 import           Gimlight.Localization             (getLocalizedText)
 import qualified Gimlight.Localization.Texts       as T
+import           Gimlight.UI.Draw.Config           (windowHeight, windowWidth)
 import           Gimlight.UI.Draw.Exploring        (drawExploring)
 import           Gimlight.UI.Draw.Fonts            (bold)
 import           Gimlight.UI.Draw.KeyEvent         (withKeyEvents)
@@ -44,8 +45,8 @@ drawSelectingItem sh c =
         , box_
               [alignMiddle, alignCenter]
               (vstack labels `styleBasic`
-               [ width 800
-               , height 600
+               [ width $ fromIntegral windowWidth * 0.8
+               , height $ fromIntegral windowHeight * 0.8
                , bgColor (Color 0x0c 0x0c 0x0c 1)
                , padding 24
                ])
