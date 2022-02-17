@@ -14,7 +14,7 @@ import           Gimlight.Localization             (MultilingualText,
                                                     getLocalizedText)
 import qualified Gimlight.Localization.Texts       as T
 import           Gimlight.UI.Draw.Config           (windowHeight, windowWidth)
-import           Gimlight.UI.Draw.Dialog           (heading)
+import           Gimlight.UI.Draw.Dialog           (heading, selections)
 import qualified Gimlight.UI.Draw.Dialog           as Dialog
 import           Gimlight.UI.Draw.Exploring        (drawExploring)
 import           Gimlight.UI.Draw.KeyEvent         (withKeyEvents)
@@ -40,11 +40,13 @@ drawSelectingItem sh c =
         ]
   where
     eh = getExploringHandler sh
-    labels = heading (getLocalizedText c $ titleLabelText sh) : itemLabels
-    itemLabels =
-        case getSelectingIndex sh of
-            Just x  -> [Dialog.selections x $ itemNames sh c]
-            Nothing -> []
+    labels = heading (getLocalizedText c $ titleLabelText sh) : itemLabels sh c
+
+itemLabels :: SelectingItemHandler -> GameConfig -> [GameWidgetNode]
+itemLabels sh c =
+    case getSelectingIndex sh of
+        Just x  -> [selections x $ itemNames sh c]
+        Nothing -> []
 
 itemNames :: SelectingItemHandler -> GameConfig -> [Text]
 itemNames sh c = fmap (getLocalizedText c . getName) (getItems sh)
