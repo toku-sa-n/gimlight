@@ -1,4 +1,4 @@
-module Gimlight.UI.Draw.Widgets
+module Gimlight.UI.Draw.Shadow
     ( shadow
     ) where
 

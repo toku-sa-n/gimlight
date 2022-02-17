@@ -22,7 +22,7 @@ import           Gimlight.UI.Draw.Config          (windowHeight, windowWidth)
 import           Gimlight.UI.Draw.Exploring       (drawExploring)
 import           Gimlight.UI.Draw.Fonts           (bold)
 import           Gimlight.UI.Draw.KeyEvent        (withKeyEvents)
-import           Gimlight.UI.Draw.Widgets         (shadow)
+import           Gimlight.UI.Draw.Shadow          (shadow)
 import           Gimlight.UI.Types                (GameWidgetNode)
 import           Monomer                          (CmbAlignCenter (alignCenter),
                                                    CmbAlignMiddle (alignMiddle),
