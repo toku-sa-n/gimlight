@@ -146,6 +146,7 @@ library
                       , Gimlight.Quest.KillBats
                       , Gimlight.TreeZipper
                       , Gimlight.UI.Draw
+                      , Gimlight.UI.Draw.Dialog
                       , Gimlight.UI.Draw.Exploring
                       , Gimlight.UI.Draw.Fonts
                       , Gimlight.UI.Draw.GameOver
