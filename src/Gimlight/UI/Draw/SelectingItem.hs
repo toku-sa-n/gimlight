@@ -40,7 +40,10 @@ drawSelectingItem sh c =
         ]
   where
     eh = getExploringHandler sh
-    labels = heading (getLocalizedText c $ titleLabelText sh) : itemLabels sh c
+    labels = titleLabel sh c : itemLabels sh c
+
+titleLabel :: SelectingItemHandler -> GameConfig -> GameWidgetNode
+titleLabel sh c = heading $ getLocalizedText c $ titleLabelText sh
 
 itemLabels :: SelectingItemHandler -> GameConfig -> [GameWidgetNode]
 itemLabels sh c =
