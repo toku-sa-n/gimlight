@@ -2,6 +2,7 @@ module Gimlight.UI.Draw.SelectingItem
     ( drawSelectingItem
     ) where
 
+import           Data.Text                         (Text)
 import           Gimlight.GameConfig               (GameConfig)
 import           Gimlight.GameStatus.SelectingItem (Reason (Drop, Use),
                                                     SelectingItemHandler,
@@ -42,9 +43,11 @@ drawSelectingItem sh c =
     labels = heading (getLocalizedText c $ titleLabelText sh) : itemLabels
     itemLabels =
         case getSelectingIndex sh of
-            Just x  -> [Dialog.selections x $ getLocalizedText c <$> itemNames]
+            Just x  -> [Dialog.selections x $ itemNames sh c]
             Nothing -> []
-    itemNames = map getName $ getItems sh
+
+itemNames :: SelectingItemHandler -> GameConfig -> [Text]
+itemNames sh c = fmap (getLocalizedText c . getName) (getItems sh)
 
 dialogStyle :: [StyleState]
 dialogStyle =
