@@ -2,7 +2,7 @@ module Gimlight.UI.Draw.SelectingItem
     ( drawSelectingItem
     ) where
 
-import           Control.Lens                      (Ixed (ix), (%~), (&), (.~))
+import           Control.Lens                      (Ixed (ix), (%~), (&))
 import           Gimlight.GameConfig               (GameConfig)
 import           Gimlight.GameStatus.SelectingItem (Reason (Drop, Use),
                                                     SelectingItemHandler,
@@ -17,6 +17,7 @@ import           Gimlight.UI.Draw.Config           (windowHeight, windowWidth)
 import           Gimlight.UI.Draw.Exploring        (drawExploring)
 import           Gimlight.UI.Draw.Fonts            (bold)
 import           Gimlight.UI.Draw.KeyEvent         (withKeyEvents)
+import           Gimlight.UI.Draw.Widgets          (shadow)
 import           Gimlight.UI.Types                 (GameWidgetNode)
 import           Monomer                           (CmbAlignCenter (alignCenter),
                                                     CmbAlignMiddle (alignMiddle),
@@ -30,17 +31,15 @@ import           Monomer                           (CmbAlignCenter (alignCenter)
                                                     CmbTextSize (textSize),
                                                     CmbWidth (width),
                                                     Color (Color), StyleState,
-                                                    black, box_, filler, label,
-                                                    paddingV, vstack, white,
-                                                    zstack)
-import qualified Monomer.Lens                      as L
+                                                    box_, label, paddingV,
+                                                    vstack, white, zstack)
 
 drawSelectingItem :: SelectingItemHandler -> GameConfig -> GameWidgetNode
 drawSelectingItem sh c =
     withKeyEvents $
     zstack
         [ drawExploring eh c
-        , filler `styleBasic` [bgColor $ black & L.a .~ 0.5]
+        , shadow
         , box_
               [alignMiddle, alignCenter]
               (vstack labels `styleBasic`

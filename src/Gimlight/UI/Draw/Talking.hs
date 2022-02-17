@@ -4,8 +4,7 @@ module Gimlight.UI.Draw.Talking
     ( drawTalking
     ) where
 
-import           Control.Lens                     (Ixed (ix), (%~), (&), (.~),
-                                                   (^.))
+import           Control.Lens                     (Ixed (ix), (%~), (&), (^.))
 import           Gimlight.Actor                   (Actor, getIdentifier,
                                                    standingImagePath)
 import           Gimlight.Actor.Identifier        (toName)
@@ -23,6 +22,7 @@ import           Gimlight.UI.Draw.Config          (windowHeight, windowWidth)
 import           Gimlight.UI.Draw.Exploring       (drawExploring)
 import           Gimlight.UI.Draw.Fonts           (bold)
 import           Gimlight.UI.Draw.KeyEvent        (withKeyEvents)
+import           Gimlight.UI.Draw.Widgets         (shadow)
 import           Gimlight.UI.Types                (GameWidgetNode)
 import           Monomer                          (CmbAlignCenter (alignCenter),
                                                    CmbAlignMiddle (alignMiddle),
@@ -36,18 +36,17 @@ import           Monomer                          (CmbAlignCenter (alignCenter),
                                                    CmbTextSize (textSize),
                                                    CmbWidth (width),
                                                    Color (Color), StyleState,
-                                                   black, box_, filler, hstack,
-                                                   image_, label, label_,
-                                                   paddingH, paddingV, vstack,
-                                                   white, zstack)
-import qualified Monomer.Lens                     as L
+                                                   box_, filler, hstack, image_,
+                                                   label, label_, paddingH,
+                                                   paddingV, vstack, white,
+                                                   zstack)
 
 drawTalking :: TalkingHandler -> GameConfig -> GameWidgetNode
 drawTalking th c =
     withKeyEvents $
     zstack
         [ drawExploring afterGameStatus c
-        , filler `styleBasic` [bgColor $ black & L.a .~ 0.5]
+        , shadow
         , talkingWindow c partner (getTalkingPart th)
         ]
   where

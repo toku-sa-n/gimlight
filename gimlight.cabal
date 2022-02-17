@@ -156,6 +156,7 @@ library
                       , Gimlight.UI.Draw.SelectingItem
                       , Gimlight.UI.Draw.Talking
                       , Gimlight.UI.Draw.Title
+                      , Gimlight.UI.Draw.Widgets
                       , Gimlight.UI.Event
                       , Gimlight.UI.Types
 
