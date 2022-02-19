@@ -10,6 +10,7 @@ module Gimlight.SetUp.CellMap
     , intermediateOrcPosition
     , weakestOrcPosition
     , orcWithHerbPosition
+    , orcWithSwordPosition
     ) where
 
 import           Codec.Picture             (PixelRGBA8 (PixelRGBA8),
@@ -53,21 +54,23 @@ initCellMap =
             , (i, intermediateOrcPosition)
             , (w, weakestOrcPosition)
             , (orcWithHerb, orcWithHerbPosition)
+            , (orcWithSword, orcWithSwordPosition)
             ]
   where
     emptyMap =
         cellMap $
         listArray (V2 0 0, V2 (mapWidth - 1) (mapHeight - 1)) (repeat emptyTile) //
         [(V2 0 1, unwalkable)]
-    (p, w, i, s, orcWithoutItems, orcWithFullItems, orcWithHerb) =
-        flip evalState generator $ (,,,,,,) <$>
+    (p, w, i, s, orcWithoutItems, orcWithFullItems, orcWithHerb, orcWithSword) =
+        flip evalState generator $ (,,,,,,,) <$>
         ((inventoryItems %~ fromJust . addItem sampleBook) <$> player) <*>
         weakestOrc <*>
         intermediateOrc <*>
         strongestOrc <*>
         orc <*>
         ((!! 5) . iterate (inventoryItems %~ fromJust . addItem herb) <$> orc) <*>
-        ((inventoryItems %~ fromJust . addItem herb) <$> orc)
+        ((inventoryItems %~ fromJust . addItem herb) <$> orc) <*>
+        ((inventoryItems %~ fromJust . addItem sword) <$> orc)
     emptyTile = TileIdLayer Nothing Nothing
     unwalkable = TileIdLayer (Just (dummyTileFile, 1)) Nothing
     mapWidth = 3
@@ -111,6 +114,9 @@ weakestOrcPosition = V2 1 3
 
 orcWithHerbPosition :: Coord
 orcWithHerbPosition = V2 2 1
+
+orcWithSwordPosition :: Coord
+orcWithSwordPosition = V2 2 2
 
 dummyTileFile :: FilePath
 dummyTileFile = "dummy.json"
