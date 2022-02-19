@@ -26,6 +26,7 @@ spec :: Spec
 spec = do
     testStartReadingBook
     testConsumeHerb
+    testEquipSword
 
 testStartReadingBook :: Spec
 testStartReadingBook =
@@ -71,3 +72,24 @@ testConsumeHerb =
         flip evalStateT initCellMap $ removeActorAt orcWithHerbPosition
     healAmount (Heal h) = getHealAmount h
     healAmount _        = error "Not a healer."
+
+testEquipSword :: Spec
+testEquipSword =
+    it "returns a Ok result if an actor uses (equips) a sword, and the actor equips the sword." $
+    result `shouldBe` expected
+  where
+    result = consumeAction 0 orcWithSwordPosition initTileCollection initCellMap
+    expected = writer (expectedResult, expectedLog)
+    expectedResult =
+        ActionResult
+            {status = Ok, newCellMap = cellMapAfterConsuming, killed = []}
+    expectedLog =
+        [T.equipped (toName $ getIdentifier orcWithSword) (getName sword)]
+    cellMapAfterConsuming =
+        fromRight' $
+        flip execStateT initCellMap $ do
+            a <- removeActorAt orcWithSwordPosition
+            locateActorAt
+                initTileCollection
+                (equipWeapon 0 a)
+                orcWithSwordPosition
