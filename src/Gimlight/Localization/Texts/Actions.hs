@@ -14,7 +14,6 @@ module Gimlight.Localization.Texts.Actions
     , deathMessage
     , attackMessage
     , noDamageMessage
-    , equipped
     ) where
 
 import           Gimlight.Localization (MultilingualText, multilingualText)
@@ -77,8 +76,3 @@ noDamageMessage :: MultilingualText -> MultilingualText -> MultilingualText
 noDamageMessage from to =
     attackMessage from to `mappend`
     multilingualText " but does not damage." "したがダメージを受けなかった．"
-
-equipped :: MultilingualText -> MultilingualText -> MultilingualText
-equipped who what =
-    who <>
-    multilingualText " equipped " "は" <> what <> multilingualText "." "を装備した。"
