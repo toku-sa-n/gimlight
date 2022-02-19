@@ -17,7 +17,6 @@ import           Codec.Picture             (PixelRGBA8 (PixelRGBA8),
 import           Control.Lens              ((%~))
 import           Control.Monad.State       (State, evalState, execStateT)
 import           Data.Array                (listArray, (//))
-import           Data.Either               (fromRight)
 import           Data.Map                  (fromList)
 import           Data.Maybe                (fromJust)
 import           Gimlight.Actor            (Actor, inventoryItems, monster,
@@ -39,7 +38,7 @@ import           Linear.V2                 (V2 (V2))
 
 initCellMap :: CellMap
 initCellMap =
-    fromRight (error "Failed to set up the test environment.") $
+    expectRight "Failed to set up the test environment." $
     flip execStateT emptyMap $ do
         mapM_
             (locateItemAt initTileCollection herb)
