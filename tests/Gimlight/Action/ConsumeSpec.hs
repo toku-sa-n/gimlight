@@ -6,6 +6,7 @@ import           Control.Lens                ((%~), (&))
 import           Control.Monad.State         (evalStateT, execStateT)
 import           Control.Monad.Writer        (writer)
 import           Data.Either                 (fromRight)
+import           Data.Either.Combinators     (fromRight')
 import           Gimlight.Action             (ActionResult (ActionResult, killed, newCellMap, status),
                                               ActionStatus (Ok, ReadingStarted))
 import           Gimlight.Action.Consume     (consumeAction)
@@ -14,11 +15,12 @@ import           Gimlight.Actor.Identifier   (toName)
 import           Gimlight.Dungeon.Map.Cell   (locateActorAt, removeActorAt)
 import           Gimlight.Inventory          (removeNthItem)
 import           Gimlight.Item               (Effect (Book, Heal), getEffect,
-                                              herb, sampleBook)
+                                              getName, herb, sampleBook, sword)
 import           Gimlight.Item.Heal          (getHealAmount)
 import qualified Gimlight.Localization.Texts as T
 import           Gimlight.SetUp.CellMap      (initCellMap, initTileCollection,
                                               orcWithHerbPosition,
+                                              orcWithSwordPosition,
                                               playerPosition)
 import           Test.Hspec                  (Spec, it, shouldBe)
 
