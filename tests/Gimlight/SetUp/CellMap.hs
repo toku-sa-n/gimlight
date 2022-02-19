@@ -26,6 +26,7 @@ import           Gimlight.Actor.Monsters   (orc)
 import           Gimlight.Actor.Status     (status)
 import           Gimlight.Actor.Status.Hp  (hp)
 import           Gimlight.Coord            (Coord)
+import           Gimlight.Data.Either      (expectRight)
 import           Gimlight.Dungeon.Map.Cell (CellMap, TileIdLayer (TileIdLayer),
                                             cellMap, locateActorAt,
                                             locateItemAt)
