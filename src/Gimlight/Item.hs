@@ -6,6 +6,7 @@ module Gimlight.Item
     , Effect(..)
     , herb
     , sampleBook
+    , sword
     , getName
     , getIconImagePath
     , getEffect
@@ -23,6 +24,7 @@ import qualified Gimlight.Localization.Texts as T
 data Effect
     = Heal HealHandler
     | Book Book
+    | Weapon Int
     deriving (Show, Ord, Eq, Generic)
 
 instance Binary Effect
@@ -59,3 +61,6 @@ herb = item T.herb "images/herb.png" (Heal $ healHandler 4) False
 
 sampleBook :: Item
 sampleBook = item T.sampleBook "images/book.png" (Book T.sampleBookContent) True
+
+sword :: Item
+sword = item T.sword "images/sword.png" (Weapon 334) True
