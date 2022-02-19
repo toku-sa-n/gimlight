@@ -11,7 +11,7 @@ import           Gimlight.Action             (ActionResult (ActionResult, killed
                                               ActionStatus (Ok, ReadingStarted))
 import           Gimlight.Action.Consume     (consumeAction)
 import           Gimlight.Actor              (getIdentifier, inventoryItems)
-import           Gimlight.Actor.Identifier   (toName)
+import           Gimlight.Actor.Identifier   (Identifier (Orc), toName)
 import           Gimlight.Dungeon.Map.Cell   (locateActorAt, removeActorAt)
 import           Gimlight.Inventory          (removeNthItem)
 import           Gimlight.Item               (Effect (Book, Heal), getEffect,
@@ -85,8 +85,7 @@ testEquipSword =
     expectedResult =
         ActionResult
             {status = Ok, newCellMap = cellMapAfterConsuming, killed = []}
-    expectedLog =
-        [T.equipped (toName $ getIdentifier orcWithSword) (getName sword)]
+    expectedLog = [T.equipped T.orc (getName sword)]
     cellMapAfterConsuming =
         fromRight' $
         flip execStateT initCellMap $ do
