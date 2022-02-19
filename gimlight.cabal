@@ -45,6 +45,7 @@ Test-Suite spec
     main-is:            Main.hs
     other-modules:      Gimlight.Action.ConsumeSpec
                       , Gimlight.Action.DropSpec
+                      , Gimlight.Action.EquipSpec
                       , Gimlight.Action.MeleeSpec
                       , Gimlight.Action.MoveSpec
                       , Gimlight.Action.PickUpSpec
