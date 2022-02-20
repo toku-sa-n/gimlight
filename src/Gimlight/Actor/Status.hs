@@ -1,4 +1,5 @@
-{-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE DeriveGeneric   #-}
+{-# LANGUAGE TemplateHaskell #-}
 
 module Gimlight.Actor.Status
     ( Status
@@ -14,6 +15,9 @@ module Gimlight.Actor.Status
     , getDefence
     ) where
 
+import           Control.Lens                     (makeLenses, (%%~), (%~), (&),
+                                                   (+=), (.=), (^.))
+import           Control.Monad.State              (execState)
 import           Data.Binary                      (Binary)
 import           Data.Maybe                       (isNothing)
 import           GHC.Generics                     (Generic)
@@ -35,16 +39,18 @@ data Status =
         }
     deriving (Show, Ord, Eq, Generic)
 
+makeLenses ''Status
+
 instance Binary Status
 
 status :: Hp -> Int -> Int -> Status
 status h p d = Status h p d E.experience
 
 getHp :: Status -> Int
-getHp Status {_hp = h} = HP.getHp h
+getHp st = HP.getHp $ st ^. hp
 
 getMaxHp :: Status -> Int
-getMaxHp Status {_hp = h} = HP.getMaxHp h
+getMaxHp st = HP.getMaxHp $ st ^. hp
 
 attackFromTo ::
        Status
@@ -56,11 +62,10 @@ attackFromTo attacker defender = (newAttacker, newDefender, message)
   where
     damage = max 0 $ getPower attacker - getDefence defender
     newAttacker =
-        attacker
-            { _power = getPower attacker + levelUp
-            , _defence = getDefence attacker + levelUp
-            , _experience = newAttackerExp
-            }
+        flip execState attacker $ do
+            power += levelUp
+            defence += levelUp
+            experience .= newAttackerExp
     newDefender = receiveDamage damage defender
     (levelUp, newAttackerExp)
         | isNothing newDefender =
@@ -79,11 +84,10 @@ attackFromTo attacker defender = (newAttacker, newDefender, message)
         [M.message $ T.levelUp a (getLevel newAttacker) | levelUp > 0]
 
 healHp :: Int -> Status -> Status
-healHp amount a@Status {_hp = h} = a {_hp = HP.healHp amount h}
+healHp amount st = st & hp %~ HP.healHp amount
 
 receiveDamage :: Int -> Status -> Maybe Status
-receiveDamage damage a@Status {_hp = h} =
-    (\x -> a {_hp = x}) <$> HP.receiveDamage damage h
+receiveDamage damage st = st & hp %%~ HP.receiveDamage damage
 
 getPower :: Status -> Int
 getPower = _power
@@ -92,11 +96,10 @@ getDefence :: Status -> Int
 getDefence = _defence
 
 getLevel :: Status -> Int
-getLevel Status {_experience = e} = E.getLevel e
+getLevel st = E.getLevel $ st ^. experience
 
 getCurrentExperiencePoint :: Status -> Int
-getCurrentExperiencePoint Status {_experience = e} =
-    E.getCurrentExperiencePoint e
+getCurrentExperiencePoint st = E.getCurrentExperiencePoint $ st ^. experience
 
 getExperiencePointForNextLevel :: Status -> Int
-getExperiencePointForNextLevel Status {_experience = e} = E.pointForNextLevel e
+getExperiencePointForNextLevel st = E.pointForNextLevel $ st ^. experience
