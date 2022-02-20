@@ -48,6 +48,7 @@ Test-Suite spec
                       , Gimlight.Action.MoveSpec
                       , Gimlight.Action.PickUpSpec
                       , Gimlight.Action.WaitSpec
+                      , Gimlight.ActorSpec
                       , Gimlight.Data.ArraySpec
                       , Gimlight.Data.EitherSpec
                       , Gimlight.Data.ListSpec
