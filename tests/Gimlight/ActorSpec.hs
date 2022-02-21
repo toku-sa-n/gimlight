@@ -5,8 +5,8 @@ module Gimlight.ActorSpec
 import           Control.Lens                ((%%~), (&))
 import           Control.Monad.State         (evalState)
 import           Data.Maybe                  (fromJust)
-import           Gimlight.Actor              (equip, getWeapon, inventoryItems,
-                                              player)
+import           Gimlight.Actor              (equip, getItems, getWeapon,
+                                              inventoryItems, player)
 import qualified Gimlight.Actor              as A
 import           Gimlight.IndexGenerator     (generator)
 import           Gimlight.Inventory          (addItem)
@@ -26,6 +26,7 @@ testEquipWeapon =
             fmap getName (getWeapon after) `shouldBe` Just T.sword
         it "increases the power." $
             A.getPower after `shouldBe` A.getPower before + swordPower
+        it "removes the sword from the inventory" $ getItems after `shouldBe` []
   where
     swordPower =
         case getEffect sword of
