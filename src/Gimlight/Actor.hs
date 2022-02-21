@@ -31,6 +31,7 @@ module Gimlight.Actor
     , target
     , equip
     , getWeapon
+    , getArmor
     ) where
 
 import           Control.Lens                     (makeLenses, (%~), (&), (.~),
@@ -52,7 +53,7 @@ import           Gimlight.Inventory               (Inventory, addItem,
                                                    inventory, removeNthItem)
 import qualified Gimlight.Inventory               as I
 import           Gimlight.Item                    (Effect (Weapon), Item,
-                                                   getEffect)
+                                                   getEffect, woodenArmor)
 import qualified Gimlight.Item.Weapon             as W
 import           Gimlight.Log                     (MessageLog)
 
@@ -186,6 +187,9 @@ getItems a = I.getItems $ a ^. inventoryItems
 
 getWeapon :: Actor -> Maybe Item
 getWeapon a = a ^. weapon
+
+getArmor :: Actor -> Maybe Item
+getArmor _ = Just woodenArmor
 
 equip :: Int -> Actor -> Maybe Actor
 equip n a =

@@ -5,8 +5,8 @@ module Gimlight.ActorSpec
 import           Control.Lens                ((%%~), (&))
 import           Control.Monad.State         (evalState)
 import           Data.Maybe                  (fromJust)
-import           Gimlight.Actor              (Actor, equip, getItems, getWeapon,
-                                              inventoryItems, player)
+import           Gimlight.Actor              (Actor, equip, getArmor, getItems,
+                                              getWeapon, inventoryItems, player)
 import qualified Gimlight.Actor              as A
 import           Gimlight.IndexGenerator     (generator)
 import           Gimlight.Inventory          (addItem)
@@ -22,6 +22,7 @@ spec =
     describe "equip" $ do
         testEquipWeapon
         testChangeWeapon
+        testEquipArmor
 
 testEquipWeapon :: Spec
 testEquipWeapon =
@@ -51,6 +52,15 @@ testChangeWeapon =
         fromJust $ do
             x <- base & inventoryItems %%~ addItem hammer
             x & inventoryItems %%~ addItem sword >>= equip 0
+
+testEquipArmor :: Spec
+testEquipArmor =
+    context "When the actor does not equip an armor." $
+    it "equips an armor." $
+    fmap getName (getArmor after) `shouldBe` Just T.woodenArmor
+  where
+    after = fromJust $ equip 0 before
+    before = fromJust $ base & inventoryItems %%~ addItem sword
 
 weaponPower :: Item -> Int
 weaponPower w =

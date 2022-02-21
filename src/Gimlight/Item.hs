@@ -12,10 +12,12 @@ module Gimlight.Item
     , isUsableManyTimes
     , sword
     , hammer
+    , woodenArmor
     ) where
 
 import           Data.Text                   (Text)
 import           GHC.Generics                (Generic)
+import           Gimlight.Item.Armor         (Armor, armor)
 import           Gimlight.Item.Book          (Book)
 import           Gimlight.Item.Heal          (HealHandler, healHandler)
 import           Gimlight.Item.Weapon        (Weapon, weapon)
@@ -26,6 +28,7 @@ data Effect
     = Heal HealHandler
     | Book Book
     | Weapon Weapon
+    | Armor Armor
     deriving (Show, Ord, Eq, Generic)
 
 data Item =
@@ -64,3 +67,6 @@ sword = item T.sword "images/sword.png" (Weapon $ weapon 4) True
 
 hammer :: Item
 hammer = item T.hammer "images/hammer.png" (Weapon $ weapon 8) True
+
+woodenArmor :: Item
+woodenArmor = item T.woodenArmor "images/wood.png" (Armor $ armor 4) True
