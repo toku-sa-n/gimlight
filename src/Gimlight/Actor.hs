@@ -34,7 +34,7 @@ module Gimlight.Actor
     ) where
 
 import           Control.Lens                     (makeLenses, (%~), (&), (.~),
-                                                   (^.))
+                                                   (?~), (^.))
 import           Control.Monad.State              (State)
 import           Control.Monad.Writer             (MonadWriter (writer), Writer)
 import           Data.Text                        (Text)
@@ -48,9 +48,10 @@ import           Gimlight.Coord                   (Coord)
 import           Gimlight.GameStatus.Talking.Part (TalkingPart)
 import           Gimlight.IndexGenerator          (Index, IndexGenerator,
                                                    generate)
-import           Gimlight.Inventory               (Inventory, inventory)
+import           Gimlight.Inventory               (Inventory, inventory,
+                                                   removeNthItem)
 import qualified Gimlight.Inventory               as I
-import           Gimlight.Item                    (Item, sword)
+import           Gimlight.Item                    (Item)
 import           Gimlight.Log                     (MessageLog)
 
 data ActorKind
@@ -71,6 +72,7 @@ data Actor =
         , _standingImagePath :: Text
         , _inventoryItems    :: Inventory
         , _target            :: Maybe Index
+        , _weapon            :: Maybe Item
         }
     deriving (Show, Ord, Eq, Generic)
 
@@ -98,6 +100,7 @@ actor id' st ak talkMessage' walkingImagePath' standingImagePath' = do
             , _actorKind = ak
             , _inventoryItems = inventory 5
             , _target = Nothing
+            , _weapon = Nothing
             }
 
 monster :: Identifier -> Status -> Text -> State IndexGenerator Actor
@@ -174,8 +177,13 @@ getDefence a = S.getDefence $ a ^. status
 getItems :: Actor -> [Item]
 getItems a = I.getItems $ a ^. inventoryItems
 
-getWeapon :: Actor -> Item
-getWeapon _ = sword
+getWeapon :: Actor -> Maybe Item
+getWeapon a = a ^. weapon
 
-equip :: Int -> Actor -> Actor
-equip _ a = a
+equip :: Int -> Actor -> Maybe Actor
+equip n a =
+    case w of
+        Just x  -> Just $ a & weapon ?~ x & inventoryItems .~ newInventory
+        Nothing -> Nothing
+  where
+    (w, newInventory) = removeNthItem n (a ^. inventoryItems)
