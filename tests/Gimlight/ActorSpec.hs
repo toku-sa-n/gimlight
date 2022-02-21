@@ -41,11 +41,22 @@ testEquipWeapon =
 
 testChangeWeapon :: Spec
 testChangeWeapon =
-    context "When the actor already equips a weapon." $
-    it "equips a new weapon." $
-    fmap getName (getWeapon after) `shouldBe` Just T.hammer
+    context "When the actor already equips a weapon." $ do
+        it "equips a new weapon." $
+            fmap getName (getWeapon after) `shouldBe` Just T.hammer
+        it "changes the power." $
+            A.getPower after `shouldBe` A.getPower before - swordPower +
+            hammerPower
   where
     after = fromJust $ equip 0 before
+    hammerPower =
+        case getEffect hammer of
+            Weapon x -> W.getPower x
+            _        -> error "Not a weapon."
+    swordPower =
+        case getEffect sword of
+            Weapon x -> W.getPower x
+            _        -> error "Not a weapon."
     before =
         fromJust $ do
             x <- base & inventoryItems %%~ addItem hammer
