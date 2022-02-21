@@ -51,7 +51,9 @@ import           Gimlight.IndexGenerator          (Index, IndexGenerator,
 import           Gimlight.Inventory               (Inventory, inventory,
                                                    removeNthItem)
 import qualified Gimlight.Inventory               as I
-import           Gimlight.Item                    (Item)
+import           Gimlight.Item                    (Effect (Weapon), Item,
+                                                   getEffect)
+import qualified Gimlight.Item.Weapon             as W
 import           Gimlight.Log                     (MessageLog)
 
 data ActorKind
@@ -169,7 +171,12 @@ getExperiencePointForNextLevel a =
     S.getExperiencePointForNextLevel $ a ^. status
 
 getPower :: Actor -> Int
-getPower a = S.getPower $ a ^. status
+getPower a = S.getPower (a ^. status) + weaponPower
+  where
+    weaponPower =
+        case fmap getEffect (a ^. weapon) of
+            Just (Weapon x) -> W.getPower x
+            _               -> 0
 
 getDefence :: Actor -> Int
 getDefence a = S.getDefence $ a ^. status
