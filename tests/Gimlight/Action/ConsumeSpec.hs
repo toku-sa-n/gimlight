@@ -12,8 +12,8 @@ import           Gimlight.Action.Consume     (consumeAction)
 import           Gimlight.Actor              (inventoryItems)
 import           Gimlight.Dungeon.Map.Cell   (locateActorAt, removeActorAt)
 import           Gimlight.Inventory          (removeNthItem)
-import           Gimlight.Item               (Effect (Book, Heal), getEffect,
-                                              herb, sampleBook)
+import           Gimlight.Item               (Effect (Book, Heal), getEffect)
+import           Gimlight.Item.Defined       (herb, sampleBook)
 import           Gimlight.Item.Heal          (getHealAmount)
 import qualified Gimlight.Localization.Texts as T
 import           Gimlight.SetUp.CellMap      (initCellMap, initTileCollection,

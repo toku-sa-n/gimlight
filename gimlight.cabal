@@ -106,6 +106,7 @@ library
                       , Gimlight.Inventory
                       , Gimlight.Item
                       , Gimlight.Item.Armor
+                      , Gimlight.Item.Defined
                       , Gimlight.Item.Heal
                       , Gimlight.Item.Weapon
                       , Gimlight.Localization.Texts

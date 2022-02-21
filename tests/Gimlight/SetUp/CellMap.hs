@@ -33,7 +33,7 @@ import           Gimlight.Dungeon.Map.Cell (CellMap, TileIdLayer (TileIdLayer),
 import           Gimlight.Dungeon.Map.Tile (TileCollection, tile)
 import           Gimlight.IndexGenerator   (IndexGenerator, generator)
 import           Gimlight.Inventory        (addItem)
-import           Gimlight.Item             (herb, sampleBook)
+import           Gimlight.Item.Defined     (herb, sampleBook)
 import           Gimlight.UI.Draw.Config   (tileHeight, tileWidth)
 import           Linear.V2                 (V2 (V2))
 

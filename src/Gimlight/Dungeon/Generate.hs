@@ -46,7 +46,7 @@ import           Gimlight.Dungeon.Map.Tile        (TileCollection, TileId,
                                                    TileIndex)
 import           Gimlight.Dungeon.Stairs          (StairsPair (StairsPair))
 import           Gimlight.IndexGenerator          (IndexGenerator)
-import           Gimlight.Item                    (herb, sampleBook)
+import           Gimlight.Item.Defined            (herb, sampleBook)
 import           Gimlight.TreeZipper              (TreeZipper, appendNode,
                                                    getFocused, goDownBy,
                                                    goToRootAndGetTree, modify,

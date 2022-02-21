@@ -15,7 +15,8 @@ import           Gimlight.Actor              (inventoryItems)
 import           Gimlight.Dungeon.Map.Cell   (locateActorAt, locateItemAt,
                                               removeActorAt)
 import           Gimlight.Inventory          (removeNthItem)
-import           Gimlight.Item               (getName, herb)
+import           Gimlight.Item               (getName)
+import           Gimlight.Item.Defined       (herb)
 import qualified Gimlight.Localization.Texts as T
 import           Gimlight.SetUp.CellMap      (initCellMap, initTileCollection,
                                               orcWithFullItemsPosition,

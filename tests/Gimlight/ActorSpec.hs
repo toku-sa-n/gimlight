@@ -11,8 +11,8 @@ import qualified Gimlight.Actor              as A
 import           Gimlight.IndexGenerator     (generator)
 import           Gimlight.Inventory          (addItem)
 import           Gimlight.Item               (Effect (Weapon), Item, getEffect,
-                                              getName, hammer, sword,
-                                              woodenArmor)
+                                              getName)
+import           Gimlight.Item.Defined       (hammer, sword, woodenArmor)
 import qualified Gimlight.Item.Weapon        as W
 import qualified Gimlight.Localization.Texts as T
 import           Test.Hspec                  (Spec, context, describe, it,

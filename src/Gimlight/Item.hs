@@ -1,28 +1,22 @@
-{-# LANGUAGE DeriveGeneric     #-}
-{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE DeriveGeneric #-}
 
 module Gimlight.Item
     ( Item
+    , item
     , Effect(..)
-    , herb
-    , sampleBook
     , getName
     , getIconImagePath
     , getEffect
     , isUsableManyTimes
-    , sword
-    , hammer
-    , woodenArmor
     ) where
 
-import           Data.Text                   (Text)
-import           GHC.Generics                (Generic)
-import           Gimlight.Item.Armor         (Armor, armor)
-import           Gimlight.Item.Book          (Book)
-import           Gimlight.Item.Heal          (HealHandler, healHandler)
-import           Gimlight.Item.Weapon        (Weapon, weapon)
-import           Gimlight.Localization       (MultilingualText)
-import qualified Gimlight.Localization.Texts as T
+import           Data.Text             (Text)
+import           GHC.Generics          (Generic)
+import           Gimlight.Item.Armor   (Armor)
+import           Gimlight.Item.Book    (Book)
+import           Gimlight.Item.Heal    (HealHandler)
+import           Gimlight.Item.Weapon  (Weapon)
+import           Gimlight.Localization (MultilingualText)
 
 data Effect
     = Heal HealHandler
@@ -55,18 +49,3 @@ getEffect Item {effect = e} = e
 
 isUsableManyTimes :: Item -> Bool
 isUsableManyTimes Item {usableManyTimes = u} = u
-
-herb :: Item
-herb = item T.herb "images/herb.png" (Heal $ healHandler 4) False
-
-sampleBook :: Item
-sampleBook = item T.sampleBook "images/book.png" (Book T.sampleBookContent) True
-
-sword :: Item
-sword = item T.sword "images/sword.png" (Weapon $ weapon 4) True
-
-hammer :: Item
-hammer = item T.hammer "images/hammer.png" (Weapon $ weapon 8) True
-
-woodenArmor :: Item
-woodenArmor = item T.woodenArmor "images/wood.png" (Armor $ armor 4) True
