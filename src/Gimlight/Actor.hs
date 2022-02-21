@@ -29,6 +29,8 @@ module Gimlight.Actor
     , inventoryItems
     , getItems
     , target
+    , equip
+    , getWeaponName
     ) where
 
 import           Control.Lens                     (makeLenses, (%~), (&), (.~),
@@ -49,6 +51,8 @@ import           Gimlight.IndexGenerator          (Index, IndexGenerator,
 import           Gimlight.Inventory               (Inventory, inventory)
 import qualified Gimlight.Inventory               as I
 import           Gimlight.Item                    (Item)
+import           Gimlight.Localization            (MultilingualText)
+import qualified Gimlight.Localization.Texts      as T
 import           Gimlight.Log                     (MessageLog)
 
 data ActorKind
@@ -171,3 +175,9 @@ getDefence a = S.getDefence $ a ^. status
 
 getItems :: Actor -> [Item]
 getItems a = I.getItems $ a ^. inventoryItems
+
+getWeaponName :: Actor -> MultilingualText
+getWeaponName _ = T.sword
+
+equip :: Int -> Actor -> Actor
+equip _ a = a
