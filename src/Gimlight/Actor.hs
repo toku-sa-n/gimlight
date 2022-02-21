@@ -194,8 +194,7 @@ equip n a =
         _                  -> Nothing
   where
     newInventory =
-        case currentWeapon of
+        case getWeapon a of
             Just x  -> addItem x inventoryWithoutWeapon
             Nothing -> Just inventoryWithoutWeapon
-    currentWeapon = a ^. weapon
     (w, inventoryWithoutWeapon) = removeNthItem n (a ^. inventoryItems)
