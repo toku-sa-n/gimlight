@@ -49,8 +49,7 @@ testChangeWeapon =
   where
     after = fromJust $ equip 0 before
     before =
-        fromJust $
-        (base & inventoryItems %%~ addItem hammer) >>=
-        (\x -> x & inventoryItems %%~ addItem sword) >>=
-        equip 0
+        fromJust $ do
+            x <- base & inventoryItems %%~ addItem hammer
+            x & inventoryItems %%~ addItem sword >>= equip 0
     base = evalState player generator
