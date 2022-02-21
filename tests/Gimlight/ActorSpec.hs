@@ -18,13 +18,13 @@ import           Test.Hspec                  (Spec, context, describe, it,
                                               shouldBe)
 
 spec :: Spec
-spec = do
-    testEquipWeapon
-    testChangeWeapon
+spec =
+    describe "equip" $ do
+        testEquipWeapon
+        testChangeWeapon
 
 testEquipWeapon :: Spec
 testEquipWeapon =
-    describe "equip" $
     context "When the actor does not equip anything." $ do
         it "equips a sword." $
             fmap getName (getWeapon after) `shouldBe` Just T.sword
@@ -42,7 +42,6 @@ testEquipWeapon =
 
 testChangeWeapon :: Spec
 testChangeWeapon =
-    describe "equip" $
     context "When the actor already equips a weapon." $
     it "equips a new weapon." $
     fmap getName (getWeapon after) `shouldBe` Just T.hammer
