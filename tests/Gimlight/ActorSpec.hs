@@ -5,7 +5,7 @@ module Gimlight.ActorSpec
 import           Control.Lens                ((%%~), (&))
 import           Control.Monad.State         (evalState)
 import           Data.Maybe                  (fromJust)
-import           Gimlight.Actor              (equip, getItems, getWeapon,
+import           Gimlight.Actor              (Actor, equip, getItems, getWeapon,
                                               inventoryItems, player)
 import qualified Gimlight.Actor              as A
 import           Gimlight.IndexGenerator     (generator)
@@ -38,7 +38,6 @@ testEquipWeapon =
             _        -> error "Not a weapon."
     after = fromJust $ equip 0 before
     before = fromJust $ base & inventoryItems %%~ addItem sword
-    base = evalState player generator
 
 testChangeWeapon :: Spec
 testChangeWeapon =
@@ -51,4 +50,6 @@ testChangeWeapon =
         fromJust $ do
             x <- base & inventoryItems %%~ addItem hammer
             x & inventoryItems %%~ addItem sword >>= equip 0
-    base = evalState player generator
+
+base :: Actor
+base = evalState player generator
