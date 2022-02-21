@@ -14,14 +14,16 @@ import           Gimlight.Item               (Effect (Weapon), getEffect,
                                               getName, sword)
 import qualified Gimlight.Item.Weapon        as W
 import qualified Gimlight.Localization.Texts as T
-import           Test.Hspec                  (Spec, describe, it, shouldBe)
+import           Test.Hspec                  (Spec, context, describe, it,
+                                              shouldBe)
 
 spec :: Spec
 spec = testEquipWeapon
 
 testEquipWeapon :: Spec
 testEquipWeapon =
-    describe "equip" $ do
+    describe "equip" $
+    context "When the actor does not equip anything." $ do
         it "equips a sword." $
             fmap getName (getWeapon after) `shouldBe` Just T.sword
         it "increases the power." $
