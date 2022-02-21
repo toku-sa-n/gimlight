@@ -10,6 +10,7 @@ module Gimlight.Item
     , getIconImagePath
     , getEffect
     , isUsableManyTimes
+    , sword
     ) where
 
 import           Data.Text                   (Text)
@@ -54,3 +55,6 @@ herb = item T.herb "images/herb.png" (Heal $ healHandler 4) False
 
 sampleBook :: Item
 sampleBook = item T.sampleBook "images/book.png" (Book T.sampleBookContent) True
+
+sword :: Item
+sword = item T.sword "images/sword.png" (Heal $ healHandler 4) True
