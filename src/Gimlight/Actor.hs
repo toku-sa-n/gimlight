@@ -52,8 +52,8 @@ import           Gimlight.IndexGenerator          (Index, IndexGenerator,
 import           Gimlight.Inventory               (Inventory, addItem,
                                                    inventory, removeNthItem)
 import qualified Gimlight.Inventory               as I
-import           Gimlight.Item                    (Effect (Weapon), Item,
-                                                   getEffect, woodenArmor)
+import           Gimlight.Item                    (Effect (Armor, Weapon), Item,
+                                                   getEffect)
 import qualified Gimlight.Item.Weapon             as W
 import           Gimlight.Log                     (MessageLog)
 
@@ -76,6 +76,7 @@ data Actor =
         , _inventoryItems    :: Inventory
         , _target            :: Maybe Index
         , _weapon            :: Maybe Item
+        , _armor             :: Maybe Item
         }
     deriving (Show, Ord, Eq, Generic)
 
@@ -104,6 +105,7 @@ actor id' st ak talkMessage' walkingImagePath' standingImagePath' = do
             , _inventoryItems = inventory 5
             , _target = Nothing
             , _weapon = Nothing
+            , _armor = Nothing
             }
 
 monster :: Identifier -> Status -> Text -> State IndexGenerator Actor
@@ -189,16 +191,31 @@ getWeapon :: Actor -> Maybe Item
 getWeapon a = a ^. weapon
 
 getArmor :: Actor -> Maybe Item
-getArmor _ = Just woodenArmor
+getArmor a = a ^. armor
 
 equip :: Int -> Actor -> Maybe Actor
 equip n a =
-    case (w, newInventory) of
-        (Just x, Just inv) -> Just $ a & weapon ?~ x & inventoryItems .~ inv
-        _                  -> Nothing
+    case (w, inventoryWithWeapon, inventoryWithArmor) of
+        (Just x, Just inv, _)
+            | isWeapon x -> Just $ a & weapon ?~ x & inventoryItems .~ inv
+        (Just x, _, Just inv)
+            | isArmor x -> Just $ a & armor ?~ x & inventoryItems .~ inv
+        _ -> Nothing
   where
-    newInventory =
+    inventoryWithWeapon =
         case getWeapon a of
-            Just x  -> addItem x inventoryWithoutWeapon
-            Nothing -> Just inventoryWithoutWeapon
-    (w, inventoryWithoutWeapon) = removeNthItem n (a ^. inventoryItems)
+            Just x  -> addItem x inventoryWithoutEquipment
+            Nothing -> Just inventoryWithoutEquipment
+    inventoryWithArmor =
+        case getArmor a of
+            Just x  -> addItem x inventoryWithoutEquipment
+            Nothing -> Just inventoryWithoutEquipment
+    (w, inventoryWithoutEquipment) = removeNthItem n (a ^. inventoryItems)
+    isWeapon x =
+        case getEffect x of
+            Weapon _ -> True
+            _        -> False
+    isArmor x =
+        case getEffect x of
+            Armor _ -> True
+            _       -> False

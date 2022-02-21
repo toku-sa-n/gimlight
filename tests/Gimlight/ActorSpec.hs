@@ -11,7 +11,8 @@ import qualified Gimlight.Actor              as A
 import           Gimlight.IndexGenerator     (generator)
 import           Gimlight.Inventory          (addItem)
 import           Gimlight.Item               (Effect (Weapon), Item, getEffect,
-                                              getName, hammer, sword)
+                                              getName, hammer, sword,
+                                              woodenArmor)
 import qualified Gimlight.Item.Weapon        as W
 import qualified Gimlight.Localization.Texts as T
 import           Test.Hspec                  (Spec, context, describe, it,
@@ -60,7 +61,7 @@ testEquipArmor =
     fmap getName (getArmor after) `shouldBe` Just T.woodenArmor
   where
     after = fromJust $ equip 0 before
-    before = fromJust $ base & inventoryItems %%~ addItem sword
+    before = fromJust $ base & inventoryItems %%~ addItem woodenArmor
 
 weaponPower :: Item -> Int
 weaponPower w =
