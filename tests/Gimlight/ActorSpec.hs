@@ -11,14 +11,16 @@ import qualified Gimlight.Actor              as A
 import           Gimlight.IndexGenerator     (generator)
 import           Gimlight.Inventory          (addItem)
 import           Gimlight.Item               (Effect (Weapon), getEffect,
-                                              getName, sword)
+                                              getName, hammer, sword)
 import qualified Gimlight.Item.Weapon        as W
 import qualified Gimlight.Localization.Texts as T
 import           Test.Hspec                  (Spec, context, describe, it,
                                               shouldBe)
 
 spec :: Spec
-spec = testEquipWeapon
+spec = do
+    testEquipWeapon
+    testChangeWeapon
 
 testEquipWeapon :: Spec
 testEquipWeapon =
@@ -36,4 +38,19 @@ testEquipWeapon =
             _        -> error "Not a weapon."
     after = fromJust $ equip 0 before
     before = fromJust $ base & inventoryItems %%~ addItem sword
+    base = evalState player generator
+
+testChangeWeapon :: Spec
+testChangeWeapon =
+    describe "equip" $
+    context "When the actor already equips a weapon." $
+    it "equips a new weapon." $
+    fmap getName (getWeapon after) `shouldBe` Just T.hammer
+  where
+    after = fromJust $ equip 0 before
+    before =
+        fromJust $
+        (base & inventoryItems %%~ addItem hammer) >>=
+        (\x -> x & inventoryItems %%~ addItem sword) >>=
+        equip 0
     base = evalState player generator

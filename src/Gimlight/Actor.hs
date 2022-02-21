@@ -48,8 +48,8 @@ import           Gimlight.Coord                   (Coord)
 import           Gimlight.GameStatus.Talking.Part (TalkingPart)
 import           Gimlight.IndexGenerator          (Index, IndexGenerator,
                                                    generate)
-import           Gimlight.Inventory               (Inventory, inventory,
-                                                   removeNthItem)
+import           Gimlight.Inventory               (Inventory, addItem,
+                                                   inventory, removeNthItem)
 import qualified Gimlight.Inventory               as I
 import           Gimlight.Item                    (Effect (Weapon), Item,
                                                    getEffect)
@@ -189,8 +189,13 @@ getWeapon a = a ^. weapon
 
 equip :: Int -> Actor -> Maybe Actor
 equip n a =
-    case w of
-        Just x  -> Just $ a & weapon ?~ x & inventoryItems .~ newInventory
-        Nothing -> Nothing
+    case (w, newInventory) of
+        (Just x, Just inv) -> Just $ a & weapon ?~ x & inventoryItems .~ inv
+        _                  -> Nothing
   where
-    (w, newInventory) = removeNthItem n (a ^. inventoryItems)
+    newInventory =
+        case currentWeapon of
+            Just x  -> addItem x inventoryWithoutWeapon
+            Nothing -> Just inventoryWithoutWeapon
+    currentWeapon = a ^. weapon
+    (w, inventoryWithoutWeapon) = removeNthItem n (a ^. inventoryItems)

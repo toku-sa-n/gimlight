@@ -11,6 +11,7 @@ module Gimlight.Item
     , getEffect
     , isUsableManyTimes
     , sword
+    , hammer
     ) where
 
 import           Data.Text                   (Text)
@@ -60,3 +61,6 @@ sampleBook = item T.sampleBook "images/book.png" (Book T.sampleBookContent) True
 
 sword :: Item
 sword = item T.sword "images/sword.png" (Weapon $ weapon 4) True
+
+hammer :: Item
+hammer = item T.hammer "images/hammer.png" (Weapon $ weapon 8) True
