@@ -43,6 +43,8 @@ testChangeWeapon =
         it "changes the power." $
             A.getPower after `shouldBe` A.getPower before - weaponPower sword +
             weaponPower hammer
+        it "backs previously equpped weapon to the inventory." $
+            getItems after `shouldBe` [sword]
   where
     after = fromJust $ equip 0 before
     before =
