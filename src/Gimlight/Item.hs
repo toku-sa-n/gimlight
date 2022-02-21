@@ -17,12 +17,14 @@ import           Data.Text                   (Text)
 import           GHC.Generics                (Generic)
 import           Gimlight.Item.Book          (Book)
 import           Gimlight.Item.Heal          (HealHandler, healHandler)
+import           Gimlight.Item.Weapon        (Weapon, weapon)
 import           Gimlight.Localization       (MultilingualText)
 import qualified Gimlight.Localization.Texts as T
 
 data Effect
     = Heal HealHandler
     | Book Book
+    | Weapon Weapon
     deriving (Show, Ord, Eq, Generic)
 
 data Item =
@@ -57,4 +59,4 @@ sampleBook :: Item
 sampleBook = item T.sampleBook "images/book.png" (Book T.sampleBookContent) True
 
 sword :: Item
-sword = item T.sword "images/sword.png" (Heal $ healHandler 4) True
+sword = item T.sword "images/sword.png" (Weapon $ weapon 4) True

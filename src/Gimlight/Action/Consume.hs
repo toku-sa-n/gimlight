@@ -15,8 +15,8 @@ import           Gimlight.Actor.Identifier   (toName)
 import           Gimlight.Dungeon.Map.Cell   (CellMap, locateActorAt,
                                               removeActorAt)
 import           Gimlight.Inventory          (removeNthItem)
-import           Gimlight.Item               (Effect (Book, Heal), getEffect,
-                                              isUsableManyTimes)
+import           Gimlight.Item               (Effect (Book, Heal, Weapon),
+                                              getEffect, isUsableManyTimes)
 import           Gimlight.Item.Heal          (getHealAmount)
 import qualified Gimlight.Localization.Texts as T
 
@@ -61,3 +61,4 @@ consumeAction n position tc cm =
             case flip execStateT ncm $ locateActorAt tc a position of
                 Right x -> x
                 Left e  -> error $ "Failed to locate an actor." <> show e
+    doItemEffect (Weapon _) _ _ = undefined

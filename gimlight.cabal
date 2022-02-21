@@ -130,6 +130,7 @@ library
                       , Gimlight.GameStatus.Talking
                       , Gimlight.GameStatus.Talking.Part
                       , Gimlight.Item.Book
+                      , Gimlight.Item.Weapon
                       , Gimlight.Localization
                       , Gimlight.Localization.Texts.Actions
                       , Gimlight.Localization.Texts.Actors
