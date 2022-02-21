@@ -8,6 +8,7 @@ import           Control.Lens                ((%~), (&))
 import           Control.Monad.State         (execStateT)
 import           Control.Monad.Trans.Writer  (writer)
 import           Data.Either.Combinators     (fromRight')
+import           Data.OpenUnion              (liftUnion)
 import           Gimlight.Action             (ActionResult (ActionResult, killed, newCellMap, status),
                                               ActionStatus (Failed, Ok))
 import           Gimlight.Action.Drop        (dropAction)
@@ -46,7 +47,7 @@ testDropItemSuccessfully =
                 initTileCollection
                 (a & inventoryItems %~ (snd . removeNthItem 0))
                 orcWithHerbPosition
-            locateItemAt initTileCollection herb orcWithHerbPosition
+            locateItemAt initTileCollection (liftUnion herb) orcWithHerbPosition
     expectedLog = [T.youDropped $ getName herb]
 
 testItemAlreadyExists :: Spec

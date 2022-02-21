@@ -19,6 +19,7 @@ import           Control.Monad.State       (State, evalState, execStateT)
 import           Data.Array                (listArray, (//))
 import           Data.Map                  (fromList)
 import           Data.Maybe                (fromJust)
+import           Data.OpenUnion            (liftUnion)
 import           Gimlight.Actor            (Actor, inventoryItems, monster,
                                             player)
 import           Gimlight.Actor.Identifier (Identifier (Orc))
@@ -42,7 +43,7 @@ initCellMap =
     expectRight "Failed to set up the test environment." $
     flip execStateT emptyMap $ do
         mapM_
-            (locateItemAt initTileCollection herb)
+            (locateItemAt initTileCollection (liftUnion herb))
             [playerPosition, orcWithFullItemsPosition]
         mapM_
             (uncurry (locateActorAt initTileCollection))
@@ -61,13 +62,16 @@ initCellMap =
         [(V2 0 1, unwalkable)]
     (p, w, i, s, orcWithoutItems, orcWithFullItems, orcWithHerb) =
         flip evalState generator $ (,,,,,,) <$>
-        ((inventoryItems %~ fromJust . addItem sampleBook) <$> player) <*>
+        ((inventoryItems %~ fromJust . addItem (liftUnion sampleBook)) <$>
+         player) <*>
         weakestOrc <*>
         intermediateOrc <*>
         strongestOrc <*>
         orc <*>
-        ((!! 5) . iterate (inventoryItems %~ fromJust . addItem herb) <$> orc) <*>
-        ((inventoryItems %~ fromJust . addItem herb) <$> orc)
+        ((!! 5) .
+         iterate (inventoryItems %~ fromJust . addItem (liftUnion herb)) <$>
+         orc) <*>
+        ((inventoryItems %~ fromJust . addItem (liftUnion herb)) <$> orc)
     emptyTile = TileIdLayer Nothing Nothing
     unwalkable = TileIdLayer (Just (dummyTileFile, 1)) Nothing
     mapWidth = 3

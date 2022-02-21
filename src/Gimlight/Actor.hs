@@ -38,6 +38,7 @@ import           Control.Lens                     (makeLenses, (%~), (&), (.~),
                                                    (?~), (^.))
 import           Control.Monad.State              (State)
 import           Control.Monad.Writer             (MonadWriter (writer), Writer)
+import           Data.OpenUnion                   (liftUnion, restrict)
 import           Data.Text                        (Text)
 import           GHC.Generics                     (Generic)
 import           Gimlight.Actor.Identifier        (Identifier, toName)
@@ -52,8 +53,10 @@ import           Gimlight.IndexGenerator          (Index, IndexGenerator,
 import           Gimlight.Inventory               (Inventory, addItem,
                                                    inventory, removeNthItem)
 import qualified Gimlight.Inventory               as I
-import           Gimlight.Item                    (Effect (Armor, Weapon), Item,
-                                                   getEffect)
+import           Gimlight.Item                    (Item)
+import           Gimlight.Item.Armor              (Armor)
+import           Gimlight.Item.SomeItem           (SomeItem)
+import           Gimlight.Item.Weapon             (Weapon)
 import qualified Gimlight.Item.Weapon             as W
 import           Gimlight.Log                     (MessageLog)
 
@@ -75,8 +78,8 @@ data Actor =
         , _standingImagePath :: Text
         , _inventoryItems    :: Inventory
         , _target            :: Maybe Index
-        , _weapon            :: Maybe Item
-        , _armor             :: Maybe Item
+        , _weapon            :: Maybe (Item Weapon)
+        , _armor             :: Maybe (Item Armor)
         }
     deriving (Show, Ord, Eq, Generic)
 
@@ -174,48 +177,37 @@ getExperiencePointForNextLevel a =
     S.getExperiencePointForNextLevel $ a ^. status
 
 getPower :: Actor -> Int
-getPower a = S.getPower (a ^. status) + weaponPower
-  where
-    weaponPower =
-        case fmap getEffect (a ^. weapon) of
-            Just (Weapon x) -> W.getPower x
-            _               -> 0
+getPower a = S.getPower (a ^. status) + maybe 0 W.getPower (a ^. weapon)
 
 getDefence :: Actor -> Int
 getDefence a = S.getDefence $ a ^. status
 
-getItems :: Actor -> [Item]
+getItems :: Actor -> [SomeItem]
 getItems a = I.getItems $ a ^. inventoryItems
 
-getWeapon :: Actor -> Maybe Item
+getWeapon :: Actor -> Maybe (Item Weapon)
 getWeapon a = a ^. weapon
 
-getArmor :: Actor -> Maybe Item
+getArmor :: Actor -> Maybe (Item Armor)
 getArmor a = a ^. armor
 
 equip :: Int -> Actor -> Maybe Actor
 equip n a =
-    case (w, inventoryWithWeapon, inventoryWithArmor) of
-        (Just x, Just inv, _)
-            | isWeapon x -> Just $ a & weapon ?~ x & inventoryItems .~ inv
-        (Just x, _, Just inv)
-            | isArmor x -> Just $ a & armor ?~ x & inventoryItems .~ inv
-        _ -> Nothing
+    case (fmap restrict w, inventoryWithWeapon) of
+        (Just (Right x), Just inv) ->
+            Just $ a & weapon ?~ x & inventoryItems .~ inv
+        _ ->
+            case (fmap restrict w, inventoryWithArmor) of
+                (Just (Right x), Just inv) ->
+                    Just $ a & armor ?~ x & inventoryItems .~ inv
+                _ -> Nothing
   where
     inventoryWithWeapon =
         case getWeapon a of
-            Just x  -> addItem x inventoryWithoutEquipment
+            Just x  -> addItem (liftUnion x) inventoryWithoutEquipment
             Nothing -> Just inventoryWithoutEquipment
     inventoryWithArmor =
         case getArmor a of
-            Just x  -> addItem x inventoryWithoutEquipment
+            Just x  -> addItem (liftUnion x) inventoryWithoutEquipment
             Nothing -> Just inventoryWithoutEquipment
     (w, inventoryWithoutEquipment) = removeNthItem n (a ^. inventoryItems)
-    isWeapon x =
-        case getEffect x of
-            Weapon _ -> True
-            _        -> False
-    isArmor x =
-        case getEffect x of
-            Armor _ -> True
-            _       -> False

@@ -12,7 +12,7 @@ import           Gimlight.Action.Consume     (consumeAction)
 import           Gimlight.Actor              (inventoryItems)
 import           Gimlight.Dungeon.Map.Cell   (locateActorAt, removeActorAt)
 import           Gimlight.Inventory          (removeNthItem)
-import           Gimlight.Item               (Effect (Book, Heal), getEffect)
+import           Gimlight.Item               (getEffect)
 import           Gimlight.Item.Defined       (herb, sampleBook)
 import           Gimlight.Item.Heal          (getHealAmount)
 import qualified Gimlight.Localization.Texts as T
@@ -35,13 +35,11 @@ testStartReadingBook =
     expected = writer (expectedResult, expectedLog)
     expectedResult =
         ActionResult
-            { status = ReadingStarted $ bookContent $ getEffect sampleBook
+            { status = ReadingStarted $ getEffect sampleBook
             , newCellMap = initCellMap
             , killed = []
             }
     expectedLog = []
-    bookContent (Book c) = c
-    bookContent _        = error "Not a book."
 
 testConsumeHerb :: Spec
 testConsumeHerb =
@@ -53,7 +51,7 @@ testConsumeHerb =
     expectedResult =
         ActionResult
             {status = Ok, newCellMap = cellMapAfterConsuming, killed = []}
-    expectedLog = [T.healed T.orc $ healAmount $ getEffect herb]
+    expectedLog = [T.healed T.orc $ getHealAmount herb]
     cellMapAfterConsuming =
         fromRight' $
         flip execStateT initCellMap $ do
@@ -62,5 +60,3 @@ testConsumeHerb =
                 initTileCollection
                 (a & inventoryItems %~ (snd . removeNthItem 0))
                 orcWithHerbPosition
-    healAmount (Heal h) = getHealAmount h
-    healAmount _        = error "Not a healer."

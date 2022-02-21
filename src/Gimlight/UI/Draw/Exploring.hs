@@ -31,7 +31,7 @@ import           Gimlight.GameStatus.Exploring   (ExploringHandler,
                                                   getCurrentDungeon,
                                                   getMessageLog, getPlayerActor,
                                                   getTileCollection)
-import qualified Gimlight.Item                   as I
+import           Gimlight.Item.SomeItem          (getIconImagePath)
 import           Gimlight.Localization           (getLocalizedText)
 import qualified Gimlight.Localization.Texts     as T
 import           Gimlight.UI.Draw.Config         (logRows, tileColumns,
@@ -142,7 +142,7 @@ mapItems eh = mapMaybe itemToImage $ positionsAndItems $ d ^. cellMap
   where
     itemToImage (position, item) =
         guard (isItemDrawed position) >>
-        return (image (I.getIconImagePath item) `styleBasic` style position)
+        return (image (getIconImagePath item) `styleBasic` style position)
     isItemDrawed position =
         let displayPosition = itemPositionOnDisplay position
             isVisible = playerFov (d ^. cellMap) ! position

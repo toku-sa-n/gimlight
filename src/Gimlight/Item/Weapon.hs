@@ -4,6 +4,8 @@ module Gimlight.Item.Weapon
     , getPower
     ) where
 
+import           Gimlight.Item (Item, getEffect)
+
 newtype Weapon =
     Weapon
         { power :: Int
@@ -13,5 +15,5 @@ newtype Weapon =
 weapon :: Int -> Weapon
 weapon = Weapon
 
-getPower :: Weapon -> Int
-getPower = power
+getPower :: Item Weapon -> Int
+getPower = power . getEffect

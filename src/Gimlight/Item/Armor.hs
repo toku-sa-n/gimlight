@@ -4,6 +4,8 @@ module Gimlight.Item.Armor
     , getArmor
     ) where
 
+import           Gimlight.Item (Item, getEffect)
+
 newtype Armor =
     Armor
         { defence :: Int
@@ -13,5 +15,5 @@ newtype Armor =
 armor :: Int -> Armor
 armor = Armor
 
-getArmor :: Armor -> Int
-getArmor = defence
+getArmor :: Item Armor -> Int
+getArmor = defence . getEffect

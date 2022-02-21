@@ -16,6 +16,7 @@ import           Data.Either                      (fromRight)
 import           Data.Foldable                    (foldlM)
 import           Data.List                        (elemIndex)
 import           Data.Maybe                       (isNothing)
+import           Data.OpenUnion                   (liftUnion)
 import           Data.Tree                        (Tree (Node, rootLabel, subForest))
 import           Gimlight.Actor                   (Actor)
 import           Gimlight.Actor.Monsters          (orc, troll)
@@ -257,8 +258,8 @@ placeItems cm tc r n = do
     prob <- randomST :: State StdGen Float
     let newItem =
             if prob < 0.8
-                then herb
-                else sampleBook
+                then liftUnion herb
+                else liftUnion sampleBook
         newMap =
             fromRight cm $ flip execStateT cm $ locateItemAt tc newItem (V2 x y)
     placeItems newMap tc r (n - 1)

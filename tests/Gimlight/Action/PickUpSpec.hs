@@ -6,6 +6,7 @@ import           Control.Lens                ((%~), (&))
 import           Control.Monad.State         (StateT (runStateT), execStateT)
 import           Control.Monad.Writer        (writer)
 import           Data.Maybe                  (fromJust)
+import           Data.OpenUnion              (liftUnion)
 import           Gimlight.Action             (ActionResult (ActionResult, killed, newCellMap, status),
                                               ActionStatus (Failed, Ok))
 import           Gimlight.Action.PickUp      (pickUpAction)
@@ -47,7 +48,7 @@ testPickUpSuccess =
             locateActorAt initTileCollection actorWithItem playerPosition
     expectedLog = [T.youGotItem $ getName herb]
     actorWithItem =
-        (\(x, _) -> x & inventoryItems %~ (fromJust . addItem herb))
+        (\(x, _) -> x & inventoryItems %~ (fromJust . addItem (liftUnion herb)))
             (expectRight
                  "Failed to add an item."
                  (flip runStateT initCellMap $ removeActorAt playerPosition))

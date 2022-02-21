@@ -3,7 +3,6 @@
 module Gimlight.Item
     ( Item
     , item
-    , Effect(..)
     , getName
     , getIconImagePath
     , getEffect
@@ -12,40 +11,29 @@ module Gimlight.Item
 
 import           Data.Text             (Text)
 import           GHC.Generics          (Generic)
-import           Gimlight.Item.Armor   (Armor)
-import           Gimlight.Item.Book    (Book)
-import           Gimlight.Item.Heal    (HealHandler)
-import           Gimlight.Item.Weapon  (Weapon)
 import           Gimlight.Localization (MultilingualText)
 
-data Effect
-    = Heal HealHandler
-    | Book Book
-    | Weapon Weapon
-    | Armor Armor
-    deriving (Show, Ord, Eq, Generic)
-
-data Item =
+data Item a =
     Item
         { name            :: MultilingualText
         , iconImagePath   :: Text
-        , effect          :: Effect
+        , effect          :: a
         , usableManyTimes :: Bool
         }
     deriving (Show, Ord, Eq, Generic)
 
-item :: MultilingualText -> Text -> Effect -> Bool -> Item
+item :: MultilingualText -> Text -> a -> Bool -> Item a
 item n ip e u =
     Item {name = n, iconImagePath = ip, effect = e, usableManyTimes = u}
 
-getName :: Item -> MultilingualText
+getName :: Item a -> MultilingualText
 getName Item {name = n} = n
 
-getIconImagePath :: Item -> Text
+getIconImagePath :: Item a -> Text
 getIconImagePath Item {iconImagePath = ip} = ip
 
-getEffect :: Item -> Effect
+getEffect :: Item a -> a
 getEffect Item {effect = e} = e
 
-isUsableManyTimes :: Item -> Bool
+isUsableManyTimes :: Item a -> Bool
 isUsableManyTimes Item {usableManyTimes = u} = u

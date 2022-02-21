@@ -1,3 +1,5 @@
+{-# LANGUAGE ScopedTypeVariables #-}
+
 module Gimlight.ActorSpec
     ( spec
     ) where
@@ -5,13 +7,13 @@ module Gimlight.ActorSpec
 import           Control.Lens                ((%%~), (&))
 import           Control.Monad.State         (evalState)
 import           Data.Maybe                  (fromJust)
+import           Data.OpenUnion              (liftUnion)
 import           Gimlight.Actor              (Actor, equip, getArmor, getItems,
                                               getWeapon, inventoryItems, player)
 import qualified Gimlight.Actor              as A
 import           Gimlight.IndexGenerator     (generator)
 import           Gimlight.Inventory          (addItem)
-import           Gimlight.Item               (Effect (Weapon), Item, getEffect,
-                                              getName)
+import           Gimlight.Item               (getName)
 import           Gimlight.Item.Defined       (hammer, sword, woodenArmor)
 import qualified Gimlight.Item.Weapon        as W
 import qualified Gimlight.Localization.Texts as T
@@ -31,11 +33,11 @@ testEquipWeapon =
         it "equips a sword." $
             fmap getName (getWeapon after) `shouldBe` Just T.sword
         it "increases the power." $
-            A.getPower after `shouldBe` A.getPower before + weaponPower sword
+            A.getPower after `shouldBe` A.getPower before + W.getPower sword
         it "removes the sword from the inventory" $ getItems after `shouldBe` []
   where
     after = fromJust $ equip 0 before
-    before = fromJust $ base & inventoryItems %%~ addItem sword
+    before = fromJust $ base & inventoryItems %%~ addItem (liftUnion sword)
 
 testChangeWeapon :: Spec
 testChangeWeapon =
@@ -43,16 +45,16 @@ testChangeWeapon =
         it "equips a new weapon." $
             fmap getName (getWeapon after) `shouldBe` Just T.hammer
         it "changes the power." $
-            A.getPower after `shouldBe` A.getPower before - weaponPower sword +
-            weaponPower hammer
+            A.getPower after `shouldBe` A.getPower before - W.getPower sword +
+            W.getPower hammer
         it "backs previously equpped weapon to the inventory." $
-            getItems after `shouldBe` [sword]
+            getItems after `shouldBe` [liftUnion sword]
   where
     after = fromJust $ equip 0 before
     before =
         fromJust $ do
-            x <- base & inventoryItems %%~ addItem hammer
-            x & inventoryItems %%~ addItem sword >>= equip 0
+            x <- base & inventoryItems %%~ addItem (liftUnion hammer)
+            x & inventoryItems %%~ addItem (liftUnion sword) >>= equip 0
 
 testEquipArmor :: Spec
 testEquipArmor =
@@ -61,13 +63,8 @@ testEquipArmor =
     fmap getName (getArmor after) `shouldBe` Just T.woodenArmor
   where
     after = fromJust $ equip 0 before
-    before = fromJust $ base & inventoryItems %%~ addItem woodenArmor
-
-weaponPower :: Item -> Int
-weaponPower w =
-    case getEffect w of
-        Weapon x -> W.getPower x
-        _        -> error "Not a weapon."
+    before =
+        fromJust $ base & inventoryItems %%~ addItem (liftUnion woodenArmor)
 
 base :: Actor
 base = evalState player generator

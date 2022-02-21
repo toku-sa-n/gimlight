@@ -5,6 +5,7 @@ module Gimlight.Action.Consume
 import           Control.Lens                ((&), (.~), (^.))
 import           Control.Monad.State         (StateT (runStateT), execStateT)
 import           Control.Monad.Writer        (tell)
+import           Data.OpenUnion              (typesExhausted, (@>))
 import           Gimlight.Action             (Action,
                                               ActionResult (ActionResult),
                                               ActionResultWithLog,
@@ -15,9 +16,12 @@ import           Gimlight.Actor.Identifier   (toName)
 import           Gimlight.Dungeon.Map.Cell   (CellMap, locateActorAt,
                                               removeActorAt)
 import           Gimlight.Inventory          (removeNthItem)
-import           Gimlight.Item               (Effect (Armor, Book, Heal, Weapon),
-                                              getEffect, isUsableManyTimes)
-import           Gimlight.Item.Heal          (getHealAmount)
+import           Gimlight.Item               (Item, getEffect)
+import           Gimlight.Item.Armor         (Armor)
+import           Gimlight.Item.Book          (Book)
+import           Gimlight.Item.Heal          (Heal, getHealAmount)
+import           Gimlight.Item.SomeItem      (SomeItem, isUsableManyTimes)
+import           Gimlight.Item.Weapon        (Weapon)
 import qualified Gimlight.Localization.Texts as T
 
 consumeAction :: Int -> Action
@@ -42,24 +46,31 @@ consumeAction n position tc cm =
                 if isUsableManyTimes x
                     then actorWithItem
                     else actorWithoutItem
-         in doItemEffect (getEffect x) actor ncm
-    doItemEffect :: Effect -> Actor -> CellMap -> ActionResultWithLog
-    doItemEffect (Heal handler) a ncm = do
-        tell [T.healed (toName $ getIdentifier a) amount]
+         in doItemEffect actor ncm x
+    doItemEffect :: Actor -> CellMap -> SomeItem -> ActionResultWithLog
+    doItemEffect a ncm =
+        useHeal a ncm @> useBook a ncm @> useWeapon a ncm @> useArmor a ncm @>
+        typesExhausted
+    useHeal :: Actor -> CellMap -> Item Heal -> ActionResultWithLog
+    useHeal a ncm h = do
+        tell [T.healed (toName $ getIdentifier a) (getHealAmount h)]
         return $ ActionResult Ok cmAfterHealing []
       where
-        amount = getHealAmount handler
+        amount = getHealAmount h
         cmAfterHealing =
             case flip execStateT ncm $
                  locateActorAt tc (healHp amount a) position of
                 Right x -> x
                 Left e  -> error $ "Failed to locate an actor." <> show e
-    doItemEffect (Book handler) a ncm =
-        return $ ActionResult (ReadingStarted handler) cmAfterReading []
+    useBook :: Actor -> CellMap -> Item Book -> ActionResultWithLog
+    useBook a ncm b =
+        return $ ActionResult (ReadingStarted $ getEffect b) cmAfterReading []
       where
         cmAfterReading =
             case flip execStateT ncm $ locateActorAt tc a position of
                 Right x -> x
                 Left e  -> error $ "Failed to locate an actor." <> show e
-    doItemEffect (Weapon _) _ _ = undefined
-    doItemEffect (Armor _) _ _ = undefined
+    useWeapon :: Actor -> CellMap -> Item Weapon -> ActionResultWithLog
+    useWeapon = undefined
+    useArmor :: Actor -> CellMap -> Item Armor -> ActionResultWithLog
+    useArmor = undefined
