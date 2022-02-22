@@ -56,6 +56,7 @@ import           Gimlight.Inventory               (Inventory, addItem,
 import qualified Gimlight.Inventory               as I
 import           Gimlight.Item                    (Item)
 import           Gimlight.Item.Armor              (Armor)
+import qualified Gimlight.Item.Armor              as A
 import           Gimlight.Item.SomeItem           (SomeItem)
 import           Gimlight.Item.Weapon             (Weapon)
 import qualified Gimlight.Item.Weapon             as W
@@ -181,7 +182,7 @@ getPower :: Actor -> Int
 getPower a = S.getPower (a ^. status) + maybe 0 W.getPower (a ^. weapon)
 
 getDefence :: Actor -> Int
-getDefence a = S.getDefence $ a ^. status
+getDefence a = S.getDefence (a ^. status) + maybe 0 A.getDefence (a ^. armor)
 
 getItems :: Actor -> [SomeItem]
 getItems a = I.getItems $ a ^. inventoryItems

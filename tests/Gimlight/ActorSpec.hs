@@ -14,6 +14,7 @@ import qualified Gimlight.Actor              as A
 import           Gimlight.IndexGenerator     (generator)
 import           Gimlight.Inventory          (addItem)
 import           Gimlight.Item               (getName)
+import qualified Gimlight.Item.Armor         as Armor
 import           Gimlight.Item.Defined       (hammer, sword, woodenArmor)
 import qualified Gimlight.Item.Weapon        as W
 import qualified Gimlight.Localization.Texts as T
@@ -58,9 +59,12 @@ testChangeWeapon =
 
 testEquipArmor :: Spec
 testEquipArmor =
-    context "When the actor does not equip an armor." $
-    it "equips an armor." $
-    fmap getName (getArmor after) `shouldBe` Just T.woodenArmor
+    context "When the actor does not equip an armor." $ do
+        it "equips an armor." $
+            fmap getName (getArmor after) `shouldBe` Just T.woodenArmor
+        it "increases the defence." $
+            A.getDefence after `shouldBe` A.getDefence before +
+            Armor.getDefence woodenArmor
   where
     after = fromJust $ equip 0 before
     before =
