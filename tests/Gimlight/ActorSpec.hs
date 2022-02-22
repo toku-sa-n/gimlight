@@ -82,6 +82,8 @@ testChangeArmor =
             A.getDefence after `shouldBe` A.getDefence before -
             Armor.getDefence woodenArmor +
             Armor.getDefence goldenArmor
+        it "backs previously equipped armor to the inventory." $
+            getItems after `shouldBe` [liftUnion woodenArmor]
   where
     after = fromJust $ equip 0 before
     before =
