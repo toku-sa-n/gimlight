@@ -75,9 +75,13 @@ testEquipArmor =
 
 testChangeArmor :: Spec
 testChangeArmor =
-    context "When the actor already equips an armor." $
-    it "equips a new armor" $
-    fmap getName (getArmor after) `shouldBe` Just T.goldenArmor
+    context "When the actor already equips an armor." $ do
+        it "equips a new armor" $
+            fmap getName (getArmor after) `shouldBe` Just T.goldenArmor
+        it "changes the defence." $
+            A.getDefence after `shouldBe` A.getDefence before -
+            Armor.getDefence woodenArmor +
+            Armor.getDefence goldenArmor
   where
     after = fromJust $ equip 0 before
     before =
