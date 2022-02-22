@@ -15,7 +15,8 @@ import           Gimlight.IndexGenerator     (generator)
 import           Gimlight.Inventory          (addItem)
 import           Gimlight.Item               (getName)
 import qualified Gimlight.Item.Armor         as Armor
-import           Gimlight.Item.Defined       (hammer, sword, woodenArmor)
+import           Gimlight.Item.Defined       (goldenArmor, hammer, sword,
+                                              woodenArmor)
 import qualified Gimlight.Item.Weapon        as W
 import qualified Gimlight.Localization.Texts as T
 import           Test.Hspec                  (Spec, context, describe, it,
@@ -27,6 +28,7 @@ spec =
         testEquipWeapon
         testChangeWeapon
         testEquipArmor
+        testChangeArmor
 
 testEquipWeapon :: Spec
 testEquipWeapon =
@@ -70,6 +72,18 @@ testEquipArmor =
     after = fromJust $ equip 0 before
     before =
         fromJust $ base & inventoryItems %%~ addItem (liftUnion woodenArmor)
+
+testChangeArmor :: Spec
+testChangeArmor =
+    context "When the actor already equips an armor." $
+    it "equips a new armor" $
+    fmap getName (getArmor after) `shouldBe` Just T.goldenArmor
+  where
+    after = fromJust $ equip 0 before
+    before =
+        fromJust $ do
+            x <- base & inventoryItems %%~ addItem (liftUnion goldenArmor)
+            x & inventoryItems %%~ addItem (liftUnion woodenArmor) >>= equip 0
 
 base :: Actor
 base = evalState player generator

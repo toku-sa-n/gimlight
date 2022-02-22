@@ -6,6 +6,7 @@ module Gimlight.Item.Defined
     , sword
     , hammer
     , woodenArmor
+    , goldenArmor
     ) where
 
 import           Gimlight.Item               (Item, item)
@@ -29,3 +30,6 @@ hammer = item T.hammer "images/hammer.png" (weapon 8) True
 
 woodenArmor :: Item Armor
 woodenArmor = item T.woodenArmor "images/wood.png" (armor 4) True
+
+goldenArmor :: Item Armor
+goldenArmor = item T.goldenArmor "images/golden_armor.png" (armor 8) True

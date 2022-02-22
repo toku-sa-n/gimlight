@@ -6,6 +6,7 @@ module Gimlight.Localization.Texts.Items
     , sword
     , hammer
     , woodenArmor
+    , goldenArmor
     ) where
 
 import           Gimlight.Localization (MultilingualText, multilingualText)
@@ -24,3 +25,6 @@ hammer = multilingualText "Hammer" "ハンマー"
 
 woodenArmor :: MultilingualText
 woodenArmor = multilingualText "Wooden armor" "木の鎧"
+
+goldenArmor :: MultilingualText
+goldenArmor = multilingualText "Golden armor" "金の鎧"
