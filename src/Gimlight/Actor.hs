@@ -34,6 +34,7 @@ module Gimlight.Actor
     , getArmor
     ) where
 
+import           Control.Applicative              ((<|>))
 import           Control.Lens                     (makeLenses, (%~), (&), (.~),
                                                    (?~), (^.))
 import           Control.Monad.State              (State)
@@ -192,16 +193,18 @@ getArmor :: Actor -> Maybe (Item Armor)
 getArmor a = a ^. armor
 
 equip :: Int -> Actor -> Maybe Actor
-equip n a =
-    case (fmap restrict w, inventoryWith weapon) of
-        (Just (Right x), Just inv) ->
-            Just $ a & weapon ?~ x & inventoryItems .~ inv
-        _ ->
-            case (fmap restrict w, inventoryWith armor) of
-                (Just (Right x), Just inv) ->
-                    Just $ a & armor ?~ x & inventoryItems .~ inv
-                _ -> Nothing
+equip n a = tryEquipWeapon <|> tryEquipArmor
   where
+    tryEquipWeapon =
+        case (fmap restrict w, inventoryWith weapon) of
+            (Just (Right x), Just inv) ->
+                Just $ a & weapon ?~ x & inventoryItems .~ inv
+            _ -> Nothing
+    tryEquipArmor =
+        case (fmap restrict w, inventoryWith armor) of
+            (Just (Right x), Just inv) ->
+                Just $ a & armor ?~ x & inventoryItems .~ inv
+            _ -> Nothing
     inventoryWith lens =
         case a ^. lens of
             Just x  -> addItem (liftUnion x) inventoryWithoutEquipment
