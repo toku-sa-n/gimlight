@@ -65,6 +65,7 @@ testEquipArmor =
         it "increases the defence." $
             A.getDefence after `shouldBe` A.getDefence before +
             Armor.getDefence woodenArmor
+        it "removes the armor from the inventory" $ getItems after `shouldBe` []
   where
     after = fromJust $ equip 0 before
     before =
