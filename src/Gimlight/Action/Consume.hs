@@ -5,18 +5,19 @@ module Gimlight.Action.Consume
 import           Control.Lens                ((&), (.~), (^.))
 import           Control.Monad.State         (StateT (runStateT), execStateT)
 import           Control.Monad.Writer        (tell)
-import           Data.OpenUnion              (typesExhausted, (@>))
+import           Data.OpenUnion              (liftUnion, typesExhausted, (@>))
 import           Gimlight.Action             (Action,
                                               ActionResult (ActionResult),
                                               ActionResultWithLog,
                                               ActionStatus (Failed, Ok, ReadingStarted))
-import           Gimlight.Actor              (Actor, getIdentifier, healHp,
-                                              inventoryItems)
+import           Gimlight.Actor              (Actor, equip, getIdentifier,
+                                              healHp, inventoryItems)
 import           Gimlight.Actor.Identifier   (toName)
+import           Gimlight.Data.Either        (expectRight)
 import           Gimlight.Dungeon.Map.Cell   (CellMap, locateActorAt,
                                               removeActorAt)
 import           Gimlight.Inventory          (removeNthItem)
-import           Gimlight.Item               (Item, getEffect)
+import           Gimlight.Item               (Item, getEffect, getName)
 import           Gimlight.Item.Armor         (Armor)
 import           Gimlight.Item.Book          (Book)
 import           Gimlight.Item.Heal          (Heal, getHealAmount)
@@ -71,6 +72,16 @@ consumeAction n position tc cm =
                 Right x -> x
                 Left e  -> error $ "Failed to locate an actor." <> show e
     useWeapon :: Actor -> CellMap -> Item Weapon -> ActionResultWithLog
-    useWeapon = undefined
+    useWeapon a ncm w =
+        case equip (liftUnion w) a of
+            Just x -> do
+                let cmAfterEquipping =
+                        expectRight "Failed to locate an actor." $
+                        flip execStateT ncm $ locateActorAt tc x position
+                tell [T.equipped (toName $ getIdentifier a) (getName w)]
+                return $ ActionResult Ok cmAfterEquipping []
+            Nothing -> do
+                tell [T.bagIsFull]
+                return $ ActionResult Failed ncm []
     useArmor :: Actor -> CellMap -> Item Armor -> ActionResultWithLog
     useArmor = undefined
