@@ -7,8 +7,7 @@ module Gimlight.Dungeon.Generate
 import           Control.Lens                     (Ixed (ix), _2, _Just, view,
                                                    (&), (.~), (?~), (^.), (^?))
 import           Control.Monad.Morph              (MFunctor (hoist), generalize)
-import           Control.Monad.State              (MonadState (get, put),
-                                                   MonadTrans (lift), State,
+import           Control.Monad.State              (MonadTrans (lift), State,
                                                    StateT, execStateT)
 import           Data.Array                       (listArray, (!))
 import           Data.Bits                        (Bits (bit, complement, (.&.), (.|.)))
@@ -49,14 +48,14 @@ import           Gimlight.Dungeon.Stairs          (StairsPair (StairsPair))
 import           Gimlight.IndexGenerator          (IndexGenerator)
 import           Gimlight.Item.Defined            (herb, sampleBook, sword,
                                                    woodenArmor)
-import           Gimlight.System.Random           (choiceST)
+import           Gimlight.System.Random           (choiceST, randomRST,
+                                                   randomST)
 import           Gimlight.TreeZipper              (TreeZipper, appendNode,
                                                    getFocused, goDownBy,
                                                    goToRootAndGetTree, modify,
                                                    treeZipper)
 import           Linear.V2                        (V2 (..), _x, _y)
-import           System.Random                    (Random (randomR), RandomGen,
-                                                   StdGen, random)
+import           System.Random                    (StdGen)
 
 generateMultipleFloorsDungeon ::
        TileCollection
@@ -275,20 +274,6 @@ newMonster = do
         if r < 0.8
             then orc
             else troll
-
-randomRST :: (Random a, RandomGen g) => (a, a) -> State g a
-randomRST r = do
-    g <- get
-    let (v, g') = randomR r g
-    put g'
-    return v
-
-randomST :: (RandomGen g, Random a) => State g a
-randomST = do
-    g <- get
-    let (v, g') = random g
-    put g'
-    return v
 
 initialTile :: Config -> TileIdLayer
 initialTile cfg = TileIdLayer u l
