@@ -1,3 +1,5 @@
+{-# LANGUAGE DataKinds #-}
+
 module Gimlight.Action.Consume
     ( consumeAction
     ) where
@@ -5,7 +7,8 @@ module Gimlight.Action.Consume
 import           Control.Lens                ((&), (.~), (^.))
 import           Control.Monad.State         (StateT (runStateT), execStateT)
 import           Control.Monad.Writer        (tell)
-import           Data.OpenUnion              (liftUnion, typesExhausted, (@>))
+import           Data.OpenUnion              (Union, liftUnion, reUnion,
+                                              typesExhausted, (@>))
 import           Gimlight.Action             (Action,
                                               ActionResult (ActionResult),
                                               ActionResultWithLog,
@@ -17,11 +20,12 @@ import           Gimlight.Data.Either        (expectRight)
 import           Gimlight.Dungeon.Map.Cell   (CellMap, locateActorAt,
                                               removeActorAt)
 import           Gimlight.Inventory          (removeNthItem)
-import           Gimlight.Item               (Item, getEffect, getName)
+import           Gimlight.Item               (Item, getEffect)
 import           Gimlight.Item.Armor         (Armor)
 import           Gimlight.Item.Book          (Book)
 import           Gimlight.Item.Heal          (Heal, getHealAmount)
-import           Gimlight.Item.SomeItem      (SomeItem, isUsableManyTimes)
+import           Gimlight.Item.SomeItem      (SomeItem, getName,
+                                              isUsableManyTimes)
 import           Gimlight.Item.Weapon        (Weapon)
 import qualified Gimlight.Localization.Texts as T
 
@@ -72,16 +76,26 @@ consumeAction n position tc cm =
                 Right x -> x
                 Left e  -> error $ "Failed to locate an actor." <> show e
     useWeapon :: Actor -> CellMap -> Item Weapon -> ActionResultWithLog
-    useWeapon a ncm w =
-        case equip (liftUnion w) a of
+    useWeapon a ncm w = useEquipment a ncm (liftUnion w)
+    useArmor :: Actor -> CellMap -> Item Armor -> ActionResultWithLog
+    useArmor a ncm armor = useEquipment a ncm (liftUnion armor)
+    useEquipment ::
+           Actor
+        -> CellMap
+        -> Union '[ Item Weapon, Item Armor]
+        -> ActionResultWithLog
+    useEquipment a ncm w =
+        case equip w a of
             Just x -> do
                 let cmAfterEquipping =
                         expectRight "Failed to locate an actor." $
                         flip execStateT ncm $ locateActorAt tc x position
-                tell [T.equipped (toName $ getIdentifier a) (getName w)]
+                tell
+                    [ T.equipped
+                          (toName $ getIdentifier a)
+                          (getName $ reUnion w)
+                    ]
                 return $ ActionResult Ok cmAfterEquipping []
             Nothing -> do
                 tell [T.bagIsFull]
                 return $ ActionResult Failed ncm []
-    useArmor :: Actor -> CellMap -> Item Armor -> ActionResultWithLog
-    useArmor = undefined

@@ -15,10 +15,12 @@ import           Gimlight.Actor              (equip, inventoryItems)
 import           Gimlight.Dungeon.Map.Cell   (locateActorAt, removeActorAt)
 import           Gimlight.Inventory          (removeNthItem)
 import           Gimlight.Item               (getEffect)
-import           Gimlight.Item.Defined       (herb, sampleBook, sword)
+import           Gimlight.Item.Defined       (herb, sampleBook, sword,
+                                              woodenArmor)
 import           Gimlight.Item.Heal          (getHealAmount)
 import qualified Gimlight.Localization.Texts as T
 import           Gimlight.SetUp.CellMap      (initCellMap, initTileCollection,
+                                              orcWithArmorPosition,
                                               orcWithHerbPosition,
                                               orcWithSwordPosition,
                                               playerPosition)
@@ -29,6 +31,7 @@ spec = do
     testStartReadingBook
     testConsumeHerb
     testEquipWeapon
+    testEquipArmor
 
 testStartReadingBook :: Spec
 testStartReadingBook =
@@ -85,3 +88,24 @@ testEquipWeapon =
                 (fromJust (equip (liftUnion sword) a) &
                  inventoryItems %~ (snd . removeNthItem 0))
                 orcWithSwordPosition
+
+testEquipArmor :: Spec
+testEquipArmor =
+    it "returns a Ok result if an actor equips a weapon" $
+    result `shouldBe` expected
+  where
+    result = consumeAction 0 orcWithArmorPosition initTileCollection initCellMap
+    expected = writer (expectedResult, expectedLog)
+    expectedResult =
+        ActionResult
+            {status = Ok, newCellMap = cellMapAfterEquipping, killed = []}
+    expectedLog = [T.equipped T.orc T.woodenArmor]
+    cellMapAfterEquipping =
+        fromRight' $
+        flip execStateT initCellMap $ do
+            a <- removeActorAt orcWithArmorPosition
+            locateActorAt
+                initTileCollection
+                (fromJust (equip (liftUnion woodenArmor) a) &
+                 inventoryItems %~ (snd . removeNthItem 0))
+                orcWithArmorPosition

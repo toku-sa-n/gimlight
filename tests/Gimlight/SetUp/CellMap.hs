@@ -11,6 +11,7 @@ module Gimlight.SetUp.CellMap
     , weakestOrcPosition
     , orcWithHerbPosition
     , orcWithSwordPosition
+    , orcWithArmorPosition
     ) where
 
 import           Codec.Picture             (PixelRGBA8 (PixelRGBA8),
@@ -35,7 +36,8 @@ import           Gimlight.Dungeon.Map.Cell (CellMap, TileIdLayer (TileIdLayer),
 import           Gimlight.Dungeon.Map.Tile (TileCollection, tile)
 import           Gimlight.IndexGenerator   (IndexGenerator, generator)
 import           Gimlight.Inventory        (addItem)
-import           Gimlight.Item.Defined     (herb, sampleBook, sword)
+import           Gimlight.Item.Defined     (herb, sampleBook, sword,
+                                            woodenArmor)
 import           Gimlight.UI.Draw.Config   (tileHeight, tileWidth)
 import           Linear.V2                 (V2 (V2))
 
@@ -56,14 +58,15 @@ initCellMap =
             , (w, weakestOrcPosition)
             , (orcWithHerb, orcWithHerbPosition)
             , (orcWithSword, orcWithSwordPosition)
+            , (orcWithArmor, orcWithArmorPosition)
             ]
   where
     emptyMap =
         cellMap $
         listArray (V2 0 0, V2 (mapWidth - 1) (mapHeight - 1)) (repeat emptyTile) //
         [(V2 0 1, unwalkable)]
-    (p, w, i, s, orcWithoutItems, orcWithFullItems, orcWithHerb, orcWithSword) =
-        flip evalState generator $ (,,,,,,,) <$>
+    (p, w, i, s, orcWithoutItems, orcWithFullItems, orcWithHerb, orcWithSword, orcWithArmor) =
+        flip evalState generator $ (,,,,,,,,) <$>
         ((inventoryItems %~ fromJust . addItem (liftUnion sampleBook)) <$>
          player) <*>
         weakestOrc <*>
@@ -74,7 +77,8 @@ initCellMap =
          iterate (inventoryItems %~ fromJust . addItem (liftUnion herb)) <$>
          orc) <*>
         ((inventoryItems %~ fromJust . addItem (liftUnion herb)) <$> orc) <*>
-        ((inventoryItems %~ fromJust . addItem (liftUnion sword)) <$> orc)
+        ((inventoryItems %~ fromJust . addItem (liftUnion sword)) <$> orc) <*>
+        ((inventoryItems %~ fromJust . addItem (liftUnion woodenArmor)) <$> orc)
     emptyTile = TileIdLayer Nothing Nothing
     unwalkable = TileIdLayer (Just (dummyTileFile, 1)) Nothing
     mapWidth = 3
@@ -121,6 +125,9 @@ orcWithHerbPosition = V2 2 1
 
 orcWithSwordPosition :: Coord
 orcWithSwordPosition = V2 2 2
+
+orcWithArmorPosition :: Coord
+orcWithArmorPosition = V2 2 3
 
 dummyTileFile :: FilePath
 dummyTileFile = "dummy.json"
