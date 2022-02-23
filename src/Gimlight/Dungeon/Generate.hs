@@ -256,16 +256,17 @@ placeItems cm _ _ 0 = return cm
 placeItems cm tc r n = do
     x <- randomRST (x1 r, x2 r - 1)
     y <- randomRST (y1 r, y2 r - 1)
-    newItem <-
-        choiceST
-            [ liftUnion herb
-            , liftUnion sampleBook
-            , liftUnion sword
-            , liftUnion woodenArmor
-            ]
+    newItem <- choiceST items
     let newMap =
             fromRight cm $ flip execStateT cm $ locateItemAt tc newItem (V2 x y)
     placeItems newMap tc r (n - 1)
+  where
+    items =
+        [ liftUnion herb
+        , liftUnion sampleBook
+        , liftUnion sword
+        , liftUnion woodenArmor
+        ]
 
 newMonster :: StateT IndexGenerator (State StdGen) Actor
 newMonster = do
