@@ -107,8 +107,9 @@ statusGrid eh c =
     defence = getLocalizedText c T.defence
     wp = getLocalizedText c T.weapon
     am = getLocalizedText c T.armor
-    wpName = maybe mempty (getLocalizedText c . getName) . getWeapon
-    amName = maybe mempty (getLocalizedText c . getName) . getArmor
+    wpName = itemNameOrEmpty . getWeapon
+    amName = itemNameOrEmpty . getArmor
+    itemNameOrEmpty = maybe mempty (getLocalizedText c . getName)
 
 mapWidget :: ExploringHandler -> GameWidgetNode
 mapWidget eh = vstack rows
