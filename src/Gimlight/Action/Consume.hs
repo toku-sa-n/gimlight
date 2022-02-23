@@ -90,12 +90,10 @@ consumeAction n position tc cm =
                 let cmAfterEquipping =
                         expectRight "Failed to locate an actor." $
                         flip execStateT ncm $ locateActorAt tc x position
-                tell
-                    [ T.equipped
-                          (toName $ getIdentifier a)
-                          (getName $ reUnion w)
-                    ]
+                tell equipLog
                 return $ ActionResult Ok cmAfterEquipping []
             Nothing -> do
                 tell [T.bagIsFull]
                 return $ ActionResult Failed ncm []
+      where
+        equipLog = [T.equipped (toName $ getIdentifier a) (getName $ reUnion w)]
