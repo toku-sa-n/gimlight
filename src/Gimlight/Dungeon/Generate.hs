@@ -47,7 +47,9 @@ import           Gimlight.Dungeon.Map.Tile        (TileCollection, TileId,
                                                    TileIndex)
 import           Gimlight.Dungeon.Stairs          (StairsPair (StairsPair))
 import           Gimlight.IndexGenerator          (IndexGenerator)
-import           Gimlight.Item.Defined            (herb, sampleBook)
+import           Gimlight.Item.Defined            (herb, sampleBook, sword,
+                                                   woodenArmor)
+import           Gimlight.System.Random           (choiceST)
 import           Gimlight.TreeZipper              (TreeZipper, appendNode,
                                                    getFocused, goDownBy,
                                                    goToRootAndGetTree, modify,
@@ -255,12 +257,14 @@ placeItems cm _ _ 0 = return cm
 placeItems cm tc r n = do
     x <- randomRST (x1 r, x2 r - 1)
     y <- randomRST (y1 r, y2 r - 1)
-    prob <- randomST :: State StdGen Float
-    let newItem =
-            if prob < 0.8
-                then liftUnion herb
-                else liftUnion sampleBook
-        newMap =
+    newItem <-
+        choiceST
+            [ liftUnion herb
+            , liftUnion sampleBook
+            , liftUnion sword
+            , liftUnion woodenArmor
+            ]
+    let newMap =
             fromRight cm $ flip execStateT cm $ locateItemAt tc newItem (V2 x y)
     placeItems newMap tc r (n - 1)
 

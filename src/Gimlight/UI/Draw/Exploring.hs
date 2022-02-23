@@ -12,11 +12,13 @@ import           Data.Array                      ((!))
 import qualified Data.Map                        as Map
 import           Data.Maybe                      (catMaybes, mapMaybe)
 import           Data.Vector.Storable.ByteString (vectorToByteString)
-import           Gimlight.Actor                  (getCurrentExperiencePoint,
+import           Gimlight.Actor                  (getArmor,
+                                                  getCurrentExperiencePoint,
                                                   getDefence,
                                                   getExperiencePointForNextLevel,
                                                   getHp, getLevel, getMaxHp,
-                                                  getPower, walkingImagePath)
+                                                  getPower, getWeapon,
+                                                  walkingImagePath)
 import           Gimlight.Coord                  (Coord)
 import           Gimlight.Dungeon                (Dungeon, cellMap)
 import           Gimlight.Dungeon.Map.Cell       (exploredMap, lower,
@@ -31,6 +33,7 @@ import           Gimlight.GameStatus.Exploring   (ExploringHandler,
                                                   getCurrentDungeon,
                                                   getMessageLog, getPlayerActor,
                                                   getTileCollection)
+import           Gimlight.Item                   (getName)
 import           Gimlight.Item.SomeItem          (getIconImagePath)
 import           Gimlight.Localization           (getLocalizedText)
 import qualified Gimlight.Localization.Texts     as T
@@ -93,6 +96,8 @@ statusGrid eh c =
              , label $ "HP: " <> showt (getHp x) <> " / " <> showt (getMaxHp x)
              , label $ atk <> ": " <> showt (getPower x)
              , label $ defence <> ": " <> showt (getDefence x)
+             , label $ wp <> ": " <> wpName x
+             , label $ am <> ": " <> amName x
              ]) $
     getPlayerActor eh
   where
@@ -100,6 +105,10 @@ statusGrid eh c =
     experience = getLocalizedText c T.experience
     atk = getLocalizedText c T.attack
     defence = getLocalizedText c T.defence
+    wp = getLocalizedText c T.weapon
+    am = getLocalizedText c T.armor
+    wpName = maybe mempty (getLocalizedText c . getName) . getWeapon
+    amName = maybe mempty (getLocalizedText c . getName) . getArmor
 
 mapWidget :: ExploringHandler -> GameWidgetNode
 mapWidget eh = vstack rows
