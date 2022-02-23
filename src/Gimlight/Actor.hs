@@ -1,3 +1,4 @@
+{-# LANGUAGE DataKinds         #-}
 {-# LANGUAGE DeriveGeneric     #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE TemplateHaskell   #-}
@@ -39,7 +40,7 @@ import           Control.Lens                     (makeLenses, (%~), (&), (.~),
                                                    (?~), (^.))
 import           Control.Monad.State              (State)
 import           Control.Monad.Writer             (MonadWriter (writer), Writer)
-import           Data.OpenUnion                   (liftUnion, restrict)
+import           Data.OpenUnion                   (Union, liftUnion, restrict)
 import           Data.Text                        (Text)
 import           GHC.Generics                     (Generic)
 import           Gimlight.Actor.Identifier        (Identifier, toName)
@@ -52,7 +53,7 @@ import           Gimlight.GameStatus.Talking.Part (TalkingPart)
 import           Gimlight.IndexGenerator          (Index, IndexGenerator,
                                                    generate)
 import           Gimlight.Inventory               (Inventory, addItem,
-                                                   inventory, removeNthItem)
+                                                   inventory)
 import qualified Gimlight.Inventory               as I
 import           Gimlight.Item                    (Item)
 import           Gimlight.Item.Armor              (Armor)
@@ -193,21 +194,19 @@ getWeapon a = a ^. weapon
 getArmor :: Actor -> Maybe (Item Armor)
 getArmor a = a ^. armor
 
-equip :: Int -> Actor -> Maybe Actor
-equip n a = tryEquipWeapon <|> tryEquipArmor
+equip :: Union '[ Item Weapon, Item Armor] -> Actor -> Maybe Actor
+equip equipment a = tryEquipWeapon <|> tryEquipArmor
   where
     tryEquipWeapon =
-        case (fmap restrict w, inventoryWith weapon) of
-            (Just (Right x), Just inv) ->
+        case (restrict equipment, inventoryWith weapon) of
+            (Right x, Just inv) ->
                 Just $ a & weapon ?~ x & inventoryItems .~ inv
             _ -> Nothing
     tryEquipArmor =
-        case (fmap restrict w, inventoryWith armor) of
-            (Just (Right x), Just inv) ->
-                Just $ a & armor ?~ x & inventoryItems .~ inv
-            _ -> Nothing
+        case (restrict equipment, inventoryWith armor) of
+            (Right x, Just inv) -> Just $ a & armor ?~ x & inventoryItems .~ inv
+            _                   -> Nothing
     inventoryWith lens =
         case a ^. lens of
-            Just x  -> addItem (liftUnion x) inventoryWithoutEquipment
-            Nothing -> Just inventoryWithoutEquipment
-    (w, inventoryWithoutEquipment) = removeNthItem n (a ^. inventoryItems)
+            Just x  -> addItem (liftUnion x) (a ^. inventoryItems)
+            Nothing -> Just $ a ^. inventoryItems

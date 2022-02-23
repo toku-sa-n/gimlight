@@ -4,15 +4,13 @@ module Gimlight.ActorSpec
     ( spec
     ) where
 
-import           Control.Lens                ((%%~), (&))
 import           Control.Monad.State         (evalState)
 import           Data.Maybe                  (fromJust)
 import           Data.OpenUnion              (liftUnion)
 import           Gimlight.Actor              (Actor, equip, getArmor, getItems,
-                                              getWeapon, inventoryItems, player)
+                                              getWeapon, player)
 import qualified Gimlight.Actor              as A
 import           Gimlight.IndexGenerator     (generator)
-import           Gimlight.Inventory          (addItem)
 import           Gimlight.Item               (getName)
 import qualified Gimlight.Item.Armor         as Armor
 import           Gimlight.Item.Defined       (goldenArmor, hammer, sword,
@@ -39,8 +37,8 @@ testEquipWeapon =
             A.getPower after `shouldBe` A.getPower before + W.getPower sword
         it "removes the sword from the inventory" $ getItems after `shouldBe` []
   where
-    after = fromJust $ equip 0 before
-    before = fromJust $ base & inventoryItems %%~ addItem (liftUnion sword)
+    after = fromJust $ equip (liftUnion sword) before
+    before = base
 
 testChangeWeapon :: Spec
 testChangeWeapon =
@@ -53,11 +51,8 @@ testChangeWeapon =
         it "backs previously equipped weapon to the inventory." $
             getItems after `shouldBe` [liftUnion sword]
   where
-    after = fromJust $ equip 0 before
-    before =
-        fromJust $ do
-            x <- base & inventoryItems %%~ addItem (liftUnion hammer)
-            x & inventoryItems %%~ addItem (liftUnion sword) >>= equip 0
+    after = fromJust $ equip (liftUnion hammer) before
+    before = fromJust $ equip (liftUnion sword) base
 
 testEquipArmor :: Spec
 testEquipArmor =
@@ -69,9 +64,8 @@ testEquipArmor =
             Armor.getDefence woodenArmor
         it "removes the armor from the inventory" $ getItems after `shouldBe` []
   where
-    after = fromJust $ equip 0 before
-    before =
-        fromJust $ base & inventoryItems %%~ addItem (liftUnion woodenArmor)
+    after = fromJust $ equip (liftUnion woodenArmor) before
+    before = base
 
 testChangeArmor :: Spec
 testChangeArmor =
@@ -85,11 +79,8 @@ testChangeArmor =
         it "backs previously equipped armor to the inventory." $
             getItems after `shouldBe` [liftUnion woodenArmor]
   where
-    after = fromJust $ equip 0 before
-    before =
-        fromJust $ do
-            x <- base & inventoryItems %%~ addItem (liftUnion goldenArmor)
-            x & inventoryItems %%~ addItem (liftUnion woodenArmor) >>= equip 0
+    after = fromJust $ equip (liftUnion goldenArmor) before
+    before = fromJust $ equip (liftUnion woodenArmor) base
 
 base :: Actor
 base = evalState player generator
