@@ -15,22 +15,17 @@ choice g xs = (val, g')
     (n, g') = randomR (0, length xs - 1) g
 
 choiceST :: (RandomGen g) => [a] -> State g a
-choiceST xs = do
-    g <- get
-    let (v, g') = choice g xs
-    put g'
-    return v
+choiceST = stFunc . flip choice
 
 randomRST :: (Random a, RandomGen g) => (a, a) -> State g a
-randomRST r = do
-    g <- get
-    let (v, g') = randomR r g
-    put g'
-    return v
+randomRST = stFunc . randomR
 
 randomST :: (RandomGen g, Random a) => State g a
-randomST = do
+randomST = stFunc random
+
+stFunc :: (RandomGen g) => (g -> (a, g)) -> State g a
+stFunc f = do
     g <- get
-    let (v, g') = random g
+    let (v, g') = f g
     put g'
     return v
