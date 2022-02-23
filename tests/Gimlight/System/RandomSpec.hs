@@ -16,5 +16,5 @@ spec =
         choiceSpec 8 "Boku"
   where
     choiceSpec n expected =
-        fst (choice (mkStdGen n) ["Ramen", "Tsukemen", "Boku", "Ikemen"]) `shouldBe`
+        fst (choice ["Ramen", "Tsukemen", "Boku", "Ikemen"] (mkStdGen n)) `shouldBe`
         expected

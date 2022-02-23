@@ -8,14 +8,14 @@ module Gimlight.System.Random
 import           Control.Monad.State (MonadState (get, put), State)
 import           System.Random       (Random (random, randomR), RandomGen)
 
-choice :: (RandomGen g) => g -> [a] -> (a, g)
-choice g xs = (val, g')
+choice :: (RandomGen g) => [a] -> g -> (a, g)
+choice xs g = (val, g')
   where
     val = xs !! n
     (n, g') = randomR (0, length xs - 1) g
 
 choiceST :: (RandomGen g) => [a] -> State g a
-choiceST = stFunc . flip choice
+choiceST = stFunc . choice
 
 randomRST :: (Random a, RandomGen g) => (a, a) -> State g a
 randomRST = stFunc . randomR
