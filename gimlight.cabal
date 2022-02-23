@@ -65,6 +65,7 @@ Test-Suite spec
                       , Gimlight.SetUp.ImageFile
                       , Gimlight.SetUp.MapFile
                       , Gimlight.SetUp.TileFile
+                      , Gimlight.System.RandomSpec
 
     build-depends:      gimlight
                       , hspec >= 2.9.1 && < 2.10
@@ -112,6 +113,7 @@ library
                       , Gimlight.Item.SomeItem
                       , Gimlight.Item.Weapon
                       , Gimlight.Localization.Texts
+                      , Gimlight.System.Random
                       , Gimlight.UI.Draw.Config
 
     other-modules:      Gimlight.Actor.Friendly

@@ -19,6 +19,7 @@ import qualified Gimlight.Dungeon.GenerateSpec
 import qualified Gimlight.Dungeon.Map.JSONReaderSpec
 import qualified Gimlight.Dungeon.Map.Tile.JSONReaderSpec
 import qualified Gimlight.FovSpec
+import qualified Gimlight.System.RandomSpec
 import           Test.Hspec                               (Spec, describe,
                                                            hspec)
 
@@ -50,3 +51,4 @@ spec = do
         "Gimlight.Dungeon.Map.Tile.JSONReader"
         Gimlight.Dungeon.Map.Tile.JSONReaderSpec.spec
     describe "Gimlight.Fov" Gimlight.FovSpec.spec
+    describe "Gimlight.System.Random" Gimlight.System.RandomSpec.spec
