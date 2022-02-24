@@ -14,6 +14,7 @@ import           Gimlight.Action             (ActionResult (ActionResult, killed
                                               ActionStatus (Failed, Ok))
 import           Gimlight.Action.PickUp      (pickUpAction)
 import           Gimlight.Actor              (inventoryItems, player)
+import           Gimlight.Coord              (Coord)
 import           Gimlight.Data.Either        (expectRight)
 import           Gimlight.Dungeon.Map.Cell   (CellMap,
                                               TileIdLayer (TileIdLayer),
@@ -62,7 +63,6 @@ testPickUpSuccess =
         fromRight' $
         flip execStateT cellMapWithPlayer $
         locateItemAt initTileCollection (liftUnion herb) playerPos
-    playerPos = V2 0 0
 
 testPickUpVoid :: Spec
 testPickUpVoid =
@@ -75,7 +75,6 @@ testPickUpVoid =
         ActionResult
             {status = Failed, newCellMap = cellMapWithPlayer, killed = []}
     expectedLog = [T.youGotNothing]
-    playerPos = V2 0 0
 
 testPickUpWhenInventoryIsFull :: Spec
 testPickUpWhenInventoryIsFull =
@@ -93,8 +92,11 @@ cellMapWithPlayer :: CellMap
 cellMapWithPlayer =
     fromRight' $
     flip execStateT emptyCellMap $
-    locateActorAt initTileCollection (evalState player generator) (V2 0 0)
+    locateActorAt initTileCollection (evalState player generator) playerPos
 
 emptyCellMap :: CellMap
 emptyCellMap =
     cellMap $ array (V2 0 0, V2 0 0) [(V2 0 0, TileIdLayer Nothing Nothing)]
+
+playerPos :: Coord
+playerPos = V2 0 0
