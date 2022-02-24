@@ -25,7 +25,7 @@ import           Gimlight.Inventory          (addItem)
 import           Gimlight.Item               (getName)
 import           Gimlight.Item.Defined       (herb)
 import qualified Gimlight.Localization.Texts as T
-import           Gimlight.SetUp.CellMap      (initCellMap, initTileCollection,
+import           Gimlight.SetUp.CellMap      (initTileCollection,
                                               orcWithFullItemsPosition)
 import           Linear                      (V2 (V2))
 import           Test.Hspec                  (Spec, it, shouldBe)
@@ -39,7 +39,8 @@ spec = do
 testPickUpSuccess :: Spec
 testPickUpSuccess =
     it "returns a Ok result if there is an item at the actor's foot, and player's inventory is not full." $
-    result `shouldBe` expected
+    result `shouldBe`
+    expected
   where
     result = pickUpAction playerPos initTileCollection cm'
     expected = writer (expectedResult, expectedLog)
@@ -47,8 +48,7 @@ testPickUpSuccess =
         ActionResult
             {status = Ok, newCellMap = cellMapAfterPickingUp, killed = []}
     cellMapAfterPickingUp =
-        fromRight' $
-        flip execStateT cm' $ do
+        fromRight' $ flip execStateT cm' $ do
             _ <- removeItemAt playerPos
             _ <- removeActorAt playerPos
             locateActorAt initTileCollection actorWithItem playerPos
@@ -57,14 +57,14 @@ testPickUpSuccess =
         (\(x, _) -> x & inventoryItems %~ (fromJust . addItem (liftUnion herb)))
             (fromRight' $ flip runStateT cm' $ removeActorAt playerPos)
     cm' =
-        fromRight' $
-        flip execStateT cellMapWithPlayer $
+        fromRight' $ flip execStateT cellMapWithPlayer $
         locateItemAt initTileCollection (liftUnion herb) playerPos
 
 testPickUpVoid :: Spec
 testPickUpVoid =
     it "returns a Failed result if there is no item at the actor's foot." $
-    result `shouldBe` expected
+    result `shouldBe`
+    expected
   where
     result = pickUpAction playerPos initTileCollection cellMapWithPlayer
     expected = writer (expectedResult, expectedLog)
@@ -75,20 +75,28 @@ testPickUpVoid =
 
 testPickUpWhenInventoryIsFull :: Spec
 testPickUpWhenInventoryIsFull =
-    it "returns a Failed result if the actor's inventory is full." $
-    result `shouldBe` expected
+    it "returns a Failed result if the actor's inventory is full." $ result `shouldBe`
+    expected
   where
-    result =
-        pickUpAction orcWithFullItemsPosition initTileCollection initCellMap
+    result = pickUpAction orcWithFullItemsPosition initTileCollection cm
     expected = writer (expectedResult, expectedLog)
     expectedResult =
-        ActionResult {status = Failed, newCellMap = initCellMap, killed = []}
+        ActionResult {status = Failed, newCellMap = cm, killed = []}
     expectedLog = [T.bagIsFull]
+    cm =
+        fromRight' $ flip execStateT emptyCellMap $ do
+            locateItemAt initTileCollection (liftUnion herb) playerPos
+            locateActorAt
+                initTileCollection
+                (iterate
+                     (inventoryItems %~ fromJust . addItem (liftUnion herb))
+                     (evalState player generator) !!
+                 5)
+                playerPos
 
 cellMapWithPlayer :: CellMap
 cellMapWithPlayer =
-    fromRight' $
-    flip execStateT emptyCellMap $
+    fromRight' $ flip execStateT emptyCellMap $
     locateActorAt initTileCollection (evalState player generator) playerPos
 
 emptyCellMap :: CellMap
