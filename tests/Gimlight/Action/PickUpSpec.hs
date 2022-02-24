@@ -1,3 +1,6 @@
+{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE GADTs     #-}
+
 module Gimlight.Action.PickUpSpec
     ( spec
     ) where
@@ -9,7 +12,8 @@ import           Control.Monad.Writer        (writer)
 import           Data.Array                  (array)
 import           Data.Either.Combinators     (fromRight')
 import           Data.Maybe                  (fromJust)
-import           Data.OpenUnion              (liftUnion)
+import           Data.OpenUnion              (Union, liftUnion, typesExhausted,
+                                              (@>))
 import           Gimlight.Action             (ActionResult (ActionResult, killed, newCellMap, status),
                                               ActionStatus (Failed, Ok))
 import           Gimlight.Action.PickUp      (pickUpAction)
@@ -58,17 +62,20 @@ testPickUpSuccess =
         (\(x, _) -> x & inventoryItems %~ (fromJust . addItem (liftUnion herb)))
             (fromRight' $ flip runStateT cm' $ removeActorAt playerPos)
     cm' =
-        fromRight' $
-        flip execStateT cellMapWithPlayer $
-        locateItemAt initTileCollection (liftUnion herb) playerPos
+        locateItemsActors
+            [ (playerPos, liftUnion (liftUnion herb :: SomeItem))
+            , (playerPos, liftUnion player)
+            ]
+            emptyCellMap
 
 testPickUpVoid :: Spec
 testPickUpVoid =
     it "returns a Failed result if there is no item at the actor's foot." $
     result `shouldBe` expected
   where
-    result = pickUpAction playerPos initTileCollection cellMapWithPlayer
-    expected = writer (failedResult cellMapWithPlayer, [T.youGotNothing])
+    result = pickUpAction playerPos initTileCollection cm
+    expected = writer (failedResult cm, [T.youGotNothing])
+    cm = locateItemsActors [(playerPos, liftUnion player)] emptyCellMap
 
 testPickUpWhenInventoryIsFull :: Spec
 testPickUpWhenInventoryIsFull =
@@ -78,23 +85,28 @@ testPickUpWhenInventoryIsFull =
     result = pickUpAction playerPos initTileCollection cm
     expected = writer (failedResult cm, [T.bagIsFull])
     cm =
-        fromRight' $
-        flip execStateT emptyCellMap $ do
-            locateItemAt initTileCollection (liftUnion herb) playerPos
-            locateActorAt initTileCollection (addItems items player) playerPos
+        locateItemsActors
+            [ (playerPos, liftUnion (liftUnion herb :: SomeItem))
+            , (playerPos, liftUnion $ addItems items player)
+            ]
+            emptyCellMap
     items = replicate maxSlot $ liftUnion herb
+
+locateItemsActors :: [(Coord, Union '[ Actor, SomeItem])] -> CellMap -> CellMap
+locateItemsActors xs cm = foldl helper cm xs
+  where
+    helper ncm (pos, x) =
+        fromRight' $ (itemFunc ncm pos @> actorFunc ncm pos @> typesExhausted) x
+    actorFunc ncm pos x =
+        flip execStateT ncm $ locateActorAt initTileCollection x pos
+    itemFunc ncm pos x =
+        flip execStateT ncm $ locateItemAt initTileCollection x pos
 
 addItems :: [SomeItem] -> Actor -> Actor
 addItems xs a = foldr (\x -> over inventoryItems (fromJust . addItem x)) a xs
 
 failedResult :: CellMap -> ActionResult
 failedResult cm = ActionResult {status = Failed, newCellMap = cm, killed = []}
-
-cellMapWithPlayer :: CellMap
-cellMapWithPlayer =
-    fromRight' $
-    flip execStateT emptyCellMap $
-    locateActorAt initTileCollection player playerPos
 
 emptyCellMap :: CellMap
 emptyCellMap =
