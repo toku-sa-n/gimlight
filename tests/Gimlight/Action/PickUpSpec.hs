@@ -13,7 +13,8 @@ import           Data.OpenUnion              (liftUnion)
 import           Gimlight.Action             (ActionResult (ActionResult, killed, newCellMap, status),
                                               ActionStatus (Failed, Ok))
 import           Gimlight.Action.PickUp      (pickUpAction)
-import           Gimlight.Actor              (Actor, inventoryItems, player)
+import           Gimlight.Actor              (Actor, inventoryItems)
+import qualified Gimlight.Actor              as A
 import           Gimlight.Coord              (Coord)
 import           Gimlight.Dungeon.Map.Cell   (CellMap,
                                               TileIdLayer (TileIdLayer),
@@ -80,10 +81,7 @@ testPickUpWhenInventoryIsFull =
         fromRight' $
         flip execStateT emptyCellMap $ do
             locateItemAt initTileCollection (liftUnion herb) playerPos
-            locateActorAt
-                initTileCollection
-                (addItems items (evalState player generator))
-                playerPos
+            locateActorAt initTileCollection (addItems items player) playerPos
     items = replicate maxSlot $ liftUnion herb
 
 addItems :: [SomeItem] -> Actor -> Actor
@@ -96,11 +94,14 @@ cellMapWithPlayer :: CellMap
 cellMapWithPlayer =
     fromRight' $
     flip execStateT emptyCellMap $
-    locateActorAt initTileCollection (evalState player generator) playerPos
+    locateActorAt initTileCollection player playerPos
 
 emptyCellMap :: CellMap
 emptyCellMap =
     cellMap $ array (V2 0 0, V2 0 0) [(V2 0 0, TileIdLayer Nothing Nothing)]
+
+player :: Actor
+player = evalState A.player generator
 
 playerPos :: Coord
 playerPos = V2 0 0
