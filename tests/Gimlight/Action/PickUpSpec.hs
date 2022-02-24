@@ -26,7 +26,6 @@ import           Gimlight.Dungeon.Map.Cell   (CellMap,
                                               removeItemAt)
 import           Gimlight.IndexGenerator     (generator)
 import           Gimlight.Inventory          (addItem, maxSlot)
-import           Gimlight.Item               (getName)
 import           Gimlight.Item.Defined       (herb)
 import           Gimlight.Item.SomeItem      (SomeItem)
 import qualified Gimlight.Localization.Texts as T
@@ -46,17 +45,13 @@ testPickUpSuccess =
     result `shouldBe` expected
   where
     result = pickUpAction playerPos initTileCollection cm
-    expected = writer (expectedResult, expectedLog)
-    expectedResult =
-        ActionResult
-            {status = Ok, newCellMap = cellMapAfterPickingUp, killed = []}
+    expected = writer (okResult cellMapAfterPickingUp, [T.youGotItem T.herb])
     cellMapAfterPickingUp =
         fromRight' $
         flip execStateT cm $ do
             _ <- removeItemAt playerPos
             _ <- removeActorAt playerPos
             locateActorAt initTileCollection actorWithItem playerPos
-    expectedLog = [T.youGotItem $ getName herb]
     actorWithItem = addItems [liftUnion herb] player
     cm =
         cellMapWith
@@ -102,6 +97,9 @@ locateItemsActors xs cm = foldl helper cm xs
 
 addItems :: [SomeItem] -> Actor -> Actor
 addItems xs a = foldr (\x -> over inventoryItems (fromJust . addItem x)) a xs
+
+okResult :: CellMap -> ActionResult
+okResult cm = ActionResult {status = Ok, newCellMap = cm, killed = []}
 
 failedResult :: CellMap -> ActionResult
 failedResult cm = ActionResult {status = Failed, newCellMap = cm, killed = []}
