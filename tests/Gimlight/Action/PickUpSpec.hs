@@ -60,12 +60,8 @@ testPickUpSuccess =
                  (flip runStateT cm' $ removeActorAt playerPos))
     cm' =
         fromRight' $
-        flip execStateT emptyCellMap $ do
-            locateActorAt
-                initTileCollection
-                (evalState player generator)
-                playerPos
-            locateItemAt initTileCollection (liftUnion herb) playerPos
+        flip execStateT cellMapWithPlayer $
+        locateItemAt initTileCollection (liftUnion herb) playerPos
     playerPos = V2 0 0
 
 testPickUpVoid :: Spec
@@ -78,10 +74,7 @@ testPickUpVoid =
     expectedResult =
         ActionResult {status = Failed, newCellMap = cm', killed = []}
     expectedLog = [T.youGotNothing]
-    cm' =
-        fromRight' $
-        flip execStateT emptyCellMap $
-        locateActorAt initTileCollection (evalState player generator) playerPos
+    cm' = cellMapWithPlayer
     playerPos = V2 0 0
 
 testPickUpWhenInventoryIsFull :: Spec
@@ -95,6 +88,12 @@ testPickUpWhenInventoryIsFull =
     expectedResult =
         ActionResult {status = Failed, newCellMap = initCellMap, killed = []}
     expectedLog = [T.bagIsFull]
+
+cellMapWithPlayer :: CellMap
+cellMapWithPlayer =
+    fromRight' $
+    flip execStateT emptyCellMap $
+    locateActorAt initTileCollection (evalState player generator) (V2 0 0)
 
 emptyCellMap :: CellMap
 emptyCellMap =
