@@ -5,7 +5,7 @@ module Gimlight.Action.PickUpSpec
     ( spec
     ) where
 
-import           Control.Lens                (over, (%~), (&))
+import           Control.Lens                (over)
 import           Control.Monad.State         (StateT (runStateT), evalState,
                                               execStateT)
 import           Control.Monad.Writer        (writer)
@@ -59,7 +59,7 @@ testPickUpSuccess =
             locateActorAt initTileCollection actorWithItem playerPos
     expectedLog = [T.youGotItem $ getName herb]
     actorWithItem =
-        (\(x, _) -> x & inventoryItems %~ (fromJust . addItem (liftUnion herb)))
+        (\(x, _) -> addItems [liftUnion herb] x)
             (fromRight' $ flip runStateT cm $ removeActorAt playerPos)
     cm =
         cellMapWith
