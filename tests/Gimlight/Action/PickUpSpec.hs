@@ -69,12 +69,12 @@ testPickUpVoid =
     it "returns a Failed result if there is no item at the actor's foot." $
     result `shouldBe` expected
   where
-    result = pickUpAction playerPos initTileCollection cm'
+    result = pickUpAction playerPos initTileCollection cellMapWithPlayer
     expected = writer (expectedResult, expectedLog)
     expectedResult =
-        ActionResult {status = Failed, newCellMap = cm', killed = []}
+        ActionResult
+            {status = Failed, newCellMap = cellMapWithPlayer, killed = []}
     expectedLog = [T.youGotNothing]
-    cm' = cellMapWithPlayer
     playerPos = V2 0 0
 
 testPickUpWhenInventoryIsFull :: Spec
