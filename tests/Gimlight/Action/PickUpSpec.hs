@@ -46,22 +46,22 @@ testPickUpSuccess =
     it "returns a Ok result if there is an item at the actor's foot, and player's inventory is not full." $
     result `shouldBe` expected
   where
-    result = pickUpAction playerPos initTileCollection cm'
+    result = pickUpAction playerPos initTileCollection cm
     expected = writer (expectedResult, expectedLog)
     expectedResult =
         ActionResult
             {status = Ok, newCellMap = cellMapAfterPickingUp, killed = []}
     cellMapAfterPickingUp =
         fromRight' $
-        flip execStateT cm' $ do
+        flip execStateT cm $ do
             _ <- removeItemAt playerPos
             _ <- removeActorAt playerPos
             locateActorAt initTileCollection actorWithItem playerPos
     expectedLog = [T.youGotItem $ getName herb]
     actorWithItem =
         (\(x, _) -> x & inventoryItems %~ (fromJust . addItem (liftUnion herb)))
-            (fromRight' $ flip runStateT cm' $ removeActorAt playerPos)
-    cm' =
+            (fromRight' $ flip runStateT cm $ removeActorAt playerPos)
+    cm =
         cellMapWith
             [ (playerPos, liftUnion (liftUnion herb :: SomeItem))
             , (playerPos, liftUnion player)
