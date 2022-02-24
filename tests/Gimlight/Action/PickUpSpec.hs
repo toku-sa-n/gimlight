@@ -25,8 +25,7 @@ import           Gimlight.Inventory          (addItem, maxSlot)
 import           Gimlight.Item               (getName)
 import           Gimlight.Item.Defined       (herb)
 import qualified Gimlight.Localization.Texts as T
-import           Gimlight.SetUp.CellMap      (initTileCollection,
-                                              orcWithFullItemsPosition)
+import           Gimlight.SetUp.CellMap      (initTileCollection)
 import           Linear                      (V2 (V2))
 import           Test.Hspec                  (Spec, it, shouldBe)
 
@@ -78,7 +77,7 @@ testPickUpWhenInventoryIsFull =
     it "returns a Failed result if the actor's inventory is full." $ result `shouldBe`
     expected
   where
-    result = pickUpAction orcWithFullItemsPosition initTileCollection cm
+    result = pickUpAction playerPos initTileCollection cm
     expected = writer (expectedResult, expectedLog)
     expectedResult =
         ActionResult {status = Failed, newCellMap = cm, killed = []}
