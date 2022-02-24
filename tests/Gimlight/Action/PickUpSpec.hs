@@ -15,7 +15,6 @@ import           Gimlight.Action             (ActionResult (ActionResult, killed
 import           Gimlight.Action.PickUp      (pickUpAction)
 import           Gimlight.Actor              (inventoryItems, player)
 import           Gimlight.Coord              (Coord)
-import           Gimlight.Data.Either        (expectRight)
 import           Gimlight.Dungeon.Map.Cell   (CellMap,
                                               TileIdLayer (TileIdLayer),
                                               cellMap, locateActorAt,
@@ -48,7 +47,7 @@ testPickUpSuccess =
         ActionResult
             {status = Ok, newCellMap = cellMapAfterPickingUp, killed = []}
     cellMapAfterPickingUp =
-        expectRight "Failed to pick up." $
+        fromRight' $
         flip execStateT cm' $ do
             _ <- removeItemAt playerPos
             _ <- removeActorAt playerPos
@@ -56,9 +55,7 @@ testPickUpSuccess =
     expectedLog = [T.youGotItem $ getName herb]
     actorWithItem =
         (\(x, _) -> x & inventoryItems %~ (fromJust . addItem (liftUnion herb)))
-            (expectRight
-                 "Failed to add an item."
-                 (flip runStateT cm' $ removeActorAt playerPos))
+            (fromRight' $ flip runStateT cm' $ removeActorAt playerPos)
     cm' =
         fromRight' $
         flip execStateT cellMapWithPlayer $
