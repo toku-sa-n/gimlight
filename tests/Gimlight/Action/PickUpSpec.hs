@@ -2,7 +2,7 @@ module Gimlight.Action.PickUpSpec
     ( spec
     ) where
 
-import           Control.Lens                ((%~), (&))
+import           Control.Lens                (over, (%~), (&))
 import           Control.Monad.State         (StateT (runStateT), evalState,
                                               execStateT)
 import           Control.Monad.Writer        (writer)
@@ -13,7 +13,7 @@ import           Data.OpenUnion              (liftUnion)
 import           Gimlight.Action             (ActionResult (ActionResult, killed, newCellMap, status),
                                               ActionStatus (Failed, Ok))
 import           Gimlight.Action.PickUp      (pickUpAction)
-import           Gimlight.Actor              (inventoryItems, player)
+import           Gimlight.Actor              (Actor, inventoryItems, player)
 import           Gimlight.Coord              (Coord)
 import           Gimlight.Dungeon.Map.Cell   (CellMap,
                                               TileIdLayer (TileIdLayer),
@@ -24,6 +24,7 @@ import           Gimlight.IndexGenerator     (generator)
 import           Gimlight.Inventory          (addItem, maxSlot)
 import           Gimlight.Item               (getName)
 import           Gimlight.Item.Defined       (herb)
+import           Gimlight.Item.SomeItem      (SomeItem)
 import qualified Gimlight.Localization.Texts as T
 import           Gimlight.SetUp.CellMap      (initTileCollection)
 import           Linear                      (V2 (V2))
@@ -38,8 +39,7 @@ spec = do
 testPickUpSuccess :: Spec
 testPickUpSuccess =
     it "returns a Ok result if there is an item at the actor's foot, and player's inventory is not full." $
-    result `shouldBe`
-    expected
+    result `shouldBe` expected
   where
     result = pickUpAction playerPos initTileCollection cm'
     expected = writer (expectedResult, expectedLog)
@@ -47,7 +47,8 @@ testPickUpSuccess =
         ActionResult
             {status = Ok, newCellMap = cellMapAfterPickingUp, killed = []}
     cellMapAfterPickingUp =
-        fromRight' $ flip execStateT cm' $ do
+        fromRight' $
+        flip execStateT cm' $ do
             _ <- removeItemAt playerPos
             _ <- removeActorAt playerPos
             locateActorAt initTileCollection actorWithItem playerPos
@@ -56,42 +57,45 @@ testPickUpSuccess =
         (\(x, _) -> x & inventoryItems %~ (fromJust . addItem (liftUnion herb)))
             (fromRight' $ flip runStateT cm' $ removeActorAt playerPos)
     cm' =
-        fromRight' $ flip execStateT cellMapWithPlayer $
+        fromRight' $
+        flip execStateT cellMapWithPlayer $
         locateItemAt initTileCollection (liftUnion herb) playerPos
 
 testPickUpVoid :: Spec
 testPickUpVoid =
     it "returns a Failed result if there is no item at the actor's foot." $
-    result `shouldBe`
-    expected
+    result `shouldBe` expected
   where
     result = pickUpAction playerPos initTileCollection cellMapWithPlayer
     expected = writer (failedResult cellMapWithPlayer, [T.youGotNothing])
 
 testPickUpWhenInventoryIsFull :: Spec
 testPickUpWhenInventoryIsFull =
-    it "returns a Failed result if the actor's inventory is full." $ result `shouldBe`
-    expected
+    it "returns a Failed result if the actor's inventory is full." $
+    result `shouldBe` expected
   where
     result = pickUpAction playerPos initTileCollection cm
     expected = writer (failedResult cm, [T.bagIsFull])
     cm =
-        fromRight' $ flip execStateT emptyCellMap $ do
+        fromRight' $
+        flip execStateT emptyCellMap $ do
             locateItemAt initTileCollection (liftUnion herb) playerPos
             locateActorAt
                 initTileCollection
-                (iterate
-                     (inventoryItems %~ fromJust . addItem (liftUnion herb))
-                     (evalState player generator) !!
-                 maxSlot)
+                (addItems items (evalState player generator))
                 playerPos
+    items = replicate maxSlot $ liftUnion herb
+
+addItems :: [SomeItem] -> Actor -> Actor
+addItems xs a = foldr (\x -> over inventoryItems (fromJust . addItem x)) a xs
 
 failedResult :: CellMap -> ActionResult
 failedResult cm = ActionResult {status = Failed, newCellMap = cm, killed = []}
 
 cellMapWithPlayer :: CellMap
 cellMapWithPlayer =
-    fromRight' $ flip execStateT emptyCellMap $
+    fromRight' $
+    flip execStateT emptyCellMap $
     locateActorAt initTileCollection (evalState player generator) playerPos
 
 emptyCellMap :: CellMap
