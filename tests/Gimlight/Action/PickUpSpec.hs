@@ -67,9 +67,7 @@ testPickUpVoid =
   where
     result = pickUpAction playerPos initTileCollection cellMapWithPlayer
     expected = writer (expectedResult, expectedLog)
-    expectedResult =
-        ActionResult
-            {status = Failed, newCellMap = cellMapWithPlayer, killed = []}
+    expectedResult = failedResult cellMapWithPlayer
     expectedLog = [T.youGotNothing]
 
 testPickUpWhenInventoryIsFull :: Spec
@@ -79,8 +77,7 @@ testPickUpWhenInventoryIsFull =
   where
     result = pickUpAction playerPos initTileCollection cm
     expected = writer (expectedResult, expectedLog)
-    expectedResult =
-        ActionResult {status = Failed, newCellMap = cm, killed = []}
+    expectedResult = failedResult cm
     expectedLog = [T.bagIsFull]
     cm =
         fromRight' $ flip execStateT emptyCellMap $ do
@@ -92,6 +89,9 @@ testPickUpWhenInventoryIsFull =
                      (evalState player generator) !!
                  maxSlot)
                 playerPos
+
+failedResult :: CellMap -> ActionResult
+failedResult cm = ActionResult {status = Failed, newCellMap = cm, killed = []}
 
 cellMapWithPlayer :: CellMap
 cellMapWithPlayer =
