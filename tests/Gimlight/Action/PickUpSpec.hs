@@ -62,11 +62,10 @@ testPickUpSuccess =
         (\(x, _) -> x & inventoryItems %~ (fromJust . addItem (liftUnion herb)))
             (fromRight' $ flip runStateT cm' $ removeActorAt playerPos)
     cm' =
-        locateItemsActors
+        cellMapWith
             [ (playerPos, liftUnion (liftUnion herb :: SomeItem))
             , (playerPos, liftUnion player)
             ]
-            emptyCellMap
 
 testPickUpVoid :: Spec
 testPickUpVoid =
@@ -75,7 +74,7 @@ testPickUpVoid =
   where
     result = pickUpAction playerPos initTileCollection cm
     expected = writer (failedResult cm, [T.youGotNothing])
-    cm = locateItemsActors [(playerPos, liftUnion player)] emptyCellMap
+    cm = cellMapWith [(playerPos, liftUnion player)]
 
 testPickUpWhenInventoryIsFull :: Spec
 testPickUpWhenInventoryIsFull =
@@ -85,12 +84,14 @@ testPickUpWhenInventoryIsFull =
     result = pickUpAction playerPos initTileCollection cm
     expected = writer (failedResult cm, [T.bagIsFull])
     cm =
-        locateItemsActors
+        cellMapWith
             [ (playerPos, liftUnion (liftUnion herb :: SomeItem))
             , (playerPos, liftUnion $ addItems items player)
             ]
-            emptyCellMap
     items = replicate maxSlot $ liftUnion herb
+
+cellMapWith :: [(Coord, Union '[ Actor, SomeItem])] -> CellMap
+cellMapWith xs = locateItemsActors xs emptyCellMap
 
 locateItemsActors :: [(Coord, Union '[ Actor, SomeItem])] -> CellMap -> CellMap
 locateItemsActors xs cm = foldl helper cm xs
