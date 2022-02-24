@@ -41,7 +41,7 @@ testPickUpSuccess =
     it "returns a Ok result if there is an item at the actor's foot, and player's inventory is not full." $
     result `shouldBe` expected
   where
-    result = pickUpAction (V2 0 0) initTileCollection cm'
+    result = pickUpAction playerPos initTileCollection cm'
     expected = writer (expectedResult, expectedLog)
     expectedResult =
         ActionResult
@@ -49,25 +49,26 @@ testPickUpSuccess =
     cellMapAfterPickingUp =
         expectRight "Failed to pick up." $
         flip execStateT cm' $ do
-            _ <- removeItemAt (V2 0 0)
-            _ <- removeActorAt (V2 0 0)
-            locateActorAt initTileCollection actorWithItem (V2 0 0)
+            _ <- removeItemAt playerPos
+            _ <- removeActorAt playerPos
+            locateActorAt initTileCollection actorWithItem playerPos
     expectedLog = [T.youGotItem $ getName herb]
     actorWithItem =
         (\(x, _) -> x & inventoryItems %~ (fromJust . addItem (liftUnion herb)))
             (expectRight
                  "Failed to add an item."
-                 (flip runStateT cm' $ removeActorAt (V2 0 0)))
+                 (flip runStateT cm' $ removeActorAt playerPos))
     cm' =
         fromRight' $
         flip execStateT cm $ do
             locateActorAt
                 initTileCollection
                 (evalState player generator)
-                (V2 0 0)
-            locateItemAt initTileCollection (liftUnion herb) (V2 0 0)
+                playerPos
+            locateItemAt initTileCollection (liftUnion herb) playerPos
     cm =
         cellMap $ array (V2 0 0, V2 0 0) [(V2 0 0, TileIdLayer Nothing Nothing)]
+    playerPos = V2 0 0
 
 testPickUpVoid :: Spec
 testPickUpVoid =
