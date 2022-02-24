@@ -21,7 +21,7 @@ import           Gimlight.Dungeon.Map.Cell   (CellMap,
                                               locateItemAt, removeActorAt,
                                               removeItemAt)
 import           Gimlight.IndexGenerator     (generator)
-import           Gimlight.Inventory          (addItem)
+import           Gimlight.Inventory          (addItem, maxSlot)
 import           Gimlight.Item               (getName)
 import           Gimlight.Item.Defined       (herb)
 import qualified Gimlight.Localization.Texts as T
@@ -91,7 +91,7 @@ testPickUpWhenInventoryIsFull =
                 (iterate
                      (inventoryItems %~ fromJust . addItem (liftUnion herb))
                      (evalState player generator) !!
-                 5)
+                 maxSlot)
                 playerPos
 
 cellMapWithPlayer :: CellMap
