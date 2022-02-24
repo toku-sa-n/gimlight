@@ -25,8 +25,7 @@ import           Gimlight.Item               (getName)
 import           Gimlight.Item.Defined       (herb)
 import qualified Gimlight.Localization.Texts as T
 import           Gimlight.SetUp.CellMap      (initCellMap, initTileCollection,
-                                              orcWithFullItemsPosition,
-                                              orcWithoutItemsPosition)
+                                              orcWithFullItemsPosition)
 import           Linear                      (V2 (V2))
 import           Test.Hspec                  (Spec, it, shouldBe)
 
@@ -75,11 +74,18 @@ testPickUpVoid =
     it "returns a Failed result if there is no item at the actor's foot." $
     result `shouldBe` expected
   where
-    result = pickUpAction orcWithoutItemsPosition initTileCollection initCellMap
+    result = pickUpAction playerPos initTileCollection cm'
     expected = writer (expectedResult, expectedLog)
     expectedResult =
-        ActionResult {status = Failed, newCellMap = initCellMap, killed = []}
+        ActionResult {status = Failed, newCellMap = cm', killed = []}
     expectedLog = [T.youGotNothing]
+    cm' =
+        fromRight' $
+        flip execStateT cm $
+        locateActorAt initTileCollection (evalState player generator) playerPos
+    cm =
+        cellMap $ array (V2 0 0, V2 0 0) [(V2 0 0, TileIdLayer Nothing Nothing)]
+    playerPos = V2 0 0
 
 testPickUpWhenInventoryIsFull :: Spec
 testPickUpWhenInventoryIsFull =
