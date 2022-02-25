@@ -30,7 +30,6 @@ import           Gimlight.Item.Heal            (getHealAmount)
 import           Gimlight.Item.SomeItem        (SomeItem)
 import qualified Gimlight.Localization.Texts   as T
 import           Gimlight.SetUp.CellMap        (initCellMap, mockTileCollection,
-                                                orcWithHerbPosition,
                                                 playerPosition)
 import           Linear                        (V2 (V2))
 import           Test.Hspec                    (Spec, it, shouldBe)
@@ -62,18 +61,19 @@ testConsumeHerb =
     it "returns a Ok result if an actor uses a herb" $
     result `shouldBe` expected
   where
-    result = consumeAction 0 orcWithHerbPosition mockTileCollection initCellMap
+    result = consumeAction 0 (V2 0 0) mockTileCollection cm
     expected = writer (expectedResult, expectedLog)
     expectedResult = okResult cellMapAfterConsuming
-    expectedLog = [T.healed T.orc $ getHealAmount herb]
+    expectedLog = [T.healed T.player $ getHealAmount herb]
     cellMapAfterConsuming =
         fromRight' $
-        flip execStateT initCellMap $ do
-            a <- removeActorAt orcWithHerbPosition
+        flip execStateT cm $ do
+            a <- removeActorAt (V2 0 0)
             locateActorAt
                 mockTileCollection
                 (a & inventoryItems %~ (snd . removeNthItem 0))
-                orcWithHerbPosition
+                (V2 0 0)
+    cm = testMap $ liftUnion herb
 
 testEquipWeapon :: Spec
 testEquipWeapon =
