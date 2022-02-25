@@ -49,11 +49,7 @@ testConsumeHerb =
   where
     expected =
         writer (okResult cmAfter, [T.healed T.player $ getHealAmount herb])
-    cmAfter =
-        fromRight' $
-        flip execStateT cm $ do
-            a <- removeActorAt playerPos
-            locateItemsActorsST [(playerPos, liftUnion $ removeItem 0 a)]
+    cmAfter = afterUsing (removeItem 0) cm
     cm = testMap $ liftUnion herb
 
 testEquipWeapon :: Spec
