@@ -2,19 +2,23 @@
 
 module Gimlight.ActorSpec
     ( spec
+    , addItems
     ) where
 
+import           Control.Lens                (over)
 import           Control.Monad.State         (evalState)
 import           Data.Maybe                  (fromJust)
 import           Data.OpenUnion              (liftUnion)
 import           Gimlight.Actor              (Actor, equip, getArmor, getItems,
-                                              getWeapon, player)
+                                              getWeapon, inventoryItems, player)
 import qualified Gimlight.Actor              as A
 import           Gimlight.IndexGenerator     (generator)
+import           Gimlight.Inventory          (addItem)
 import           Gimlight.Item               (getName)
 import qualified Gimlight.Item.Armor         as Armor
 import           Gimlight.Item.Defined       (goldenArmor, hammer, sword,
                                               woodenArmor)
+import           Gimlight.Item.SomeItem      (SomeItem)
 import qualified Gimlight.Item.Weapon        as W
 import qualified Gimlight.Localization.Texts as T
 import           Test.Hspec                  (Spec, context, describe, it,
@@ -84,3 +88,6 @@ testChangeArmor =
 
 base :: Actor
 base = evalState player generator
+
+addItems :: [SomeItem] -> Actor -> Actor
+addItems xs a = foldr (\x -> over inventoryItems (fromJust . addItem x)) a xs

@@ -5,23 +5,22 @@ module Gimlight.Action.PickUpSpec
     ( spec
     ) where
 
-import           Control.Lens                  (over)
 import           Control.Monad.State           (evalState, execStateT)
 import           Control.Monad.Writer          (writer)
 import           Data.Either.Combinators       (fromRight')
-import           Data.Maybe                    (fromJust)
 import           Data.OpenUnion                (Union, liftUnion)
 import           Gimlight.Action               (ActionResultWithLog)
 import           Gimlight.Action.PickUp        (pickUpAction)
 import           Gimlight.ActionSpec           (failedResult, okResult)
-import           Gimlight.Actor                (Actor, inventoryItems)
+import           Gimlight.Actor                (Actor)
 import qualified Gimlight.Actor                as A
+import           Gimlight.ActorSpec            (addItems)
 import           Gimlight.Coord                (Coord)
 import           Gimlight.Dungeon.Map.Cell     (CellMap, locateActorAt,
                                                 removeActorAt, removeItemAt)
 import           Gimlight.Dungeon.Map.CellSpec (emptyCellMap, locateItemsActors)
 import           Gimlight.IndexGenerator       (generator)
-import           Gimlight.Inventory            (addItem, maxSlot)
+import           Gimlight.Inventory            (maxSlot)
 import           Gimlight.Item.Defined         (herb)
 import           Gimlight.Item.SomeItem        (SomeItem)
 import qualified Gimlight.Localization.Texts   as T
@@ -80,9 +79,6 @@ result = pickUpAction playerPos mockTileCollection
 
 cellMapWith :: [(Coord, Union '[ Actor, SomeItem])] -> CellMap
 cellMapWith xs = locateItemsActors xs testMap
-
-addItems :: [SomeItem] -> Actor -> Actor
-addItems xs a = foldr (\x -> over inventoryItems (fromJust . addItem x)) a xs
 
 testMap :: CellMap
 testMap = emptyCellMap $ V2 1 1

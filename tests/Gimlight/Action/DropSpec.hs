@@ -10,8 +10,9 @@ import           Control.Monad.Trans.Writer    (writer)
 import           Data.Either.Combinators       (fromRight')
 import           Data.OpenUnion                (liftUnion)
 import           Gimlight.Action               (ActionResult (ActionResult, killed, newCellMap, status),
-                                                ActionStatus (Failed, Ok))
+                                                ActionStatus (Ok))
 import           Gimlight.Action.Drop          (dropAction)
+import           Gimlight.ActionSpec           (failedResult)
 import           Gimlight.Actor                (inventoryItems, player)
 import           Gimlight.ActorSpec            (addItems)
 import           Gimlight.Dungeon.Map.Cell     (CellMap, locateActorAt,
@@ -60,8 +61,7 @@ testItemAlreadyExists =
   where
     result = dropAction 0 (V2 0 0) mockTileCollection cm
     expected = writer (expectedResult, expectedLog)
-    expectedResult =
-        ActionResult {status = Failed, newCellMap = cm, killed = []}
+    expectedResult = failedResult cm
     expectedLog = [T.itemExists]
     cm =
         locateItemsActors
