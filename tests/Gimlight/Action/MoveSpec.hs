@@ -70,9 +70,12 @@ testMap =
         cellMap $
         array
             (V2 0 0, V2 1 1)
-            [ (V2 0 0, TileIdLayer Nothing Nothing)
-            , (V2 1 0, TileIdLayer Nothing Nothing)
+            [ (V2 0 0, emptyTile)
+            , (V2 1 0, emptyTile)
             , (V2 0 1, TileIdLayer (Just (dummyTileFile, 1)) Nothing)
-            , (V2 1 1, TileIdLayer Nothing Nothing)
+            , (V2 1 1, emptyTile)
             ]
     (o1, o2) = flip evalState generator $ (,) <$> orc <*> orc
+
+emptyTile :: TileIdLayer
+emptyTile = TileIdLayer Nothing Nothing
