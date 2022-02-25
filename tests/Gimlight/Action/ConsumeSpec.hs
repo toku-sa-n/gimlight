@@ -58,10 +58,8 @@ testConsumeHerb =
         fromRight' $
         flip execStateT cm $ do
             a <- removeActorAt playerPos
-            locateActorAt
-                mockTileCollection
-                (a & inventoryItems %~ (snd . removeNthItem 0))
-                (V2 0 0)
+            mapStateT generalize $
+                locateItemsActorsST [(playerPos, liftUnion $ removeItem 0 a)]
     cm = testMap $ liftUnion herb
 
 testEquipWeapon :: Spec
