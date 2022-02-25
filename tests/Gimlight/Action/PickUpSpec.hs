@@ -14,8 +14,9 @@ import           Data.Maybe                  (fromJust)
 import           Data.OpenUnion              (Union, liftUnion, typesExhausted,
                                               (@>))
 import           Gimlight.Action             (ActionResult (ActionResult, killed, newCellMap, status),
-                                              ActionStatus (Failed, Ok))
+                                              ActionStatus (Ok))
 import           Gimlight.Action.PickUp      (pickUpAction)
+import           Gimlight.ActionSpec         (failedResult)
 import           Gimlight.Actor              (Actor, inventoryItems)
 import qualified Gimlight.Actor              as A
 import           Gimlight.Coord              (Coord)
@@ -100,9 +101,6 @@ addItems xs a = foldr (\x -> over inventoryItems (fromJust . addItem x)) a xs
 
 okResult :: CellMap -> ActionResult
 okResult cm = ActionResult {status = Ok, newCellMap = cm, killed = []}
-
-failedResult :: CellMap -> ActionResult
-failedResult cm = ActionResult {status = Failed, newCellMap = cm, killed = []}
 
 emptyCellMap :: CellMap
 emptyCellMap =

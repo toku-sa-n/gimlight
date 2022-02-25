@@ -8,8 +8,9 @@ import           Data.Array                  (array)
 import           Data.Either.Combinators     (fromRight')
 import           Gimlight.Action             (ActionResult (ActionResult, killed, newCellMap, status),
                                               ActionResultWithLog,
-                                              ActionStatus (Failed, Ok))
+                                              ActionStatus (Ok))
 import           Gimlight.Action.Move        (moveAction)
+import           Gimlight.ActionSpec         (failedResult)
 import           Gimlight.Actor.Monsters     (orc)
 import           Gimlight.Dungeon.Map.Cell   (CellMap,
                                               TileIdLayer (TileIdLayer),
@@ -58,7 +59,7 @@ succeed offset = writer (result, [])
 failed :: ActionResultWithLog
 failed = writer (result, l)
   where
-    result = ActionResult {status = Failed, newCellMap = testMap, killed = []}
+    result = failedResult testMap
     l = [T.youCannotMoveThere]
 
 resultWhenMoveOffsetTo :: V2 Int -> ActionResultWithLog
