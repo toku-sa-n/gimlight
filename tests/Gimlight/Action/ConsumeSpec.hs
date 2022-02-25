@@ -11,7 +11,7 @@ import           Data.Either.Combinators       (fromRight')
 import           Data.Maybe                    (fromJust)
 import           Data.OpenUnion                (liftUnion)
 import           Gimlight.Action               (ActionResult (ActionResult, killed, newCellMap, status),
-                                                ActionStatus (Ok, ReadingStarted))
+                                                ActionStatus (ReadingStarted))
 import           Gimlight.Action.Consume       (consumeAction)
 import           Gimlight.ActionSpec           (okResult)
 import           Gimlight.Actor                (equip, inventoryItems, player)
@@ -80,9 +80,7 @@ testEquipWeapon =
   where
     result = consumeAction 0 orcWithSwordPosition mockTileCollection initCellMap
     expected = writer (expectedResult, expectedLog)
-    expectedResult =
-        ActionResult
-            {status = Ok, newCellMap = cellMapAfterEquipping, killed = []}
+    expectedResult = okResult cellMapAfterEquipping
     expectedLog = [T.equipped T.orc T.sword]
     cellMapAfterEquipping =
         fromRight' $
