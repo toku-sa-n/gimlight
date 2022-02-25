@@ -2,23 +2,25 @@ module Gimlight.Action.MoveSpec
     ( spec
     ) where
 
-import           Control.Monad.State         (evalState, execStateT)
-import           Control.Monad.Writer        (writer)
-import           Data.Array                  (array)
-import           Data.Either.Combinators     (fromRight')
-import           Gimlight.Action             (ActionResultWithLog)
-import           Gimlight.Action.Move        (moveAction)
-import           Gimlight.ActionSpec         (failedResult, okResult)
-import           Gimlight.Actor.Monsters     (orc)
-import           Gimlight.Dungeon.Map.Cell   (CellMap,
-                                              TileIdLayer (TileIdLayer),
-                                              cellMap, locateActorAt,
-                                              removeActorAt)
-import           Gimlight.IndexGenerator     (generator)
-import qualified Gimlight.Localization.Texts as T
-import           Gimlight.SetUp.CellMap      (dummyTileFile, initTileCollection)
-import           Linear.V2                   (V2 (V2))
-import           Test.Hspec                  (Spec, it, shouldBe)
+import           Control.Monad.State           (evalState, execStateT)
+import           Control.Monad.Writer          (writer)
+import           Data.Array                    (array)
+import           Data.Either.Combinators       (fromRight')
+import           Gimlight.Action               (ActionResultWithLog)
+import           Gimlight.Action.Move          (moveAction)
+import           Gimlight.ActionSpec           (failedResult, okResult)
+import           Gimlight.Actor.Monsters       (orc)
+import           Gimlight.Dungeon.Map.Cell     (CellMap,
+                                                TileIdLayer (TileIdLayer),
+                                                cellMap, locateActorAt,
+                                                removeActorAt)
+import           Gimlight.Dungeon.Map.CellSpec (emptyTile)
+import           Gimlight.IndexGenerator       (generator)
+import qualified Gimlight.Localization.Texts   as T
+import           Gimlight.SetUp.CellMap        (dummyTileFile,
+                                                initTileCollection)
+import           Linear.V2                     (V2 (V2))
+import           Test.Hspec                    (Spec, it, shouldBe)
 
 spec :: Spec
 spec = do
@@ -76,6 +78,3 @@ testMap =
             , (V2 1 1, emptyTile)
             ]
     (o1, o2) = flip evalState generator $ (,) <$> orc <*> orc
-
-emptyTile :: TileIdLayer
-emptyTile = TileIdLayer Nothing Nothing

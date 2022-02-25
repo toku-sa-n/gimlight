@@ -5,32 +5,31 @@ module Gimlight.Action.PickUpSpec
     ( spec
     ) where
 
-import           Control.Lens                (over)
-import           Control.Monad.State         (evalState, execStateT)
-import           Control.Monad.Writer        (writer)
-import           Data.Array                  (array)
-import           Data.Either.Combinators     (fromRight')
-import           Data.Maybe                  (fromJust)
-import           Data.OpenUnion              (Union, liftUnion, typesExhausted,
-                                              (@>))
-import           Gimlight.Action.PickUp      (pickUpAction)
-import           Gimlight.ActionSpec         (failedResult, okResult)
-import           Gimlight.Actor              (Actor, inventoryItems)
-import qualified Gimlight.Actor              as A
-import           Gimlight.Coord              (Coord)
-import           Gimlight.Dungeon.Map.Cell   (CellMap,
-                                              TileIdLayer (TileIdLayer),
-                                              cellMap, locateActorAt,
-                                              locateItemAt, removeActorAt,
-                                              removeItemAt)
-import           Gimlight.IndexGenerator     (generator)
-import           Gimlight.Inventory          (addItem, maxSlot)
-import           Gimlight.Item.Defined       (herb)
-import           Gimlight.Item.SomeItem      (SomeItem)
-import qualified Gimlight.Localization.Texts as T
-import           Gimlight.SetUp.CellMap      (initTileCollection)
-import           Linear                      (V2 (V2))
-import           Test.Hspec                  (Spec, it, shouldBe)
+import           Control.Lens                  (over)
+import           Control.Monad.State           (evalState, execStateT)
+import           Control.Monad.Writer          (writer)
+import           Data.Array                    (array)
+import           Data.Either.Combinators       (fromRight')
+import           Data.Maybe                    (fromJust)
+import           Data.OpenUnion                (Union, liftUnion,
+                                                typesExhausted, (@>))
+import           Gimlight.Action.PickUp        (pickUpAction)
+import           Gimlight.ActionSpec           (failedResult, okResult)
+import           Gimlight.Actor                (Actor, inventoryItems)
+import qualified Gimlight.Actor                as A
+import           Gimlight.Coord                (Coord)
+import           Gimlight.Dungeon.Map.Cell     (CellMap, cellMap, locateActorAt,
+                                                locateItemAt, removeActorAt,
+                                                removeItemAt)
+import           Gimlight.Dungeon.Map.CellSpec (emptyTile)
+import           Gimlight.IndexGenerator       (generator)
+import           Gimlight.Inventory            (addItem, maxSlot)
+import           Gimlight.Item.Defined         (herb)
+import           Gimlight.Item.SomeItem        (SomeItem)
+import qualified Gimlight.Localization.Texts   as T
+import           Gimlight.SetUp.CellMap        (initTileCollection)
+import           Linear                        (V2 (V2))
+import           Test.Hspec                    (Spec, it, shouldBe)
 
 spec :: Spec
 spec = do
@@ -98,8 +97,7 @@ addItems :: [SomeItem] -> Actor -> Actor
 addItems xs a = foldr (\x -> over inventoryItems (fromJust . addItem x)) a xs
 
 emptyCellMap :: CellMap
-emptyCellMap =
-    cellMap $ array (V2 0 0, V2 0 0) [(V2 0 0, TileIdLayer Nothing Nothing)]
+emptyCellMap = cellMap $ array (V2 0 0, V2 0 0) [(V2 0 0, emptyTile)]
 
 player :: Actor
 player = evalState A.player generator
