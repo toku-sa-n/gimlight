@@ -56,9 +56,7 @@ testConsumeHerb =
   where
     result = consumeAction 0 orcWithHerbPosition mockTileCollection initCellMap
     expected = writer (expectedResult, expectedLog)
-    expectedResult =
-        ActionResult
-            {status = Ok, newCellMap = cellMapAfterConsuming, killed = []}
+    expectedResult = okResult cellMapAfterConsuming
     expectedLog = [T.healed T.orc $ getHealAmount herb]
     cellMapAfterConsuming =
         fromRight' $
