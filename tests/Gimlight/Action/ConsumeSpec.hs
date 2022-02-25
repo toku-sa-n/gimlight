@@ -61,9 +61,8 @@ testEquipWeapon =
     it "returns a Ok result if an actor equips a weapon" $
     result cm `shouldBe` expected
   where
-    expected =
-        writer (okResult cellMapAfterEquipping, [T.equipped T.player T.sword])
-    cellMapAfterEquipping =
+    expected = writer (okResult cmAfter, [T.equipped T.player T.sword])
+    cmAfter =
         fromRight' $
         flip execStateT cm $ do
             a <- removeActorAt playerPos
