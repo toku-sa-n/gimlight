@@ -9,10 +9,8 @@ import           Control.Monad.State           (evalState, execStateT)
 import           Control.Monad.Trans.Writer    (writer)
 import           Data.Either.Combinators       (fromRight')
 import           Data.OpenUnion                (liftUnion)
-import           Gimlight.Action               (ActionResult (ActionResult, killed, newCellMap, status),
-                                                ActionStatus (Ok))
 import           Gimlight.Action.Drop          (dropAction)
-import           Gimlight.ActionSpec           (failedResult)
+import           Gimlight.ActionSpec           (failedResult, okResult)
 import           Gimlight.Actor                (inventoryItems, player)
 import           Gimlight.ActorSpec            (addItems)
 import           Gimlight.Dungeon.Map.Cell     (CellMap, locateActorAt,
@@ -40,9 +38,7 @@ testDropItemSuccessfully =
   where
     result = dropAction 0 (V2 0 0) mockTileCollection testMap
     expected = writer (expectedResult, expectedLog)
-    expectedResult =
-        ActionResult
-            {status = Ok, newCellMap = cellMapAfterDropping, killed = []}
+    expectedResult = okResult cellMapAfterDropping
     cellMapAfterDropping =
         fromRight' $
         flip execStateT testMap $ do
