@@ -56,9 +56,7 @@ testItemAlreadyExists =
     result `shouldBe` expected
   where
     result = dropAction 0 (V2 0 0) mockTileCollection cm
-    expected = writer (expectedResult, expectedLog)
-    expectedResult = failedResult cm
-    expectedLog = [T.itemExists]
+    expected = writer (failedResult cm, [T.itemExists])
     cm =
         locateItemsActors
             [(V2 0 0, liftUnion (liftUnion herb :: SomeItem))]
