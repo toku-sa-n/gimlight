@@ -28,7 +28,6 @@ import           Gimlight.Item.Heal            (getHealAmount)
 import qualified Gimlight.Localization.Texts   as T
 import           Gimlight.SetUp.CellMap        (initCellMap, mockTileCollection,
                                                 orcWithHerbPosition,
-                                                orcWithSwordPosition,
                                                 playerPosition)
 import           Linear                        (V2 (V2))
 import           Test.Hspec                    (Spec, it, shouldBe)
@@ -78,18 +77,20 @@ testEquipWeapon =
     it "returns a Ok result if an actor equips a weapon" $
     result `shouldBe` expected
   where
-    result = consumeAction 0 orcWithSwordPosition mockTileCollection initCellMap
+    result = consumeAction 0 (V2 0 0) mockTileCollection cm
     expected =
-        writer (okResult cellMapAfterEquipping, [T.equipped T.orc T.sword])
+        writer (okResult cellMapAfterEquipping, [T.equipped T.player T.sword])
     cellMapAfterEquipping =
         fromRight' $
-        flip execStateT initCellMap $ do
-            a <- removeActorAt orcWithSwordPosition
+        flip execStateT cm $ do
+            a <- removeActorAt (V2 0 0)
             locateActorAt
                 mockTileCollection
                 (fromJust (equip (liftUnion sword) a) &
                  inventoryItems %~ (snd . removeNthItem 0))
-                orcWithSwordPosition
+                (V2 0 0)
+    cm = locateItemsActors [(V2 0 0, liftUnion p)] $emptyCellMap $ V2 1 1
+    p = addItems [liftUnion sword] $ evalState player generator
 
 testEquipArmor :: Spec
 testEquipArmor =
