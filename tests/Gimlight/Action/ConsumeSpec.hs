@@ -29,7 +29,7 @@ import           Gimlight.Item.Defined         (herb, sampleBook, sword,
 import           Gimlight.Item.Heal            (getHealAmount)
 import           Gimlight.Item.SomeItem        (SomeItem)
 import qualified Gimlight.Localization.Texts   as T
-import           Gimlight.SetUp.CellMap        (initCellMap, mockTileCollection,
+import           Gimlight.SetUp.CellMap        (mockTileCollection,
                                                 playerPosition)
 import           Linear                        (V2 (V2))
 import           Test.Hspec                    (Spec, it, shouldBe)
@@ -46,15 +46,16 @@ testStartReadingBook =
     it "returns a ReadingStarted result if an actor uses a book" $
     result `shouldBe` expected
   where
-    result = consumeAction 0 playerPosition mockTileCollection initCellMap
+    result = consumeAction 0 playerPosition mockTileCollection cm
     expected = writer (expectedResult, expectedLog)
     expectedResult =
         ActionResult
             { status = ReadingStarted $ getEffect sampleBook
-            , newCellMap = initCellMap
+            , newCellMap = cm
             , killed = []
             }
     expectedLog = []
+    cm = testMap $ liftUnion sampleBook
 
 testConsumeHerb :: Spec
 testConsumeHerb =
