@@ -2,30 +2,36 @@ module Gimlight.Action.ConsumeSpec
     ( spec
     ) where
 
-import           Control.Lens                ((%~), (&))
-import           Control.Monad.State         (execStateT)
-import           Control.Monad.Writer        (writer)
-import           Data.Either.Combinators     (fromRight')
-import           Data.Maybe                  (fromJust)
-import           Data.OpenUnion              (liftUnion)
-import           Gimlight.Action             (ActionResult (ActionResult, killed, newCellMap, status),
-                                              ActionStatus (Ok, ReadingStarted))
-import           Gimlight.Action.Consume     (consumeAction)
-import           Gimlight.ActionSpec         (okResult)
-import           Gimlight.Actor              (equip, inventoryItems)
-import           Gimlight.Dungeon.Map.Cell   (locateActorAt, removeActorAt)
-import           Gimlight.Inventory          (removeNthItem)
-import           Gimlight.Item               (getEffect)
-import           Gimlight.Item.Defined       (herb, sampleBook, sword,
-                                              woodenArmor)
-import           Gimlight.Item.Heal          (getHealAmount)
-import qualified Gimlight.Localization.Texts as T
-import           Gimlight.SetUp.CellMap      (initCellMap, mockTileCollection,
-                                              orcWithArmorPosition,
-                                              orcWithHerbPosition,
-                                              orcWithSwordPosition,
-                                              playerPosition)
-import           Test.Hspec                  (Spec, it, shouldBe)
+import           Control.Lens                  ((%~), (&))
+import           Control.Monad.Morph           (generalize)
+import           Control.Monad.State           (evalState, execStateT,
+                                                mapStateT)
+import           Control.Monad.Writer          (writer)
+import           Data.Either.Combinators       (fromRight')
+import           Data.Maybe                    (fromJust)
+import           Data.OpenUnion                (liftUnion)
+import           Gimlight.Action               (ActionResult (ActionResult, killed, newCellMap, status),
+                                                ActionStatus (Ok, ReadingStarted))
+import           Gimlight.Action.Consume       (consumeAction)
+import           Gimlight.ActionSpec           (okResult)
+import           Gimlight.Actor                (equip, inventoryItems, player)
+import           Gimlight.ActorSpec            (addItems, removeItem)
+import           Gimlight.Dungeon.Map.Cell     (locateActorAt, removeActorAt)
+import           Gimlight.Dungeon.Map.CellSpec (emptyCellMap, locateItemsActors,
+                                                locateItemsActorsST)
+import           Gimlight.IndexGenerator       (generator)
+import           Gimlight.Inventory            (removeNthItem)
+import           Gimlight.Item                 (getEffect)
+import           Gimlight.Item.Defined         (herb, sampleBook, sword,
+                                                woodenArmor)
+import           Gimlight.Item.Heal            (getHealAmount)
+import qualified Gimlight.Localization.Texts   as T
+import           Gimlight.SetUp.CellMap        (initCellMap, mockTileCollection,
+                                                orcWithHerbPosition,
+                                                orcWithSwordPosition,
+                                                playerPosition)
+import           Linear                        (V2 (V2))
+import           Test.Hspec                    (Spec, it, shouldBe)
 
 spec :: Spec
 spec = do
@@ -93,16 +99,20 @@ testEquipArmor =
     it "returns a Ok result if an actor equips a weapon" $
     result `shouldBe` expected
   where
-    result = consumeAction 0 orcWithArmorPosition mockTileCollection initCellMap
+    result = consumeAction 0 (V2 0 0) mockTileCollection cm
     expected = writer (expectedResult, expectedLog)
     expectedResult = okResult cellMapAfterEquipping
-    expectedLog = [T.equipped T.orc T.woodenArmor]
+    expectedLog = [T.equipped T.player T.woodenArmor]
     cellMapAfterEquipping =
         fromRight' $
-        flip execStateT initCellMap $ do
-            a <- removeActorAt orcWithArmorPosition
-            locateActorAt
-                mockTileCollection
-                (fromJust (equip (liftUnion woodenArmor) a) &
-                 inventoryItems %~ (snd . removeNthItem 0))
-                orcWithArmorPosition
+        flip execStateT cm $ do
+            a <- removeActorAt (V2 0 0)
+            mapStateT generalize $
+                locateItemsActorsST
+                    [ ( V2 0 0
+                      , liftUnion
+                            (removeItem 0 $
+                             fromJust $ equip (liftUnion woodenArmor) a))
+                    ]
+    cm = locateItemsActors [(V2 0 0, liftUnion p)] $ emptyCellMap $ V2 1 1
+    p = addItems [liftUnion woodenArmor] $ evalState player generator
