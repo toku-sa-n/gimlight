@@ -12,6 +12,7 @@ module Gimlight.SetUp.CellMap
     , orcWithHerbPosition
     , orcWithSwordPosition
     , orcWithArmorPosition
+    , dummyTileFile
     ) where
 
 import           Codec.Picture             (PixelRGBA8 (PixelRGBA8),
