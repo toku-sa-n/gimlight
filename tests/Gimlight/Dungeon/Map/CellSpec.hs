@@ -5,9 +5,11 @@ module Gimlight.Dungeon.Map.CellSpec
     ( emptyTile
     , emptyCellMap
     , locateItemsActors
+    , locateItemsActorsST
     ) where
 
-import           Control.Monad.State       (execStateT)
+import           Control.Monad.State       (MonadState (get, put), State,
+                                            execStateT)
 import           Data.Array                (listArray)
 import           Data.Either.Combinators   (fromRight')
 import           Data.OpenUnion            (Union, typesExhausted, (@>))
@@ -37,3 +39,9 @@ locateItemsActors xs cm = foldl helper cm xs
     actorFunc = apply locateActorAt
     itemFunc = apply locateItemAt
     apply f pos x = f mockTileCollection x pos
+
+locateItemsActorsST :: [(Coord, Union '[ Actor, SomeItem])] -> State CellMap ()
+locateItemsActorsST xs = do
+    cm <- get
+    let cm' = locateItemsActors xs cm
+    put cm'

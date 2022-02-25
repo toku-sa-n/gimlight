@@ -5,7 +5,9 @@ module Gimlight.Action.DropSpec
     ) where
 
 import           Control.Lens                  ((%~), (&))
-import           Control.Monad.State           (evalState, execStateT)
+import           Control.Monad.Morph           (generalize)
+import           Control.Monad.State           (evalState, execStateT,
+                                                mapStateT)
 import           Control.Monad.Trans.Writer    (writer)
 import           Data.Either.Combinators       (fromRight')
 import           Data.OpenUnion                (liftUnion)
@@ -13,9 +15,9 @@ import           Gimlight.Action.Drop          (dropAction)
 import           Gimlight.ActionSpec           (failedResult, okResult)
 import           Gimlight.Actor                (inventoryItems, player)
 import           Gimlight.ActorSpec            (addItems)
-import           Gimlight.Dungeon.Map.Cell     (CellMap, locateActorAt,
-                                                locateItemAt, removeActorAt)
-import           Gimlight.Dungeon.Map.CellSpec (emptyCellMap, locateItemsActors)
+import           Gimlight.Dungeon.Map.Cell     (CellMap, removeActorAt)
+import           Gimlight.Dungeon.Map.CellSpec (emptyCellMap, locateItemsActors,
+                                                locateItemsActorsST)
 import           Gimlight.IndexGenerator       (generator)
 import           Gimlight.Inventory            (removeNthItem)
 import           Gimlight.Item.Defined         (herb)
@@ -41,11 +43,13 @@ testDropItemSuccessfully =
         fromRight' $
         flip execStateT testMap $ do
             a <- removeActorAt (V2 0 0)
-            locateActorAt
-                mockTileCollection
-                (a & inventoryItems %~ (snd . removeNthItem 0))
-                (V2 0 0)
-            locateItemAt mockTileCollection (liftUnion herb) (V2 0 0)
+            mapStateT generalize $
+                locateItemsActorsST
+                    [ ( V2 0 0
+                      , liftUnion $
+                        a & inventoryItems %~ (snd . removeNthItem 0))
+                    , (V2 0 0, liftUnion (liftUnion herb :: SomeItem))
+                    ]
 
 testItemAlreadyExists :: Spec
 testItemAlreadyExists =
