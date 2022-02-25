@@ -6,6 +6,7 @@ import           Control.Lens                  (ix, (&), (.~))
 import           Control.Monad.State           (evalState, execStateT)
 import           Control.Monad.Writer          (writer)
 import           Data.Either.Combinators       (fromRight')
+import           Data.OpenUnion                (liftUnion)
 import           Gimlight.Action               (ActionResultWithLog)
 import           Gimlight.Action.Move          (moveAction)
 import           Gimlight.ActionSpec           (failedResult, okResult)
@@ -14,7 +15,7 @@ import           Gimlight.Dungeon.Map.Cell     (CellMap,
                                                 TileIdLayer (TileIdLayer),
                                                 locateActorAt, removeActorAt,
                                                 tileIdLayer)
-import           Gimlight.Dungeon.Map.CellSpec (emptyCellMap)
+import           Gimlight.Dungeon.Map.CellSpec (emptyCellMap, locateItemsActors)
 import           Gimlight.IndexGenerator       (generator)
 import qualified Gimlight.Localization.Texts   as T
 import           Gimlight.SetUp.CellMap        (dummyTileFile,
@@ -64,10 +65,7 @@ resultWhenMoveOffsetTo offset =
     moveAction offset (V2 0 0) mockTileCollection testMap
 
 testMap :: CellMap
-testMap =
-    fromRight' $ flip execStateT cm $ do
-        locateActorAt mockTileCollection o1 (V2 0 0)
-        locateActorAt mockTileCollection o2 (V2 1 0)
+testMap = locateItemsActors [(V2 0 0, liftUnion o1), (V2 1 0, liftUnion o2)] cm
   where
     cm =
         emptyCellMap (V2 2 2) & ix (V2 0 1) . tileIdLayer .~

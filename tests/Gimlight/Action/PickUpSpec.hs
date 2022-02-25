@@ -10,8 +10,7 @@ import           Control.Monad.State           (evalState, execStateT)
 import           Control.Monad.Writer          (writer)
 import           Data.Either.Combinators       (fromRight')
 import           Data.Maybe                    (fromJust)
-import           Data.OpenUnion                (Union, liftUnion,
-                                                typesExhausted, (@>))
+import           Data.OpenUnion                (Union, liftUnion)
 import           Gimlight.Action               (ActionResultWithLog)
 import           Gimlight.Action.PickUp        (pickUpAction)
 import           Gimlight.ActionSpec           (failedResult, okResult)
@@ -19,9 +18,8 @@ import           Gimlight.Actor                (Actor, inventoryItems)
 import qualified Gimlight.Actor                as A
 import           Gimlight.Coord                (Coord)
 import           Gimlight.Dungeon.Map.Cell     (CellMap, locateActorAt,
-                                                locateItemAt, removeActorAt,
-                                                removeItemAt)
-import           Gimlight.Dungeon.Map.CellSpec (emptyCellMap)
+                                                removeActorAt, removeItemAt)
+import           Gimlight.Dungeon.Map.CellSpec (emptyCellMap, locateItemsActors)
 import           Gimlight.IndexGenerator       (generator)
 import           Gimlight.Inventory            (addItem, maxSlot)
 import           Gimlight.Item.Defined         (herb)
@@ -82,17 +80,6 @@ result = pickUpAction playerPos mockTileCollection
 
 cellMapWith :: [(Coord, Union '[ Actor, SomeItem])] -> CellMap
 cellMapWith xs = locateItemsActors xs testMap
-
-locateItemsActors :: [(Coord, Union '[ Actor, SomeItem])] -> CellMap -> CellMap
-locateItemsActors xs cm = foldl helper cm xs
-  where
-    helper ncm (pos, x) =
-        fromRight' $
-        flip execStateT ncm $
-        (itemFunc pos @> actorFunc pos @> typesExhausted) x
-    actorFunc = apply locateActorAt
-    itemFunc = apply locateItemAt
-    apply f pos x = f mockTileCollection x pos
 
 addItems :: [SomeItem] -> Actor -> Actor
 addItems xs a = foldr (\x -> over inventoryItems (fromJust . addItem x)) a xs
