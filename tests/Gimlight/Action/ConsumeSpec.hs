@@ -89,7 +89,7 @@ testEquipWeapon =
                 (fromJust (equip (liftUnion sword) a) &
                  inventoryItems %~ (snd . removeNthItem 0))
                 (V2 0 0)
-    cm = locateItemsActors [(V2 0 0, liftUnion p)] $emptyCellMap $ V2 1 1
+    cm = locateItemsActors [(V2 0 0, liftUnion p)] $ emptyCellMap $ V2 1 1
     p = addItems [liftUnion sword] $ evalState player generator
 
 testEquipArmor :: Spec
