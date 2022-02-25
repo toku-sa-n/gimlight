@@ -91,8 +91,9 @@ locateItemsActors xs cm = foldl helper cm xs
         fromRight' $
         flip execStateT ncm $
         (itemFunc pos @> actorFunc pos @> typesExhausted) x
-    actorFunc pos x = locateActorAt initTileCollection x pos
-    itemFunc pos x = locateItemAt initTileCollection x pos
+    actorFunc = apply locateActorAt
+    itemFunc = apply locateItemAt
+    apply f pos x = f initTileCollection x pos
 
 addItems :: [SomeItem] -> Actor -> Actor
 addItems xs a = foldr (\x -> over inventoryItems (fromJust . addItem x)) a xs
