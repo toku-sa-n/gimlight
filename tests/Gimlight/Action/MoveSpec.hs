@@ -18,7 +18,7 @@ import           Gimlight.Dungeon.Map.CellSpec (emptyCellMap)
 import           Gimlight.IndexGenerator       (generator)
 import qualified Gimlight.Localization.Texts   as T
 import           Gimlight.SetUp.CellMap        (dummyTileFile,
-                                                initTileCollection)
+                                                mockTileCollection)
 import           Linear.V2                     (V2 (V2))
 import           Test.Hspec                    (Spec, it, shouldBe)
 
@@ -54,20 +54,20 @@ succeed offset = writer (okResult cellMapWithPlayer, [])
     cellMapWithPlayer =
         fromRight' $ flip execStateT testMap $ do
             a <- removeActorAt (V2 0 0)
-            locateActorAt initTileCollection a (V2 0 0 + offset)
+            locateActorAt mockTileCollection a (V2 0 0 + offset)
 
 failed :: ActionResultWithLog
 failed = writer (failedResult testMap, [T.youCannotMoveThere])
 
 resultWhenMoveOffsetTo :: V2 Int -> ActionResultWithLog
 resultWhenMoveOffsetTo offset =
-    moveAction offset (V2 0 0) initTileCollection testMap
+    moveAction offset (V2 0 0) mockTileCollection testMap
 
 testMap :: CellMap
 testMap =
     fromRight' $ flip execStateT cm $ do
-        locateActorAt initTileCollection o1 (V2 0 0)
-        locateActorAt initTileCollection o2 (V2 1 0)
+        locateActorAt mockTileCollection o1 (V2 0 0)
+        locateActorAt mockTileCollection o2 (V2 1 0)
   where
     cm =
         emptyCellMap (V2 2 2) & ix (V2 0 1) . tileIdLayer .~

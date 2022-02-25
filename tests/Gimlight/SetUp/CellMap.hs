@@ -2,7 +2,7 @@
 
 module Gimlight.SetUp.CellMap
     ( initCellMap
-    , initTileCollection
+    , mockTileCollection
     , playerPosition
     , orcWithoutItemsPosition
     , orcWithFullItemsPosition
@@ -47,10 +47,10 @@ initCellMap =
     expectRight "Failed to set up the test environment." $
     flip execStateT emptyMap $ do
         mapM_
-            (locateItemAt initTileCollection (liftUnion herb))
+            (locateItemAt mockTileCollection (liftUnion herb))
             [playerPosition, orcWithFullItemsPosition]
         mapM_
-            (uncurry (locateActorAt initTileCollection))
+            (uncurry (locateActorAt mockTileCollection))
             [ (p, playerPosition)
             , (orcWithoutItems, orcWithoutItemsPosition)
             , (orcWithFullItems, orcWithFullItemsPosition)
@@ -85,8 +85,8 @@ initCellMap =
     mapWidth = 3
     mapHeight = 4
 
-initTileCollection :: TileCollection
-initTileCollection =
+mockTileCollection :: TileCollection
+mockTileCollection =
     fromList
         [ ((dummyTileFile, 0), tile True True emptyImage)
         , ((dummyTileFile, 1), tile False True emptyImage)

@@ -19,7 +19,7 @@ import           Gimlight.Inventory          (removeNthItem)
 import           Gimlight.Item               (getName)
 import           Gimlight.Item.Defined       (herb)
 import qualified Gimlight.Localization.Texts as T
-import           Gimlight.SetUp.CellMap      (initCellMap, initTileCollection,
+import           Gimlight.SetUp.CellMap      (initCellMap, mockTileCollection,
                                               orcWithFullItemsPosition,
                                               orcWithHerbPosition)
 import           Test.Hspec                  (Spec, it, shouldBe)
@@ -34,7 +34,7 @@ testDropItemSuccessfully =
     it "returns a Ok result if there is no item at the player's foot." $
     result `shouldBe` expected
   where
-    result = dropAction 0 orcWithHerbPosition initTileCollection initCellMap
+    result = dropAction 0 orcWithHerbPosition mockTileCollection initCellMap
     expected = writer (expectedResult, expectedLog)
     expectedResult =
         ActionResult
@@ -44,10 +44,10 @@ testDropItemSuccessfully =
         flip execStateT initCellMap $ do
             a <- removeActorAt orcWithHerbPosition
             locateActorAt
-                initTileCollection
+                mockTileCollection
                 (a & inventoryItems %~ (snd . removeNthItem 0))
                 orcWithHerbPosition
-            locateItemAt initTileCollection (liftUnion herb) orcWithHerbPosition
+            locateItemAt mockTileCollection (liftUnion herb) orcWithHerbPosition
     expectedLog = [T.youDropped $ getName herb]
 
 testItemAlreadyExists :: Spec
@@ -56,7 +56,7 @@ testItemAlreadyExists =
     result `shouldBe` expected
   where
     result =
-        dropAction 0 orcWithFullItemsPosition initTileCollection initCellMap
+        dropAction 0 orcWithFullItemsPosition mockTileCollection initCellMap
     expected = writer (expectedResult, expectedLog)
     expectedResult =
         ActionResult {status = Failed, newCellMap = initCellMap, killed = []}

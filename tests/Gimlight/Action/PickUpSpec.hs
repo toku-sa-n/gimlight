@@ -27,7 +27,7 @@ import           Gimlight.Inventory            (addItem, maxSlot)
 import           Gimlight.Item.Defined         (herb)
 import           Gimlight.Item.SomeItem        (SomeItem)
 import qualified Gimlight.Localization.Texts   as T
-import           Gimlight.SetUp.CellMap        (initTileCollection)
+import           Gimlight.SetUp.CellMap        (mockTileCollection)
 import           Linear                        (V2 (V2))
 import           Test.Hspec                    (Spec, it, shouldBe)
 
@@ -48,7 +48,7 @@ testPickUpSuccess =
         flip execStateT cm $ do
             _ <- removeItemAt playerPos
             _ <- removeActorAt playerPos
-            locateActorAt initTileCollection actorWithItem playerPos
+            locateActorAt mockTileCollection actorWithItem playerPos
     actorWithItem = addItems [liftUnion herb] player
     cm =
         cellMapWith
@@ -78,7 +78,7 @@ testPickUpWhenInventoryIsFull =
     items = replicate maxSlot $ liftUnion herb
 
 result :: CellMap -> ActionResultWithLog
-result = pickUpAction playerPos initTileCollection
+result = pickUpAction playerPos mockTileCollection
 
 cellMapWith :: [(Coord, Union '[ Actor, SomeItem])] -> CellMap
 cellMapWith xs = locateItemsActors xs testMap
@@ -92,7 +92,7 @@ locateItemsActors xs cm = foldl helper cm xs
         (itemFunc pos @> actorFunc pos @> typesExhausted) x
     actorFunc = apply locateActorAt
     itemFunc = apply locateItemAt
-    apply f pos x = f initTileCollection x pos
+    apply f pos x = f mockTileCollection x pos
 
 addItems :: [SomeItem] -> Actor -> Actor
 addItems xs a = foldr (\x -> over inventoryItems (fromJust . addItem x)) a xs

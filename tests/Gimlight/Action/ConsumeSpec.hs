@@ -19,7 +19,7 @@ import           Gimlight.Item.Defined       (herb, sampleBook, sword,
                                               woodenArmor)
 import           Gimlight.Item.Heal          (getHealAmount)
 import qualified Gimlight.Localization.Texts as T
-import           Gimlight.SetUp.CellMap      (initCellMap, initTileCollection,
+import           Gimlight.SetUp.CellMap      (initCellMap, mockTileCollection,
                                               orcWithArmorPosition,
                                               orcWithHerbPosition,
                                               orcWithSwordPosition,
@@ -38,7 +38,7 @@ testStartReadingBook =
     it "returns a ReadingStarted result if an actor uses a book" $
     result `shouldBe` expected
   where
-    result = consumeAction 0 playerPosition initTileCollection initCellMap
+    result = consumeAction 0 playerPosition mockTileCollection initCellMap
     expected = writer (expectedResult, expectedLog)
     expectedResult =
         ActionResult
@@ -53,7 +53,7 @@ testConsumeHerb =
     it "returns a Ok result if an actor uses a herb" $
     result `shouldBe` expected
   where
-    result = consumeAction 0 orcWithHerbPosition initTileCollection initCellMap
+    result = consumeAction 0 orcWithHerbPosition mockTileCollection initCellMap
     expected = writer (expectedResult, expectedLog)
     expectedResult =
         ActionResult
@@ -64,7 +64,7 @@ testConsumeHerb =
         flip execStateT initCellMap $ do
             a <- removeActorAt orcWithHerbPosition
             locateActorAt
-                initTileCollection
+                mockTileCollection
                 (a & inventoryItems %~ (snd . removeNthItem 0))
                 orcWithHerbPosition
 
@@ -73,7 +73,7 @@ testEquipWeapon =
     it "returns a Ok result if an actor equips a weapon" $
     result `shouldBe` expected
   where
-    result = consumeAction 0 orcWithSwordPosition initTileCollection initCellMap
+    result = consumeAction 0 orcWithSwordPosition mockTileCollection initCellMap
     expected = writer (expectedResult, expectedLog)
     expectedResult =
         ActionResult
@@ -84,7 +84,7 @@ testEquipWeapon =
         flip execStateT initCellMap $ do
             a <- removeActorAt orcWithSwordPosition
             locateActorAt
-                initTileCollection
+                mockTileCollection
                 (fromJust (equip (liftUnion sword) a) &
                  inventoryItems %~ (snd . removeNthItem 0))
                 orcWithSwordPosition
@@ -94,7 +94,7 @@ testEquipArmor =
     it "returns a Ok result if an actor equips a weapon" $
     result `shouldBe` expected
   where
-    result = consumeAction 0 orcWithArmorPosition initTileCollection initCellMap
+    result = consumeAction 0 orcWithArmorPosition mockTileCollection initCellMap
     expected = writer (expectedResult, expectedLog)
     expectedResult =
         ActionResult
@@ -105,7 +105,7 @@ testEquipArmor =
         flip execStateT initCellMap $ do
             a <- removeActorAt orcWithArmorPosition
             locateActorAt
-                initTileCollection
+                mockTileCollection
                 (fromJust (equip (liftUnion woodenArmor) a) &
                  inventoryItems %~ (snd . removeNthItem 0))
                 orcWithArmorPosition

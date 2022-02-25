@@ -14,7 +14,7 @@ import           Gimlight.Action           (ActionResult (ActionResult, killed, 
 import           Gimlight.Action.Melee     (meleeAction)
 import           Gimlight.Actor            (attackFromTo)
 import           Gimlight.Dungeon.Map.Cell (locateActorAt, removeActorAt)
-import           Gimlight.SetUp.CellMap    (initCellMap, initTileCollection,
+import           Gimlight.SetUp.CellMap    (initCellMap, mockTileCollection,
                                             intermediateOrcPosition,
                                             strongestOrcPosition,
                                             weakestOrcPosition)
@@ -32,7 +32,7 @@ testKill =
         it "returns a Nothing defender" $ newDefender `shouldBe` Nothing
   where
     result =
-        meleeAction offset strongestOrcPosition initTileCollection initCellMap
+        meleeAction offset strongestOrcPosition mockTileCollection initCellMap
     expected = writer (expectedResult, expectedLog)
     expectedResult =
         ActionResult
@@ -55,7 +55,7 @@ testDamage =
     it "attacks to the intermediate orc" $ result `shouldBe` expected
   where
     result =
-        meleeAction offset strongestOrcPosition initTileCollection initCellMap
+        meleeAction offset strongestOrcPosition mockTileCollection initCellMap
     expected = writer (expectedResult, expectedLog)
     expectedResult =
         ActionResult
@@ -64,7 +64,7 @@ testDamage =
                   fromRight' $
                   flip execStateT cellMapWithoutDefender $
                   locateActorAt
-                      initTileCollection
+                      mockTileCollection
                       (fromJust newDefender)
                       intermediateOrcPosition
             , killed = []
