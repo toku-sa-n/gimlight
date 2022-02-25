@@ -4,7 +4,6 @@ module Gimlight.Action.DropSpec
     ( spec
     ) where
 
-import           Control.Lens                  ((%~), (&))
 import           Control.Monad.Morph           (generalize)
 import           Control.Monad.State           (evalState, execStateT,
                                                 mapStateT)
@@ -13,13 +12,12 @@ import           Data.Either.Combinators       (fromRight')
 import           Data.OpenUnion                (liftUnion)
 import           Gimlight.Action.Drop          (dropAction)
 import           Gimlight.ActionSpec           (failedResult, okResult)
-import           Gimlight.Actor                (inventoryItems, player)
-import           Gimlight.ActorSpec            (addItems)
+import           Gimlight.Actor                (player)
+import           Gimlight.ActorSpec            (addItems, removeItem)
 import           Gimlight.Dungeon.Map.Cell     (CellMap, removeActorAt)
 import           Gimlight.Dungeon.Map.CellSpec (emptyCellMap, locateItemsActors,
                                                 locateItemsActorsST)
 import           Gimlight.IndexGenerator       (generator)
-import           Gimlight.Inventory            (removeNthItem)
 import           Gimlight.Item.Defined         (herb)
 import           Gimlight.Item.SomeItem        (SomeItem)
 import qualified Gimlight.Localization.Texts   as T
@@ -45,9 +43,7 @@ testDropItemSuccessfully =
             a <- removeActorAt (V2 0 0)
             mapStateT generalize $
                 locateItemsActorsST
-                    [ ( V2 0 0
-                      , liftUnion $
-                        a & inventoryItems %~ (snd . removeNthItem 0))
+                    [ (V2 0 0, liftUnion $ removeItem 0 a)
                     , (V2 0 0, liftUnion (liftUnion herb :: SomeItem))
                     ]
 

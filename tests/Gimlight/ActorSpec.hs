@@ -3,9 +3,10 @@
 module Gimlight.ActorSpec
     ( spec
     , addItems
+    , removeItem
     ) where
 
-import           Control.Lens                (over)
+import           Control.Lens                (over, (%~), (&))
 import           Control.Monad.State         (evalState)
 import           Data.Maybe                  (fromJust)
 import           Data.OpenUnion              (liftUnion)
@@ -13,7 +14,7 @@ import           Gimlight.Actor              (Actor, equip, getArmor, getItems,
                                               getWeapon, inventoryItems, player)
 import qualified Gimlight.Actor              as A
 import           Gimlight.IndexGenerator     (generator)
-import           Gimlight.Inventory          (addItem)
+import           Gimlight.Inventory          (addItem, removeNthItem)
 import           Gimlight.Item               (getName)
 import qualified Gimlight.Item.Armor         as Armor
 import           Gimlight.Item.Defined       (goldenArmor, hammer, sword,
@@ -35,10 +36,11 @@ spec =
 testEquipWeapon :: Spec
 testEquipWeapon =
     context "When the actor does not equip anything." $ do
-        it "equips a sword." $
-            fmap getName (getWeapon after) `shouldBe` Just T.sword
-        it "increases the power." $
-            A.getPower after `shouldBe` A.getPower before + W.getPower sword
+        it "equips a sword." $ fmap getName (getWeapon after) `shouldBe`
+            Just T.sword
+        it "increases the power." $ A.getPower after `shouldBe`
+            A.getPower before +
+            W.getPower sword
         it "removes the sword from the inventory" $ getItems after `shouldBe` []
   where
     after = fromJust $ equip (liftUnion sword) before
@@ -47,13 +49,13 @@ testEquipWeapon =
 testChangeWeapon :: Spec
 testChangeWeapon =
     context "When the actor already equips a weapon." $ do
-        it "equips a new weapon." $
-            fmap getName (getWeapon after) `shouldBe` Just T.hammer
-        it "changes the power." $
-            A.getPower after `shouldBe` A.getPower before - W.getPower sword +
+        it "equips a new weapon." $ fmap getName (getWeapon after) `shouldBe`
+            Just T.hammer
+        it "changes the power." $ A.getPower after `shouldBe` A.getPower before -
+            W.getPower sword +
             W.getPower hammer
-        it "backs previously equipped weapon to the inventory." $
-            getItems after `shouldBe` [liftUnion sword]
+        it "backs previously equipped weapon to the inventory." $ getItems after `shouldBe`
+            [liftUnion sword]
   where
     after = fromJust $ equip (liftUnion hammer) before
     before = fromJust $ equip (liftUnion sword) base
@@ -61,10 +63,10 @@ testChangeWeapon =
 testEquipArmor :: Spec
 testEquipArmor =
     context "When the actor does not equip an armor." $ do
-        it "equips an armor." $
-            fmap getName (getArmor after) `shouldBe` Just T.woodenArmor
-        it "increases the defence." $
-            A.getDefence after `shouldBe` A.getDefence before +
+        it "equips an armor." $ fmap getName (getArmor after) `shouldBe`
+            Just T.woodenArmor
+        it "increases the defence." $ A.getDefence after `shouldBe`
+            A.getDefence before +
             Armor.getDefence woodenArmor
         it "removes the armor from the inventory" $ getItems after `shouldBe` []
   where
@@ -74,14 +76,14 @@ testEquipArmor =
 testChangeArmor :: Spec
 testChangeArmor =
     context "When the actor already equips an armor." $ do
-        it "equips a new armor" $
-            fmap getName (getArmor after) `shouldBe` Just T.goldenArmor
-        it "changes the defence." $
-            A.getDefence after `shouldBe` A.getDefence before -
+        it "equips a new armor" $ fmap getName (getArmor after) `shouldBe`
+            Just T.goldenArmor
+        it "changes the defence." $ A.getDefence after `shouldBe`
+            A.getDefence before -
             Armor.getDefence woodenArmor +
             Armor.getDefence goldenArmor
-        it "backs previously equipped armor to the inventory." $
-            getItems after `shouldBe` [liftUnion woodenArmor]
+        it "backs previously equipped armor to the inventory." $ getItems after `shouldBe`
+            [liftUnion woodenArmor]
   where
     after = fromJust $ equip (liftUnion goldenArmor) before
     before = fromJust $ equip (liftUnion woodenArmor) base
@@ -91,3 +93,6 @@ base = evalState player generator
 
 addItems :: [SomeItem] -> Actor -> Actor
 addItems xs a = foldr (\x -> over inventoryItems (fromJust . addItem x)) a xs
+
+removeItem :: Int -> Actor -> Actor
+removeItem n a = a & inventoryItems %~ snd . removeNthItem n
