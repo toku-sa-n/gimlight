@@ -62,15 +62,7 @@ testEquipWeapon =
     result cm `shouldBe` expected
   where
     expected = writer (okResult cmAfter, [T.equipped T.player T.sword])
-    cmAfter =
-        fromRight' $
-        flip execStateT cm $ do
-            a <- removeActorAt playerPos
-            locateItemsActorsST
-                [ ( playerPos
-                  , liftUnion $
-                    removeItem 0 $ fromJust $ equip (liftUnion sword) a)
-                ]
+    cmAfter = afterUsing (removeItem 0 . fromJust . equip (liftUnion sword)) cm
     cm = testMap $ liftUnion sword
 
 testEquipArmor :: Spec
