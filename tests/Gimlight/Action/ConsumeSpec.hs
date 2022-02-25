@@ -3,9 +3,7 @@ module Gimlight.Action.ConsumeSpec
     ) where
 
 import           Control.Lens                  ((%~), (&))
-import           Control.Monad.Morph           (generalize)
-import           Control.Monad.State           (evalState, execStateT,
-                                                mapStateT)
+import           Control.Monad.State           (evalState, execStateT)
 import           Control.Monad.Writer          (writer)
 import           Data.Either.Combinators       (fromRight')
 import           Data.Maybe                    (fromJust)
@@ -58,8 +56,7 @@ testConsumeHerb =
         fromRight' $
         flip execStateT cm $ do
             a <- removeActorAt playerPos
-            mapStateT generalize $
-                locateItemsActorsST [(playerPos, liftUnion $ removeItem 0 a)]
+            locateItemsActorsST [(playerPos, liftUnion $ removeItem 0 a)]
     cm = testMap $ liftUnion herb
 
 testEquipWeapon :: Spec
@@ -92,13 +89,12 @@ testEquipArmor =
         fromRight' $
         flip execStateT cm $ do
             a <- removeActorAt playerPos
-            mapStateT generalize $
-                locateItemsActorsST
-                    [ ( playerPos
-                      , liftUnion
-                            (removeItem 0 $
-                             fromJust $ equip (liftUnion woodenArmor) a))
-                    ]
+            locateItemsActorsST
+                [ ( playerPos
+                  , liftUnion
+                        (removeItem 0 $
+                         fromJust $ equip (liftUnion woodenArmor) a))
+                ]
     cm = testMap $ liftUnion woodenArmor
 
 result :: CellMap -> ActionResultWithLog

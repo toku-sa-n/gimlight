@@ -4,9 +4,7 @@ module Gimlight.Action.DropSpec
     ( spec
     ) where
 
-import           Control.Monad.Morph           (generalize)
-import           Control.Monad.State           (evalState, execStateT,
-                                                mapStateT)
+import           Control.Monad.State           (evalState, execStateT)
 import           Control.Monad.Trans.Writer    (writer)
 import           Data.Either.Combinators       (fromRight')
 import           Data.OpenUnion                (liftUnion)
@@ -42,11 +40,10 @@ testDropItemSuccessfully =
         fromRight' $
         flip execStateT testMap $ do
             a <- removeActorAt playerPos
-            mapStateT generalize $
-                locateItemsActorsST
-                    [ (playerPos, liftUnion $ removeItem 0 a)
-                    , (playerPos, liftUnion (liftUnion herb :: SomeItem))
-                    ]
+            locateItemsActorsST
+                [ (playerPos, liftUnion $ removeItem 0 a)
+                , (playerPos, liftUnion (liftUnion herb :: SomeItem))
+                ]
 
 testItemAlreadyExists :: Spec
 testItemAlreadyExists =

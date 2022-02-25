@@ -8,16 +8,16 @@ module Gimlight.Dungeon.Map.CellSpec
     , locateItemsActorsST
     ) where
 
-import           Control.Monad.State       (MonadState (get, put), State,
+import           Control.Monad.State       (MonadState (get, put), StateT,
                                             execStateT)
 import           Data.Array                (listArray)
 import           Data.Either.Combinators   (fromRight')
 import           Data.OpenUnion            (Union, typesExhausted, (@>))
 import           Gimlight.Actor            (Actor)
 import           Gimlight.Coord            (Coord)
-import           Gimlight.Dungeon.Map.Cell (CellMap, TileIdLayer (TileIdLayer),
-                                            cellMap, locateActorAt,
-                                            locateItemAt)
+import           Gimlight.Dungeon.Map.Cell (CellMap, Error,
+                                            TileIdLayer (TileIdLayer), cellMap,
+                                            locateActorAt, locateItemAt)
 import           Gimlight.Item.SomeItem    (SomeItem)
 import           Gimlight.SetUp.CellMap    (mockTileCollection)
 import           Linear                    (V2 (V2))
@@ -40,7 +40,9 @@ locateItemsActors xs cm = foldl helper cm xs
     itemFunc = apply locateItemAt
     apply f pos x = f mockTileCollection x pos
 
-locateItemsActorsST :: [(Coord, Union '[ Actor, SomeItem])] -> State CellMap ()
+-- To conform to the types of `locateItemAt` and `locateActorAt`
+locateItemsActorsST ::
+       [(Coord, Union '[ Actor, SomeItem])] -> StateT CellMap (Either Error) ()
 locateItemsActorsST xs = do
     cm <- get
     let cm' = locateItemsActors xs cm
