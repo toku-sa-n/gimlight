@@ -52,10 +52,9 @@ testConsumeHerb =
     it "returns a Ok result if an actor uses a herb" $
     result cm `shouldBe` expected
   where
-    expected = writer (expectedResult, expectedLog)
-    expectedResult = okResult cellMapAfterConsuming
-    expectedLog = [T.healed T.player $ getHealAmount herb]
-    cellMapAfterConsuming =
+    expected =
+        writer (okResult cmAfter, [T.healed T.player $ getHealAmount herb])
+    cmAfter =
         fromRight' $
         flip execStateT cm $ do
             a <- removeActorAt playerPos
