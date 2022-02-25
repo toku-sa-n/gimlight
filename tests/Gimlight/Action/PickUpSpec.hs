@@ -8,7 +8,6 @@ module Gimlight.Action.PickUpSpec
 import           Control.Lens                  (over)
 import           Control.Monad.State           (evalState, execStateT)
 import           Control.Monad.Writer          (writer)
-import           Data.Array                    (array)
 import           Data.Either.Combinators       (fromRight')
 import           Data.Maybe                    (fromJust)
 import           Data.OpenUnion                (Union, liftUnion,
@@ -19,10 +18,10 @@ import           Gimlight.ActionSpec           (failedResult, okResult)
 import           Gimlight.Actor                (Actor, inventoryItems)
 import qualified Gimlight.Actor                as A
 import           Gimlight.Coord                (Coord)
-import           Gimlight.Dungeon.Map.Cell     (CellMap, cellMap, locateActorAt,
+import           Gimlight.Dungeon.Map.Cell     (CellMap, locateActorAt,
                                                 locateItemAt, removeActorAt,
                                                 removeItemAt)
-import           Gimlight.Dungeon.Map.CellSpec (emptyTile)
+import           Gimlight.Dungeon.Map.CellSpec (emptyCellMap)
 import           Gimlight.IndexGenerator       (generator)
 import           Gimlight.Inventory            (addItem, maxSlot)
 import           Gimlight.Item.Defined         (herb)
@@ -82,7 +81,7 @@ result :: CellMap -> ActionResultWithLog
 result = pickUpAction playerPos initTileCollection
 
 cellMapWith :: [(Coord, Union '[ Actor, SomeItem])] -> CellMap
-cellMapWith xs = locateItemsActors xs emptyCellMap
+cellMapWith xs = locateItemsActors xs testMap
 
 locateItemsActors :: [(Coord, Union '[ Actor, SomeItem])] -> CellMap -> CellMap
 locateItemsActors xs cm = foldl helper cm xs
@@ -98,8 +97,8 @@ locateItemsActors xs cm = foldl helper cm xs
 addItems :: [SomeItem] -> Actor -> Actor
 addItems xs a = foldr (\x -> over inventoryItems (fromJust . addItem x)) a xs
 
-emptyCellMap :: CellMap
-emptyCellMap = cellMap $ array (V2 0 0, V2 0 0) [(V2 0 0, emptyTile)]
+testMap :: CellMap
+testMap = emptyCellMap $ V2 1 1
 
 player :: Actor
 player = evalState A.player generator
