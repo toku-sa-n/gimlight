@@ -79,9 +79,8 @@ testEquipWeapon =
     result `shouldBe` expected
   where
     result = consumeAction 0 orcWithSwordPosition mockTileCollection initCellMap
-    expected = writer (expectedResult, expectedLog)
-    expectedResult = okResult cellMapAfterEquipping
-    expectedLog = [T.equipped T.orc T.sword]
+    expected =
+        writer (okResult cellMapAfterEquipping, [T.equipped T.orc T.sword])
     cellMapAfterEquipping =
         fromRight' $
         flip execStateT initCellMap $ do
