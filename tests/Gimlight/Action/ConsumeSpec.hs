@@ -80,16 +80,15 @@ testEquipArmor =
   where
     expected = writer (okResult cmAfter, [T.equipped T.player T.woodenArmor])
     cmAfter =
-        fromRight' $
-        flip execStateT cm $ do
-            a <- removeActorAt playerPos
-            locateItemsActorsST
-                [ ( playerPos
-                  , liftUnion
-                        (removeItem 0 $
-                         fromJust $ equip (liftUnion woodenArmor) a))
-                ]
+        afterUsing (removeItem 0 . fromJust . equip (liftUnion woodenArmor)) cm
     cm = testMap $ liftUnion woodenArmor
+
+afterUsing :: (Actor -> Actor) -> CellMap -> CellMap
+afterUsing f cm =
+    fromRight' $
+    flip execStateT cm $ do
+        a <- removeActorAt playerPos
+        locateItemsActorsST [(playerPos, liftUnion $ f a)]
 
 result :: CellMap -> ActionResultWithLog
 result = consumeAction 0 playerPos mockTileCollection
