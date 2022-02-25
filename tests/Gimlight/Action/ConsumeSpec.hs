@@ -14,9 +14,11 @@ import           Gimlight.Action               (ActionResult (ActionResult, kill
                                                 ActionStatus (ReadingStarted))
 import           Gimlight.Action.Consume       (consumeAction)
 import           Gimlight.ActionSpec           (okResult)
-import           Gimlight.Actor                (equip, inventoryItems, player)
+import           Gimlight.Actor                (Actor, equip, inventoryItems)
+import qualified Gimlight.Actor                as A
 import           Gimlight.ActorSpec            (addItems, removeItem)
-import           Gimlight.Dungeon.Map.Cell     (locateActorAt, removeActorAt)
+import           Gimlight.Dungeon.Map.Cell     (CellMap, locateActorAt,
+                                                removeActorAt)
 import           Gimlight.Dungeon.Map.CellSpec (emptyCellMap, locateItemsActors,
                                                 locateItemsActorsST)
 import           Gimlight.IndexGenerator       (generator)
@@ -25,6 +27,7 @@ import           Gimlight.Item                 (getEffect)
 import           Gimlight.Item.Defined         (herb, sampleBook, sword,
                                                 woodenArmor)
 import           Gimlight.Item.Heal            (getHealAmount)
+import           Gimlight.Item.SomeItem        (SomeItem)
 import qualified Gimlight.Localization.Texts   as T
 import           Gimlight.SetUp.CellMap        (initCellMap, mockTileCollection,
                                                 orcWithHerbPosition,
@@ -89,8 +92,7 @@ testEquipWeapon =
                 (fromJust (equip (liftUnion sword) a) &
                  inventoryItems %~ (snd . removeNthItem 0))
                 (V2 0 0)
-    cm = locateItemsActors [(V2 0 0, liftUnion p)] $ emptyCellMap $ V2 1 1
-    p = addItems [liftUnion sword] $ evalState player generator
+    cm = testMap $ liftUnion sword
 
 testEquipArmor :: Spec
 testEquipArmor =
@@ -112,5 +114,11 @@ testEquipArmor =
                             (removeItem 0 $
                              fromJust $ equip (liftUnion woodenArmor) a))
                     ]
-    cm = locateItemsActors [(V2 0 0, liftUnion p)] $ emptyCellMap $ V2 1 1
-    p = addItems [liftUnion woodenArmor] $ evalState player generator
+    cm = testMap $ liftUnion woodenArmor
+
+testMap :: SomeItem -> CellMap
+testMap x =
+    locateItemsActors [(V2 0 0, liftUnion $ player x)] $ emptyCellMap $ V2 1 1
+
+player :: SomeItem -> Actor
+player x = addItems [x] $ evalState A.player generator
