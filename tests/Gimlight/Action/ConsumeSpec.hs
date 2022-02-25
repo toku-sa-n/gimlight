@@ -83,9 +83,9 @@ testEquipArmor =
     result cm `shouldBe` expected
   where
     expected = writer (expectedResult, expectedLog)
-    expectedResult = okResult cellMapAfterEquipping
+    expectedResult = okResult cmAfter
     expectedLog = [T.equipped T.player T.woodenArmor]
-    cellMapAfterEquipping =
+    cmAfter =
         fromRight' $
         flip execStateT cm $ do
             a <- removeActorAt playerPos
