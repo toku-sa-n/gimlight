@@ -13,6 +13,7 @@ import           Data.Either.Combinators       (fromRight')
 import           Data.Maybe                    (fromJust)
 import           Data.OpenUnion                (Union, liftUnion,
                                                 typesExhausted, (@>))
+import           Gimlight.Action               (ActionResultWithLog)
 import           Gimlight.Action.PickUp        (pickUpAction)
 import           Gimlight.ActionSpec           (failedResult, okResult)
 import           Gimlight.Actor                (Actor, inventoryItems)
@@ -40,9 +41,8 @@ spec = do
 testPickUpSuccess :: Spec
 testPickUpSuccess =
     it "returns a Ok result if there is an item at the actor's foot, and player's inventory is not full." $
-    result `shouldBe` expected
+    result cm `shouldBe` expected
   where
-    result = pickUpAction playerPos initTileCollection cm
     expected = writer (okResult cellMapAfterPickingUp, [T.youGotItem T.herb])
     cellMapAfterPickingUp =
         fromRight' $
@@ -60,18 +60,16 @@ testPickUpSuccess =
 testPickUpVoid :: Spec
 testPickUpVoid =
     it "returns a Failed result if there is no item at the actor's foot." $
-    result `shouldBe` expected
+    result cm `shouldBe` expected
   where
-    result = pickUpAction playerPos initTileCollection cm
     expected = writer (failedResult cm, [T.youGotNothing])
     cm = cellMapWith [(playerPos, liftUnion player)]
 
 testPickUpWhenInventoryIsFull :: Spec
 testPickUpWhenInventoryIsFull =
     it "returns a Failed result if the actor's inventory is full." $
-    result `shouldBe` expected
+    result cm `shouldBe` expected
   where
-    result = pickUpAction playerPos initTileCollection cm
     expected = writer (failedResult cm, [T.bagIsFull])
     cm =
         cellMapWith
@@ -79,6 +77,9 @@ testPickUpWhenInventoryIsFull =
             , (playerPos, liftUnion $ addItems items player)
             ]
     items = replicate maxSlot $ liftUnion herb
+
+result :: CellMap -> ActionResultWithLog
+result = pickUpAction playerPos initTileCollection
 
 cellMapWith :: [(Coord, Union '[ Actor, SomeItem])] -> CellMap
 cellMapWith xs = locateItemsActors xs emptyCellMap
