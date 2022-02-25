@@ -4,21 +4,23 @@ module Gimlight.Action.MeleeSpec
     ( spec
     ) where
 
-import           Control.Monad.State       (StateT (runStateT), evalStateT,
-                                            execStateT)
-import           Control.Monad.Writer      (runWriter, writer)
-import           Data.Either.Combinators   (fromRight')
-import           Data.Maybe                (fromJust)
-import           Gimlight.Action.Melee     (meleeAction)
-import           Gimlight.ActionSpec       (okResult, okWithKilled)
-import           Gimlight.Actor            (attackFromTo)
-import           Gimlight.Dungeon.Map.Cell (locateActorAt, removeActorAt)
-import           Gimlight.SetUp.CellMap    (initCellMap,
-                                            intermediateOrcPosition,
-                                            mockTileCollection,
-                                            strongestOrcPosition,
-                                            weakestOrcPosition)
-import           Test.Hspec                (Spec, describe, it, shouldBe)
+import           Control.Monad.State           (StateT (runStateT), evalStateT,
+                                                execStateT)
+import           Control.Monad.Writer          (runWriter, writer)
+import           Data.Either.Combinators       (fromRight')
+import           Data.Maybe                    (fromJust)
+import           Data.OpenUnion                (liftUnion)
+import           Gimlight.Action.Melee         (meleeAction)
+import           Gimlight.ActionSpec           (okResult, okWithKilled)
+import           Gimlight.Actor                (attackFromTo)
+import           Gimlight.Dungeon.Map.Cell     (removeActorAt)
+import           Gimlight.Dungeon.Map.CellSpec (locateItemsActorsST)
+import           Gimlight.SetUp.CellMap        (initCellMap,
+                                                intermediateOrcPosition,
+                                                mockTileCollection,
+                                                strongestOrcPosition,
+                                                weakestOrcPosition)
+import           Test.Hspec                    (Spec, describe, it, shouldBe)
 
 spec :: Spec
 spec = do
@@ -56,10 +58,8 @@ testDamage =
         okResult $
         fromRight' $
         flip execStateT cellMapWithoutDefender $
-        locateActorAt
-            mockTileCollection
-            (fromJust newDefender)
-            intermediateOrcPosition
+        locateItemsActorsST
+            [(intermediateOrcPosition, liftUnion $ fromJust newDefender)]
     ((_, newDefender), expectedLog) = runWriter $ attackFromTo attacker defender
     (defender, cellMapWithoutDefender) =
         fromRight' $
