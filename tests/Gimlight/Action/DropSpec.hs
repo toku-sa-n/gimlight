@@ -57,7 +57,7 @@ testItemAlreadyExists =
     expected = writer (failedResult cm, [T.itemExists])
     cm =
         locateItemsActors
-            [(V2 0 0, liftUnion (liftUnion herb :: SomeItem))]
+            [(playerPos, liftUnion (liftUnion herb :: SomeItem))]
             testMap
 
 testMap :: CellMap
