@@ -10,11 +10,9 @@ import           Control.Monad.Writer          (writer)
 import           Data.Either.Combinators       (fromRight')
 import           Data.Maybe                    (fromJust)
 import           Data.OpenUnion                (liftUnion)
-import           Gimlight.Action               (ActionResult (ActionResult, killed, newCellMap, status),
-                                                ActionResultWithLog,
-                                                ActionStatus (ReadingStarted))
+import           Gimlight.Action               (ActionResultWithLog)
 import           Gimlight.Action.Consume       (consumeAction)
-import           Gimlight.ActionSpec           (okResult)
+import           Gimlight.ActionSpec           (okResult, readingResult)
 import           Gimlight.Actor                (Actor, equip, inventoryItems)
 import qualified Gimlight.Actor                as A
 import           Gimlight.ActorSpec            (addItems, removeItem)
@@ -47,12 +45,7 @@ testStartReadingBook =
     result cm `shouldBe` expected
   where
     expected = writer (expectedResult, expectedLog)
-    expectedResult =
-        ActionResult
-            { status = ReadingStarted T.sampleBookContent
-            , newCellMap = cm
-            , killed = []
-            }
+    expectedResult = readingResult T.sampleBookContent cm
     expectedLog = []
     cm = testMap $ liftUnion sampleBook
 
