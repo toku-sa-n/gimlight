@@ -23,7 +23,6 @@ import           Gimlight.Dungeon.Map.CellSpec (emptyCellMap, locateItemsActors,
                                                 locateItemsActorsST)
 import           Gimlight.IndexGenerator       (generator)
 import           Gimlight.Inventory            (removeNthItem)
-import           Gimlight.Item                 (getEffect)
 import           Gimlight.Item.Defined         (herb, sampleBook, sword,
                                                 woodenArmor)
 import           Gimlight.Item.Heal            (getHealAmount)
@@ -50,7 +49,7 @@ testStartReadingBook =
     expected = writer (expectedResult, expectedLog)
     expectedResult =
         ActionResult
-            { status = ReadingStarted $ getEffect sampleBook
+            { status = ReadingStarted T.sampleBookContent
             , newCellMap = cm
             , killed = []
             }
