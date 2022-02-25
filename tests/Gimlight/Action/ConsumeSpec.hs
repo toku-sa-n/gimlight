@@ -44,9 +44,7 @@ testStartReadingBook =
     it "returns a ReadingStarted result if an actor uses a book" $
     result cm `shouldBe` expected
   where
-    expected = writer (expectedResult, expectedLog)
-    expectedResult = readingResult T.sampleBookContent cm
-    expectedLog = []
+    expected = writer (readingResult T.sampleBookContent cm, [])
     cm = testMap $ liftUnion sampleBook
 
 testConsumeHerb :: Spec
