@@ -88,11 +88,11 @@ locateItemsActors :: [(Coord, Union '[ Actor, SomeItem])] -> CellMap -> CellMap
 locateItemsActors xs cm = foldl helper cm xs
   where
     helper ncm (pos, x) =
-        fromRight' $ (itemFunc ncm pos @> actorFunc ncm pos @> typesExhausted) x
-    actorFunc ncm pos x =
-        flip execStateT ncm $ locateActorAt initTileCollection x pos
-    itemFunc ncm pos x =
-        flip execStateT ncm $ locateItemAt initTileCollection x pos
+        fromRight' $
+        flip execStateT ncm $
+        (itemFunc pos @> actorFunc pos @> typesExhausted) x
+    actorFunc pos x = locateActorAt initTileCollection x pos
+    itemFunc pos x = locateItemAt initTileCollection x pos
 
 addItems :: [SomeItem] -> Actor -> Actor
 addItems xs a = foldr (\x -> over inventoryItems (fromJust . addItem x)) a xs
