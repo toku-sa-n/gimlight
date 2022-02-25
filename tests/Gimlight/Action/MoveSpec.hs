@@ -57,10 +57,7 @@ succeed offset = writer (result, [])
             locateActorAt initTileCollection a (V2 0 0 + offset)
 
 failed :: ActionResultWithLog
-failed = writer (result, l)
-  where
-    result = failedResult testMap
-    l = [T.youCannotMoveThere]
+failed = writer (failedResult testMap, [T.youCannotMoveThere])
 
 resultWhenMoveOffsetTo :: V2 Int -> ActionResultWithLog
 resultWhenMoveOffsetTo offset =
