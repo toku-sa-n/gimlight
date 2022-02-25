@@ -11,6 +11,7 @@ import           Data.Either.Combinators       (fromRight')
 import           Data.Maybe                    (fromJust)
 import           Data.OpenUnion                (liftUnion)
 import           Gimlight.Action               (ActionResult (ActionResult, killed, newCellMap, status),
+                                                ActionResultWithLog,
                                                 ActionStatus (ReadingStarted))
 import           Gimlight.Action.Consume       (consumeAction)
 import           Gimlight.ActionSpec           (okResult)
@@ -43,9 +44,8 @@ spec = do
 testStartReadingBook :: Spec
 testStartReadingBook =
     it "returns a ReadingStarted result if an actor uses a book" $
-    result `shouldBe` expected
+    result cm `shouldBe` expected
   where
-    result = consumeAction 0 playerPos mockTileCollection cm
     expected = writer (expectedResult, expectedLog)
     expectedResult =
         ActionResult
@@ -59,9 +59,8 @@ testStartReadingBook =
 testConsumeHerb :: Spec
 testConsumeHerb =
     it "returns a Ok result if an actor uses a herb" $
-    result `shouldBe` expected
+    result cm `shouldBe` expected
   where
-    result = consumeAction 0 playerPos mockTileCollection cm
     expected = writer (expectedResult, expectedLog)
     expectedResult = okResult cellMapAfterConsuming
     expectedLog = [T.healed T.player $ getHealAmount herb]
@@ -78,9 +77,8 @@ testConsumeHerb =
 testEquipWeapon :: Spec
 testEquipWeapon =
     it "returns a Ok result if an actor equips a weapon" $
-    result `shouldBe` expected
+    result cm `shouldBe` expected
   where
-    result = consumeAction 0 playerPos mockTileCollection cm
     expected =
         writer (okResult cellMapAfterEquipping, [T.equipped T.player T.sword])
     cellMapAfterEquipping =
@@ -97,9 +95,8 @@ testEquipWeapon =
 testEquipArmor :: Spec
 testEquipArmor =
     it "returns a Ok result if an actor equips a weapon" $
-    result `shouldBe` expected
+    result cm `shouldBe` expected
   where
-    result = consumeAction 0 playerPos mockTileCollection cm
     expected = writer (expectedResult, expectedLog)
     expectedResult = okResult cellMapAfterEquipping
     expectedLog = [T.equipped T.player T.woodenArmor]
@@ -115,6 +112,9 @@ testEquipArmor =
                              fromJust $ equip (liftUnion woodenArmor) a))
                     ]
     cm = testMap $ liftUnion woodenArmor
+
+result :: CellMap -> ActionResultWithLog
+result = consumeAction 0 playerPos mockTileCollection
 
 testMap :: SomeItem -> CellMap
 testMap x =
