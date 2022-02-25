@@ -3,9 +3,8 @@ module Gimlight.Action.WaitSpec
     ) where
 
 import           Control.Monad.Writer   (writer)
-import           Gimlight.Action        (ActionResult (ActionResult, killed, newCellMap, status),
-                                         ActionStatus (Ok))
 import           Gimlight.Action.Wait   (waitAction)
+import           Gimlight.ActionSpec    (okResult)
 import           Gimlight.SetUp.CellMap (initCellMap, mockTileCollection,
                                          playerPosition)
 import           Test.Hspec             (Spec, describe, it, shouldBe)
@@ -17,6 +16,5 @@ spec =
   where
     result = waitAction playerPosition mockTileCollection initCellMap
     expected = writer (expectedResult, expectedLog)
-    expectedResult =
-        ActionResult {status = Ok, newCellMap = initCellMap, killed = []}
+    expectedResult = okResult initCellMap
     expectedLog = []
