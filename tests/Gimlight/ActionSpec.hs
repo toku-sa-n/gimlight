@@ -12,7 +12,7 @@ import           Gimlight.Dungeon.Map.Cell (CellMap)
 import           Gimlight.Item.Book        (Book)
 
 okResult :: CellMap -> ActionResult
-okResult cm = ActionResult {status = Ok, newCellMap = cm, killed = []}
+okResult cm = okWithKilled cm []
 
 okWithKilled :: CellMap -> [Actor] -> ActionResult
 okWithKilled cm actors =
