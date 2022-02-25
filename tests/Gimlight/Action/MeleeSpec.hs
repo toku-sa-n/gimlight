@@ -9,10 +9,8 @@ import           Control.Monad.State       (StateT (runStateT), evalStateT,
 import           Control.Monad.Writer      (runWriter, writer)
 import           Data.Either.Combinators   (fromRight')
 import           Data.Maybe                (fromJust)
-import           Gimlight.Action           (ActionResult (ActionResult, killed, newCellMap, status),
-                                            ActionStatus (Ok))
 import           Gimlight.Action.Melee     (meleeAction)
-import           Gimlight.ActionSpec       (okWithKilled)
+import           Gimlight.ActionSpec       (okResult, okWithKilled)
 import           Gimlight.Actor            (attackFromTo)
 import           Gimlight.Dungeon.Map.Cell (locateActorAt, removeActorAt)
 import           Gimlight.SetUp.CellMap    (initCellMap,
@@ -55,17 +53,13 @@ testDamage =
         meleeAction offset strongestOrcPosition mockTileCollection initCellMap
     expected = writer (expectedResult, expectedLog)
     expectedResult =
-        ActionResult
-            { status = Ok
-            , newCellMap =
-                  fromRight' $
-                  flip execStateT cellMapWithoutDefender $
-                  locateActorAt
-                      mockTileCollection
-                      (fromJust newDefender)
-                      intermediateOrcPosition
-            , killed = []
-            }
+        okResult $
+        fromRight' $
+        flip execStateT cellMapWithoutDefender $
+        locateActorAt
+            mockTileCollection
+            (fromJust newDefender)
+            intermediateOrcPosition
     ((_, newDefender), expectedLog) = runWriter $ attackFromTo attacker defender
     (defender, cellMapWithoutDefender) =
         fromRight' $
