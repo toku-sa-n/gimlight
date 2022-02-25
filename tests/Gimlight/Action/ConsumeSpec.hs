@@ -17,6 +17,7 @@ import           Gimlight.ActionSpec           (okResult)
 import           Gimlight.Actor                (Actor, equip, inventoryItems)
 import qualified Gimlight.Actor                as A
 import           Gimlight.ActorSpec            (addItems, removeItem)
+import           Gimlight.Coord                (Coord)
 import           Gimlight.Dungeon.Map.Cell     (CellMap, locateActorAt,
                                                 removeActorAt)
 import           Gimlight.Dungeon.Map.CellSpec (emptyCellMap, locateItemsActors,
@@ -44,7 +45,7 @@ testStartReadingBook =
     it "returns a ReadingStarted result if an actor uses a book" $
     result `shouldBe` expected
   where
-    result = consumeAction 0 (V2 0 0) mockTileCollection cm
+    result = consumeAction 0 playerPos mockTileCollection cm
     expected = writer (expectedResult, expectedLog)
     expectedResult =
         ActionResult
@@ -60,14 +61,14 @@ testConsumeHerb =
     it "returns a Ok result if an actor uses a herb" $
     result `shouldBe` expected
   where
-    result = consumeAction 0 (V2 0 0) mockTileCollection cm
+    result = consumeAction 0 playerPos mockTileCollection cm
     expected = writer (expectedResult, expectedLog)
     expectedResult = okResult cellMapAfterConsuming
     expectedLog = [T.healed T.player $ getHealAmount herb]
     cellMapAfterConsuming =
         fromRight' $
         flip execStateT cm $ do
-            a <- removeActorAt (V2 0 0)
+            a <- removeActorAt playerPos
             locateActorAt
                 mockTileCollection
                 (a & inventoryItems %~ (snd . removeNthItem 0))
@@ -79,13 +80,13 @@ testEquipWeapon =
     it "returns a Ok result if an actor equips a weapon" $
     result `shouldBe` expected
   where
-    result = consumeAction 0 (V2 0 0) mockTileCollection cm
+    result = consumeAction 0 playerPos mockTileCollection cm
     expected =
         writer (okResult cellMapAfterEquipping, [T.equipped T.player T.sword])
     cellMapAfterEquipping =
         fromRight' $
         flip execStateT cm $ do
-            a <- removeActorAt (V2 0 0)
+            a <- removeActorAt playerPos
             locateActorAt
                 mockTileCollection
                 (fromJust (equip (liftUnion sword) a) &
@@ -98,17 +99,17 @@ testEquipArmor =
     it "returns a Ok result if an actor equips a weapon" $
     result `shouldBe` expected
   where
-    result = consumeAction 0 (V2 0 0) mockTileCollection cm
+    result = consumeAction 0 playerPos mockTileCollection cm
     expected = writer (expectedResult, expectedLog)
     expectedResult = okResult cellMapAfterEquipping
     expectedLog = [T.equipped T.player T.woodenArmor]
     cellMapAfterEquipping =
         fromRight' $
         flip execStateT cm $ do
-            a <- removeActorAt (V2 0 0)
+            a <- removeActorAt playerPos
             mapStateT generalize $
                 locateItemsActorsST
-                    [ ( V2 0 0
+                    [ ( playerPos
                       , liftUnion
                             (removeItem 0 $
                              fromJust $ equip (liftUnion woodenArmor) a))
@@ -117,7 +118,11 @@ testEquipArmor =
 
 testMap :: SomeItem -> CellMap
 testMap x =
-    locateItemsActors [(V2 0 0, liftUnion $ player x)] $ emptyCellMap $ V2 1 1
+    locateItemsActors [(playerPos, liftUnion $ player x)] $
+    emptyCellMap $ V2 1 1
 
 player :: SomeItem -> Actor
 player x = addItems [x] $ evalState A.player generator
+
+playerPos :: Coord
+playerPos = V2 0 0
