@@ -10,6 +10,7 @@ import           Control.Monad.State           (evalState, execStateT,
 import           Control.Monad.Trans.Writer    (writer)
 import           Data.Either.Combinators       (fromRight')
 import           Data.OpenUnion                (liftUnion)
+import           Gimlight.Action               (ActionResultWithLog)
 import           Gimlight.Action.Drop          (dropAction)
 import           Gimlight.ActionSpec           (failedResult, okResult)
 import           Gimlight.Actor                (player)
@@ -34,9 +35,8 @@ spec = do
 testDropItemSuccessfully :: Spec
 testDropItemSuccessfully =
     it "returns a Ok result if there is no item at the player's foot." $
-    result `shouldBe` expected
+    result testMap `shouldBe` expected
   where
-    result = dropAction 0 playerPos mockTileCollection testMap
     expected = writer (okResult cellMapAfterDropping, [T.youDropped T.herb])
     cellMapAfterDropping =
         fromRight' $
@@ -51,14 +51,16 @@ testDropItemSuccessfully =
 testItemAlreadyExists :: Spec
 testItemAlreadyExists =
     it "returns a Failed result if there is already an item at the player's foot." $
-    result `shouldBe` expected
+    result cm `shouldBe` expected
   where
-    result = dropAction 0 playerPos mockTileCollection cm
     expected = writer (failedResult cm, [T.itemExists])
     cm =
         locateItemsActors
             [(playerPos, liftUnion (liftUnion herb :: SomeItem))]
             testMap
+
+result :: CellMap -> ActionResultWithLog
+result = dropAction 0 playerPos mockTileCollection
 
 testMap :: CellMap
 testMap = locateItemsActors [(playerPos, liftUnion p)] $ emptyCellMap $ V2 1 1
