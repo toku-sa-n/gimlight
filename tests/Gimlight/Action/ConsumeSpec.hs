@@ -82,9 +82,7 @@ testEquipArmor =
     it "returns a Ok result if an actor equips a weapon" $
     result cm `shouldBe` expected
   where
-    expected = writer (expectedResult, expectedLog)
-    expectedResult = okResult cmAfter
-    expectedLog = [T.equipped T.player T.woodenArmor]
+    expected = writer (okResult cmAfter, [T.equipped T.player T.woodenArmor])
     cmAfter =
         fromRight' $
         flip execStateT cm $ do
