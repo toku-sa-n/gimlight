@@ -18,7 +18,6 @@ import           Gimlight.Dungeon.Map.Cell     (CellMap, locateActorAt,
 import           Gimlight.Dungeon.Map.CellSpec (emptyCellMap, locateItemsActors)
 import           Gimlight.IndexGenerator       (generator)
 import           Gimlight.Inventory            (removeNthItem)
-import           Gimlight.Item                 (getName)
 import           Gimlight.Item.Defined         (herb)
 import           Gimlight.Item.SomeItem        (SomeItem)
 import qualified Gimlight.Localization.Texts   as T
@@ -37,8 +36,7 @@ testDropItemSuccessfully =
     result `shouldBe` expected
   where
     result = dropAction 0 (V2 0 0) mockTileCollection testMap
-    expected = writer (expectedResult, expectedLog)
-    expectedResult = okResult cellMapAfterDropping
+    expected = writer (okResult cellMapAfterDropping, [T.youDropped T.herb])
     cellMapAfterDropping =
         fromRight' $
         flip execStateT testMap $ do
@@ -48,7 +46,6 @@ testDropItemSuccessfully =
                 (a & inventoryItems %~ (snd . removeNthItem 0))
                 (V2 0 0)
             locateItemAt mockTileCollection (liftUnion herb) (V2 0 0)
-    expectedLog = [T.youDropped $ getName herb]
 
 testItemAlreadyExists :: Spec
 testItemAlreadyExists =
