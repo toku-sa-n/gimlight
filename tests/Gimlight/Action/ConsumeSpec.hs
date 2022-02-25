@@ -11,6 +11,7 @@ import           Data.OpenUnion              (liftUnion)
 import           Gimlight.Action             (ActionResult (ActionResult, killed, newCellMap, status),
                                               ActionStatus (Ok, ReadingStarted))
 import           Gimlight.Action.Consume     (consumeAction)
+import           Gimlight.ActionSpec         (okResult)
 import           Gimlight.Actor              (equip, inventoryItems)
 import           Gimlight.Dungeon.Map.Cell   (locateActorAt, removeActorAt)
 import           Gimlight.Inventory          (removeNthItem)
@@ -96,9 +97,7 @@ testEquipArmor =
   where
     result = consumeAction 0 orcWithArmorPosition mockTileCollection initCellMap
     expected = writer (expectedResult, expectedLog)
-    expectedResult =
-        ActionResult
-            {status = Ok, newCellMap = cellMapAfterEquipping, killed = []}
+    expectedResult = okResult cellMapAfterEquipping
     expectedLog = [T.equipped T.orc T.woodenArmor]
     cellMapAfterEquipping =
         fromRight' $
