@@ -64,7 +64,7 @@ testMap =
     fromRight' $
     flip execStateT cm $ do
         locateActorAt initTileCollection o1 (V2 0 0)
-        locateActorAt initTileCollection o2 (V2 1 0) -- TODO: Change `p` as two actors have the same ID.
+        locateActorAt initTileCollection o2 (V2 1 0)
   where
     cm =
         cellMap $
