@@ -13,10 +13,8 @@ import           Data.Either.Combinators     (fromRight')
 import           Data.Maybe                  (fromJust)
 import           Data.OpenUnion              (Union, liftUnion, typesExhausted,
                                               (@>))
-import           Gimlight.Action             (ActionResult (ActionResult, killed, newCellMap, status),
-                                              ActionStatus (Ok))
 import           Gimlight.Action.PickUp      (pickUpAction)
-import           Gimlight.ActionSpec         (failedResult)
+import           Gimlight.ActionSpec         (failedResult, okResult)
 import           Gimlight.Actor              (Actor, inventoryItems)
 import qualified Gimlight.Actor              as A
 import           Gimlight.Coord              (Coord)
@@ -98,9 +96,6 @@ locateItemsActors xs cm = foldl helper cm xs
 
 addItems :: [SomeItem] -> Actor -> Actor
 addItems xs a = foldr (\x -> over inventoryItems (fromJust . addItem x)) a xs
-
-okResult :: CellMap -> ActionResult
-okResult cm = ActionResult {status = Ok, newCellMap = cm, killed = []}
 
 emptyCellMap :: CellMap
 emptyCellMap =

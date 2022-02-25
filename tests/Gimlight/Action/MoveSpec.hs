@@ -6,11 +6,9 @@ import           Control.Monad.State         (evalState, execStateT)
 import           Control.Monad.Writer        (writer)
 import           Data.Array                  (array)
 import           Data.Either.Combinators     (fromRight')
-import           Gimlight.Action             (ActionResult (ActionResult, killed, newCellMap, status),
-                                              ActionResultWithLog,
-                                              ActionStatus (Ok))
+import           Gimlight.Action             (ActionResultWithLog)
 import           Gimlight.Action.Move        (moveAction)
-import           Gimlight.ActionSpec         (failedResult)
+import           Gimlight.ActionSpec         (failedResult, okResult)
 import           Gimlight.Actor.Monsters     (orc)
 import           Gimlight.Dungeon.Map.Cell   (CellMap,
                                               TileIdLayer (TileIdLayer),
@@ -46,10 +44,8 @@ testTriedToMoveWhereActorExists =
     resultWhenMoveOffsetTo (V2 1 0) `shouldBe` failed
 
 succeed :: V2 Int -> ActionResultWithLog
-succeed offset = writer (result, [])
+succeed offset = writer (okResult cellMapWithPlayer, [])
   where
-    result =
-        ActionResult {status = Ok, newCellMap = cellMapWithPlayer, killed = []}
     cellMapWithPlayer =
         fromRight' $
         flip execStateT testMap $ do
