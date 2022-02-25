@@ -2,7 +2,6 @@ module Gimlight.Action.ConsumeSpec
     ( spec
     ) where
 
-import           Control.Lens                  ((%~), (&))
 import           Control.Monad.State           (evalState, execStateT)
 import           Control.Monad.Writer          (writer)
 import           Data.Either.Combinators       (fromRight')
@@ -11,16 +10,14 @@ import           Data.OpenUnion                (liftUnion)
 import           Gimlight.Action               (ActionResultWithLog)
 import           Gimlight.Action.Consume       (consumeAction)
 import           Gimlight.ActionSpec           (okResult, readingResult)
-import           Gimlight.Actor                (Actor, equip, inventoryItems)
+import           Gimlight.Actor                (Actor, equip)
 import qualified Gimlight.Actor                as A
 import           Gimlight.ActorSpec            (addItems, removeItem)
 import           Gimlight.Coord                (Coord)
-import           Gimlight.Dungeon.Map.Cell     (CellMap, locateActorAt,
-                                                removeActorAt)
+import           Gimlight.Dungeon.Map.Cell     (CellMap, removeActorAt)
 import           Gimlight.Dungeon.Map.CellSpec (emptyCellMap, locateItemsActors,
                                                 locateItemsActorsST)
 import           Gimlight.IndexGenerator       (generator)
-import           Gimlight.Inventory            (removeNthItem)
 import           Gimlight.Item.Defined         (herb, sampleBook, sword,
                                                 woodenArmor)
 import           Gimlight.Item.Heal            (getHealAmount)
@@ -70,11 +67,11 @@ testEquipWeapon =
         fromRight' $
         flip execStateT cm $ do
             a <- removeActorAt playerPos
-            locateActorAt
-                mockTileCollection
-                (fromJust (equip (liftUnion sword) a) &
-                 inventoryItems %~ (snd . removeNthItem 0))
-                (V2 0 0)
+            locateItemsActorsST
+                [ ( playerPos
+                  , liftUnion $
+                    removeItem 0 $ fromJust $ equip (liftUnion sword) a)
+                ]
     cm = testMap $ liftUnion sword
 
 testEquipArmor :: Spec
