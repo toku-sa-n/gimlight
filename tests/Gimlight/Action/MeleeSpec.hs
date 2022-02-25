@@ -14,8 +14,9 @@ import           Gimlight.Action           (ActionResult (ActionResult, killed, 
 import           Gimlight.Action.Melee     (meleeAction)
 import           Gimlight.Actor            (attackFromTo)
 import           Gimlight.Dungeon.Map.Cell (locateActorAt, removeActorAt)
-import           Gimlight.SetUp.CellMap    (initCellMap, mockTileCollection,
+import           Gimlight.SetUp.CellMap    (initCellMap,
                                             intermediateOrcPosition,
+                                            mockTileCollection,
                                             strongestOrcPosition,
                                             weakestOrcPosition)
 import           Test.Hspec                (Spec, describe, it, shouldBe)
