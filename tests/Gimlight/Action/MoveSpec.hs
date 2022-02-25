@@ -11,6 +11,7 @@ import           Gimlight.Action               (ActionResultWithLog)
 import           Gimlight.Action.Move          (moveAction)
 import           Gimlight.ActionSpec           (failedResult, okResult)
 import           Gimlight.Actor.Monsters       (orc)
+import           Gimlight.Coord                (Coord)
 import           Gimlight.Dungeon.Map.Cell     (CellMap,
                                                 TileIdLayer (TileIdLayer),
                                                 locateActorAt, removeActorAt,
@@ -54,8 +55,8 @@ succeed offset = writer (okResult cellMapWithPlayer, [])
   where
     cellMapWithPlayer =
         fromRight' $ flip execStateT testMap $ do
-            a <- removeActorAt (V2 0 0)
-            locateActorAt mockTileCollection a (V2 0 0 + offset)
+            a <- removeActorAt startPos
+            locateActorAt mockTileCollection a (startPos + offset)
 
 failed :: ActionResultWithLog
 failed = writer (failedResult testMap, [T.youCannotMoveThere])
@@ -65,9 +66,13 @@ resultWhenMoveOffsetTo offset =
     moveAction offset (V2 0 0) mockTileCollection testMap
 
 testMap :: CellMap
-testMap = locateItemsActors [(V2 0 0, liftUnion o1), (V2 1 0, liftUnion o2)] cm
+testMap =
+    locateItemsActors [(startPos, liftUnion o1), (V2 1 0, liftUnion o2)] cm
   where
     cm =
         emptyCellMap (V2 2 2) & ix (V2 0 1) . tileIdLayer .~
         TileIdLayer (Just (dummyTileFile, 1)) Nothing
     (o1, o2) = flip evalState generator $ (,) <$> orc <*> orc
+
+startPos :: Coord
+startPos = V2 0 0
