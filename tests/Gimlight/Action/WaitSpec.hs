@@ -15,6 +15,4 @@ spec =
     it "returns a Ok result." $ result `shouldBe` expected
   where
     result = waitAction playerPosition mockTileCollection initCellMap
-    expected = writer (expectedResult, expectedLog)
-    expectedResult = okResult initCellMap
-    expectedLog = []
+    expected = writer (okResult initCellMap, [])
