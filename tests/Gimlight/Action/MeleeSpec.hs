@@ -29,15 +29,15 @@ import           Linear                        (V2 (V2))
 import           Test.Hspec                    (Spec, describe, it, shouldBe)
 
 spec :: Spec
-spec = do
-    testKill
-    testDamage
+spec =
+    describe "meleeAction" $ do
+        testKill
+        testDamage
 
 testKill :: Spec
-testKill =
-    describe "Strongest orc" $ do
-        it "kills the weakest orc" $ result cm `shouldBe` expected
-        it "returns a Nothing defender" $ newDefender `shouldBe` Nothing
+testKill = do
+    it "kills the weakest orc" $ result cm `shouldBe` expected
+    it "returns a Nothing defender" $ newDefender `shouldBe` Nothing
   where
     expected = writer (expectedResult, expectedLog)
     expectedResult = okWithKilled cellMapWithoutDefender [defender]
@@ -47,7 +47,6 @@ testKill =
 
 testDamage :: Spec
 testDamage =
-    describe "Strongest orc" $
     it "attacks to the intermediate orc" $ result cm `shouldBe` expected
   where
     expected = writer (expectedResult, expectedLog)
