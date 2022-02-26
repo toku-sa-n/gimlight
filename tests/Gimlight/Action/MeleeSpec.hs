@@ -46,7 +46,7 @@ testKill =
     (defender, cellMapWithoutDefender) =
         fromRight' $ flip runStateT cm $ removeActorAt $ V2 1 0
     attacker = fromRight' $ flip evalStateT cm $ removeActorAt $ V2 0 0
-    cm = testMap $ status (hp 50) 50 50
+    cm = testMap $ status (hp 1) 0 0
 
 testDamage :: Spec
 testDamage =
@@ -78,7 +78,7 @@ testMap st =
   where
     (a1, a2) =
         flip evalState generator $
-        (,) <$> testMonster st <*> testMonster (status (hp 5) 0 0)
+        (,) <$> testMonster (status (hp 1) 2 0) <*> testMonster st
 
 testMonster :: Status -> State IndexGenerator Actor
 testMonster st = monster Orc st ""
