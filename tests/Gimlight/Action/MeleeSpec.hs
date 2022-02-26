@@ -21,10 +21,7 @@ import           Gimlight.Dungeon.Map.Cell     (CellMap, removeActorAt)
 import           Gimlight.Dungeon.Map.CellSpec (emptyCellMap, locateItemsActors,
                                                 locateItemsActorsST)
 import           Gimlight.IndexGenerator       (IndexGenerator, generator)
-import           Gimlight.SetUp.CellMap        (initCellMap,
-                                                intermediateOrcPosition,
-                                                mockTileCollection,
-                                                strongestOrcPosition)
+import           Gimlight.SetUp.CellMap        (mockTileCollection)
 import           Linear                        (V2 (V2))
 import           Test.Hspec                    (Spec, describe, it, shouldBe)
 
@@ -53,23 +50,18 @@ testDamage =
     describe "Strongest orc" $
     it "attacks to the intermediate orc" $ result `shouldBe` expected
   where
-    result =
-        meleeAction offset strongestOrcPosition mockTileCollection initCellMap
+    result = meleeAction (V2 1 0) (V2 0 0) mockTileCollection cm
     expected = writer (expectedResult, expectedLog)
     expectedResult =
         okResult $
         fromRight' $
         flip execStateT cellMapWithoutDefender $
-        locateItemsActorsST
-            [(intermediateOrcPosition, liftUnion $ fromJust newDefender)]
+        locateItemsActorsST [(V2 1 0, liftUnion $ fromJust newDefender)]
     ((_, newDefender), expectedLog) = runWriter $ attackFromTo attacker defender
     (defender, cellMapWithoutDefender) =
-        fromRight' $
-        flip runStateT initCellMap $ removeActorAt intermediateOrcPosition
-    attacker =
-        fromRight' $
-        flip evalStateT initCellMap $ removeActorAt strongestOrcPosition
-    offset = intermediateOrcPosition - strongestOrcPosition
+        fromRight' $ flip runStateT cm $ removeActorAt (V2 1 0)
+    attacker = fromRight' $ flip evalStateT cm $ removeActorAt (V2 0 0)
+    cm = testMap $ status (hp 2) 0 1
 
 testMap :: Status -> CellMap
 testMap st =
