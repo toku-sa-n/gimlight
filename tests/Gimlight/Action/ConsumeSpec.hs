@@ -16,9 +16,8 @@ import           Gimlight.Actor                (Actor, equip)
 import qualified Gimlight.Actor                as A
 import           Gimlight.ActorSpec            (addItems, removeItem)
 import           Gimlight.Coord                (Coord)
-import           Gimlight.Dungeon.Map.Cell     (CellMap, removeActorAt)
-import           Gimlight.Dungeon.Map.CellSpec (emptyCellMap, locateItemsActors,
-                                                locateItemsActorsST)
+import           Gimlight.Dungeon.Map.Cell     (CellMap, mapActorAt)
+import           Gimlight.Dungeon.Map.CellSpec (emptyCellMap, locateItemsActors)
 import           Gimlight.Dungeon.Map.TileSpec (mockTileCollection)
 import           Gimlight.IndexGenerator       (generator)
 import           Gimlight.Item                 (Item)
@@ -77,10 +76,7 @@ testEquip x = result cm `shouldBe` expected
 
 afterUsing :: (Actor -> Actor) -> CellMap -> CellMap
 afterUsing f cm =
-    fromRight' $
-    flip execStateT cm $ do
-        a <- removeActorAt playerPos
-        locateItemsActorsST [(playerPos, liftUnion $ f a)]
+    fromRight' $ flip execStateT cm $ mapActorAt mockTileCollection playerPos f
 
 result :: CellMap -> ActionResultWithLog
 result = consumeAction 0 playerPos mockTileCollection
