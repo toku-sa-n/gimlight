@@ -35,13 +35,11 @@ spec =
         testDamage
 
 testKill :: Spec
-testKill = do
-    it "kills the weakest orc" $ result cm `shouldBe` expected
-    it "returns a Nothing defender" $ newDefender `shouldBe` Nothing
+testKill = it "kills the weakest orc" $ result cm `shouldBe` expected
   where
     expected = writer (expectedResult, expectedLog)
     expectedResult = okWithKilled cellMapWithoutDefender [defender]
-    (newDefender, expectedLog) = defenderAfterAttackAndLog cm
+    (_, expectedLog) = defenderAfterAttackAndLog cm
     (defender, cellMapWithoutDefender) = defenderAndMap cm
     cm = testMap $ status (hp 1) 0 0
 
