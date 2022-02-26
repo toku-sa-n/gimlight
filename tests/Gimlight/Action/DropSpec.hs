@@ -14,7 +14,7 @@ import           Gimlight.ActionSpec           (failedResult, okResult)
 import           Gimlight.Actor                (player)
 import           Gimlight.ActorSpec            (addItems, removeItem)
 import           Gimlight.Coord                (Coord)
-import           Gimlight.Dungeon.Map.Cell     (CellMap, removeActorAt)
+import           Gimlight.Dungeon.Map.Cell     (CellMap, mapActorAt)
 import           Gimlight.Dungeon.Map.CellSpec (emptyCellMap, locateItemsActors,
                                                 locateItemsActorsST)
 import           Gimlight.Dungeon.Map.TileSpec (mockTileCollection)
@@ -39,11 +39,9 @@ testDropItemSuccessfully =
     cellMapAfterDropping =
         fromRight' $
         flip execStateT testMap $ do
-            a <- removeActorAt playerPos
+            mapActorAt mockTileCollection playerPos (removeItem 0)
             locateItemsActorsST
-                [ (playerPos, liftUnion $ removeItem 0 a)
-                , (playerPos, liftUnion (liftUnion herb :: SomeItem))
-                ]
+                [(playerPos, liftUnion (liftUnion herb :: SomeItem))]
 
 testItemAlreadyExists :: Spec
 testItemAlreadyExists =
