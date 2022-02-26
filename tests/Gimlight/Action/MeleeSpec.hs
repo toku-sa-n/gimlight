@@ -42,8 +42,7 @@ testKill =
     expectedResult = okWithKilled cellMapWithoutDefender [defender]
     ((_, newDefender), expectedLog) =
         runWriter $ attackFromTo (attacker cm) defender
-    (defender, cellMapWithoutDefender) =
-        fromRight' $ flip runStateT cm $ removeActorAt defPos
+    (defender, cellMapWithoutDefender) = defenderAndMap cm
     cm = testMap $ status (hp 1) 0 0
 
 testDamage :: Spec
@@ -59,8 +58,7 @@ testDamage =
         locateItemsActorsST [(defPos, liftUnion $ fromJust newDefender)]
     ((_, newDefender), expectedLog) =
         runWriter $ attackFromTo (attacker cm) defender
-    (defender, cellMapWithoutDefender) =
-        fromRight' $ flip runStateT cm $ removeActorAt defPos
+    (defender, cellMapWithoutDefender) = defenderAndMap cm
     cm = testMap $ status (hp 2) 0 1
 
 testMap :: Status -> CellMap
@@ -77,6 +75,9 @@ result = meleeAction offset atkPos mockTileCollection
 
 attacker :: CellMap -> Actor
 attacker cm = fromRight' $ flip evalStateT cm $ removeActorAt atkPos
+
+defenderAndMap :: CellMap -> (Actor, CellMap)
+defenderAndMap cm = fromRight' $ flip runStateT cm $ removeActorAt defPos
 
 testMonster :: Status -> State IndexGenerator Actor
 testMonster st = monster Orc st ""
