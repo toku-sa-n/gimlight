@@ -11,6 +11,7 @@ import           Control.Monad.Writer          (runWriter, writer)
 import           Data.Either.Combinators       (fromRight')
 import           Data.Maybe                    (fromJust)
 import           Data.OpenUnion                (liftUnion)
+import           Gimlight.Action               (ActionResultWithLog)
 import           Gimlight.Action.Melee         (meleeAction)
 import           Gimlight.ActionSpec           (okResult, okWithKilled)
 import           Gimlight.Actor                (Actor, attackFromTo, monster)
@@ -34,10 +35,9 @@ spec = do
 testKill :: Spec
 testKill =
     describe "Strongest orc" $ do
-        it "kills the weakest orc" $ result `shouldBe` expected
+        it "kills the weakest orc" $ result cm `shouldBe` expected
         it "returns a Nothing defender" $ newDefender `shouldBe` Nothing
   where
-    result = meleeAction offset atkPos mockTileCollection cm
     expected = writer (expectedResult, expectedLog)
     expectedResult = okWithKilled cellMapWithoutDefender [defender]
     ((_, newDefender), expectedLog) = runWriter $ attackFromTo attacker defender
@@ -49,9 +49,8 @@ testKill =
 testDamage :: Spec
 testDamage =
     describe "Strongest orc" $
-    it "attacks to the intermediate orc" $ result `shouldBe` expected
+    it "attacks to the intermediate orc" $ result cm `shouldBe` expected
   where
-    result = meleeAction offset atkPos mockTileCollection cm
     expected = writer (expectedResult, expectedLog)
     expectedResult =
         okResult $
@@ -72,6 +71,9 @@ testMap st =
     (a1, a2) =
         flip evalState generator $
         (,) <$> testMonster (status (hp 1) 2 0) <*> testMonster st
+
+result :: CellMap -> ActionResultWithLog
+result = meleeAction offset atkPos mockTileCollection
 
 testMonster :: Status -> State IndexGenerator Actor
 testMonster st = monster Orc st ""
