@@ -116,6 +116,7 @@ library
                       , Gimlight.Item.SomeItem
                       , Gimlight.Item.Weapon
                       , Gimlight.Localization.Texts
+                      , Gimlight.Log
                       , Gimlight.System.Random
                       , Gimlight.UI.Draw.Config
 
@@ -148,7 +149,6 @@ library
                       , Gimlight.Localization.Texts.Scene
                       , Gimlight.Localization.Texts.Status
                       , Gimlight.Localization.Texts.Title
-                      , Gimlight.Log
                       , Gimlight.NpcBehavior
                       , Gimlight.Player
                       , Gimlight.Quest

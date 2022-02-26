@@ -23,6 +23,7 @@ import           Gimlight.Dungeon.Map.Cell     (CellMap, removeActorAt)
 import           Gimlight.Dungeon.Map.CellSpec (emptyCellMap, locateItemsActors,
                                                 locateItemsActorsST)
 import           Gimlight.IndexGenerator       (IndexGenerator, generator)
+import           Gimlight.Log                  (MessageLog)
 import           Gimlight.SetUp.CellMap        (mockTileCollection)
 import           Linear                        (V2 (V2))
 import           Test.Hspec                    (Spec, describe, it, shouldBe)
@@ -40,8 +41,7 @@ testKill =
   where
     expected = writer (expectedResult, expectedLog)
     expectedResult = okWithKilled cellMapWithoutDefender [defender]
-    ((_, newDefender), expectedLog) =
-        runWriter $ attackFromTo (attacker cm) defender
+    (newDefender, expectedLog) = defenderAfterAttackAndLog cm
     (defender, cellMapWithoutDefender) = defenderAndMap cm
     cm = testMap $ status (hp 1) 0 0
 
@@ -56,9 +56,8 @@ testDamage =
         fromRight' $
         flip execStateT cellMapWithoutDefender $
         locateItemsActorsST [(defPos, liftUnion $ fromJust newDefender)]
-    ((_, newDefender), expectedLog) =
-        runWriter $ attackFromTo (attacker cm) defender
-    (defender, cellMapWithoutDefender) = defenderAndMap cm
+    (newDefender, expectedLog) = defenderAfterAttackAndLog cm
+    (_, cellMapWithoutDefender) = defenderAndMap cm
     cm = testMap $ status (hp 2) 0 1
 
 testMap :: Status -> CellMap
@@ -72,6 +71,12 @@ testMap st =
 
 result :: CellMap -> ActionResultWithLog
 result = meleeAction offset atkPos mockTileCollection
+
+defenderAfterAttackAndLog :: CellMap -> (Maybe Actor, MessageLog)
+defenderAfterAttackAndLog cm = (d, l)
+  where
+    ((_, d), l) = runWriter $ attackFromTo (attacker cm) defender
+    defender = fst $ defenderAndMap cm
 
 attacker :: CellMap -> Actor
 attacker cm = fromRight' $ flip evalStateT cm $ removeActorAt atkPos
