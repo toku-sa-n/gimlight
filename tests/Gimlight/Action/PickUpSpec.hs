@@ -16,8 +16,8 @@ import           Gimlight.Actor                (Actor)
 import qualified Gimlight.Actor                as A
 import           Gimlight.ActorSpec            (addItems)
 import           Gimlight.Coord                (Coord)
-import           Gimlight.Dungeon.Map.Cell     (CellMap, locateActorAt,
-                                                removeActorAt, removeItemAt)
+import           Gimlight.Dungeon.Map.Cell     (CellMap, mapActorAt,
+                                                removeItemAt)
 import           Gimlight.Dungeon.Map.CellSpec (emptyCellMap, locateItemsActors)
 import           Gimlight.Dungeon.Map.TileSpec (mockTileCollection)
 import           Gimlight.IndexGenerator       (generator)
@@ -44,9 +44,7 @@ testPickUpSuccess =
         fromRight' $
         flip execStateT cm $ do
             _ <- removeItemAt playerPos
-            _ <- removeActorAt playerPos
-            locateActorAt mockTileCollection actorWithItem playerPos
-    actorWithItem = addItems [liftUnion herb] player
+            mapActorAt mockTileCollection playerPos (addItems [liftUnion herb])
     cm =
         cellMapWith
             [ (playerPos, liftUnion (liftUnion herb :: SomeItem))
