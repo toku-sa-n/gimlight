@@ -17,6 +17,7 @@ import           Gimlight.Actor                (Actor, attackFromTo, monster)
 import           Gimlight.Actor.Identifier     (Identifier (Orc))
 import           Gimlight.Actor.Status         (Status, status)
 import           Gimlight.Actor.Status.Hp      (hp)
+import           Gimlight.Coord                (Coord)
 import           Gimlight.Dungeon.Map.Cell     (CellMap, removeActorAt)
 import           Gimlight.Dungeon.Map.CellSpec (emptyCellMap, locateItemsActors,
                                                 locateItemsActorsST)
@@ -36,13 +37,13 @@ testKill =
         it "kills the weakest orc" $ result `shouldBe` expected
         it "returns a Nothing defender" $ newDefender `shouldBe` Nothing
   where
-    result = meleeAction (V2 1 0) (V2 0 0) mockTileCollection cm
+    result = meleeAction offset atkPos mockTileCollection cm
     expected = writer (expectedResult, expectedLog)
     expectedResult = okWithKilled cellMapWithoutDefender [defender]
     ((_, newDefender), expectedLog) = runWriter $ attackFromTo attacker defender
     (defender, cellMapWithoutDefender) =
-        fromRight' $ flip runStateT cm $ removeActorAt $ V2 1 0
-    attacker = fromRight' $ flip evalStateT cm $ removeActorAt $ V2 0 0
+        fromRight' $ flip runStateT cm $ removeActorAt defPos
+    attacker = fromRight' $ flip evalStateT cm $ removeActorAt atkPos
     cm = testMap $ status (hp 1) 0 0
 
 testDamage :: Spec
@@ -50,22 +51,22 @@ testDamage =
     describe "Strongest orc" $
     it "attacks to the intermediate orc" $ result `shouldBe` expected
   where
-    result = meleeAction (V2 1 0) (V2 0 0) mockTileCollection cm
+    result = meleeAction offset atkPos mockTileCollection cm
     expected = writer (expectedResult, expectedLog)
     expectedResult =
         okResult $
         fromRight' $
         flip execStateT cellMapWithoutDefender $
-        locateItemsActorsST [(V2 1 0, liftUnion $ fromJust newDefender)]
+        locateItemsActorsST [(defPos, liftUnion $ fromJust newDefender)]
     ((_, newDefender), expectedLog) = runWriter $ attackFromTo attacker defender
     (defender, cellMapWithoutDefender) =
-        fromRight' $ flip runStateT cm $ removeActorAt (V2 1 0)
-    attacker = fromRight' $ flip evalStateT cm $ removeActorAt (V2 0 0)
+        fromRight' $ flip runStateT cm $ removeActorAt defPos
+    attacker = fromRight' $ flip evalStateT cm $ removeActorAt atkPos
     cm = testMap $ status (hp 2) 0 1
 
 testMap :: Status -> CellMap
 testMap st =
-    locateItemsActors (zip [V2 0 0, V2 1 0] $ map liftUnion [a1, a2]) $
+    locateItemsActors (zip [atkPos, defPos] $ map liftUnion [a1, a2]) $
     emptyCellMap $ V2 2 1
   where
     (a1, a2) =
@@ -74,3 +75,12 @@ testMap st =
 
 testMonster :: Status -> State IndexGenerator Actor
 testMonster st = monster Orc st ""
+
+atkPos :: Coord
+atkPos = V2 0 0
+
+defPos :: Coord
+defPos = V2 1 0
+
+offset :: V2 Int
+offset = defPos - atkPos
