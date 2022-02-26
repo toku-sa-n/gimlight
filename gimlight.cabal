@@ -60,10 +60,10 @@ Test-Suite spec
                       , Gimlight.Dungeon.Generate.ConfigSpec
                       , Gimlight.Dungeon.Map.CellSpec
                       , Gimlight.Dungeon.Map.JSONReaderSpec
+                      , Gimlight.Dungeon.Map.TileSpec
                       , Gimlight.Dungeon.Map.Tile.JSONReaderSpec
                       , Gimlight.FovSpec
                       , Gimlight.Generator
-                      , Gimlight.SetUp.CellMap
                       , Gimlight.SetUp.ImageFile
                       , Gimlight.SetUp.MapFile
                       , Gimlight.SetUp.TileFile

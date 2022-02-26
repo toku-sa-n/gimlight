@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module Gimlight.SetUp.CellMap
+module Gimlight.Dungeon.Map.TileSpec
     ( mockTileCollection
     , dummyTileFile
     ) where

@@ -17,10 +17,10 @@ import           Gimlight.Dungeon.Map.Cell     (CellMap,
                                                 locateActorAt, removeActorAt,
                                                 tileIdLayer)
 import           Gimlight.Dungeon.Map.CellSpec (emptyCellMap, locateItemsActors)
+import           Gimlight.Dungeon.Map.TileSpec (dummyTileFile,
+                                                mockTileCollection)
 import           Gimlight.IndexGenerator       (generator)
 import qualified Gimlight.Localization.Texts   as T
-import           Gimlight.SetUp.CellMap        (dummyTileFile,
-                                                mockTileCollection)
 import           Linear.V2                     (V2 (V2))
 import           Test.Hspec                    (Spec, it, shouldBe)
 

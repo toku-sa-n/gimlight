@@ -8,19 +8,20 @@ module Gimlight.Dungeon.Map.CellSpec
     , locateItemsActorsST
     ) where
 
-import           Control.Monad.State       (MonadState (get, put), StateT,
-                                            execStateT)
-import           Data.Array                (listArray)
-import           Data.Either.Combinators   (fromRight')
-import           Data.OpenUnion            (Union, typesExhausted, (@>))
-import           Gimlight.Actor            (Actor)
-import           Gimlight.Coord            (Coord)
-import           Gimlight.Dungeon.Map.Cell (CellMap, Error,
-                                            TileIdLayer (TileIdLayer), cellMap,
-                                            locateActorAt, locateItemAt)
-import           Gimlight.Item.SomeItem    (SomeItem)
-import           Gimlight.SetUp.CellMap    (mockTileCollection)
-import           Linear                    (V2 (V2))
+import           Control.Monad.State           (MonadState (get, put), StateT,
+                                                execStateT)
+import           Data.Array                    (listArray)
+import           Data.Either.Combinators       (fromRight')
+import           Data.OpenUnion                (Union, typesExhausted, (@>))
+import           Gimlight.Actor                (Actor)
+import           Gimlight.Coord                (Coord)
+import           Gimlight.Dungeon.Map.Cell     (CellMap, Error,
+                                                TileIdLayer (TileIdLayer),
+                                                cellMap, locateActorAt,
+                                                locateItemAt)
+import           Gimlight.Dungeon.Map.TileSpec (mockTileCollection)
+import           Gimlight.Item.SomeItem        (SomeItem)
+import           Linear                        (V2 (V2))
 
 emptyTile :: TileIdLayer
 emptyTile = TileIdLayer Nothing Nothing
