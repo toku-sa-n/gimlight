@@ -1,3 +1,5 @@
+{-# LANGUAGE DataKinds #-}
+
 module Gimlight.Action.ConsumeSpec
     ( spec
     ) where
@@ -6,7 +8,7 @@ import           Control.Monad.State           (evalState, execStateT)
 import           Control.Monad.Writer          (writer)
 import           Data.Either.Combinators       (fromRight')
 import           Data.Maybe                    (fromJust)
-import           Data.OpenUnion                (liftUnion)
+import           Data.OpenUnion                (Union, liftUnion, reUnion)
 import           Gimlight.Action               (ActionResultWithLog)
 import           Gimlight.Action.Consume       (consumeAction)
 import           Gimlight.ActionSpec           (okResult, readingResult)
@@ -19,13 +21,16 @@ import           Gimlight.Dungeon.Map.CellSpec (emptyCellMap, locateItemsActors,
                                                 locateItemsActorsST)
 import           Gimlight.Dungeon.Map.TileSpec (mockTileCollection)
 import           Gimlight.IndexGenerator       (generator)
+import           Gimlight.Item                 (Item)
+import           Gimlight.Item.Armor           (Armor)
 import           Gimlight.Item.Defined         (herb, sampleBook, sword,
                                                 woodenArmor)
 import           Gimlight.Item.Heal            (getHealAmount)
-import           Gimlight.Item.SomeItem        (SomeItem)
+import           Gimlight.Item.SomeItem        (SomeItem, getName)
+import           Gimlight.Item.Weapon          (Weapon)
 import qualified Gimlight.Localization.Texts   as T
 import           Linear                        (V2 (V2))
-import           Test.Hspec                    (Spec, it, shouldBe)
+import           Test.Hspec                    (Expectation, Spec, it, shouldBe)
 
 spec :: Spec
 spec = do
@@ -55,21 +60,20 @@ testConsumeHerb =
 testEquipWeapon :: Spec
 testEquipWeapon =
     it "returns a Ok result if an actor equips a weapon" $
-    result cm `shouldBe` expected
-  where
-    expected = writer (okResult cmAfter, [T.equipped T.player T.sword])
-    cmAfter = afterUsing (removeItem 0 . fromJust . equip (liftUnion sword)) cm
-    cm = testMap $ liftUnion sword
+    testEquip $ liftUnion sword
 
 testEquipArmor :: Spec
 testEquipArmor =
     it "returns a Ok result if an actor equips a weapon" $
-    result cm `shouldBe` expected
+    testEquip $ liftUnion woodenArmor
+
+testEquip :: Union '[ Item Weapon, Item Armor] -> Expectation
+testEquip x = result cm `shouldBe` expected
   where
-    expected = writer (okResult cmAfter, [T.equipped T.player T.woodenArmor])
-    cmAfter =
-        afterUsing (removeItem 0 . fromJust . equip (liftUnion woodenArmor)) cm
-    cm = testMap $ liftUnion woodenArmor
+    expected = writer (okResult cmAfter, [T.equipped T.player (getName item)])
+    cmAfter = afterUsing (removeItem 0 . fromJust . equip x) cm
+    cm = testMap item
+    item = reUnion x
 
 afterUsing :: (Actor -> Actor) -> CellMap -> CellMap
 afterUsing f cm =
