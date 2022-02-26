@@ -17,8 +17,7 @@ import           Gimlight.Dungeon.Map.Cell     (CellMap,
                                                 locateActorAt, removeActorAt,
                                                 tileIdLayer)
 import           Gimlight.Dungeon.Map.CellSpec (emptyCellMap, locateItemsActors)
-import           Gimlight.Dungeon.Map.TileSpec (dummyTileFile,
-                                                mockTileCollection)
+import           Gimlight.Dungeon.Map.TileSpec (mockTileCollection, unwalkable)
 import           Gimlight.IndexGenerator       (generator)
 import qualified Gimlight.Localization.Texts   as T
 import           Linear.V2                     (V2 (V2))
@@ -71,7 +70,7 @@ testMap =
   where
     cm =
         emptyCellMap (V2 2 2) & ix (V2 0 1) . tileIdLayer .~
-        TileIdLayer (Just (dummyTileFile, 1)) Nothing
+        TileIdLayer (Just unwalkable) Nothing
     (o1, o2) = flip evalState generator $ (,) <$> orc <*> orc
 
 startPos :: Coord
