@@ -21,11 +21,11 @@ mockTileCollection =
   where
     emptyImage = generateImage (\_ _ -> PixelRGBA8 0 0 0 0) tileWidth tileHeight
 
-dummyTileFile :: FilePath
-dummyTileFile = "dummy.json"
-
 walkable :: TileId
 walkable = (dummyTileFile, 0)
 
 unwalkable :: TileId
 unwalkable = (dummyTileFile, 1)
+
+dummyTileFile :: FilePath
+dummyTileFile = "dummy.json"
