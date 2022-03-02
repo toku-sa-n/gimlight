@@ -49,7 +49,7 @@ testNoActorExistsOnUpStairs :: TileCollection -> Spec
 testNoActorExistsOnUpStairs tc =
     prop "does not locate an actor at the upstairs." $ \g ->
         let (d, c) = toDungeon g
-         in actorExists c (d ^. D.cellMap)
+         in not $ actorExists c (d ^. D.cellMap)
   where
     toDungeon g =
         let (Node d _, c) = tree (mkStdGen g)
