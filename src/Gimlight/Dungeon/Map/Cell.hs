@@ -1,7 +1,6 @@
 {-# LANGUAGE DeriveGeneric   #-}
 {-# LANGUAGE GADTs           #-}
 {-# LANGUAGE LambdaCase      #-}
-{-# LANGUAGE MultiWayIf      #-}
 {-# LANGUAGE RankNTypes      #-}
 {-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE TupleSections   #-}
