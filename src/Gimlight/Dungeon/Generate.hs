@@ -252,15 +252,14 @@ placeEnemies tc cm r n = do
     placeEnemies tc newMap r (n - 1)
 
 placeItems :: CellMap -> TileCollection -> Room -> Int -> State StdGen CellMap
-placeItems cm _ _ 0 = return cm
-placeItems cm tc r n = do
-    x <- randomRST (x1 r, x2 r - 1)
-    y <- randomRST (y1 r, y2 r - 1)
-    newItem <- choiceST items
-    let newMap =
-            fromRight cm $ flip execStateT cm $ locateItemAt tc newItem (V2 x y)
-    placeItems newMap tc r (n - 1)
+placeItems before tc r n = foldlM foldStep before [1 .. n]
   where
+    foldStep cm _ = do
+        x <- randomRST (x1 r, x2 r - 1)
+        y <- randomRST (y1 r, y2 r - 1)
+        newItem <- choiceST items
+        return $ fromRight cm $ flip execStateT cm $
+            locateItemAt tc newItem (V2 x y)
     items =
         [ liftUnion herb
         , liftUnion sampleBook
