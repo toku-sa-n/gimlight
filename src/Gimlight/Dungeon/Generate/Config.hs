@@ -46,15 +46,15 @@ getMapSize = mapSize
 getTileFilePath :: Config -> FilePath
 getTileFilePath = tileFilePath
 
-config :: Int -> Int -> Int -> Int -> V2 Int -> FilePath -> Config
-config nf mr rmin rmax ms@(V2 width height) path
+config :: Int -> Int -> V2 Int -> V2 Int -> FilePath -> Config
+config nf mr rs@(V2 rmin rmax) ms@(V2 width height) path
     | nf <= 0 = error numOfFloorsMustBePositive
     | mr <= 0 = error maxRoomMustBePositive
     | rmin <= 0 = error roomMinSizeMustBePositive
     | rmin > rmax = error $ roomMinIsLargerThanRoomMax rmin rmax -- No need to check if `rmax <= 0` as this ensures that `0 < rmin <= rmax`.
     | rmax > width = error $ roomMaxSizeIsLargerThanRoomWidth rmax width
     | rmax > height = error $ roomMaxSizeIsLargerThanRoomHeight rmax height -- No need to check if `width` or `height` are negative as `(width or height) >= rmax >= rmin > 0`
-    | otherwise = Config nf mr (V2 rmin rmax) ms path
+    | otherwise = Config nf mr rs ms path
 
 numOfFloorsMustBePositive :: String
 numOfFloorsMustBePositive = "The number of floors must be positive."
