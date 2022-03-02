@@ -242,14 +242,14 @@ placeEnemies ::
     -> Room
     -> Int
     -> StateT IndexGenerator (State StdGen) CellMap
-placeEnemies _ cm _ 0 = return cm
-placeEnemies tc cm r n = do
-    x <- lift $ randomRST (x1 r, x2 r - 1)
-    y <- lift $ randomRST (y1 r, y2 r - 1)
-    enemy <- newMonster
-    let newMap =
-            fromRight cm $ flip execStateT cm $ locateActorAt tc enemy (V2 x y)
-    placeEnemies tc newMap r (n - 1)
+placeEnemies tc before r n = foldlM foldStep before [1 .. n]
+  where
+    foldStep cm _ = do
+        x <- lift $ randomRST (x1 r, x2 r - 1)
+        y <- lift $ randomRST (y1 r, y2 r - 1)
+        enemy <- newMonster
+        return $ fromRight cm $ flip execStateT cm $
+            locateActorAt tc enemy (V2 x y)
 
 placeItems :: CellMap -> TileCollection -> Room -> Int -> State StdGen CellMap
 placeItems before tc r n = foldlM foldStep before [1 .. n]
