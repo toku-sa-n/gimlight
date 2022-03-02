@@ -1,6 +1,7 @@
 {-# LANGUAGE DeriveGeneric   #-}
 {-# LANGUAGE GADTs           #-}
 {-# LANGUAGE LambdaCase      #-}
+{-# LANGUAGE MultiWayIf      #-}
 {-# LANGUAGE RankNTypes      #-}
 {-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE TupleSections   #-}
@@ -188,7 +189,10 @@ positionsAndItems = mapMaybe mapStep . assocs
 locateActorAt ::
        TileCollection -> Actor -> Coord -> StateT CellMap (Either Error) ()
 locateActorAt tc a c =
-    StateT $ \cm -> fmap ((), ) $ cm & ix c %%~ locateActor tc a
+    StateT $ \cm ->
+        if coordIsInMap c cm
+            then fmap ((), ) $ cm & ix c %%~ locateActor tc a
+            else Left OutOfRange
 
 locateItemAt ::
        TileCollection -> SomeItem -> Coord -> StateT CellMap (Either Error) ()
@@ -230,3 +234,8 @@ actorExists c cm =
     case cm ^? ix c . actor of
         Just (Just _) -> True
         _             -> False
+
+coordIsInMap :: Coord -> CellMap -> Bool
+coordIsInMap (V2 x y) cm = x >= 0 && y >= 0 && x < width && y < height
+  where
+    V2 width height = widthAndHeight cm
