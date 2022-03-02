@@ -57,7 +57,7 @@ testNoActorExistsOnUpStairs tc =
     tree g =
         extractDungeonTreeAndAscendingStairsPosition g $
         generateMultipleFloorsDungeon tc cfg Beaeve
-    cfg = config 1 10 3 3 (V2 10 10) tileFileForGeneration
+    cfg = config 1 10 (V2 3 3) (V2 10 10) tileFileForGeneration
 
 generateSingleMap :: TileCollection -> Config -> Int -> CellMap
 generateSingleMap tc cfg g =
