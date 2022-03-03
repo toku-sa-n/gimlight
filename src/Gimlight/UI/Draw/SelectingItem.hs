@@ -9,12 +9,13 @@ import           Gimlight.GameStatus.SelectingItem (Reason (Drop, Use),
                                                     getExploringHandler,
                                                     getItems, getReason,
                                                     getSelectingIndex)
-import           Gimlight.Item.SomeItem            (getName)
+import           Gimlight.Item.SomeItem            (getIconImagePath, getName)
 import           Gimlight.Localization             (MultilingualText,
                                                     getLocalizedText)
 import qualified Gimlight.Localization.Texts       as T
 import           Gimlight.UI.Draw.Config           (windowHeight, windowWidth)
-import           Gimlight.UI.Draw.Dialog           (heading, selections)
+import           Gimlight.UI.Draw.Dialog           (heading,
+                                                    selectionsWithImages)
 import qualified Gimlight.UI.Draw.Dialog           as Dialog
 import           Gimlight.UI.Draw.Exploring        (drawExploring)
 import           Gimlight.UI.Draw.KeyEvent         (withKeyEvents)
@@ -48,8 +49,14 @@ titleLabel sh c = heading $ getLocalizedText c $ titleLabelText sh
 itemLabels :: SelectingItemHandler -> GameConfig -> [GameWidgetNode]
 itemLabels sh c =
     case getSelectingIndex sh of
-        Just x  -> [selections x $ itemNames sh c]
+        Just x  -> [selectionsWithImages x $ itemPathsAndNames sh c]
         Nothing -> []
+
+itemPathsAndNames :: SelectingItemHandler -> GameConfig -> [(Text, Text)]
+itemPathsAndNames sh c = zip (itemPaths sh) (itemNames sh c)
+
+itemPaths :: SelectingItemHandler -> [Text]
+itemPaths = fmap getIconImagePath . getItems
 
 itemNames :: SelectingItemHandler -> GameConfig -> [Text]
 itemNames sh c = fmap (getLocalizedText c . getName) (getItems sh)

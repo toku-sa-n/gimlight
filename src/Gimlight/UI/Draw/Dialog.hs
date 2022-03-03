@@ -1,6 +1,7 @@
 module Gimlight.UI.Draw.Dialog
     ( dialog
     , heading
+    , selectionsWithImages
     , selections
     , normalText
     , boldText
@@ -10,8 +11,10 @@ module Gimlight.UI.Draw.Dialog
 import           Data.Text              (Text)
 import           Gimlight.UI.Draw.Fonts (bold)
 import           Gimlight.UI.Types      (GameWidgetNode)
-import           Monomer                (CmbBgColor (bgColor),
+import           Monomer                (CmbAlignMiddle (alignMiddle),
+                                         CmbBgColor (bgColor),
                                          CmbBorderB (borderB),
+                                         CmbHeight (height),
                                          CmbMultiline (multiline),
                                          CmbPadding (padding),
                                          CmbStyleBasic (styleBasic),
@@ -19,14 +22,25 @@ import           Monomer                (CmbBgColor (bgColor),
                                          CmbTextFont (textFont),
                                          CmbTextSize (textSize),
                                          CmbTextSpaceV (textSpaceV),
-                                         Color (Color), StyleState, box, label,
-                                         label_, vstack, white)
+                                         Color (Color), StyleState, box, hstack,
+                                         image_, label, label_, vstack, white)
 
 dialog :: GameWidgetNode -> GameWidgetNode
 dialog inner = box inner `styleBasic` dialogStyle
 
 heading :: Text -> GameWidgetNode
 heading text = label text `styleBasic` headingStyle
+
+selectionsWithImages :: Int -> [(Text, Text)] -> GameWidgetNode
+selectionsWithImages selecting = vstack . fmap toLabel . zip [0 ..]
+  where
+    toLabel (idx, (path, text))
+        | idx == selecting =
+            hstack [image_ path [alignMiddle], boldText text] `styleBasic`
+            [height 48]
+        | otherwise =
+            hstack [image_ path [alignMiddle], normalText text] `styleBasic`
+            [height 48]
 
 selections :: Int -> [Text] -> GameWidgetNode
 selections selecting = vstack . fmap toLabel . zip [0 ..]
