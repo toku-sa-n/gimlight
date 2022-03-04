@@ -58,20 +58,17 @@ selectionsWithImages :: Int -> [(Text, Text)] -> GameWidgetNode
 selectionsWithImages selecting = vstack . fmap toLabel . zip [0 ..]
   where
     toLabel (idx, (path, text))
-        | idx == selecting =
-            hstack
-                [ image path `styleBasic` [width $ fromIntegral tileWidth]
-                , spacer
-                , label text `styleBasic` boldTextStyle
-                ] `styleBasic`
-            [height $ fromIntegral tileHeight]
-        | otherwise =
-            hstack
-                [ image path `styleBasic` [width $ fromIntegral tileWidth]
-                , spacer
-                , label text `styleBasic` normalTextStyle
-                ] `styleBasic`
-            [height $ fromIntegral tileHeight]
+        | idx == selecting = row boldTextStyle path text
+        | otherwise = row normalTextStyle path text
+
+row :: [StyleState] -> Text -> Text -> GameWidgetNode
+row style path text =
+    hstack
+        [ image path `styleBasic` [width $ fromIntegral tileWidth]
+        , spacer
+        , label text `styleBasic` style
+        ] `styleBasic`
+    [height $ fromIntegral tileHeight]
 
 itemPathsAndNames :: SelectingItemHandler -> GameConfig -> [(Text, Text)]
 itemPathsAndNames sh c = zip (itemPaths sh) (itemNames sh c)
