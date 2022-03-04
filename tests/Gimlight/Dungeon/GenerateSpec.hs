@@ -61,15 +61,7 @@ testNoActorExistsOnUpStairs tc =
 
 generateSingleMap :: TileCollection -> Int -> CellMap
 generateSingleMap tc g =
-    let Node d _ = generateMap tc g
-     in d
-
-generateMap :: TileCollection -> Int -> Tree CellMap
-generateMap tc g = fmap (^. D.cellMap) tree
-  where
-    tree =
-        extractDungeonTree (mkStdGen g) $
-        generateMultipleFloorsDungeon tc cfg Beaeve
+    view D.cellMap $ fst $ generateDungeonAndUpStairsPosition g tc
 
 generateDungeonAndUpStairsPosition :: Int -> TileCollection -> (Dungeon, Coord)
 generateDungeonAndUpStairsPosition g tc = (d, c)
@@ -81,12 +73,6 @@ generateDungeonTreeAndUpstairsPosition ::
 generateDungeonTreeAndUpstairsPosition g tc =
     extractDungeonTreeAndAscendingStairsPosition (mkStdGen g) $
     generateMultipleFloorsDungeon tc cfg Beaeve
-
-extractDungeonTree ::
-       StdGen
-    -> StateT IndexGenerator (State StdGen) (Tree Dungeon, Coord)
-    -> Tree Dungeon
-extractDungeonTree g = fst . extractDungeonTreeAndAscendingStairsPosition g
 
 extractDungeonTreeAndAscendingStairsPosition ::
        StdGen
