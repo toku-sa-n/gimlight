@@ -35,7 +35,7 @@ spec :: Spec
 spec = do
     tc <- runIO $ readTileFileRecursive "tests/tiles/valid/"
     expected <- runIO $ readMapFile "tests/maps/generate/seed_0.json"
-    let result = generateSingleMap tc 0
+    let result = generateSingleMap 0 tc
     describe "generateMultipleFloorsDungeon" $ do
         it "fills the lower layer with the floor tile." $ tilesOf lower result `shouldSatisfy`
             all (== Just (getTileFilePath cfg, 0))
@@ -59,9 +59,9 @@ testNoActorExistsOnUpStairs tc =
         let (d, c) = generateDungeonAndUpStairsPosition g tc
          in not $ actorExists c (d ^. D.cellMap)
 
-generateSingleMap :: TileCollection -> Int -> CellMap
-generateSingleMap tc g =
-    view D.cellMap $ fst $ generateDungeonAndUpStairsPosition g tc
+generateSingleMap :: Int -> TileCollection -> CellMap
+generateSingleMap g =
+    view D.cellMap . fst . generateDungeonAndUpStairsPosition g
 
 generateDungeonAndUpStairsPosition :: Int -> TileCollection -> (Dungeon, Coord)
 generateDungeonAndUpStairsPosition g tc = (d, c)
