@@ -35,7 +35,7 @@ spec :: Spec
 spec = do
     tc <- runIO $ readTileFileRecursive "tests/tiles/valid/"
     expected <- runIO $ readMapFile "tests/maps/generate/seed_0.json"
-    let result = generateSingleMap tc cfg 0
+    let result = generateSingleMap tc 0
     describe "generateMultipleFloorsDungeon" $ do
         it "fills the lower layer with the floor tile." $ tilesOf lower result `shouldSatisfy`
             all (== Just (getTileFilePath cfg, 0))
@@ -45,7 +45,6 @@ spec = do
         testUpstairsIsOnCorrectPosition tc
   where
     tilesOf layer = fmap (view (tileIdLayer . layer))
-    cfg = config 1 10 (V2 3 3) (V2 10 10) tileFileForGeneration
 
 testUpstairsIsOnCorrectPosition :: TileCollection -> Spec
 testUpstairsIsOnCorrectPosition tc =
@@ -60,7 +59,6 @@ testUpstairsIsOnCorrectPosition tc =
     tree g =
         extractDungeonTreeAndAscendingStairsPosition g $
         generateMultipleFloorsDungeon tc cfg Beaeve
-    cfg = config 1 10 (V2 3 3) (V2 10 10) tileFileForGeneration
 
 testNoActorExistsOnUpStairs :: TileCollection -> Spec
 testNoActorExistsOnUpStairs tc =
@@ -74,15 +72,14 @@ testNoActorExistsOnUpStairs tc =
     tree g =
         extractDungeonTreeAndAscendingStairsPosition g $
         generateMultipleFloorsDungeon tc cfg Beaeve
-    cfg = config 1 10 (V2 3 3) (V2 10 10) tileFileForGeneration
 
-generateSingleMap :: TileCollection -> Config -> Int -> CellMap
-generateSingleMap tc cfg g =
-    let Node d _ = generateMap tc cfg g
+generateSingleMap :: TileCollection -> Int -> CellMap
+generateSingleMap tc g =
+    let Node d _ = generateMap tc g
      in d
 
-generateMap :: TileCollection -> Config -> Int -> Tree CellMap
-generateMap tc cfg g = fmap (^. D.cellMap) tree
+generateMap :: TileCollection -> Int -> Tree CellMap
+generateMap tc g = fmap (^. D.cellMap) tree
   where
     tree =
         extractDungeonTree (mkStdGen g) $
@@ -100,3 +97,6 @@ extractDungeonTreeAndAscendingStairsPosition ::
     -> (Tree Dungeon, Coord)
 extractDungeonTreeAndAscendingStairsPosition g =
     flip evalState g . flip evalStateT generator
+
+cfg :: Config
+cfg = config 1 10 (V2 3 3) (V2 10 10) tileFileForGeneration
