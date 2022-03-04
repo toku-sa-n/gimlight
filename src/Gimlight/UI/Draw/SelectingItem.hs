@@ -57,9 +57,10 @@ itemLabels sh c =
 selectionsWithImages :: Int -> [(Text, Text)] -> GameWidgetNode
 selectionsWithImages selecting = vstack . fmap toLabel . zip [0 ..]
   where
-    toLabel (idx, (path, text))
-        | idx == selecting = row boldTextStyle path text
-        | otherwise = row normalTextStyle path text
+    toLabel (idx, (path, text)) = row (style idx) path text
+    style idx
+        | idx == selecting = boldTextStyle
+        | otherwise = normalTextStyle
 
 row :: [StyleState] -> Text -> Text -> GameWidgetNode
 row style path text =
