@@ -13,7 +13,8 @@ import           Gimlight.Item.SomeItem            (getIconImagePath, getName)
 import           Gimlight.Localization             (MultilingualText,
                                                     getLocalizedText)
 import qualified Gimlight.Localization.Texts       as T
-import           Gimlight.UI.Draw.Config           (windowHeight, windowWidth)
+import           Gimlight.UI.Draw.Config           (tileHeight, tileWidth,
+                                                    windowHeight, windowWidth)
 import           Gimlight.UI.Draw.Dialog           (boldTextStyle, heading,
                                                     normalTextStyle)
 import qualified Gimlight.UI.Draw.Dialog           as Dialog
@@ -59,18 +60,18 @@ selectionsWithImages selecting = vstack . fmap toLabel . zip [0 ..]
     toLabel (idx, (path, text))
         | idx == selecting =
             hstack
-                [ image path `styleBasic` [width 48]
+                [ image path `styleBasic` [width $ fromIntegral tileWidth]
                 , spacer
                 , label text `styleBasic` boldTextStyle
                 ] `styleBasic`
-            [height 48]
+            [height $ fromIntegral tileHeight]
         | otherwise =
             hstack
-                [ image path `styleBasic` [width 48]
+                [ image path `styleBasic` [width $ fromIntegral tileWidth]
                 , spacer
                 , label text `styleBasic` normalTextStyle
                 ] `styleBasic`
-            [height 48]
+            [height $ fromIntegral tileHeight]
 
 itemPathsAndNames :: SelectingItemHandler -> GameConfig -> [(Text, Text)]
 itemPathsAndNames sh c = zip (itemPaths sh) (itemNames sh c)
