@@ -49,29 +49,15 @@ spec = do
 testUpstairsIsOnCorrectPosition :: TileCollection -> Spec
 testUpstairsIsOnCorrectPosition tc =
     prop "upstairs appears on the correct position." $ \g ->
-        let (d, c) = toDungeon g
+        let (d, c) = generateDungeonAndUpStairsPosition g tc
          in d ^? D.cellMap . ix c . tileIdLayer . upper `shouldBe`
             Just (Just (tileFileForGeneration, upStairsIndex))
-  where
-    toDungeon g =
-        let (Node d _, c) = tree (mkStdGen g)
-         in (d, c)
-    tree g =
-        extractDungeonTreeAndAscendingStairsPosition g $
-        generateMultipleFloorsDungeon tc cfg Beaeve
 
 testNoActorExistsOnUpStairs :: TileCollection -> Spec
 testNoActorExistsOnUpStairs tc =
     prop "does not locate an actor at the upstairs." $ \g ->
-        let (d, c) = toDungeon g
+        let (d, c) = generateDungeonAndUpStairsPosition g tc
          in not $ actorExists c (d ^. D.cellMap)
-  where
-    toDungeon g =
-        let (Node d _, c) = tree (mkStdGen g)
-         in (d, c)
-    tree g =
-        extractDungeonTreeAndAscendingStairsPosition g $
-        generateMultipleFloorsDungeon tc cfg Beaeve
 
 generateSingleMap :: TileCollection -> Int -> CellMap
 generateSingleMap tc g =
@@ -84,6 +70,17 @@ generateMap tc g = fmap (^. D.cellMap) tree
     tree =
         extractDungeonTree (mkStdGen g) $
         generateMultipleFloorsDungeon tc cfg Beaeve
+
+generateDungeonAndUpStairsPosition :: Int -> TileCollection -> (Dungeon, Coord)
+generateDungeonAndUpStairsPosition g tc = (d, c)
+  where
+    (Node d _, c) = generateDungeonTreeAndUpstairsPosition g tc
+
+generateDungeonTreeAndUpstairsPosition ::
+       Int -> TileCollection -> (Tree Dungeon, Coord)
+generateDungeonTreeAndUpstairsPosition g tc =
+    extractDungeonTreeAndAscendingStairsPosition (mkStdGen g) $
+    generateMultipleFloorsDungeon tc cfg Beaeve
 
 extractDungeonTree ::
        StdGen
