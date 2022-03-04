@@ -22,13 +22,12 @@ import           Gimlight.UI.Draw.KeyEvent         (withKeyEvents)
 import           Gimlight.UI.Draw.Shadow           (shadow)
 import           Gimlight.UI.Types                 (GameWidgetNode)
 import           Monomer                           (CmbAlignCenter (alignCenter),
-                                                    CmbAlignLeft (alignLeft),
                                                     CmbAlignMiddle (alignMiddle),
                                                     CmbHeight (height),
                                                     CmbStyleBasic (styleBasic),
                                                     CmbWidth (width),
                                                     StyleState, box_, hstack,
-                                                    image_, label, spacer,
+                                                    image, label, spacer,
                                                     vstack, zstack)
 
 drawSelectingItem :: SelectingItemHandler -> GameConfig -> GameWidgetNode
@@ -60,14 +59,14 @@ selectionsWithImages selecting = vstack . fmap toLabel . zip [0 ..]
     toLabel (idx, (path, text))
         | idx == selecting =
             hstack
-                [ image_ path [alignMiddle, alignLeft] `styleBasic` [width 48]
+                [ image path `styleBasic` [width 48]
                 , spacer
                 , label text `styleBasic` boldTextStyle
                 ] `styleBasic`
             [height 48]
         | otherwise =
             hstack
-                [ image_ path [alignMiddle] `styleBasic` [width 48]
+                [ image path `styleBasic` [width 48]
                 , spacer
                 , label text `styleBasic` normalTextStyle
                 ] `styleBasic`
