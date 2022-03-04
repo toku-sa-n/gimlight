@@ -14,20 +14,22 @@ import           Gimlight.Localization             (MultilingualText,
                                                     getLocalizedText)
 import qualified Gimlight.Localization.Texts       as T
 import           Gimlight.UI.Draw.Config           (windowHeight, windowWidth)
-import           Gimlight.UI.Draw.Dialog           (heading,
-                                                    selectionsWithImages)
+import           Gimlight.UI.Draw.Dialog           (boldTextStyle, heading,
+                                                    normalTextStyle)
 import qualified Gimlight.UI.Draw.Dialog           as Dialog
 import           Gimlight.UI.Draw.Exploring        (drawExploring)
 import           Gimlight.UI.Draw.KeyEvent         (withKeyEvents)
 import           Gimlight.UI.Draw.Shadow           (shadow)
 import           Gimlight.UI.Types                 (GameWidgetNode)
 import           Monomer                           (CmbAlignCenter (alignCenter),
+                                                    CmbAlignLeft (alignLeft),
                                                     CmbAlignMiddle (alignMiddle),
                                                     CmbHeight (height),
                                                     CmbStyleBasic (styleBasic),
                                                     CmbWidth (width),
-                                                    StyleState, box_, vstack,
-                                                    zstack)
+                                                    StyleState, box_, hstack,
+                                                    image_, label, spacer,
+                                                    vstack, zstack)
 
 drawSelectingItem :: SelectingItemHandler -> GameConfig -> GameWidgetNode
 drawSelectingItem sh c =
@@ -51,6 +53,25 @@ itemLabels sh c =
     case getSelectingIndex sh of
         Just x  -> [selectionsWithImages x $ itemPathsAndNames sh c]
         Nothing -> []
+
+selectionsWithImages :: Int -> [(Text, Text)] -> GameWidgetNode
+selectionsWithImages selecting = vstack . fmap toLabel . zip [0 ..]
+  where
+    toLabel (idx, (path, text))
+        | idx == selecting =
+            hstack
+                [ image_ path [alignMiddle, alignLeft] `styleBasic` [width 48]
+                , spacer
+                , label text `styleBasic` boldTextStyle
+                ] `styleBasic`
+            [height 48]
+        | otherwise =
+            hstack
+                [ image_ path [alignMiddle] `styleBasic` [width 48]
+                , spacer
+                , label text `styleBasic` normalTextStyle
+                ] `styleBasic`
+            [height 48]
 
 itemPathsAndNames :: SelectingItemHandler -> GameConfig -> [(Text, Text)]
 itemPathsAndNames sh c = zip (itemPaths sh) (itemNames sh c)
