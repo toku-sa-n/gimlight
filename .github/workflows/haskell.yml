@@ -58,4 +58,4 @@ jobs:
 
     - name: Check format
       run: |
-        find src tests app -name '*.hs'|xargs -I {} sh -c "cat {}|~/.cabal/bin/hindent|~/.cabal/bin/stylish-haskell|diff --color -u {} -"
+        find src tests app -name '*.hs'|xargs -I {} sh -c "cat {}|hindent|~/.cabal/bin/stylish-haskell|diff --color -u {} -"
