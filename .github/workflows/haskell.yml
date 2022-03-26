@@ -36,8 +36,8 @@ jobs:
         sudo apt update
         sudo apt install libsdl2-dev libglew-dev moreutils
         cabal update -j
-        cabal install weeder hlint stylish-haskell -j -z
-        stack install hindent
+        cabal install weeder hlint -j -z
+        stack install hindent stylish-haskell
 
     - name: Generate `cabal.project.local`
       run: "echo \"package * \n  ghc-options: -fwrite-ide-info\" > cabal.project.local"
@@ -58,4 +58,4 @@ jobs:
 
     - name: Check format
       run: |
-        find src tests app -name '*.hs'|xargs -I {} sh -c "cat {}|hindent|~/.cabal/bin/stylish-haskell|diff --color -u {} -"
+        find src tests app -name '*.hs'|xargs -I {} sh -c "cat {}|hindent|stylish-haskell|diff --color -u {} -"
