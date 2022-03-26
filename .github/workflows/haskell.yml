@@ -36,8 +36,10 @@ jobs:
         sudo apt update
         sudo apt install libsdl2-dev libglew-dev moreutils
         cabal update -j
-        cabal install weeder hlint -j -z
-        stack install hindent stylish-haskell
+        cabal install weeder -z -j
+        cabal install hlint -z -j
+        cabal install hindent -z -j
+        cabal install stylish-haskell -z -j
 
     - name: Generate `cabal.project.local`
       run: "echo \"package * \n  ghc-options: -fwrite-ide-info\" > cabal.project.local"
