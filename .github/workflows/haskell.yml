@@ -62,5 +62,4 @@ jobs:
       run: ~/.cabal/bin/hlint .
 
     - name: Check format
-      run: |
-        find src tests app -name '*.hs'|xargs -I {} sh -c "cat {}|hindent|stylish-haskell|diff --color -u {} -"
+      run: ./formatter.sh --check
