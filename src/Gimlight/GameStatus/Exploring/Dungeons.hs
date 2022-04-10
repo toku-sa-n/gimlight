@@ -103,10 +103,7 @@ doPlayerAction action ts ds = result
         actionResult <- action playerPos ts (ds ^. focused . cellMap)
         let statusAndNewDungeon = (status actionResult, newCellMap actionResult)
         return $
-            (\(a, cm) ->
-                 ( a
-                 , ds & focused %~ (\d -> d & cellMap .~ cm)
-                 , killed actionResult))
+            (\(a, cm) -> (a, ds & focused . cellMap .~ cm, killed actionResult))
                 statusAndNewDungeon
     playerPos =
         maybe
