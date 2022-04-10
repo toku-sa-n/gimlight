@@ -7,7 +7,7 @@ module Gimlight.GameStatus.Exploring.Dungeons
     , handleNpcTurns
     ) where
 
-import           Control.Lens               ((%%~), (%~), (&), (.~), (^.))
+import           Control.Lens               ((%%~), (&), (.~), (^.))
 import           Control.Monad.State        (execStateT, runStateT)
 import           Control.Monad.Trans.Writer (Writer)
 import           Data.Either.Combinators    (rightToMaybe)
@@ -120,6 +120,5 @@ handleNpcTurns ts ds =
 popPlayer :: Dungeons -> (Maybe Actor, Dungeons)
 popPlayer z =
     case flip runStateT (z ^. focused . cellMap) $ removeActorIf isPlayer of
-        Right (actor, ncm) ->
-            (Just actor, z & focused %~ (\x -> x & cellMap .~ ncm))
-        _ -> (Nothing, z)
+        Right (actor, ncm) -> (Just actor, z & focused . cellMap .~ ncm)
+        _                  -> (Nothing, z)
