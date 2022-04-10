@@ -1,14 +1,14 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module Gimlight.Actor.Friendly.Electria
-    ( electria
+module Gimlight.Actor.Friendly.Momo
+    ( momo
     ) where
 
 import           Control.Monad.State              (State)
 import           Data.List.NonEmpty               (fromList)
 import           Gimlight.Actor                   (Actor)
 import           Gimlight.Actor.Friendly          (friendly)
-import           Gimlight.Actor.Identifier        (Identifier (Electria))
+import           Gimlight.Actor.Identifier        (Identifier (Momo))
 import           Gimlight.Actor.Status            (status)
 import           Gimlight.Actor.Status.Hp         (hp)
 import           Gimlight.GameStatus.Talking.Part (TalkingPart (QuestInquiry, Selection, UpdateQuest),
@@ -20,14 +20,14 @@ import qualified Gimlight.Localization.Texts      as T
 import           Gimlight.Quest                   (Inquiry (IsEnoughBatsKilled, IsKillBatsCompleted, IsKillBatsStarted),
                                                    Updater (CompleteKillBats, StartKillBats))
 
-electria :: State IndexGenerator Actor
-electria =
+momo :: State IndexGenerator Actor
+momo =
     friendly
-        Electria
+        Momo
         st
         talking
         "images/electria.png"
-        "images/upper_body/electria/electria.png"
+        "images/upper_body/momo/default.png"
   where
     st = status (hp 1) 1 1
 
@@ -48,7 +48,7 @@ talking = isQuestCompleted
             (Just beforeStarted)
     afterCompleted =
         Selection $
-        selectionHandler T.electriaAfterCompletion $ fromList [(T.yes, Nothing)]
+        selectionHandler T.momoAfterCompletion $ fromList [(T.yes, Nothing)]
     isEnoughBatsKilled =
         QuestInquiry $
         questInquiryHandler
@@ -60,20 +60,18 @@ talking = isQuestCompleted
         updateQuestHandler CompleteKillBats $
         Just $
         Selection $
-        selectionHandler T.electriaCompleted $ fromList [(T.yes, Nothing)]
+        selectionHandler T.momoCompleted $ fromList [(T.yes, Nothing)]
     questIsOnGoing =
         Selection $
-        selectionHandler T.electriaNotCompleted $ fromList [(T.yes, Nothing)]
+        selectionHandler T.momoNotCompleted $ fromList [(T.yes, Nothing)]
     beforeStarted =
         Selection $
-        selectionHandler T.electriaBeforeQuest $
+        selectionHandler T.momoBeforeQuest $
         fromList [(T.yes, Just startQuest), (T.no, Just rejected)]
     startQuest =
         UpdateQuest $
         updateQuestHandler StartKillBats $
         Just $
-        Selection $
-        selectionHandler T.electriaAccept $ fromList [(T.yes, Nothing)]
+        Selection $ selectionHandler T.momoAccept $ fromList [(T.yes, Nothing)]
     rejected =
-        Selection $
-        selectionHandler T.electriaReject $ fromList [(T.yes, Nothing)]
+        Selection $ selectionHandler T.momoReject $ fromList [(T.yes, Nothing)]

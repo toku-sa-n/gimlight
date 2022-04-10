@@ -12,12 +12,12 @@ import qualified Gimlight.Localization.Texts as T
 data Identifier
     = Orc
     | Troll
-    | Electria
+    | Momo
     | Player
     deriving (Show, Ord, Eq, Generic)
 
 toName :: Identifier -> MultilingualText
-toName Orc      = T.orc
-toName Troll    = T.troll
-toName Electria = T.electria
-toName Player   = T.player
+toName Orc    = T.orc
+toName Troll  = T.troll
+toName Momo   = T.momo
+toName Player = T.player
