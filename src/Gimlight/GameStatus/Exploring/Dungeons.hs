@@ -72,16 +72,12 @@ descendStairsAtPlayerPosition ts ds = newZipper
             (Just g, Just pos, Just p) -> Just $ updateMapOrError g p pos
             _                          -> Nothing
     updateMapOrError g pos p =
-        g & focused %~
-        (\d ->
-             expectJust
-                 "Failed to update the map."
-                 (d & cellMap %%~
-                  (\x ->
-                       rightToMaybe (execStateT (locateActorAt ts p pos) x) >>=
-                       updatePlayerFov ts >>=
-                       Just .
-                       updateExploredMap)))
+        expectJust "Failed to update the map." $ g & focused . cellMap %%~
+        (\x ->
+             rightToMaybe (execStateT (locateActorAt ts p pos) x) >>=
+             updatePlayerFov ts >>=
+             Just .
+             updateExploredMap)
 
 exitDungeon :: TileCollection -> Dungeons -> Maybe Dungeons
 exitDungeon ts ds = newZipper
