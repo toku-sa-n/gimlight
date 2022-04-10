@@ -1,5 +1,6 @@
-{-# LANGUAGE DataKinds #-}
-{-# LANGUAGE GADTs     #-}
+{-# LANGUAGE DataKinds     #-}
+{-# LANGUAGE GADTs         #-}
+{-# LANGUAGE TupleSections #-}
 
 module Gimlight.Action.PickUpSpec
     ( spec
@@ -45,11 +46,7 @@ testPickUpSuccess =
         flip execStateT cm $ do
             _ <- removeItemAt playerPos
             mapActorAt mockTileCollection playerPos (addItems [liftUnion herb])
-    cm =
-        cellMapWith
-            [ (playerPos, liftUnion (liftUnion herb :: SomeItem))
-            , (playerPos, liftUnion player)
-            ]
+    cm = cellMapWith [liftUnion (liftUnion herb :: SomeItem), liftUnion player]
 
 testPickUpVoid :: Spec
 testPickUpVoid =
@@ -57,7 +54,7 @@ testPickUpVoid =
     result cm `shouldBe` expected
   where
     expected = writer (failedResult cm, [T.youGotNothing])
-    cm = cellMapWith [(playerPos, liftUnion player)]
+    cm = cellMapWith [liftUnion player]
 
 testPickUpWhenInventoryIsFull :: Spec
 testPickUpWhenInventoryIsFull =
@@ -67,16 +64,18 @@ testPickUpWhenInventoryIsFull =
     expected = writer (failedResult cm, [T.bagIsFull])
     cm =
         cellMapWith
-            [ (playerPos, liftUnion (liftUnion herb :: SomeItem))
-            , (playerPos, liftUnion $ addItems items player)
+            [ liftUnion (liftUnion herb :: SomeItem)
+            , liftUnion $ addItems items player
             ]
     items = replicate maxSlot $ liftUnion herb
 
 result :: CellMap -> ActionResultWithLog
 result = pickUpAction playerPos mockTileCollection
 
-cellMapWith :: [(Coord, Union '[ Actor, SomeItem])] -> CellMap
-cellMapWith xs = locateItemsActors xs testMap
+cellMapWith :: [Union '[ Actor, SomeItem]] -> CellMap
+cellMapWith xs = locateItemsActors withCoords testMap
+  where
+    withCoords = fmap (playerPos, ) xs
 
 testMap :: CellMap
 testMap = emptyCellMap $ V2 1 1
