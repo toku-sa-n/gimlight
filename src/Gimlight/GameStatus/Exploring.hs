@@ -38,7 +38,7 @@ import           Gimlight.Log                           (MessageLog)
 import qualified Gimlight.Log                           as L
 import           Gimlight.Quest                         (QuestCollection,
                                                          handleWithTurnResult)
-import           Gimlight.TreeZipper                    (TreeZipper, getFocused,
+import           Gimlight.TreeZipper                    (TreeZipper, focused,
                                                          modify)
 
 data ExploringHandler =
@@ -83,24 +83,23 @@ doPlayerAction action eh = (status, newHandler)
         runWriter $
         DS.doPlayerAction action (eh ^. tileCollection) (eh ^. dungeons)
     newHandler =
-        eh & messageLog %~ L.addMessages newLog &
-        dungeons .~ dungeonsAfterAction &
+        eh & messageLog %~ L.addMessages newLog & dungeons .~
+        dungeonsAfterAction &
         quests %~
         handleWithTurnResult
-            (D.getIdentifier (getFocused dungeonsAfterAction))
+            (D.getIdentifier (dungeonsAfterAction ^. focused))
             (map getIdentifier killed)
 
 processAfterPlayerTurn :: ExploringHandler -> Maybe ExploringHandler
 processAfterPlayerTurn eh =
     (\x ->
-         handlerAfterNpcTurns & dungeons %~ modify (const x) &
-         quests %~ updateQuestsForResult (D.getIdentifier x)) <$>
+         handlerAfterNpcTurns & dungeons %~ modify (const x) & quests %~
+         updateQuestsForResult (D.getIdentifier x)) <$>
     newCurrentDungeon
   where
     updateQuestsForResult d = handleWithTurnResult d $ map getIdentifier killed
     newCurrentDungeon =
-        getFocused (handlerAfterNpcTurns ^. dungeons) &
-        cellMap %%~
+        (handlerAfterNpcTurns ^. dungeons . focused) & cellMap %%~
         (updatePlayerFov (eh ^. tileCollection) >=> (Just . updateExploredMap))
     (handlerAfterNpcTurns, killed) = handleNpcTurns eh
 
@@ -108,8 +107,8 @@ handleNpcTurns :: ExploringHandler -> (ExploringHandler, [Actor])
 handleNpcTurns eh = (newHandler, killed)
   where
     newHandler =
-        eh & dungeons .~ dungeonsAfterNpcTurns &
-        messageLog %~ L.addMessages newLog
+        eh & dungeons .~ dungeonsAfterNpcTurns & messageLog %~
+        L.addMessages newLog
     ((dungeonsAfterNpcTurns, killed), newLog) =
         runWriter $ DS.handleNpcTurns (eh ^. tileCollection) (eh ^. dungeons)
 
@@ -126,7 +125,7 @@ getPlayerPosition :: ExploringHandler -> Maybe Coord
 getPlayerPosition = fmap fst . playerActor . (^. cellMap) . getCurrentDungeon
 
 getCurrentDungeon :: ExploringHandler -> Dungeon
-getCurrentDungeon eh = getFocused $ eh ^. dungeons
+getCurrentDungeon eh = eh ^. dungeons . focused
 
 getMessageLog :: ExploringHandler -> MessageLog
 getMessageLog eh = eh ^. messageLog

@@ -52,7 +52,7 @@ import           Gimlight.Item.Defined            (herb, sampleBook, sword,
 import           Gimlight.System.Random           (choiceST, randomRST,
                                                    randomST)
 import           Gimlight.TreeZipper              (TreeZipper, appendNode,
-                                                   getFocused, goDownBy,
+                                                   focused, goDownBy,
                                                    goToRootAndGetTree, modify,
                                                    treeZipper)
 import           Linear.V2                        (V2 (..), _x, _y)
@@ -82,11 +82,11 @@ generateDungeonAndAppend ::
     -> StateT IndexGenerator (State StdGen) (TreeZipper Dungeon)
 generateDungeonAndAppend zipper ts cfg ident = do
     (generatedDungeon, lowerStairsPosition) <- generateDungeon ts cfg ident
-    upperStairsPosition <- lift $ newStairsPosition ts $ getFocused zipper
+    upperStairsPosition <- lift $ newStairsPosition ts $ zipper ^. focused
     let (newUpperDungeon, newLowerDungeon) =
             addAscendingAndDescendingStiars
                 (StairsPair upperStairsPosition lowerStairsPosition)
-                (getFocused zipper, generatedDungeon)
+                (zipper ^. focused, generatedDungeon)
         upperWithStairs =
             newUpperDungeon & cellMap . upperAt upperStairsPosition ?~
             downStairsId cfg
