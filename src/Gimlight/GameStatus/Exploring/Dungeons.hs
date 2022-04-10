@@ -89,12 +89,8 @@ exitDungeon ts ds = newZipper
     newZipper =
         case (zipperFocusingGlobalMap, newPosition, player) of
             (Just g, Just pos, Just p) ->
-                Just $ g & focused %~
-                (\d ->
-                     expectJust
-                         "Failed to update the map."
-                         (d & cellMap %%~ rightToMaybe .
-                          execStateT (locateActorAt ts pos p)))
+                g & focused . cellMap %%~ rightToMaybe .
+                execStateT (locateActorAt ts pos p)
             _ -> Nothing
 
 doPlayerAction ::
