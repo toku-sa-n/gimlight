@@ -20,8 +20,8 @@ import           Gimlight.Actor                  (getArmor,
                                                   getPower, getWeapon,
                                                   walkingImagePath)
 import           Gimlight.Coord                  (Coord)
-import           Gimlight.Dungeon                (Dungeon, cellMap)
-import           Gimlight.Dungeon.Map.Cell       (exploredMap, lower,
+import           Gimlight.Dungeon                (cellMap)
+import           Gimlight.Dungeon.Map.Cell       (CellMap, exploredMap, lower,
                                                   playerActor, playerFov,
                                                   positionsAndActors,
                                                   positionsAndItems,
@@ -144,7 +144,7 @@ mapWidget eh = vstack rows
     isExplored c = exploredMap (d ^. cellMap) ^? ix c == Just True
     getTileIdOfLayerAt which c = tileIdLayer c >>= (^. which)
     tileIdLayer c = tileIdLayerAt c $ d ^. cellMap
-    V2 topLeftCoordX topLeftCoordY = topLeftCoord d
+    V2 topLeftCoordX topLeftCoordY = topLeftCoord (d ^. cellMap)
     d = getCurrentDungeon eh
 
 mapItems :: ExploringHandler -> [GameWidgetNode]
@@ -165,7 +165,7 @@ mapItems eh = mapMaybe itemToImage $ positionsAndItems $ d ^. cellMap
         fromIntegral $ itemPositionOnDisplay position ^. _y * tileHeight
     style position =
         [paddingL $ leftPadding position, paddingT $ topPadding position]
-    itemPositionOnDisplay position = position - topLeftCoord d
+    itemPositionOnDisplay position = position - topLeftCoord (d ^. cellMap)
 
 mapActors :: ExploringHandler -> [GameWidgetNode]
 mapActors eh = mapMaybe actorToImage . positionsAndActors $ d ^. cellMap
@@ -177,7 +177,7 @@ mapActors eh = mapMaybe actorToImage . positionsAndActors $ d ^. cellMap
         fromIntegral $ actorPositionOnDisplay actor ^. _y * tileHeight
     style position =
         [paddingL $ leftPadding position, paddingT $ topPadding position]
-    actorPositionOnDisplay position = position - topLeftCoord d
+    actorPositionOnDisplay position = position - topLeftCoord (d ^. cellMap)
     isActorDrawed position =
         let displayPosition = actorPositionOnDisplay position
             isVisible = playerFov (d ^. cellMap) ! position
@@ -187,15 +187,15 @@ mapActors eh = mapMaybe actorToImage . positionsAndActors $ d ^. cellMap
         guard (isActorDrawed position) >>
         return (image (actor ^. walkingImagePath) `styleBasic` style position)
 
-topLeftCoord :: Dungeon -> Coord
-topLeftCoord d = V2 x y
+topLeftCoord :: CellMap -> Coord
+topLeftCoord cm = V2 x y
   where
     V2 unadjustedX unadjestedY =
         maybe
             (V2 0 0)
             ((\pos -> pos - V2 (tileColumns `div` 2) (tileRows `div` 2)) . fst)
-            (playerActor $ d ^. cellMap)
-    V2 maxX maxY = widthAndHeight (d ^. cellMap) - V2 tileColumns tileRows
+            (playerActor cm)
+    V2 maxX maxY = widthAndHeight cm - V2 tileColumns tileRows
     x = max 0 $ min maxX unadjustedX
     y = max 0 $ min maxY unadjestedY
 
