@@ -114,7 +114,7 @@ doPlayerAction action ts ds = result
 handleNpcTurns ::
        TileCollection -> Dungeons -> Writer MessageLog (Dungeons, [Actor])
 handleNpcTurns ts ds =
-    (\(x, ks) -> (ds & focused %~ (\d -> d & cellMap .~ x), ks)) <$>
+    (\(x, ks) -> (ds & focused . cellMap .~ x, ks)) <$>
     NPC.handleNpcTurns ts (ds ^. focused . cellMap)
 
 popPlayer :: Dungeons -> (Maybe Actor, Dungeons)
