@@ -27,7 +27,7 @@ import           Gimlight.Dungeon.Map.Tile  (TileCollection)
 import           Gimlight.Dungeon.Stairs    (StairsPair (StairsPair, downStairs, upStairs))
 import           Gimlight.Log               (MessageLog)
 import qualified Gimlight.NpcBehavior       as NPC
-import           Gimlight.TreeZipper        (TreeZipper, getFocused, goDownBy,
+import           Gimlight.TreeZipper        (TreeZipper, focused, goDownBy,
                                              goUp, modify)
 
 type Dungeons = TreeZipper Dungeon
@@ -37,10 +37,10 @@ ascendStairsAtPlayerPosition ts ds = newZipper
   where
     (player, zipperWithoutPlayer) = popPlayer ds
     ascendable =
-        (downStairs <$> getFocused ds ^. ascendingStairs) ==
-        (fst <$> playerActor (getFocused ds ^. cellMap))
+        (downStairs <$> ds ^. focused . ascendingStairs) ==
+        (fst <$> playerActor (ds ^. focused . cellMap))
     zipperFocusingNextDungeon = goUp zipperWithoutPlayer
-    newPosition = upStairs <$> getFocused ds ^. ascendingStairs
+    newPosition = upStairs <$> ds ^. focused . ascendingStairs
     newZipper =
         case (zipperFocusingNextDungeon, newPosition, player, ascendable) of
             (Just g, Just pos, Just p, True) -> updateMapOrError g p pos
@@ -71,8 +71,8 @@ descendStairsAtPlayerPosition ts ds = newZipper
         downStairs <$>
         find
             (\(StairsPair from _) -> Just from == currentPosition)
-            (getFocused ds ^. descendingStairs)
-    currentPosition = fmap fst . playerActor $ getFocused ds ^. cellMap
+            (ds ^. focused . descendingStairs)
+    currentPosition = fmap fst . playerActor $ ds ^. focused . cellMap
     newZipper =
         case (zipperFocusingNextDungeon, newPosition, player) of
             (Just g, Just pos, Just p) -> updateMapOrError g p pos
@@ -95,7 +95,7 @@ exitDungeon :: TileCollection -> Dungeons -> Maybe Dungeons
 exitDungeon ts ds = newZipper
   where
     (player, zipperWithoutPlayer) = popPlayer ds
-    currentDungeon = getFocused ds
+    currentDungeon = ds ^. focused
     newPosition = currentDungeon ^. positionOnParentMap
     zipperFocusingGlobalMap = goUp zipperWithoutPlayer
     newZipper =
@@ -119,7 +119,7 @@ doPlayerAction ::
 doPlayerAction action ts ds = result
   where
     result = do
-        actionResult <- action playerPos ts (getFocused ds ^. cellMap)
+        actionResult <- action playerPos ts (ds ^. focused . cellMap)
         let statusAndNewDungeon = (status actionResult, newCellMap actionResult)
         return $
             (\(a, cm) ->
@@ -129,16 +129,16 @@ doPlayerAction action ts ds = result
         maybe
             (error "Failed to get the player position")
             fst
-            (playerActor $ getFocused ds ^. cellMap)
+            (playerActor $ ds ^. focused . cellMap)
 
 handleNpcTurns ::
        TileCollection -> Dungeons -> Writer MessageLog (Dungeons, [Actor])
 handleNpcTurns ts ds =
     (\(x, ks) -> (modify (\d -> d & cellMap .~ x) ds, ks)) <$>
-    NPC.handleNpcTurns ts (getFocused ds ^. cellMap)
+    NPC.handleNpcTurns ts (ds ^. focused . cellMap)
 
 popPlayer :: Dungeons -> (Maybe Actor, Dungeons)
 popPlayer z =
-    case flip runStateT (getFocused z ^. cellMap) $ removeActorIf isPlayer of
+    case flip runStateT (z ^. focused . cellMap) $ removeActorIf isPlayer of
         Right (actor, ncm) -> (Just actor, modify (\x -> x & cellMap .~ ncm) z)
         _                  -> (Nothing, z)
