@@ -81,26 +81,22 @@ mapGrid eh =
     ]
 
 statusGrid :: ExploringHandler -> GameConfig -> GameWidgetNode
-statusGrid eh c =
-    vstack $
-    maybe
-        []
-        (\x ->
-             [ label "Player"
-             , label $ lvl <> ": " <> showt (getLevel x)
-             , label $
-               experience <>
-               ": " <>
-               showt (getCurrentExperiencePoint x) <>
-               " / " <> showt (getExperiencePointForNextLevel x)
-             , label $ "HP: " <> showt (getHp x) <> " / " <> showt (getMaxHp x)
-             , label $ atk <> ": " <> showt (getPower x)
-             , label $ defence <> ": " <> showt (getDefence x)
-             , label $ wp <> ": " <> wpName x
-             , label $ am <> ": " <> amName x
-             ]) $
-    getPlayerActor eh
+statusGrid eh c = vstack $ maybe [] actorToStatus $ getPlayerActor eh
   where
+    actorToStatus x =
+        [ label "Player"
+        , label $ lvl <> ": " <> showt (getLevel x)
+        , label $
+          experience <>
+          ": " <>
+          showt (getCurrentExperiencePoint x) <>
+          " / " <> showt (getExperiencePointForNextLevel x)
+        , label $ "HP: " <> showt (getHp x) <> " / " <> showt (getMaxHp x)
+        , label $ atk <> ": " <> showt (getPower x)
+        , label $ defence <> ": " <> showt (getDefence x)
+        , label $ wp <> ": " <> wpName x
+        , label $ am <> ": " <> amName x
+        ]
     lvl = getLocalizedText c T.level
     experience = getLocalizedText c T.experience
     atk = getLocalizedText c T.attack
