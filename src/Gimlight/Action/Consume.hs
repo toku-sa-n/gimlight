@@ -64,7 +64,7 @@ consumeAction n position tc cm =
         amount = getHealAmount h
         cmAfterHealing =
             case flip execStateT ncm $
-                 locateActorAt tc (healHp amount a) position of
+                 locateActorAt tc position (healHp amount a) of
                 Right x -> x
                 Left e  -> error $ "Failed to locate an actor." <> show e
     useBook :: Actor -> CellMap -> Item Book -> ActionResultWithLog
@@ -72,7 +72,7 @@ consumeAction n position tc cm =
         return $ ActionResult (ReadingStarted $ getEffect b) cmAfterReading []
       where
         cmAfterReading =
-            case flip execStateT ncm $ locateActorAt tc a position of
+            case flip execStateT ncm $ locateActorAt tc position a of
                 Right x -> x
                 Left e  -> error $ "Failed to locate an actor." <> show e
     useWeapon :: Actor -> CellMap -> Item Weapon -> ActionResultWithLog
@@ -89,7 +89,7 @@ consumeAction n position tc cm =
             Just x -> do
                 let cmAfterEquipping =
                         expectRight "Failed to locate an actor." $
-                        flip execStateT ncm $ locateActorAt tc x position
+                        flip execStateT ncm $ locateActorAt tc position x
                 tell equipLog
                 return $ ActionResult Ok cmAfterEquipping []
             Nothing -> do

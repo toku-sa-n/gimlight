@@ -43,7 +43,7 @@ ascendStairsAtPlayerPosition ts ds = newZipper
     newPosition = upStairs <$> getFocused ds ^. ascendingStairs
     newZipper =
         case (zipperFocusingNextDungeon, newPosition, player, ascendable) of
-            (Just g, Just pos, Just p, True) -> updateMapOrError g pos p
+            (Just g, Just pos, Just p, True) -> updateMapOrError g p pos
             _                                -> Nothing
     updateMapOrError g pos p =
         Just $
@@ -75,7 +75,7 @@ descendStairsAtPlayerPosition ts ds = newZipper
     currentPosition = fmap fst . playerActor $ getFocused ds ^. cellMap
     newZipper =
         case (zipperFocusingNextDungeon, newPosition, player) of
-            (Just g, Just pos, Just p) -> updateMapOrError g pos p
+            (Just g, Just pos, Just p) -> updateMapOrError g p pos
             _                          -> Nothing
     updateMapOrError g pos p =
         Just $
@@ -107,7 +107,7 @@ exitDungeon ts ds = newZipper
                          expectJust
                              "Failed to update the map."
                              (d & cellMap %%~ rightToMaybe .
-                              execStateT (locateActorAt ts p pos)))
+                              execStateT (locateActorAt ts pos p)))
                     g
             _ -> Nothing
 

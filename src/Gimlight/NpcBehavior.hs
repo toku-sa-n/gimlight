@@ -59,7 +59,7 @@ npcAction position ts cm =
     action a = selectAction position (entityAfterUpdatingMap a) cm
     cellMapAfterUpdatingMap a cellMapBeforeUpdating =
         case flip execStateT cellMapBeforeUpdating $
-             locateActorAt ts (entityAfterUpdatingMap a) position of
+             locateActorAt ts position (entityAfterUpdatingMap a) of
             Right x -> x
             Left e  -> error $ "Failed to locate an actor: " <> show e
     entityAfterUpdatingMap a =
@@ -124,7 +124,7 @@ popPathToDestinationAndMove position tc cm =
                 (next, remaining) = (head path, tail path)
                 offset = next - position
                 updatedActor = a & pathToDestination .~ remaining
-            locateActorAt tc updatedActor position
+            locateActorAt tc position updatedActor
             return offset
 
 targetIsNextTo :: Coord -> Actor -> CellMap -> Bool
