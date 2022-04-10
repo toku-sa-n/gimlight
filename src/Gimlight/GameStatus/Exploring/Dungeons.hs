@@ -43,10 +43,10 @@ ascendStairsAtPlayerPosition ts ds = newZipper
     newPosition = upStairs <$> ds ^. focused . ascendingStairs
     newZipper =
         case (zipperFocusingNextDungeon, newPosition, player, ascendable) of
-            (Just g, Just pos, Just p, True) -> updateMapOrError g p pos
+            (Just g, Just pos, Just p, True) -> Just $ updateMapOrError g p pos
             _                                -> Nothing
     updateMapOrError g pos p =
-        Just $ g & focused %~
+        g & focused %~
         (\d ->
              expectJust
                  "Failed to update the map."
