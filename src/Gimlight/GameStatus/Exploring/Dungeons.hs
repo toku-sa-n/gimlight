@@ -7,7 +7,7 @@ module Gimlight.GameStatus.Exploring.Dungeons
     , handleNpcTurns
     ) where
 
-import           Control.Lens               ((%%~), (&), (.~), (^.))
+import           Control.Lens               ((%%~), (%~), (&), (.~), (^.))
 import           Control.Monad.State        (execStateT, runStateT)
 import           Control.Monad.Trans.Writer (Writer)
 import           Data.Either.Combinators    (rightToMaybe)
@@ -28,7 +28,7 @@ import           Gimlight.Dungeon.Stairs    (StairsPair (StairsPair, downStairs,
 import           Gimlight.Log               (MessageLog)
 import qualified Gimlight.NpcBehavior       as NPC
 import           Gimlight.TreeZipper        (TreeZipper, focused, goDownBy,
-                                             goUp, modify)
+                                             goUp)
 
 type Dungeons = TreeZipper Dungeon
 
@@ -46,18 +46,16 @@ ascendStairsAtPlayerPosition ts ds = newZipper
             (Just g, Just pos, Just p, True) -> updateMapOrError g p pos
             _                                -> Nothing
     updateMapOrError g pos p =
-        Just $
-        modify
-            (\d ->
-                 expectJust
-                     "Failed to update the map."
-                     (d & cellMap %%~
-                      (\x ->
-                           rightToMaybe (execStateT (locateActorAt ts p pos) x) >>=
-                           updatePlayerFov ts >>=
-                           Just .
-                           updateExploredMap)))
-            g
+        Just $ g & focused %~
+        (\d ->
+             expectJust
+                 "Failed to update the map."
+                 (d & cellMap %%~
+                  (\x ->
+                       rightToMaybe (execStateT (locateActorAt ts p pos) x) >>=
+                       updatePlayerFov ts >>=
+                       Just .
+                       updateExploredMap)))
 
 descendStairsAtPlayerPosition :: TileCollection -> Dungeons -> Maybe Dungeons
 descendStairsAtPlayerPosition ts ds = newZipper
@@ -78,18 +76,16 @@ descendStairsAtPlayerPosition ts ds = newZipper
             (Just g, Just pos, Just p) -> updateMapOrError g p pos
             _                          -> Nothing
     updateMapOrError g pos p =
-        Just $
-        modify
-            (\d ->
-                 expectJust
-                     "Failed to update the map."
-                     (d & cellMap %%~
-                      (\x ->
-                           rightToMaybe (execStateT (locateActorAt ts p pos) x) >>=
-                           updatePlayerFov ts >>=
-                           Just .
-                           updateExploredMap)))
-            g
+        Just $ g & focused %~
+        (\d ->
+             expectJust
+                 "Failed to update the map."
+                 (d & cellMap %%~
+                  (\x ->
+                       rightToMaybe (execStateT (locateActorAt ts p pos) x) >>=
+                       updatePlayerFov ts >>=
+                       Just .
+                       updateExploredMap)))
 
 exitDungeon :: TileCollection -> Dungeons -> Maybe Dungeons
 exitDungeon ts ds = newZipper
@@ -101,14 +97,12 @@ exitDungeon ts ds = newZipper
     newZipper =
         case (zipperFocusingGlobalMap, newPosition, player) of
             (Just g, Just pos, Just p) ->
-                Just $
-                modify
-                    (\d ->
-                         expectJust
-                             "Failed to update the map."
-                             (d & cellMap %%~ rightToMaybe .
-                              execStateT (locateActorAt ts pos p)))
-                    g
+                Just $ g & focused %~
+                (\d ->
+                     expectJust
+                         "Failed to update the map."
+                         (d & cellMap %%~ rightToMaybe .
+                          execStateT (locateActorAt ts pos p)))
             _ -> Nothing
 
 doPlayerAction ::
@@ -123,7 +117,9 @@ doPlayerAction action ts ds = result
         let statusAndNewDungeon = (status actionResult, newCellMap actionResult)
         return $
             (\(a, cm) ->
-                 (a, modify (\d -> d & cellMap .~ cm) ds, killed actionResult))
+                 ( a
+                 , ds & focused %~ (\d -> d & cellMap .~ cm)
+                 , killed actionResult))
                 statusAndNewDungeon
     playerPos =
         maybe
@@ -134,11 +130,12 @@ doPlayerAction action ts ds = result
 handleNpcTurns ::
        TileCollection -> Dungeons -> Writer MessageLog (Dungeons, [Actor])
 handleNpcTurns ts ds =
-    (\(x, ks) -> (modify (\d -> d & cellMap .~ x) ds, ks)) <$>
+    (\(x, ks) -> (ds & focused %~ (\d -> d & cellMap .~ x), ks)) <$>
     NPC.handleNpcTurns ts (ds ^. focused . cellMap)
 
 popPlayer :: Dungeons -> (Maybe Actor, Dungeons)
 popPlayer z =
     case flip runStateT (z ^. focused . cellMap) $ removeActorIf isPlayer of
-        Right (actor, ncm) -> (Just actor, modify (\x -> x & cellMap .~ ncm) z)
-        _                  -> (Nothing, z)
+        Right (actor, ncm) ->
+            (Just actor, z & focused %~ (\x -> x & cellMap .~ ncm))
+        _ -> (Nothing, z)

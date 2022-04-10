@@ -53,7 +53,7 @@ import           Gimlight.System.Random           (choiceST, randomRST,
                                                    randomST)
 import           Gimlight.TreeZipper              (TreeZipper, appendNode,
                                                    focused, goDownBy,
-                                                   goToRootAndGetTree, modify,
+                                                   goToRootAndGetTree,
                                                    treeZipper)
 import           Linear.V2                        (V2 (..), _x, _y)
 import           System.Random                    (StdGen)
@@ -91,7 +91,7 @@ generateDungeonAndAppend zipper ts cfg ident = do
             newUpperDungeon & cellMap . upperAt upperStairsPosition ?~
             downStairsId cfg
         newZipper =
-            appendNode newLowerDungeon $ modify (const upperWithStairs) zipper
+            appendNode newLowerDungeon $ zipper & focused .~ upperWithStairs
         zipperFocusingNext =
             expectJust "unreachable." (goDownBy (== newLowerDungeon) newZipper)
     return zipperFocusingNext

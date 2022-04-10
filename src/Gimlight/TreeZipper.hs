@@ -6,7 +6,6 @@ module Gimlight.TreeZipper
     , treeZipper
     , goToRootAndGetTree
     , focused
-    , modify
     , goToRoot
     , goUp
     , goDownBy
@@ -36,9 +35,6 @@ focused = lens getter setter
   where
     getter (t, _) = rootLabel t
     setter (Node _ ts, c) t = (Node t ts, c)
-
-modify :: (a -> a) -> TreeZipper a -> TreeZipper a
-modify f (n@Node {rootLabel = r}, bs) = (n {rootLabel = f r}, bs)
 
 goToRoot :: TreeZipper a -> TreeZipper a
 goToRoot z = maybe z goToRoot (goUp z)

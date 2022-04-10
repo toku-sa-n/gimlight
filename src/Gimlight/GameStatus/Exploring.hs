@@ -38,8 +38,7 @@ import           Gimlight.Log                           (MessageLog)
 import qualified Gimlight.Log                           as L
 import           Gimlight.Quest                         (QuestCollection,
                                                          handleWithTurnResult)
-import           Gimlight.TreeZipper                    (TreeZipper, focused,
-                                                         modify)
+import           Gimlight.TreeZipper                    (TreeZipper, focused)
 
 data ExploringHandler =
     ExploringHandler
@@ -93,7 +92,7 @@ doPlayerAction action eh = (status, newHandler)
 processAfterPlayerTurn :: ExploringHandler -> Maybe ExploringHandler
 processAfterPlayerTurn eh =
     (\x ->
-         handlerAfterNpcTurns & dungeons %~ modify (const x) & quests %~
+         handlerAfterNpcTurns & dungeons . focused %~ const x & quests %~
          updateQuestsForResult (D.getIdentifier x)) <$>
     newCurrentDungeon
   where
