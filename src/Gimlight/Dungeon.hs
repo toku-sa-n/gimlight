@@ -19,7 +19,7 @@ module Gimlight.Dungeon
     , ascendingStairs
     ) where
 
-import           Control.Lens                (makeLenses, (%~), (&), (^.))
+import           Control.Lens                (makeLenses, (%~), (&), (?~), (^.))
 import           Data.Array.Base             (assocs)
 import           GHC.Generics                (Generic)
 import           Gimlight.Coord              (Coord)
@@ -65,7 +65,7 @@ addAscendingAndDescendingStiars sp@(StairsPair upper _) (parent, child@Dungeon {
                                                                                , _positionOnParentMap = Nothing
                                                                                }) =
     ( parent & descendingStairs %~ (sp :)
-    , child {_ascendingStairs = Just sp, _positionOnParentMap = Just upper})
+    , child & ascendingStairs ?~ sp & positionOnParentMap ?~ upper)
 addAscendingAndDescendingStiars _ _ =
     error "The child's position and the ascending stairs are already set."
 
