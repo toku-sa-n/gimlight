@@ -26,7 +26,7 @@ momo =
         Momo
         st
         talking
-        "images/electria.png"
+        "images/walking_pictures/momo.png"
         "images/upper_body/momo/default.png"
   where
     st = status (hp 1) 1 1
