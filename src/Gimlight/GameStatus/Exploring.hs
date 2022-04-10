@@ -92,7 +92,7 @@ doPlayerAction action eh = (status, newHandler)
 processAfterPlayerTurn :: ExploringHandler -> Maybe ExploringHandler
 processAfterPlayerTurn eh =
     (\x ->
-         handlerAfterNpcTurns & dungeons . focused %~ const x & quests %~
+         handlerAfterNpcTurns & dungeons . focused .~ x & quests %~
          updateQuestsForResult (D.getIdentifier x)) <$>
     newCurrentDungeon
   where
