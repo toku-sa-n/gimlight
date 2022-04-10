@@ -125,7 +125,7 @@ player =
         st
         Player
         Nothing
-        "images/player.png"
+        "images/walking_pictures/Darnah.png"
         "images/sample_standing_picture.png"
   where
     st = S.status (hp 30) 5 2
