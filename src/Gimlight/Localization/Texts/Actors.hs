@@ -2,23 +2,23 @@
 
 module Gimlight.Localization.Texts.Actors
     ( player
-    , electria
+    , momo
     , yes
     , no
     , orc
     , troll
-    , module Gimlight.Localization.Texts.Actors.Electria
+    , module Gimlight.Localization.Texts.Actors.Momo
     ) where
 
-import           Gimlight.Localization                       (MultilingualText,
-                                                              multilingualText)
-import           Gimlight.Localization.Texts.Actors.Electria
+import           Gimlight.Localization                   (MultilingualText,
+                                                          multilingualText)
+import           Gimlight.Localization.Texts.Actors.Momo
 
 player :: MultilingualText
 player = multilingualText "Player" "プレイヤー"
 
-electria :: MultilingualText
-electria = multilingualText "Electria" "エレクトリア"
+momo :: MultilingualText
+momo = multilingualText "Momo" "モモ"
 
 yes :: MultilingualText
 yes = multilingualText "Yes" "はい"

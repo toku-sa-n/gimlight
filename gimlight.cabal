@@ -122,7 +122,7 @@ library
                       , Gimlight.UI.Draw.Config
 
     other-modules:      Gimlight.Actor.Friendly
-                      , Gimlight.Actor.Friendly.Electria
+                      , Gimlight.Actor.Friendly.Momo
                       , Gimlight.Actor.Status.Experience
                       , Gimlight.Dungeon.Generate.Room
                       , Gimlight.Dungeon.Init
@@ -143,7 +143,7 @@ library
                       , Gimlight.Localization
                       , Gimlight.Localization.Texts.Actions
                       , Gimlight.Localization.Texts.Actors
-                      , Gimlight.Localization.Texts.Actors.Electria
+                      , Gimlight.Localization.Texts.Actors.Momo
                       , Gimlight.Localization.Texts.Books
                       , Gimlight.Localization.Texts.Items
                       , Gimlight.Localization.Texts.Scene
