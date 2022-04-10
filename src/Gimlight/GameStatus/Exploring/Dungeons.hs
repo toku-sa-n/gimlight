@@ -16,7 +16,6 @@ import           Gimlight.Action            (Action,
                                              ActionResult (killed, newCellMap, status),
                                              ActionStatus)
 import           Gimlight.Actor             (Actor, isPlayer)
-import           Gimlight.Data.Maybe        (expectJust)
 import           Gimlight.Dungeon           (Dungeon, ascendingStairs, cellMap,
                                              descendingStairs,
                                              positionOnParentMap)
@@ -43,10 +42,10 @@ ascendStairsAtPlayerPosition ts ds = newZipper
     newPosition = upStairs <$> ds ^. focused . ascendingStairs
     newZipper =
         case (zipperFocusingNextDungeon, newPosition, player, ascendable) of
-            (Just g, Just pos, Just p, True) -> Just $ updateMapOrError g p pos
+            (Just g, Just pos, Just p, True) -> updateMapOrError g p pos
             _                                -> Nothing
     updateMapOrError g pos p =
-        expectJust "Failed to update the map." $ g & focused . cellMap %%~
+        g & focused . cellMap %%~
         (\x ->
              rightToMaybe (execStateT (locateActorAt ts p pos) x) >>=
              updatePlayerFov ts >>=
@@ -69,10 +68,10 @@ descendStairsAtPlayerPosition ts ds = newZipper
     currentPosition = fmap fst . playerActor $ ds ^. focused . cellMap
     newZipper =
         case (zipperFocusingNextDungeon, newPosition, player) of
-            (Just g, Just pos, Just p) -> Just $ updateMapOrError g p pos
+            (Just g, Just pos, Just p) -> updateMapOrError g p pos
             _                          -> Nothing
     updateMapOrError g pos p =
-        expectJust "Failed to update the map." $ g & focused . cellMap %%~
+        g & focused . cellMap %%~
         (\x ->
              rightToMaybe (execStateT (locateActorAt ts p pos) x) >>=
              updatePlayerFov ts >>=
