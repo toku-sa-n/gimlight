@@ -35,6 +35,6 @@ dropAction n position tc cm =
             let (item, newInventory) =
                     first (fromMaybe (error "Index out of bounds.")) $
                     removeNthItem n (a ^. inventoryItems)
-            locateActorAt tc (a & inventoryItems .~ newInventory) position
-            locateItemAt tc item position
+            locateActorAt tc position (a & inventoryItems .~ newInventory)
+            locateItemAt tc position item
             return item

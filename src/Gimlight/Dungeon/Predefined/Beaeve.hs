@@ -21,5 +21,5 @@ beaeve tc = do
     cm <- lift $ readMapFile "maps/beaeve.json"
     let cm' =
             expectRight "Failed to place a NPC." . flip execStateT cm $
-            locateActorAt tc momo' (V2 4 5)
+            locateActorAt tc (V2 4 5) momo'
     return $ dungeon cm' Beaeve

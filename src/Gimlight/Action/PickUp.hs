@@ -39,6 +39,6 @@ pickUpAction position tc cm =
                     maybeToRight T.bagIsFull $ a & inventoryItems %%~ addItem i
             case newActor of
                 Right x -> do
-                    locateActorAt tc x position
+                    locateActorAt tc position x
                     return $ Right $ getName i
                 Left x -> return $ Left x
