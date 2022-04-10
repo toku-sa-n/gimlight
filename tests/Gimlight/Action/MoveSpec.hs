@@ -60,9 +60,8 @@ succeed :: V2 Int -> ActionResultWithLog
 succeed offset = writer (okResult cellMapWithPlayer, [])
   where
     cellMapWithPlayer =
-        fromRight' $ flip execStateT testMap $ do
-            a <- removeActorAt startPos
-            locateActorAt mockTileCollection a (startPos + offset)
+        fromRight' $ flip execStateT testMap $ removeActorAt startPos >>=
+        locateActorAt mockTileCollection (startPos + offset)
 
 failed :: ActionResultWithLog
 failed = writer (failedResult testMap, [T.youCannotMoveThere])

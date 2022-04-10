@@ -28,4 +28,4 @@ initDungeon tc = do
         updateExploredMap .
         expectJust "Failed to update the player FoV." .
         updatePlayerFov tc . expectRight "Failed to locate the player." $
-        execStateT (locateActorAt tc p (V2 10 10)) cm'
+        execStateT (locateActorAt tc (V2 10 10) p) cm'

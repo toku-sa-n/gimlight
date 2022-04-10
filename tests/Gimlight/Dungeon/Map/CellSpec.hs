@@ -39,7 +39,7 @@ locateItemsActors xs cm = foldl helper cm xs
         (itemFunc pos @> actorFunc pos @> typesExhausted) x
     actorFunc = apply locateActorAt
     itemFunc = apply locateItemAt
-    apply f pos x = f mockTileCollection x pos
+    apply f = f mockTileCollection
 
 locateItemsActorsST ::
        [(Coord, Union '[ Actor, SomeItem])] -> StateT CellMap (Either Error) ()

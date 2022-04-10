@@ -186,16 +186,16 @@ positionsAndItems = mapMaybe mapStep . assocs
     mapStep (coord, cell) = (coord, ) <$> cell ^. item
 
 locateActorAt ::
-       TileCollection -> Actor -> Coord -> StateT CellMap (Either Error) ()
-locateActorAt tc a c =
+       TileCollection -> Coord -> Actor -> StateT CellMap (Either Error) ()
+locateActorAt tc c a =
     StateT $ \cm ->
         if coordIsInMap c cm
             then fmap ((), ) $ cm & ix c %%~ locateActor tc a
             else Left OutOfRange
 
 locateItemAt ::
-       TileCollection -> SomeItem -> Coord -> StateT CellMap (Either Error) ()
-locateItemAt tc i c =
+       TileCollection -> Coord -> SomeItem -> StateT CellMap (Either Error) ()
+locateItemAt tc c i =
     StateT $ \cm -> fmap ((), ) $ cm & ix c %%~ locateItem tc i
 
 removeActorAt :: Coord -> StateT CellMap (Either Error) Actor
@@ -221,9 +221,7 @@ mapActorAt ::
     -> Coord
     -> (Actor -> Actor)
     -> StateT CellMap (Either Error) ()
-mapActorAt tc p f = do
-    a <- removeActorAt p
-    locateActorAt tc (f a) p
+mapActorAt tc p f = removeActorAt p >>= locateActorAt tc p . f
 
 tileIdLayerAt :: Coord -> CellMap -> Maybe TileIdLayer
 tileIdLayerAt c = preview (ix c . tileIdLayer)

@@ -22,9 +22,8 @@ moveAction offset position tiles cm =
         _                           -> error "Unreachable."
   where
     result =
-        flip execStateT cm $ do
-            a <- removeActorAt position
-            locateActorAt tiles a (position + offset)
+        flip execStateT cm $
+        removeActorAt position >>= locateActorAt tiles (position + offset)
     cannotMove = do
         tell [T.youCannotMoveThere]
         return $ ActionResult Failed cm []

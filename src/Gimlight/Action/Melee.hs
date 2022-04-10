@@ -24,10 +24,10 @@ meleeAction offset srcPosition tc cm =
             defender <- removeActorAt dstPosition
             let ((newAttacker, newDefender), l') =
                     runWriter $ A.attackFromTo attacker defender
-            locateActorAt tc newAttacker srcPosition
+            locateActorAt tc srcPosition newAttacker
             case newDefender of
                 Just x -> do
-                    locateActorAt tc x dstPosition
+                    locateActorAt tc dstPosition x
                     return (l', [])
                 Nothing -> return (l', [defender])
     dstPosition = srcPosition + offset

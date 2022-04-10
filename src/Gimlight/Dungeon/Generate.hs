@@ -249,10 +249,8 @@ placeEnemies tc before r n = foldlM foldStep before [1 .. n]
         x <- lift $ randomRST (x1 r, x2 r - 1)
         y <- lift $ randomRST (y1 r, y2 r - 1)
         if V2 x y /= center r
-            then do
-                enemy <- newMonster
-                return $ fromRight cm $ flip execStateT cm $
-                    locateActorAt tc enemy (V2 x y)
+            then fromRight cm . flip execStateT cm . locateActorAt tc (V2 x y) <$>
+                 newMonster
             else return cm
 
 placeItems :: CellMap -> TileCollection -> Room -> Int -> State StdGen CellMap
@@ -261,9 +259,8 @@ placeItems before tc r n = foldlM foldStep before [1 .. n]
     foldStep cm _ = do
         x <- randomRST (x1 r, x2 r - 1)
         y <- randomRST (y1 r, y2 r - 1)
-        newItem <- choiceST items
-        return $ fromRight cm $ flip execStateT cm $
-            locateItemAt tc newItem (V2 x y)
+        fromRight cm . flip execStateT cm . locateItemAt tc (V2 x y) <$>
+            choiceST items
     items =
         [ liftUnion herb
         , liftUnion sampleBook
