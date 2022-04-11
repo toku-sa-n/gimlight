@@ -2,26 +2,43 @@
 {-# LANGUAGE GADTs     #-}
 
 module Gimlight.Dungeon.Map.CellSpec
-    ( emptyTile
+    ( spec
+    , emptyTile
     , emptyCellMap
     , locateItemsActors
     , locateItemsActorsST
     ) where
 
 import           Control.Monad.State           (MonadState (get, put), StateT,
-                                                execStateT)
+                                                evalStateT, execStateT)
 import           Data.Array                    (listArray)
 import           Data.Either.Combinators       (fromRight')
-import           Data.OpenUnion                (Union, typesExhausted, (@>))
+import           Data.OpenUnion                (Union, liftUnion,
+                                                typesExhausted, (@>))
 import           Gimlight.Actor                (Actor)
 import           Gimlight.Coord                (Coord)
-import           Gimlight.Dungeon.Map.Cell     (CellMap, Error,
+import           Gimlight.Dungeon.Map.Cell     (CellMap, Error (OutOfRange),
                                                 TileIdLayer (TileIdLayer),
                                                 cellMap, locateActorAt,
                                                 locateItemAt)
 import           Gimlight.Dungeon.Map.TileSpec (mockTileCollection)
+import           Gimlight.Item.Defined         (herb)
 import           Gimlight.Item.SomeItem        (SomeItem)
 import           Linear                        (V2 (V2))
+import           Test.Hspec                    (Spec, describe, it, shouldBe)
+
+spec :: Spec
+spec = testLocateItemAt
+
+testLocateItemAt :: Spec
+testLocateItemAt =
+    describe "locateItemAt" $
+    it "returns OutOfRange error if it tries to locate an item outside of a map." $
+    result `shouldBe` Left OutOfRange
+  where
+    result = evalStateT locating cm
+    locating = locateItemAt mockTileCollection (V2 5 5) (liftUnion herb)
+    cm = emptyCellMap (V2 1 1)
 
 emptyTile :: TileIdLayer
 emptyTile = TileIdLayer Nothing Nothing

@@ -62,7 +62,7 @@ data Error
     | ItemNotFound
     | ItemAlreadyExists SomeItem
     | TileIsNotWalkable
-    deriving (Show)
+    deriving (Show, Eq)
 
 data TileIdLayer =
     TileIdLayer
@@ -196,7 +196,10 @@ locateActorAt tc c a =
 locateItemAt ::
        TileCollection -> Coord -> SomeItem -> StateT CellMap (Either Error) ()
 locateItemAt tc c i =
-    StateT $ \cm -> fmap ((), ) $ cm & ix c %%~ locateItem tc i
+    StateT $ \cm ->
+        if coordIsInMap c cm
+            then fmap ((), ) $ cm & ix c %%~ locateItem tc i
+            else Left OutOfRange
 
 removeActorAt :: Coord -> StateT CellMap (Either Error) Actor
 removeActorAt c =
