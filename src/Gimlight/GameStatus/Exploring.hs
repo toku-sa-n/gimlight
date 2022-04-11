@@ -33,8 +33,8 @@ import           Gimlight.Actor                                  (Actor,
                                                                   getIdentifier)
 import           Gimlight.Coord                                  (Coord)
 import           Gimlight.Dungeon                                (Dungeon,
-                                                                  cellMap)
-import qualified Gimlight.Dungeon                                as D
+                                                                  cellMap,
+                                                                  identifier)
 import           Gimlight.Dungeon.Map.Cell                       (playerActor,
                                                                   updateExploredMap,
                                                                   updatePlayerFov)
@@ -92,14 +92,14 @@ doPlayerAction action eh = (status, newHandler)
             dungeons .= dungeonsAfterAction
             quests %=
                 handleWithTurnResult
-                    (D.getIdentifier (dungeonsAfterAction ^. focused))
+                    (dungeonsAfterAction ^. focused . identifier)
                     (map getIdentifier killed)
 
 processAfterPlayerTurn :: ExploringHandler -> Maybe ExploringHandler
 processAfterPlayerTurn eh =
     (\x ->
          handlerAfterNpcTurns & dungeons . focused .~ x & quests %~
-         updateQuestsForResult (D.getIdentifier x)) <$>
+         updateQuestsForResult (x ^. identifier)) <$>
     newCurrentDungeon
   where
     updateQuestsForResult d = handleWithTurnResult d $ map getIdentifier killed

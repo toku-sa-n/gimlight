@@ -6,7 +6,7 @@ module Gimlight.Player
     , handlePlayerAfterSelecting
     ) where
 
-import           Control.Lens                      ((^.))
+import           Control.Lens                      (view, (^.))
 import           Data.Foldable                     (find)
 import           Gimlight.Action                   (ActionStatus (Failed, Ok, ReadingStarted))
 import           Gimlight.Action.Consume           (consumeAction)
@@ -18,7 +18,7 @@ import           Gimlight.Actor                    (Actor, getTalkingPart,
                                                     isMonster)
 import qualified Gimlight.Actor                    as A
 import           Gimlight.Data.Maybe               (expectJust)
-import           Gimlight.Dungeon                  (cellMap, getIdentifier)
+import           Gimlight.Dungeon                  (cellMap, identifier)
 import           Gimlight.Dungeon.Identifier       (isTown)
 import           Gimlight.Dungeon.Map.Cell         (isPositionInMap,
                                                     positionsAndActors)
@@ -121,7 +121,7 @@ meleeOrTalk offset target eh
 moveOrExitMap :: V2 Int -> ExploringHandler -> (Bool, GameStatus)
 moveOrExitMap offset eh
     | isPositionInMap destination (getCurrentDungeon eh ^. cellMap) ||
-          not (isTown . getIdentifier $ getCurrentDungeon eh) =
+          not (isTown . view identifier $ getCurrentDungeon eh) =
         case status of
             Ok               -> (True, Exploring newHandler)
             ReadingStarted _ -> error "Unreachable."
