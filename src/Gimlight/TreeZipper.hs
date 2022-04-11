@@ -5,8 +5,7 @@ module Gimlight.TreeZipper
     ( TreeZipper
     , treeZipper
     , goToRootAndGetTree
-    , getFocused
-    , modify
+    , focused
     , goToRoot
     , goUp
     , goDownBy
@@ -14,6 +13,7 @@ module Gimlight.TreeZipper
     , appendTree
     ) where
 
+import           Control.Lens  (Lens', lens)
 import           Data.Foldable (find)
 import           Data.Tree     (Tree (Node, rootLabel, subForest))
 import           GHC.Generics  (Generic)
@@ -30,11 +30,11 @@ treeZipper t = (t, [])
 goToRootAndGetTree :: TreeZipper a -> Tree a
 goToRootAndGetTree z = fst $ goToRoot z
 
-getFocused :: TreeZipper a -> a
-getFocused (t, _) = rootLabel t
-
-modify :: (a -> a) -> TreeZipper a -> TreeZipper a
-modify f (n@Node {rootLabel = r}, bs) = (n {rootLabel = f r}, bs)
+focused :: Lens' (TreeZipper a) a
+focused = lens getter setter
+  where
+    getter (t, _) = rootLabel t
+    setter (Node _ ts, c) t = (Node t ts, c)
 
 goToRoot :: TreeZipper a -> TreeZipper a
 goToRoot z = maybe z goToRoot (goUp z)

@@ -19,8 +19,10 @@ module Gimlight.GameStatus.Exploring
     ) where
 
 import           Control.Lens                           (makeLenses, (%%~),
-                                                         (%~), (&), (.~), (^.))
+                                                         (%=), (%~), (&), (.=),
+                                                         (.~), (^.))
 import           Control.Monad                          ((>=>))
+import           Control.Monad.State                    (execState)
 import           Control.Monad.Trans.Writer             (runWriter)
 import           GHC.Generics                           (Generic)
 import           Gimlight.Action                        (Action, ActionStatus)
@@ -38,8 +40,7 @@ import           Gimlight.Log                           (MessageLog)
 import qualified Gimlight.Log                           as L
 import           Gimlight.Quest                         (QuestCollection,
                                                          handleWithTurnResult)
-import           Gimlight.TreeZipper                    (TreeZipper, getFocused,
-                                                         modify)
+import           Gimlight.TreeZipper                    (TreeZipper, focused)
 
 data ExploringHandler =
     ExploringHandler
@@ -72,9 +73,7 @@ descendStairsAtPlayerPosition eh =
     eh & dungeons %%~ DS.descendStairsAtPlayerPosition (eh ^. tileCollection)
 
 exitDungeon :: ExploringHandler -> Maybe ExploringHandler
-exitDungeon eh =
-    (\x -> eh & dungeons .~ x) <$>
-    DS.exitDungeon (eh ^. tileCollection) (eh ^. dungeons)
+exitDungeon eh = eh & dungeons %%~ DS.exitDungeon (eh ^. tileCollection)
 
 doPlayerAction :: Action -> ExploringHandler -> (ActionStatus, ExploringHandler)
 doPlayerAction action eh = (status, newHandler)
@@ -83,24 +82,24 @@ doPlayerAction action eh = (status, newHandler)
         runWriter $
         DS.doPlayerAction action (eh ^. tileCollection) (eh ^. dungeons)
     newHandler =
-        eh & messageLog %~ L.addMessages newLog &
-        dungeons .~ dungeonsAfterAction &
-        quests %~
-        handleWithTurnResult
-            (D.getIdentifier (getFocused dungeonsAfterAction))
-            (map getIdentifier killed)
+        flip execState eh $ do
+            messageLog %= L.addMessages newLog
+            dungeons .= dungeonsAfterAction
+            quests %=
+                handleWithTurnResult
+                    (D.getIdentifier (dungeonsAfterAction ^. focused))
+                    (map getIdentifier killed)
 
 processAfterPlayerTurn :: ExploringHandler -> Maybe ExploringHandler
 processAfterPlayerTurn eh =
     (\x ->
-         handlerAfterNpcTurns & dungeons %~ modify (const x) &
-         quests %~ updateQuestsForResult (D.getIdentifier x)) <$>
+         handlerAfterNpcTurns & dungeons . focused .~ x & quests %~
+         updateQuestsForResult (D.getIdentifier x)) <$>
     newCurrentDungeon
   where
     updateQuestsForResult d = handleWithTurnResult d $ map getIdentifier killed
     newCurrentDungeon =
-        getFocused (handlerAfterNpcTurns ^. dungeons) &
-        cellMap %%~
+        (handlerAfterNpcTurns ^. dungeons . focused) & cellMap %%~
         (updatePlayerFov (eh ^. tileCollection) >=> (Just . updateExploredMap))
     (handlerAfterNpcTurns, killed) = handleNpcTurns eh
 
@@ -108,8 +107,9 @@ handleNpcTurns :: ExploringHandler -> (ExploringHandler, [Actor])
 handleNpcTurns eh = (newHandler, killed)
   where
     newHandler =
-        eh & dungeons .~ dungeonsAfterNpcTurns &
-        messageLog %~ L.addMessages newLog
+        flip execState eh $ do
+            dungeons .= dungeonsAfterNpcTurns
+            messageLog %= L.addMessages newLog
     ((dungeonsAfterNpcTurns, killed), newLog) =
         runWriter $ DS.handleNpcTurns (eh ^. tileCollection) (eh ^. dungeons)
 
@@ -126,7 +126,7 @@ getPlayerPosition :: ExploringHandler -> Maybe Coord
 getPlayerPosition = fmap fst . playerActor . (^. cellMap) . getCurrentDungeon
 
 getCurrentDungeon :: ExploringHandler -> Dungeon
-getCurrentDungeon eh = getFocused $ eh ^. dungeons
+getCurrentDungeon eh = eh ^. dungeons . focused
 
 getMessageLog :: ExploringHandler -> MessageLog
 getMessageLog eh = eh ^. messageLog

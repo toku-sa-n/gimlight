@@ -81,26 +81,22 @@ mapGrid eh =
     ]
 
 statusGrid :: ExploringHandler -> GameConfig -> GameWidgetNode
-statusGrid eh c =
-    vstack $
-    maybe
-        []
-        (\x ->
-             [ label "Player"
-             , label $ lvl <> ": " <> showt (getLevel x)
-             , label $
-               experience <>
-               ": " <>
-               showt (getCurrentExperiencePoint x) <>
-               " / " <> showt (getExperiencePointForNextLevel x)
-             , label $ "HP: " <> showt (getHp x) <> " / " <> showt (getMaxHp x)
-             , label $ atk <> ": " <> showt (getPower x)
-             , label $ defence <> ": " <> showt (getDefence x)
-             , label $ wp <> ": " <> wpName x
-             , label $ am <> ": " <> amName x
-             ]) $
-    getPlayerActor eh
+statusGrid eh c = vstack $ maybe [] actorToStatus $ getPlayerActor eh
   where
+    actorToStatus x =
+        [ label "Player"
+        , label $ lvl <> ": " <> showt (getLevel x)
+        , label $
+          experience <>
+          ": " <>
+          showt (getCurrentExperiencePoint x) <>
+          " / " <> showt (getExperiencePointForNextLevel x)
+        , label $ "HP: " <> showt (getHp x) <> " / " <> showt (getMaxHp x)
+        , label $ atk <> ": " <> showt (getPower x)
+        , label $ defence <> ": " <> showt (getDefence x)
+        , label $ wp <> ": " <> wpName x
+        , label $ am <> ": " <> amName x
+        ]
     lvl = getLocalizedText c T.level
     experience = getLocalizedText c T.experience
     atk = getLocalizedText c T.attack
@@ -140,47 +136,47 @@ mapWidget eh = vstack rows
         | isVisible c = 0
         | isExplored c = 0.5
         | otherwise = 1
-    isVisible c = playerFov (d ^. cellMap) ^? ix c == Just True
-    isExplored c = exploredMap (d ^. cellMap) ^? ix c == Just True
+    isVisible c = playerFov cm ^? ix c == Just True
+    isExplored c = exploredMap cm ^? ix c == Just True
     getTileIdOfLayerAt which c = tileIdLayer c >>= (^. which)
-    tileIdLayer c = tileIdLayerAt c $ d ^. cellMap
-    V2 topLeftCoordX topLeftCoordY = topLeftCoord (d ^. cellMap)
-    d = getCurrentDungeon eh
+    tileIdLayer c = tileIdLayerAt c cm
+    V2 topLeftCoordX topLeftCoordY = topLeftCoord cm
+    cm = getCurrentDungeon eh ^. cellMap
 
 mapItems :: ExploringHandler -> [GameWidgetNode]
-mapItems eh = mapMaybe itemToImage $ positionsAndItems $ d ^. cellMap
+mapItems eh = mapMaybe itemToImage $ positionsAndItems cm
   where
     itemToImage (position, item) =
         guard (isItemDrawed position) >>
         return (image (getIconImagePath item) `styleBasic` style position)
     isItemDrawed position =
         let displayPosition = itemPositionOnDisplay position
-            isVisible = playerFov (d ^. cellMap) ! position
+            isVisible = playerFov cm ! position
          in V2 0 0 <= displayPosition &&
             displayPosition < V2 tileColumns tileRows && isVisible
-    d = getCurrentDungeon eh
+    cm = getCurrentDungeon eh ^. cellMap
     leftPadding position =
         fromIntegral $ itemPositionOnDisplay position ^. _x * tileWidth
     topPadding position =
         fromIntegral $ itemPositionOnDisplay position ^. _y * tileHeight
     style position =
         [paddingL $ leftPadding position, paddingT $ topPadding position]
-    itemPositionOnDisplay position = position - topLeftCoord (d ^. cellMap)
+    itemPositionOnDisplay position = position - topLeftCoord cm
 
 mapActors :: ExploringHandler -> [GameWidgetNode]
-mapActors eh = mapMaybe actorToImage . positionsAndActors $ d ^. cellMap
+mapActors eh = mapMaybe actorToImage $ positionsAndActors cm
   where
-    d = getCurrentDungeon eh
+    cm = getCurrentDungeon eh ^. cellMap
     leftPadding actor =
         fromIntegral $ actorPositionOnDisplay actor ^. _x * tileWidth
     topPadding actor =
         fromIntegral $ actorPositionOnDisplay actor ^. _y * tileHeight
     style position =
         [paddingL $ leftPadding position, paddingT $ topPadding position]
-    actorPositionOnDisplay position = position - topLeftCoord (d ^. cellMap)
+    actorPositionOnDisplay position = position - topLeftCoord cm
     isActorDrawed position =
         let displayPosition = actorPositionOnDisplay position
-            isVisible = playerFov (d ^. cellMap) ! position
+            isVisible = playerFov cm ! position
          in V2 0 0 <= displayPosition &&
             displayPosition < V2 tileColumns tileRows && isVisible
     actorToImage (position, actor) =
