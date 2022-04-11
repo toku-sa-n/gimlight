@@ -13,15 +13,16 @@ module Gimlight.GameStatus.Exploring
     , processAfterPlayerTurn
     , getPlayerActor
     , getPlayerPosition
-    , getCurrentDungeon
+    , currentDungeon
     , getMessageLog
     ) where
 
-import           Control.Lens                                    (makeLenses,
-                                                                  (%%~), (%=),
-                                                                  (%~), (&),
-                                                                  (.=), (.~),
-                                                                  (^.))
+import           Control.Lens                                    (Getter,
+                                                                  makeLenses,
+                                                                  view, (%%~),
+                                                                  (%=), (%~),
+                                                                  (&), (.=),
+                                                                  (.~), (^.))
 import           Control.Monad                                   ((>=>))
 import           Control.Monad.State                             (execState)
 import           Control.Monad.Trans.Writer                      (runWriter)
@@ -118,13 +119,13 @@ handleNpcTurns eh = (newHandler, killed)
         runWriter $ DS.handleNpcTurns (eh ^. tileCollection) (eh ^. dungeons)
 
 getPlayerActor :: ExploringHandler -> Maybe Actor
-getPlayerActor = fmap snd . playerActor . (^. cellMap) . getCurrentDungeon
+getPlayerActor = fmap snd . playerActor . view (currentDungeon . cellMap)
 
 getPlayerPosition :: ExploringHandler -> Maybe Coord
-getPlayerPosition = fmap fst . playerActor . (^. cellMap) . getCurrentDungeon
+getPlayerPosition = fmap fst . playerActor . view (currentDungeon . cellMap)
 
-getCurrentDungeon :: ExploringHandler -> Dungeon
-getCurrentDungeon eh = eh ^. dungeons . focused
+currentDungeon :: Getter ExploringHandler Dungeon
+currentDungeon = dungeons . focused
 
 getMessageLog :: ExploringHandler -> MessageLog
 getMessageLog eh = eh ^. messageLog
