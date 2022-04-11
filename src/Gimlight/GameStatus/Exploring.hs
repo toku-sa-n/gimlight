@@ -39,7 +39,6 @@ import           Gimlight.Dungeon.Map.Cell                       (playerActor,
                                                                   updateExploredMap,
                                                                   updatePlayerFov)
 import           Gimlight.Dungeon.Map.Tile                       (TileCollection)
-import           Gimlight.GameStatus.Exploring.DungeonTreeZipper (Dungeons)
 import qualified Gimlight.GameStatus.Exploring.DungeonTreeZipper as DS
 import           Gimlight.Log                                    (MessageLog)
 import qualified Gimlight.Log                                    as L
@@ -50,7 +49,7 @@ import           Gimlight.TreeZipper                             (TreeZipper,
 
 data ExploringHandler =
     ExploringHandler
-        { _dungeons       :: Dungeons
+        { _dungeons       :: TreeZipper Dungeon
         , _messageLog     :: MessageLog
         , _quests         :: QuestCollection
         , _tileCollection :: TileCollection
