@@ -1,6 +1,5 @@
-module Gimlight.GameStatus.Exploring.Dungeons
-    ( Dungeons
-    , ascendStairsAtPlayerPosition
+module Gimlight.GameStatus.Exploring.DungeonTreeZipper
+    ( ascendStairsAtPlayerPosition
     , descendStairsAtPlayerPosition
     , exitDungeon
     , doPlayerAction
@@ -29,9 +28,8 @@ import qualified Gimlight.NpcBehavior       as NPC
 import           Gimlight.TreeZipper        (TreeZipper, focused, goDownBy,
                                              goUp)
 
-type Dungeons = TreeZipper Dungeon
-
-ascendStairsAtPlayerPosition :: TileCollection -> Dungeons -> Maybe Dungeons
+ascendStairsAtPlayerPosition ::
+       TileCollection -> TreeZipper Dungeon -> Maybe (TreeZipper Dungeon)
 ascendStairsAtPlayerPosition ts ds = newZipper
   where
     (player, zipperWithoutPlayer) = popPlayer ds
@@ -52,7 +50,8 @@ ascendStairsAtPlayerPosition ts ds = newZipper
              Just .
              updateExploredMap)
 
-descendStairsAtPlayerPosition :: TileCollection -> Dungeons -> Maybe Dungeons
+descendStairsAtPlayerPosition ::
+       TileCollection -> TreeZipper Dungeon -> Maybe (TreeZipper Dungeon)
 descendStairsAtPlayerPosition ts ds = newZipper
   where
     (player, zipperWithoutPlayer) = popPlayer ds
@@ -78,7 +77,8 @@ descendStairsAtPlayerPosition ts ds = newZipper
              Just .
              updateExploredMap)
 
-exitDungeon :: TileCollection -> Dungeons -> Maybe Dungeons
+exitDungeon ::
+       TileCollection -> TreeZipper Dungeon -> Maybe (TreeZipper Dungeon)
 exitDungeon ts ds = newZipper
   where
     (player, zipperWithoutPlayer) = popPlayer ds
@@ -95,8 +95,8 @@ exitDungeon ts ds = newZipper
 doPlayerAction ::
        Action
     -> TileCollection
-    -> Dungeons
-    -> Writer MessageLog (ActionStatus, Dungeons, [Actor])
+    -> TreeZipper Dungeon
+    -> Writer MessageLog (ActionStatus, TreeZipper Dungeon, [Actor])
 doPlayerAction action ts ds = result
   where
     result = do
@@ -112,12 +112,14 @@ doPlayerAction action ts ds = result
             (playerActor $ ds ^. focused . cellMap)
 
 handleNpcTurns ::
-       TileCollection -> Dungeons -> Writer MessageLog (Dungeons, [Actor])
+       TileCollection
+    -> TreeZipper Dungeon
+    -> Writer MessageLog (TreeZipper Dungeon, [Actor])
 handleNpcTurns ts ds =
     (\(x, ks) -> (ds & focused . cellMap .~ x, ks)) <$>
     NPC.handleNpcTurns ts (ds ^. focused . cellMap)
 
-popPlayer :: Dungeons -> (Maybe Actor, Dungeons)
+popPlayer :: TreeZipper Dungeon -> (Maybe Actor, TreeZipper Dungeon)
 popPlayer z =
     case flip runStateT (z ^. focused . cellMap) $ removeActorIf isPlayer of
         Right (actor, ncm) -> (Just actor, z & focused . cellMap .~ ncm)
