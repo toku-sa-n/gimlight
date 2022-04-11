@@ -134,7 +134,7 @@ library
                       , Gimlight.GameModel
                       , Gimlight.GameStatus
                       , Gimlight.GameStatus.Exploring
-                      , Gimlight.GameStatus.Exploring.Dungeons
+                      , Gimlight.GameStatus.Exploring.DungeonTreeZipper
                       , Gimlight.GameStatus.ReadingBook
                       , Gimlight.GameStatus.Scene
                       , Gimlight.GameStatus.SelectingItem
