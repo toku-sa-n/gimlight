@@ -52,8 +52,8 @@ import           Gimlight.Item.Defined            (herb, sampleBook, sword,
 import           Gimlight.System.Random           (choiceST, randomRST,
                                                    randomST)
 import           Gimlight.TreeZipper              (TreeZipper, appendNode,
-                                                   getFocused, goDownBy,
-                                                   goToRootAndGetTree, modify,
+                                                   focused, goDownBy,
+                                                   goToRootAndGetTree,
                                                    treeZipper)
 import           Linear.V2                        (V2 (..), _x, _y)
 import           System.Random                    (StdGen)
@@ -82,16 +82,16 @@ generateDungeonAndAppend ::
     -> StateT IndexGenerator (State StdGen) (TreeZipper Dungeon)
 generateDungeonAndAppend zipper ts cfg ident = do
     (generatedDungeon, lowerStairsPosition) <- generateDungeon ts cfg ident
-    upperStairsPosition <- lift $ newStairsPosition ts $ getFocused zipper
+    upperStairsPosition <- lift $ newStairsPosition ts $ zipper ^. focused
     let (newUpperDungeon, newLowerDungeon) =
             addAscendingAndDescendingStiars
                 (StairsPair upperStairsPosition lowerStairsPosition)
-                (getFocused zipper, generatedDungeon)
+                (zipper ^. focused, generatedDungeon)
         upperWithStairs =
             newUpperDungeon & cellMap . upperAt upperStairsPosition ?~
             downStairsId cfg
         newZipper =
-            appendNode newLowerDungeon $ modify (const upperWithStairs) zipper
+            appendNode newLowerDungeon $ zipper & focused .~ upperWithStairs
         zipperFocusingNext =
             expectJust "unreachable." (goDownBy (== newLowerDungeon) newZipper)
     return zipperFocusingNext
