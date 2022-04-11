@@ -107,8 +107,9 @@ handleNpcTurns :: ExploringHandler -> (ExploringHandler, [Actor])
 handleNpcTurns eh = (newHandler, killed)
   where
     newHandler =
-        eh & dungeons .~ dungeonsAfterNpcTurns & messageLog %~
-        L.addMessages newLog
+        flip execState eh $ do
+            dungeons .= dungeonsAfterNpcTurns
+            messageLog %= L.addMessages newLog
     ((dungeonsAfterNpcTurns, killed), newLog) =
         runWriter $ DS.handleNpcTurns (eh ^. tileCollection) (eh ^. dungeons)
 
