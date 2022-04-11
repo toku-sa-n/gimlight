@@ -62,7 +62,7 @@ data Error
     | ItemNotFound
     | ItemAlreadyExists SomeItem
     | TileIsNotWalkable
-    deriving (Show)
+    deriving (Show, Eq)
 
 data TileIdLayer =
     TileIdLayer
