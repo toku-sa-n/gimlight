@@ -18,29 +18,35 @@ module Gimlight.GameStatus.Exploring
     , getMessageLog
     ) where
 
-import           Control.Lens                           (makeLenses, (%%~),
-                                                         (%=), (%~), (&), (.=),
-                                                         (.~), (^.))
-import           Control.Monad                          ((>=>))
-import           Control.Monad.State                    (execState)
-import           Control.Monad.Trans.Writer             (runWriter)
-import           GHC.Generics                           (Generic)
-import           Gimlight.Action                        (Action, ActionStatus)
-import           Gimlight.Actor                         (Actor, getIdentifier)
-import           Gimlight.Coord                         (Coord)
-import           Gimlight.Dungeon                       (Dungeon, cellMap)
-import qualified Gimlight.Dungeon                       as D
-import           Gimlight.Dungeon.Map.Cell              (playerActor,
-                                                         updateExploredMap,
-                                                         updatePlayerFov)
-import           Gimlight.Dungeon.Map.Tile              (TileCollection)
-import           Gimlight.GameStatus.Exploring.Dungeons (Dungeons)
-import qualified Gimlight.GameStatus.Exploring.Dungeons as DS
-import           Gimlight.Log                           (MessageLog)
-import qualified Gimlight.Log                           as L
-import           Gimlight.Quest                         (QuestCollection,
-                                                         handleWithTurnResult)
-import           Gimlight.TreeZipper                    (TreeZipper, focused)
+import           Control.Lens                                    (makeLenses,
+                                                                  (%%~), (%=),
+                                                                  (%~), (&),
+                                                                  (.=), (.~),
+                                                                  (^.))
+import           Control.Monad                                   ((>=>))
+import           Control.Monad.State                             (execState)
+import           Control.Monad.Trans.Writer                      (runWriter)
+import           GHC.Generics                                    (Generic)
+import           Gimlight.Action                                 (Action,
+                                                                  ActionStatus)
+import           Gimlight.Actor                                  (Actor,
+                                                                  getIdentifier)
+import           Gimlight.Coord                                  (Coord)
+import           Gimlight.Dungeon                                (Dungeon,
+                                                                  cellMap)
+import qualified Gimlight.Dungeon                                as D
+import           Gimlight.Dungeon.Map.Cell                       (playerActor,
+                                                                  updateExploredMap,
+                                                                  updatePlayerFov)
+import           Gimlight.Dungeon.Map.Tile                       (TileCollection)
+import           Gimlight.GameStatus.Exploring.DungeonTreeZipper (Dungeons)
+import qualified Gimlight.GameStatus.Exploring.DungeonTreeZipper as DS
+import           Gimlight.Log                                    (MessageLog)
+import qualified Gimlight.Log                                    as L
+import           Gimlight.Quest                                  (QuestCollection,
+                                                                  handleWithTurnResult)
+import           Gimlight.TreeZipper                             (TreeZipper,
+                                                                  focused)
 
 data ExploringHandler =
     ExploringHandler

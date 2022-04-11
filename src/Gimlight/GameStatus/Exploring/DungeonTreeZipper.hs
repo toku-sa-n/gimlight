@@ -1,4 +1,4 @@
-module Gimlight.GameStatus.Exploring.Dungeons
+module Gimlight.GameStatus.Exploring.DungeonTreeZipper
     ( Dungeons
     , ascendStairsAtPlayerPosition
     , descendStairsAtPlayerPosition
