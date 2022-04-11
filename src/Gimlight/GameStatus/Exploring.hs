@@ -73,9 +73,7 @@ descendStairsAtPlayerPosition eh =
     eh & dungeons %%~ DS.descendStairsAtPlayerPosition (eh ^. tileCollection)
 
 exitDungeon :: ExploringHandler -> Maybe ExploringHandler
-exitDungeon eh =
-    (\x -> eh & dungeons .~ x) <$>
-    DS.exitDungeon (eh ^. tileCollection) (eh ^. dungeons)
+exitDungeon eh = eh & dungeons %%~ DS.exitDungeon (eh ^. tileCollection)
 
 doPlayerAction :: Action -> ExploringHandler -> (ActionStatus, ExploringHandler)
 doPlayerAction action eh = (status, newHandler)
