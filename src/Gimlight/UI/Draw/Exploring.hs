@@ -30,9 +30,9 @@ import           Gimlight.Dungeon.Map.Cell       (CellMap, exploredMap, lower,
 import           Gimlight.Dungeon.Map.Tile       (getImage)
 import           Gimlight.GameConfig             (GameConfig)
 import           Gimlight.GameStatus.Exploring   (ExploringHandler,
-                                                  currentDungeon, getMessageLog,
+                                                  currentDungeon,
                                                   getPlayerActor,
-                                                  getTileCollection)
+                                                  getTileCollection, messageLog)
 import           Gimlight.Item                   (getName)
 import           Gimlight.Item.SomeItem          (getIconImagePath)
 import           Gimlight.Localization           (getLocalizedText)
@@ -71,7 +71,8 @@ messageLogArea :: ExploringHandler -> GameConfig -> GameWidgetNode
 messageLogArea eh c =
     vstack $ fmap (\x -> label_ (getLocalizedText c x) [multiline]) $
     take logRows $
-    getMessageLog eh
+    eh ^.
+    messageLog
 
 mapGrid :: ExploringHandler -> GameWidgetNode
 mapGrid eh =

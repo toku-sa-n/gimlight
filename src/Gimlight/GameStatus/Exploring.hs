@@ -14,7 +14,7 @@ module Gimlight.GameStatus.Exploring
     , getPlayerActor
     , getPlayerPosition
     , currentDungeon
-    , getMessageLog
+    , messageLog
     ) where
 
 import           Control.Lens                                    (Getter,
@@ -50,7 +50,7 @@ import           Gimlight.TreeZipper                             (TreeZipper,
 data ExploringHandler =
     ExploringHandler
         { _dungeons       :: TreeZipper Dungeon
-        , _messageLog     :: MessageLog
+        , _messageLog'    :: MessageLog
         , _quests         :: QuestCollection
         , _tileCollection :: TileCollection
         }
@@ -88,7 +88,7 @@ doPlayerAction action eh = (status, newHandler)
         DS.doPlayerAction action (eh ^. tileCollection) (eh ^. dungeons)
     newHandler =
         flip execState eh $ do
-            messageLog %= L.addMessages newLog
+            messageLog' %= L.addMessages newLog
             dungeons .= dungeonsAfterAction
             quests %=
                 handleWithTurnResult
@@ -114,7 +114,7 @@ handleNpcTurns eh = (newHandler, killed)
     newHandler =
         flip execState eh $ do
             dungeons .= dungeonsAfterNpcTurns
-            messageLog %= L.addMessages newLog
+            messageLog' %= L.addMessages newLog
     ((dungeonsAfterNpcTurns, killed), newLog) =
         runWriter $ DS.handleNpcTurns (eh ^. tileCollection) (eh ^. dungeons)
 
@@ -127,5 +127,5 @@ getPlayerPosition = fmap fst . playerActor . view (currentDungeon . cellMap)
 currentDungeon :: Getter ExploringHandler Dungeon
 currentDungeon = dungeons . focused
 
-getMessageLog :: ExploringHandler -> MessageLog
-getMessageLog eh = eh ^. messageLog
+messageLog :: Getter ExploringHandler MessageLog
+messageLog = messageLog'
