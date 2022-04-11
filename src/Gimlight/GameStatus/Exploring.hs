@@ -19,8 +19,10 @@ module Gimlight.GameStatus.Exploring
     ) where
 
 import           Control.Lens                           (makeLenses, (%%~),
-                                                         (%~), (&), (.~), (^.))
+                                                         (%=), (%~), (&), (.=),
+                                                         (.~), (^.))
 import           Control.Monad                          ((>=>))
+import           Control.Monad.State                    (execState)
 import           Control.Monad.Trans.Writer             (runWriter)
 import           GHC.Generics                           (Generic)
 import           Gimlight.Action                        (Action, ActionStatus)
@@ -82,12 +84,13 @@ doPlayerAction action eh = (status, newHandler)
         runWriter $
         DS.doPlayerAction action (eh ^. tileCollection) (eh ^. dungeons)
     newHandler =
-        eh & messageLog %~ L.addMessages newLog & dungeons .~
-        dungeonsAfterAction &
-        quests %~
-        handleWithTurnResult
-            (D.getIdentifier (dungeonsAfterAction ^. focused))
-            (map getIdentifier killed)
+        flip execState eh $ do
+            messageLog %= L.addMessages newLog
+            dungeons .= dungeonsAfterAction
+            quests %=
+                handleWithTurnResult
+                    (D.getIdentifier (dungeonsAfterAction ^. focused))
+                    (map getIdentifier killed)
 
 processAfterPlayerTurn :: ExploringHandler -> Maybe ExploringHandler
 processAfterPlayerTurn eh =
