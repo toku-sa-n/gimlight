@@ -4,14 +4,13 @@
 module Gimlight.GameStatus.Exploring
     ( ExploringHandler
     , exploringHandler
+    , quests
     , getTileCollection
     , ascendStairsAtPlayerPosition
     , descendStairsAtPlayerPosition
     , exitDungeon
     , doPlayerAction
     , processAfterPlayerTurn
-    , updateQuests
-    , getQuests
     , getPlayerActor
     , getPlayerPosition
     , getCurrentDungeon
@@ -117,12 +116,6 @@ handleNpcTurns eh = (newHandler, killed)
             messageLog %= L.addMessages newLog
     ((dungeonsAfterNpcTurns, killed), newLog) =
         runWriter $ DS.handleNpcTurns (eh ^. tileCollection) (eh ^. dungeons)
-
-updateQuests :: QuestCollection -> ExploringHandler -> ExploringHandler
-updateQuests q e = e & quests .~ q
-
-getQuests :: ExploringHandler -> QuestCollection
-getQuests e = e ^. quests
 
 getPlayerActor :: ExploringHandler -> Maybe Actor
 getPlayerActor = fmap snd . playerActor . (^. cellMap) . getCurrentDungeon
