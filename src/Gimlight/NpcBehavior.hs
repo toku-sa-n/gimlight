@@ -105,7 +105,7 @@ selectAction :: Coord -> Actor -> CellMap -> Action
 selectAction position e cm
     | targetIsNextTo position e cm =
         case offsetToTarget position e cm of
-            Just offset -> meleeAction offset
+            Just offset -> meleeAction $ fromUnitVector offset
             Nothing     -> moveOrWait e
     | otherwise = moveOrWait e
 

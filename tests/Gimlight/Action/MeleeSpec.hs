@@ -19,6 +19,7 @@ import           Gimlight.Actor.Identifier     (Identifier (Orc))
 import           Gimlight.Actor.Status         (Status, status)
 import           Gimlight.Actor.Status.Hp      (hp)
 import           Gimlight.Coord                (Coord)
+import           Gimlight.Direction            (Direction (East))
 import           Gimlight.Dungeon.Map.Cell     (CellMap, removeActorAt)
 import           Gimlight.Dungeon.Map.CellSpec (emptyCellMap, locateItemsActors,
                                                 locateItemsActorsST)
@@ -67,7 +68,7 @@ testMap st =
         (,) <$> testMonster (status (hp 1) 2 0) <*> testMonster st
 
 result :: CellMap -> ActionResultWithLog
-result = meleeAction offset atkPos mockTileCollection
+result = meleeAction East atkPos mockTileCollection
 
 defenderAfterAttackAndLog :: CellMap -> (Maybe Actor, MessageLog)
 defenderAfterAttackAndLog cm = (d, l)
@@ -89,6 +90,3 @@ atkPos = V2 0 0
 
 defPos :: Coord
 defPos = V2 1 0
-
-offset :: V2 Int
-offset = defPos - atkPos
