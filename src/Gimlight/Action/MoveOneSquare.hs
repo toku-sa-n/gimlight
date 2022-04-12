@@ -13,7 +13,7 @@ import           Gimlight.Dungeon.Map.Cell   (Error (ActorAlreadyExists, OutOfRa
 import qualified Gimlight.Localization.Texts as T
 
 moveOneSquareAction :: Direction -> Action
-moveOneSquareAction offset position tiles cm =
+moveOneSquareAction dir position tiles cm =
     case result of
         Right x                     -> return $ ActionResult Ok x []
         Left (ActorAlreadyExists _) -> cannotMove
@@ -23,7 +23,7 @@ moveOneSquareAction offset position tiles cm =
   where
     result =
         flip execStateT cm $ removeActorAt position >>= locateActorAt tiles dst
-    dst = position + toUnitVector offset
+    dst = position + toUnitVector dir
     cannotMove = do
         tell [T.youCannotMoveThere]
         return $ ActionResult Failed cm []
