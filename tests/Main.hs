@@ -5,7 +5,7 @@ module Main
 import qualified Gimlight.Action.ConsumeSpec
 import qualified Gimlight.Action.DropSpec
 import qualified Gimlight.Action.MeleeSpec
-import qualified Gimlight.Action.MoveSpec
+import qualified Gimlight.Action.MoveOneSquareSpec
 import qualified Gimlight.Action.PickUpSpec
 import qualified Gimlight.Action.WaitSpec
 import qualified Gimlight.ActorSpec
@@ -32,7 +32,9 @@ spec = do
     describe "Gimlight.Action.Consume" Gimlight.Action.ConsumeSpec.spec
     describe "Gimlight.Action.Drop" Gimlight.Action.DropSpec.spec
     describe "Gimlight.Action.Melee" Gimlight.Action.MeleeSpec.spec
-    describe "Gimlight.Action.Move" Gimlight.Action.MoveSpec.spec
+    describe
+        "Gimlight.Action.MoveOneSquare"
+        Gimlight.Action.MoveOneSquareSpec.spec
     describe "Gimlight.Action.PickUp" Gimlight.Action.PickUpSpec.spec
     describe "Gimlight.Action.Wait" Gimlight.Action.WaitSpec.spec
     describe "Gimlight.Actor" Gimlight.ActorSpec.spec

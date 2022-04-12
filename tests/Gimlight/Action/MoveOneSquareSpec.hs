@@ -1,4 +1,4 @@
-module Gimlight.Action.MoveSpec
+module Gimlight.Action.MoveOneSquareSpec
     ( spec
     ) where
 
@@ -8,7 +8,7 @@ import           Control.Monad.Writer          (writer)
 import           Data.Either.Combinators       (fromRight')
 import           Data.OpenUnion                (liftUnion)
 import           Gimlight.Action               (ActionResultWithLog)
-import           Gimlight.Action.Move          (moveAction)
+import           Gimlight.Action.MoveOneSquare (moveOneSquareAction)
 import           Gimlight.ActionSpec           (failedResult, okResult)
 import           Gimlight.Actor.Monsters       (orc)
 import           Gimlight.Coord                (Coord)
@@ -68,7 +68,7 @@ failed = writer (failedResult testMap, [T.youCannotMoveThere])
 
 resultWhenMoveOffsetTo :: V2 Int -> ActionResultWithLog
 resultWhenMoveOffsetTo offset =
-    moveAction offset (V2 0 0) mockTileCollection testMap
+    moveOneSquareAction offset (V2 0 0) mockTileCollection testMap
 
 testMap :: CellMap
 testMap =
