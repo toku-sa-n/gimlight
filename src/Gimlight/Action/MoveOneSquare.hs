@@ -2,11 +2,13 @@ module Gimlight.Action.MoveOneSquare
     ( moveOneSquareAction
     ) where
 
+import           Control.Lens                ((&), (.~))
 import           Control.Monad.State         (execStateT)
 import           Control.Monad.Writer        (tell)
 import           Gimlight.Action             (Action,
                                               ActionResult (ActionResult),
                                               ActionStatus (Failed, Ok))
+import           Gimlight.Actor              (facing)
 import           Gimlight.Direction          (Direction, toUnitVector)
 import           Gimlight.Dungeon.Map.Cell   (Error (ActorAlreadyExists, OutOfRange, TileIsNotWalkable),
                                               locateActorAt, removeActorAt)
@@ -22,7 +24,10 @@ moveOneSquareAction offset position tiles cm =
         _                           -> error "Unreachable."
   where
     result =
-        flip execStateT cm $ removeActorAt position >>= locateActorAt tiles dst
+        flip execStateT cm $ do
+            a <- removeActorAt position
+            let facingUpdated = a & facing .~ offset
+            locateActorAt tiles dst facingUpdated
     dst = position + toUnitVector offset
     cannotMove = do
         tell [T.youCannotMoveThere]

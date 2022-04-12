@@ -6,6 +6,7 @@
 module Gimlight.Actor
     ( Actor
     , player
+    , facing
     , getIndex
     , getIdentifier
     , getLevel
@@ -49,6 +50,7 @@ import           Gimlight.Actor.Status            (Status)
 import qualified Gimlight.Actor.Status            as S
 import           Gimlight.Actor.Status.Hp         (hp)
 import           Gimlight.Coord                   (Coord)
+import           Gimlight.Direction               (Direction (South))
 import           Gimlight.GameStatus.Talking.Part (TalkingPart)
 import           Gimlight.IndexGenerator          (Index, IndexGenerator,
                                                    generate)
@@ -83,6 +85,7 @@ data Actor =
         , _target            :: Maybe Index
         , _weapon            :: Maybe (Item Weapon)
         , _armor             :: Maybe (Item Armor)
+        , _facing            :: Direction
         }
     deriving (Show, Ord, Eq, Generic)
 
@@ -112,6 +115,7 @@ actor id' st ak talkMessage' walkingImagePath' standingImagePath' = do
             , _target = Nothing
             , _weapon = Nothing
             , _armor = Nothing
+            , _facing = South
             }
 
 monster :: Identifier -> Status -> Text -> State IndexGenerator Actor
