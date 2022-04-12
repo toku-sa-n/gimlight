@@ -20,6 +20,7 @@ import           Gimlight.Actor                (Actor, getIndex, isFriendlyNpc,
                                                 target)
 import           Gimlight.Coord                (Coord)
 import           Gimlight.Data.Either          (expectRight)
+import           Gimlight.Direction            (fromUnitVector)
 import           Gimlight.Dungeon.Map.Cell     (CellMap, locateActorAt,
                                                 positionsAndActors,
                                                 removeActorAt, removeActorIf,
@@ -126,7 +127,7 @@ popPathToDestinationAndMove position tc cm =
                 offset = next - position
                 updatedActor = a & pathToDestination .~ remaining
             locateActorAt tc position updatedActor
-            return offset
+            return $ fromUnitVector offset
 
 targetIsNextTo :: Coord -> Actor -> CellMap -> Bool
 targetIsNextTo position e cm =
