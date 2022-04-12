@@ -39,7 +39,6 @@ import           Gimlight.GameStatus.SelectingItem (Reason (Drop, Use),
                                                     getSelectingIndex,
                                                     selectingItemHandler)
 import           Gimlight.GameStatus.Talking       (talkingHandler)
-import           Linear.V2                         (V2)
 
 handlePlayerMoving :: Direction -> ExploringHandler -> GameStatus
 handlePlayerMoving dir gs
@@ -93,7 +92,7 @@ playerBumpAction dir eh = action eh
   where
     action =
         case actorAtDestination of
-            Just x  -> meleeOrTalk offset x
+            Just x  -> meleeOrTalk dir x
             Nothing -> moveOrExitMap dir
     actorAtDestination =
         snd <$>
@@ -106,8 +105,8 @@ playerBumpAction dir eh = action eh
             Nothing -> error "The player is dead."
     offset = toUnitVector dir
 
-meleeOrTalk :: V2 Int -> Actor -> ExploringHandler -> (Bool, GameStatus)
-meleeOrTalk offset target eh
+meleeOrTalk :: Direction -> Actor -> ExploringHandler -> (Bool, GameStatus)
+meleeOrTalk dir target eh
     | isMonster target =
         case status of
             Ok               -> (True, Exploring newHandler)
@@ -118,7 +117,7 @@ meleeOrTalk offset target eh
             Just x  -> (True, Talking $ talkingHandler target x eh)
             Nothing -> error "No talk handler is set."
   where
-    (status, newHandler) = doPlayerAction (meleeAction offset) eh
+    (status, newHandler) = doPlayerAction (meleeAction dir) eh
 
 moveOrExitMap :: Direction -> ExploringHandler -> (Bool, GameStatus)
 moveOrExitMap dir eh

@@ -19,6 +19,7 @@ import           Gimlight.Actor.Identifier     (Identifier (Orc))
 import           Gimlight.Actor.Status         (Status, status)
 import           Gimlight.Actor.Status.Hp      (hp)
 import           Gimlight.Coord                (Coord)
+import           Gimlight.Direction            (Direction (East))
 import           Gimlight.Dungeon.Map.Cell     (CellMap, removeActorAt)
 import           Gimlight.Dungeon.Map.CellSpec (emptyCellMap, locateItemsActors,
                                                 locateItemsActorsST)
@@ -90,5 +91,5 @@ atkPos = V2 0 0
 defPos :: Coord
 defPos = V2 1 0
 
-offset :: V2 Int
-offset = defPos - atkPos
+offset :: Direction
+offset = East

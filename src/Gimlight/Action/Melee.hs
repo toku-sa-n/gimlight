@@ -7,10 +7,10 @@ import           Control.Monad.Writer      (runWriter, tell)
 import           Gimlight.Action           (Action, ActionResult (ActionResult),
                                             ActionStatus (Ok))
 import qualified Gimlight.Actor            as A
+import           Gimlight.Direction        (Direction, toUnitVector)
 import           Gimlight.Dungeon.Map.Cell (locateActorAt, removeActorAt)
-import           Linear.V2                 (V2)
 
-meleeAction :: V2 Int -> Action
+meleeAction :: Direction -> Action
 meleeAction offset srcPosition tc cm =
     case result of
         Right ((l, killed), newMap) -> do
@@ -30,4 +30,4 @@ meleeAction offset srcPosition tc cm =
                     locateActorAt tc dstPosition x
                     return (l', [])
                 Nothing -> return (l', [defender])
-    dstPosition = srcPosition + offset
+    dstPosition = srcPosition + toUnitVector offset
