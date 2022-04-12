@@ -96,6 +96,7 @@ library
                       , Gimlight.Data.List
                       , Gimlight.Data.Maybe
                       , Gimlight.Data.String
+                      , Gimlight.Direction
                       , Gimlight.Dungeon
                       , Gimlight.Dungeon.Generate
                       , Gimlight.Dungeon.Generate.Config
