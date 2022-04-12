@@ -2,32 +2,34 @@ module Gimlight.NpcBehavior
     ( handleNpcTurns
     ) where
 
-import           Control.Arrow               ((&&&))
-import           Control.Lens                ((&), (.~), (^.))
-import           Control.Monad.State         (StateT (runStateT), evalStateT,
-                                              execStateT)
-import           Control.Monad.Writer        (MonadWriter (writer), Writer)
-import           Data.Array                  ((!))
-import           Data.Foldable               (find)
-import           Data.Maybe                  (fromMaybe)
-import           Gimlight.Action             (Action, ActionResult (killed),
-                                              newCellMap)
-import           Gimlight.Action.Melee       (meleeAction)
-import           Gimlight.Action.Move        (moveAction)
-import           Gimlight.Action.Wait        (waitAction)
-import           Gimlight.Actor              (Actor, getIndex, isFriendlyNpc,
-                                              isPlayer, pathToDestination,
-                                              target)
-import           Gimlight.Coord              (Coord)
-import           Gimlight.Data.Either        (expectRight)
-import           Gimlight.Dungeon.Map.Cell   (CellMap, locateActorAt,
-                                              positionsAndActors, removeActorAt,
-                                              removeActorIf, transparentMap)
-import           Gimlight.Dungeon.Map.Tile   (TileCollection)
-import           Gimlight.Dungeon.PathFinder (getPathTo)
-import           Gimlight.Fov                (calculateFov)
-import           Gimlight.Log                (MessageLog)
-import           Linear.V2                   (V2 (V2))
+import           Control.Arrow                 ((&&&))
+import           Control.Lens                  ((&), (.~), (^.))
+import           Control.Monad.State           (StateT (runStateT), evalStateT,
+                                                execStateT)
+import           Control.Monad.Writer          (MonadWriter (writer), Writer)
+import           Data.Array                    ((!))
+import           Data.Foldable                 (find)
+import           Data.Maybe                    (fromMaybe)
+import           Gimlight.Action               (Action, ActionResult (killed),
+                                                newCellMap)
+import           Gimlight.Action.Melee         (meleeAction)
+import           Gimlight.Action.MoveOneSquare (moveOneSquareAction)
+import           Gimlight.Action.Wait          (waitAction)
+import           Gimlight.Actor                (Actor, getIndex, isFriendlyNpc,
+                                                isPlayer, pathToDestination,
+                                                target)
+import           Gimlight.Coord                (Coord)
+import           Gimlight.Data.Either          (expectRight)
+import           Gimlight.Direction            (fromUnitVector)
+import           Gimlight.Dungeon.Map.Cell     (CellMap, locateActorAt,
+                                                positionsAndActors,
+                                                removeActorAt, removeActorIf,
+                                                transparentMap)
+import           Gimlight.Dungeon.Map.Tile     (TileCollection)
+import           Gimlight.Dungeon.PathFinder   (getPathTo)
+import           Gimlight.Fov                  (calculateFov)
+import           Gimlight.Log                  (MessageLog)
+import           Linear.V2                     (V2 (V2))
 
 handleNpcTurns ::
        TileCollection -> CellMap -> Writer MessageLog (CellMap, [Actor])
@@ -114,7 +116,7 @@ moveOrWait e
 
 popPathToDestinationAndMove :: Action
 popPathToDestinationAndMove position tc cm =
-    moveAction moveTo position tc newMap
+    moveOneSquareAction moveTo position tc newMap
   where
     (moveTo, newMap) =
         expectRight "No such actor." $
@@ -125,7 +127,7 @@ popPathToDestinationAndMove position tc cm =
                 offset = next - position
                 updatedActor = a & pathToDestination .~ remaining
             locateActorAt tc position updatedActor
-            return offset
+            return $ fromUnitVector offset
 
 targetIsNextTo :: Coord -> Actor -> CellMap -> Bool
 targetIsNextTo position e cm =

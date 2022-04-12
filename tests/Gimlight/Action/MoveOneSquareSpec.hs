@@ -1,4 +1,4 @@
-module Gimlight.Action.MoveSpec
+module Gimlight.Action.MoveOneSquareSpec
     ( spec
     ) where
 
@@ -8,10 +8,12 @@ import           Control.Monad.Writer          (writer)
 import           Data.Either.Combinators       (fromRight')
 import           Data.OpenUnion                (liftUnion)
 import           Gimlight.Action               (ActionResultWithLog)
-import           Gimlight.Action.Move          (moveAction)
+import           Gimlight.Action.MoveOneSquare (moveOneSquareAction)
 import           Gimlight.ActionSpec           (failedResult, okResult)
 import           Gimlight.Actor.Monsters       (orc)
 import           Gimlight.Coord                (Coord)
+import           Gimlight.Direction            (Direction (East, South, SouthEast, West),
+                                                toUnitVector)
 import           Gimlight.Dungeon.Map.Cell     (CellMap,
                                                 TileIdLayer (TileIdLayer),
                                                 locateActorAt, removeActorAt,
@@ -36,39 +38,39 @@ testMoveSucceed =
     resultWhenMoveOffsetTo moveTo `shouldBe`
     succeed moveTo
   where
-    moveTo = V2 1 1
+    moveTo = SouthEast
 
 testTriedToMoveToUnwalkablePlace :: Spec
 testTriedToMoveToUnwalkablePlace =
     it "fails to move because the destination is not walkable." $
-    resultWhenMoveOffsetTo (V2 0 1) `shouldBe`
+    resultWhenMoveOffsetTo South `shouldBe`
     failed
 
 testTriedToMoveWhereActorExists :: Spec
 testTriedToMoveWhereActorExists =
     it "fails to move because there is an actor on the destination." $
-    resultWhenMoveOffsetTo (V2 1 0) `shouldBe`
+    resultWhenMoveOffsetTo East `shouldBe`
     failed
 
 testTriedToMoveOutsideOfMap :: Spec
 testTriedToMoveOutsideOfMap =
     it "fails to move because the actor tried to move to the outside of the map." $
-    resultWhenMoveOffsetTo (V2 (-1) 0) `shouldBe`
+    resultWhenMoveOffsetTo West `shouldBe`
     failed
 
-succeed :: V2 Int -> ActionResultWithLog
-succeed offset = writer (okResult cellMapWithPlayer, [])
+succeed :: Direction -> ActionResultWithLog
+succeed dir = writer (okResult cellMapWithPlayer, [])
   where
     cellMapWithPlayer =
         fromRight' $ flip execStateT testMap $ removeActorAt startPos >>=
-        locateActorAt mockTileCollection (startPos + offset)
+        locateActorAt mockTileCollection (startPos + toUnitVector dir)
 
 failed :: ActionResultWithLog
 failed = writer (failedResult testMap, [T.youCannotMoveThere])
 
-resultWhenMoveOffsetTo :: V2 Int -> ActionResultWithLog
-resultWhenMoveOffsetTo offset =
-    moveAction offset (V2 0 0) mockTileCollection testMap
+resultWhenMoveOffsetTo :: Direction -> ActionResultWithLog
+resultWhenMoveOffsetTo d =
+    moveOneSquareAction d (V2 0 0) mockTileCollection testMap
 
 testMap :: CellMap
 testMap =

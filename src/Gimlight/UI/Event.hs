@@ -6,6 +6,7 @@ module Gimlight.UI.Event
 
 import           Data.Maybe                        (fromMaybe)
 import           Data.Text                         (Text)
+import           Gimlight.Direction                (Direction (..))
 import           Gimlight.GameConfig               (Language (English, Japanese),
                                                     setLocale)
 import           Gimlight.GameModel                (GameModel (GameModel, config, status))
@@ -31,7 +32,6 @@ import           Gimlight.UI.Types                 (AppEvent (AppInit, AppKeyboa
                                                     GameEventResponse,
                                                     GameWidgetEnv,
                                                     GameWidgetNode)
-import           Linear.V2                         (V2 (V2))
 import           Monomer                           (AnimationMsg (AnimationStart, AnimationStop),
                                                     EventResponse (Message, Model, Task),
                                                     WidgetKey (WidgetKey),
@@ -73,10 +73,10 @@ handleKeyInput e@GameModel {status = s} k =
 
 handleKeyInputDuringExploring :: GameModel -> Text -> [GameEventResponse]
 handleKeyInputDuringExploring e@GameModel {status = Exploring eh} k
-    | k == "Right" = [Model $ e {status = handlePlayerMoving (V2 1 0) eh}]
-    | k == "Left" = [Model $ e {status = handlePlayerMoving (V2 (-1) 0) eh}]
-    | k == "Up" = [Model $ e {status = handlePlayerMoving (V2 0 (-1)) eh}]
-    | k == "Down" = [Model $ e {status = handlePlayerMoving (V2 0 1) eh}]
+    | k == "Right" = [Model $ e {status = handlePlayerMoving East eh}]
+    | k == "Left" = [Model $ e {status = handlePlayerMoving West eh}]
+    | k == "Up" = [Model $ e {status = handlePlayerMoving North eh}]
+    | k == "Down" = [Model $ e {status = handlePlayerMoving South eh}]
     | k == "g" = [Model e {status = handlePlayerPickingUp eh}]
     | k == "u" = [Model e {status = handlePlayerSelectingItem Use eh}]
     | k == "d" = [Model e {status = handlePlayerSelectingItem Drop eh}]

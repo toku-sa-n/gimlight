@@ -12,12 +12,13 @@ import           Gimlight.Action                   (ActionStatus (Failed, Ok, Re
 import           Gimlight.Action.Consume           (consumeAction)
 import           Gimlight.Action.Drop              (dropAction)
 import           Gimlight.Action.Melee             (meleeAction)
-import           Gimlight.Action.Move              (moveAction)
+import           Gimlight.Action.MoveOneSquare     (moveOneSquareAction)
 import           Gimlight.Action.PickUp            (pickUpAction)
 import           Gimlight.Actor                    (Actor, getTalkingPart,
                                                     isMonster)
 import qualified Gimlight.Actor                    as A
 import           Gimlight.Data.Maybe               (expectJust)
+import           Gimlight.Direction                (Direction, toUnitVector)
 import           Gimlight.Dungeon                  (cellMap, identifier)
 import           Gimlight.Dungeon.Identifier       (isTown)
 import           Gimlight.Dungeon.Map.Cell         (isPositionInMap,
@@ -40,15 +41,15 @@ import           Gimlight.GameStatus.SelectingItem (Reason (Drop, Use),
 import           Gimlight.GameStatus.Talking       (talkingHandler)
 import           Linear.V2                         (V2)
 
-handlePlayerMoving :: V2 Int -> ExploringHandler -> GameStatus
-handlePlayerMoving offset gs
+handlePlayerMoving :: Direction -> ExploringHandler -> GameStatus
+handlePlayerMoving dir gs
     | isSuccess =
         case newState of
             Exploring eh -> maybe GameOver Exploring (processAfterPlayerTurn eh)
             _            -> newState
     | otherwise = newState
   where
-    (isSuccess, newState) = playerBumpAction offset gs
+    (isSuccess, newState) = playerBumpAction dir gs
 
 handlePlayerPickingUp :: ExploringHandler -> GameStatus
 handlePlayerPickingUp eh =
@@ -87,13 +88,13 @@ handlePlayerAfterSelecting h = result
             Use  -> consumeAction
             Drop -> dropAction
 
-playerBumpAction :: V2 Int -> ExploringHandler -> (Bool, GameStatus)
-playerBumpAction offset eh = action eh
+playerBumpAction :: Direction -> ExploringHandler -> (Bool, GameStatus)
+playerBumpAction dir eh = action eh
   where
     action =
         case actorAtDestination of
             Just x  -> meleeOrTalk offset x
-            Nothing -> moveOrExitMap offset
+            Nothing -> moveOrExitMap dir
     actorAtDestination =
         snd <$>
         find
@@ -103,6 +104,7 @@ playerBumpAction offset eh = action eh
         case getPlayerPosition eh of
             Just p  -> p + offset
             Nothing -> error "The player is dead."
+    offset = toUnitVector dir
 
 meleeOrTalk :: V2 Int -> Actor -> ExploringHandler -> (Bool, GameStatus)
 meleeOrTalk offset target eh
@@ -118,8 +120,8 @@ meleeOrTalk offset target eh
   where
     (status, newHandler) = doPlayerAction (meleeAction offset) eh
 
-moveOrExitMap :: V2 Int -> ExploringHandler -> (Bool, GameStatus)
-moveOrExitMap offset eh
+moveOrExitMap :: Direction -> ExploringHandler -> (Bool, GameStatus)
+moveOrExitMap dir eh
     | isPositionInMap destination (eh ^. currentDungeon . cellMap) ||
           not (isTown $ eh ^. currentDungeon . identifier) =
         case status of
@@ -132,7 +134,8 @@ moveOrExitMap offset eh
         case getPlayerPosition eh of
             Just p  -> p + offset
             Nothing -> error "The player is dead."
-    (status, newHandler) = doPlayerAction (moveAction offset) eh
+    (status, newHandler) = doPlayerAction (moveOneSquareAction dir) eh
+    offset = toUnitVector dir
 
 exitDungeon :: ExploringHandler -> GameStatus
 exitDungeon eh =
