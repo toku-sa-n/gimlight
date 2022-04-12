@@ -12,7 +12,7 @@ import           Gimlight.Action                   (ActionStatus (Failed, Ok, Re
 import           Gimlight.Action.Consume           (consumeAction)
 import           Gimlight.Action.Drop              (dropAction)
 import           Gimlight.Action.Melee             (meleeAction)
-import           Gimlight.Action.Move              (moveAction)
+import           Gimlight.Action.MoveOneSquare     (moveOneSquareAction)
 import           Gimlight.Action.PickUp            (pickUpAction)
 import           Gimlight.Actor                    (Actor, getTalkingPart,
                                                     isMonster)
@@ -132,7 +132,7 @@ moveOrExitMap offset eh
         case getPlayerPosition eh of
             Just p  -> p + offset
             Nothing -> error "The player is dead."
-    (status, newHandler) = doPlayerAction (moveAction offset) eh
+    (status, newHandler) = doPlayerAction (moveOneSquareAction offset) eh
 
 exitDungeon :: ExploringHandler -> GameStatus
 exitDungeon eh =

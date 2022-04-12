@@ -1,5 +1,5 @@
-module Gimlight.Action.Move
-    ( moveAction
+module Gimlight.Action.MoveOneSquare
+    ( moveOneSquareAction
     ) where
 
 import           Control.Monad.State         (execStateT)
@@ -12,8 +12,8 @@ import           Gimlight.Dungeon.Map.Cell   (Error (ActorAlreadyExists, OutOfRa
 import qualified Gimlight.Localization.Texts as T
 import           Linear.V2                   (V2)
 
-moveAction :: V2 Int -> Action
-moveAction offset position tiles cm =
+moveOneSquareAction :: V2 Int -> Action
+moveOneSquareAction offset position tiles cm =
     case result of
         Right x                     -> return $ ActionResult Ok x []
         Left (ActorAlreadyExists _) -> cannotMove

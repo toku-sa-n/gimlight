@@ -46,7 +46,7 @@ Test-Suite spec
     other-modules:      Gimlight.Action.ConsumeSpec
                       , Gimlight.Action.DropSpec
                       , Gimlight.Action.MeleeSpec
-                      , Gimlight.Action.MoveSpec
+                      , Gimlight.Action.MoveOneSquareSpec
                       , Gimlight.Action.PickUpSpec
                       , Gimlight.Action.WaitSpec
                       , Gimlight.ActionSpec
@@ -82,7 +82,7 @@ library
                       , Gimlight.Action.Consume
                       , Gimlight.Action.Drop
                       , Gimlight.Action.Melee
-                      , Gimlight.Action.Move
+                      , Gimlight.Action.MoveOneSquare
                       , Gimlight.Action.PickUp
                       , Gimlight.Action.Wait
                       , Gimlight.Actor
