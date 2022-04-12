@@ -6,13 +6,14 @@ module Gimlight.UI.Draw.Exploring
 
 import           Codec.Picture                   (Image (imageData, imageHeight, imageWidth))
 import           Control.Lens                    (Ixed (ix), (&), (.~), (^.),
-                                                  (^?))
+                                                  (^?!), (^?))
 import           Control.Monad                   (guard)
 import           Data.Array                      ((!))
 import qualified Data.Map                        as Map
 import           Data.Maybe                      (catMaybes, mapMaybe)
+import           Data.Text                       (pack, unpack)
 import           Data.Vector.Storable.ByteString (vectorToByteString)
-import           Gimlight.Actor                  (getArmor,
+import           Gimlight.Actor                  (facing, getArmor,
                                                   getCurrentExperiencePoint,
                                                   getDefence,
                                                   getExperiencePointForNextLevel,
@@ -32,7 +33,8 @@ import           Gimlight.GameConfig             (GameConfig)
 import           Gimlight.GameStatus.Exploring   (ExploringHandler,
                                                   currentDungeon, getMessageLog,
                                                   getPlayerActor,
-                                                  getTileCollection)
+                                                  getTileCollection,
+                                                  walkingImages)
 import           Gimlight.Item                   (getName)
 import           Gimlight.Item.SomeItem          (getIconImagePath)
 import           Gimlight.Localization           (getLocalizedText)
@@ -181,7 +183,18 @@ mapActors eh = mapMaybe actorToImage $ positionsAndActors cm
             isVisible
     actorToImage (position, actor) =
         guard (isActorDrawed position) >>
-        return (image (actor ^. walkingImagePath) `styleBasic` style position)
+        return
+            (imageMem
+                 (actor ^. walkingImagePath <> pack (show (actor ^. facing)))
+                 (vectorToByteString
+                      (imageData
+                           (eh ^?! walkingImages .
+                            ix
+                                ( unpack (actor ^. walkingImagePath)
+                                , actor ^. facing
+                                , 0))))
+                 (Size 48 48) `styleBasic`
+             style position)
 
 topLeftCoord :: CellMap -> Coord
 topLeftCoord cm = V2 x y

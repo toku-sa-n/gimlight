@@ -19,12 +19,16 @@ import           Linear                     (V2 (V2))
 import           System.Directory           (canonicalizePath,
                                              makeRelativeToCurrentDirectory)
 import           System.Directory.Recursive (getFilesRecursive)
+import           System.FilePath            (takeExtension)
 
 type WalkingImages = Map (FilePath, Direction, Int) (Image PixelRGBA8)
 
 readIntegratedImagesRecursive :: FilePath -> IO WalkingImages
 readIntegratedImagesRecursive dir =
-    getFilesRecursive dir >>= foldlM (flip addIntegratedImage) empty
+    getFilesRecursive dir >>=
+    foldlM (flip addIntegratedImage) empty . filterToPng
+  where
+    filterToPng = filter ((== ".png") . takeExtension)
 
 addIntegratedImage :: FilePath -> WalkingImages -> IO WalkingImages
 addIntegratedImage path images =

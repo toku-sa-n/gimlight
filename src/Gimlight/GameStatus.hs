@@ -13,6 +13,7 @@ import           Control.Monad.State                   (StateT (runStateT),
 import           Data.List.NonEmpty                    (fromList)
 import           Data.Tree                             (Tree (Node, rootLabel, subForest))
 import           GHC.Generics                          (Generic)
+import           Gimlight.Actor.WalkingImages          (readIntegratedImagesRecursive)
 import           Gimlight.Data.Maybe                   (expectJust)
 import           Gimlight.Dungeon                      (addAscendingAndDescendingStiars,
                                                         addDescendingStairs)
@@ -47,12 +48,13 @@ data GameStatus
     | Title
     | GameOver
     | SelectingLocale
-    deriving (Show, Ord, Eq, Generic)
+    deriving (Eq, Generic)
 
 newGameStatus :: IO GameStatus
 newGameStatus = do
     g <- getStdGen
     tc <- readTileFileRecursive "tiles/"
+    walkingImages <- readIntegratedImagesRecursive "images/walking_pictures/"
     gm <- globalMap
     (beaeve, ig) <- runStateT (initDungeon tc) generator
     let (bats, stairsPosition) =
@@ -81,6 +83,7 @@ newGameStatus = do
                 (foldr (L.addMessage . L.message) L.emptyLog [T.welcome])
                 questCollection
                 tc
+                walkingImages
     return . Scene $
         sceneHandler
             "images/game_opening.png"

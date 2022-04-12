@@ -28,7 +28,7 @@ data SelectingItemHandler =
         , reason    :: Reason
         , handler   :: ExploringHandler
         }
-    deriving (Show, Ord, Eq, Generic)
+    deriving (Eq, Generic)
 
 selectingItemHandler ::
        [SomeItem] -> Reason -> ExploringHandler -> SelectingItemHandler
