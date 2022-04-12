@@ -11,7 +11,7 @@ import           Gimlight.Direction        (Direction, toUnitVector)
 import           Gimlight.Dungeon.Map.Cell (locateActorAt, removeActorAt)
 
 meleeAction :: Direction -> Action
-meleeAction offset srcPosition tc cm =
+meleeAction direction srcPosition tc cm =
     case result of
         Right ((l, killed), newMap) -> do
             tell l
@@ -30,4 +30,4 @@ meleeAction offset srcPosition tc cm =
                     locateActorAt tc dstPosition x
                     return (l', [])
                 Nothing -> return (l', [defender])
-    dstPosition = srcPosition + toUnitVector offset
+    dstPosition = srcPosition + toUnitVector direction
