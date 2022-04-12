@@ -19,7 +19,7 @@ data Direction
     | NorthWest
     | SouthEast
     | SouthWest
-    deriving (Show, Ord, Eq, Generic)
+    deriving (Show, Ord, Eq, Generic, Enum, Bounded)
 
 fromUnitVector :: HasCallStack => V2 Int -> Direction
 fromUnitVector (V2 0 (-1))    = North

@@ -51,6 +51,7 @@ Test-Suite spec
                       , Gimlight.Action.WaitSpec
                       , Gimlight.ActionSpec
                       , Gimlight.ActorSpec
+                      , Gimlight.Actor.WalkingImagesSpec
                       , Gimlight.Data.ArraySpec
                       , Gimlight.Data.EitherSpec
                       , Gimlight.Data.ListSpec
@@ -90,6 +91,7 @@ library
                       , Gimlight.Actor.Monsters
                       , Gimlight.Actor.Status
                       , Gimlight.Actor.Status.Hp
+                      , Gimlight.Actor.WalkingImages
                       , Gimlight.Coord
                       , Gimlight.Data.Array
                       , Gimlight.Data.Either
