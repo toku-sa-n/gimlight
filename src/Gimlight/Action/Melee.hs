@@ -19,16 +19,16 @@ meleeAction direction srcPosition tc cm =
             return $ ActionResult Ok newMap killed
         _ -> error "Unreachable"
   where
-    result =
-        flip runStateT cm $ do
-            attacker <- removeActorAt srcPosition
-            defender <- removeActorAt dstPosition
-            let ((newAttacker, newDefender), l') =
-                    runWriter $ A.attackFromTo attacker defender
-            locateActorAt tc srcPosition (changeDirection direction newAttacker)
-            case newDefender of
-                Just x -> do
-                    locateActorAt tc dstPosition x
-                    return (l', [])
-                Nothing -> return (l', [defender])
+    result = runStateT meleeState cm
+    meleeState = do
+        attacker <- removeActorAt srcPosition
+        defender <- removeActorAt dstPosition
+        let ((newAttacker, newDefender), l') =
+                runWriter $ A.attackFromTo attacker defender
+        locateActorAt tc srcPosition (changeDirection direction newAttacker)
+        case newDefender of
+            Just x -> do
+                locateActorAt tc dstPosition x
+                return (l', [])
+            Nothing -> return (l', [defender])
     dstPosition = srcPosition + toUnitVector direction
