@@ -13,9 +13,10 @@ import qualified Data.Map                        as Map
 import           Data.Maybe                      (catMaybes, mapMaybe)
 import           Data.Text                       (pack, unpack)
 import           Data.Vector.Storable.ByteString (vectorToByteString)
-import           Gimlight.Actor                  (facing, getArmor,
+import           Gimlight.Actor                  (getArmor,
                                                   getCurrentExperiencePoint,
                                                   getDefence,
+                                                  getDirectionAndPattern,
                                                   getExperiencePointForNextLevel,
                                                   getHp, getLevel, getMaxHp,
                                                   getPower, getWeapon,
@@ -185,16 +186,19 @@ mapActors eh = mapMaybe actorToImage $ positionsAndActors cm
         guard (isActorDrawed position) >>
         return
             (imageMem
-                 (actor ^. walkingImagePath <> pack (show (actor ^. facing)))
+                 (actor ^. walkingImagePath <> pack (show dir) <> showt imgIdx)
                  (vectorToByteString
                       (imageData
                            (eh ^?! walkingImages .
-                            ix
-                                ( unpack (actor ^. walkingImagePath)
-                                , actor ^. facing
-                                , 0))))
+                            ix (unpack (actor ^. walkingImagePath), dir, imgIdx))))
                  (Size 48 48) `styleBasic`
              style position)
+      where
+        imgIdx =
+            if pat < 3
+                then pat
+                else 4 - pat
+        (dir, pat) = getDirectionAndPattern actor
 
 topLeftCoord :: CellMap -> Coord
 topLeftCoord cm = V2 x y

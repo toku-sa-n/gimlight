@@ -2,13 +2,12 @@ module Gimlight.Action.MoveOneSquare
     ( moveOneSquareAction
     ) where
 
-import           Control.Lens                ((&), (.~))
 import           Control.Monad.State         (execStateT)
 import           Control.Monad.Writer        (tell)
 import           Gimlight.Action             (Action,
                                               ActionResult (ActionResult),
                                               ActionStatus (Failed, Ok))
-import           Gimlight.Actor              (facing)
+import           Gimlight.Actor              (changeDirection)
 import           Gimlight.Direction          (Direction, toUnitVector)
 import           Gimlight.Dungeon.Map.Cell   (Error (ActorAlreadyExists, OutOfRange, TileIsNotWalkable),
                                               locateActorAt, removeActorAt)
@@ -26,7 +25,7 @@ moveOneSquareAction dir position tiles cm =
     result =
         flip execStateT cm $ do
             a <- removeActorAt position
-            let facingUpdated = a & facing .~ dir
+            let facingUpdated = changeDirection dir a
             locateActorAt tiles dst facingUpdated
     dst = position + toUnitVector dir
     cannotMove = do

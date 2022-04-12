@@ -4,7 +4,6 @@ module Gimlight.Action.MeleeSpec
     ( spec
     ) where
 
-import           Control.Lens                  ((&), (.~))
 import           Control.Monad.State           (State, StateT (runStateT),
                                                 evalState, evalStateT,
                                                 execStateT)
@@ -15,8 +14,8 @@ import           Data.OpenUnion                (liftUnion)
 import           Gimlight.Action               (ActionResultWithLog)
 import           Gimlight.Action.Melee         (meleeAction)
 import           Gimlight.ActionSpec           (okResult, okWithKilled)
-import           Gimlight.Actor                (Actor, attackFromTo, facing,
-                                                monster)
+import           Gimlight.Actor                (Actor, attackFromTo,
+                                                changeDirection, monster)
 import           Gimlight.Actor.Identifier     (Identifier (Orc))
 import           Gimlight.Actor.Status         (Status, status)
 import           Gimlight.Actor.Status.Hp      (hp)
@@ -47,7 +46,7 @@ testKill = it "kills the weakest orc" $ result cm `shouldBe` expected
     mapAfterAttack =
         fromRight' $
         flip execStateT cellMapWithoutDefender $
-        mapActorAt mockTileCollection atkPos (\a -> a & facing .~ East)
+        mapActorAt mockTileCollection atkPos (changeDirection East)
     (defender, cellMapWithoutDefender) = defenderAndMap cm
     cm = testMap $ status (hp 1) 0 0
 
@@ -61,7 +60,7 @@ testDamage =
         fromRight' $
         flip execStateT cellMapWithoutDefender $ do
             locateItemsActorsST [(defPos, liftUnion $ fromJust newDefender)]
-            mapActorAt mockTileCollection atkPos (\a -> a & facing .~ East)
+            mapActorAt mockTileCollection atkPos (changeDirection East)
     (newDefender, expectedLog) = defenderAfterAttackAndLog cm
     (_, cellMapWithoutDefender) = defenderAndMap cm
     cm = testMap $ status (hp 2) 0 1

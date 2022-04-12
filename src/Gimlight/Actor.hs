@@ -6,7 +6,6 @@
 module Gimlight.Actor
     ( Actor
     , player
-    , facing
     , getIndex
     , getIdentifier
     , getLevel
@@ -17,6 +16,7 @@ module Gimlight.Actor
     , getPower
     , getDefence
     , getTalkingPart
+    , getDirectionAndPattern
     , monster
     , isPlayer
     , isMonster
@@ -34,6 +34,7 @@ module Gimlight.Actor
     , equip
     , getWeapon
     , getArmor
+    , changeDirection
     ) where
 
 import           Control.Applicative              ((<|>))
@@ -73,19 +74,20 @@ data ActorKind
 
 data Actor =
     Actor
-        { _index             :: Index
-        , _identifier        :: Identifier
-        , _status            :: Status
-        , _pathToDestination :: [Coord]
-        , _actorKind         :: ActorKind
-        , _talk              :: Maybe TalkingPart
-        , _walkingImagePath  :: Text
-        , _standingImagePath :: Text
-        , _inventoryItems    :: Inventory
-        , _target            :: Maybe Index
-        , _weapon            :: Maybe (Item Weapon)
-        , _armor             :: Maybe (Item Armor)
-        , _facing            :: Direction
+        { _index               :: Index
+        , _identifier          :: Identifier
+        , _status              :: Status
+        , _pathToDestination   :: [Coord]
+        , _actorKind           :: ActorKind
+        , _talk                :: Maybe TalkingPart
+        , _walkingImagePath    :: Text
+        , _standingImagePath   :: Text
+        , _inventoryItems      :: Inventory
+        , _target              :: Maybe Index
+        , _weapon              :: Maybe (Item Weapon)
+        , _armor               :: Maybe (Item Armor)
+        , _facing              :: Direction
+        , _walkingImagePattern :: Int
         }
     deriving (Show, Ord, Eq, Generic)
 
@@ -116,6 +118,7 @@ actor id' st ak talkMessage' walkingImagePath' standingImagePath' = do
             , _weapon = Nothing
             , _armor = Nothing
             , _facing = South
+            , _walkingImagePattern = 0
             }
 
 monster :: Identifier -> Status -> Text -> State IndexGenerator Actor
@@ -198,6 +201,9 @@ getWeapon a = a ^. weapon
 getArmor :: Actor -> Maybe (Item Armor)
 getArmor a = a ^. armor
 
+getDirectionAndPattern :: Actor -> (Direction, Int)
+getDirectionAndPattern a = (a ^. facing, a ^. walkingImagePattern)
+
 equip :: Union '[ Item Weapon, Item Armor] -> Actor -> Maybe Actor
 equip equipment a = tryEquipWeapon <|> tryEquipArmor
   where
@@ -214,3 +220,7 @@ equip equipment a = tryEquipWeapon <|> tryEquipArmor
         case a ^. lens of
             Just x  -> addItem (liftUnion x) (a ^. inventoryItems)
             Nothing -> Just $ a ^. inventoryItems
+
+changeDirection :: Direction -> Actor -> Actor
+changeDirection d a =
+    a & facing .~ d & walkingImagePattern %~ (`mod` (2 * (3 - 1))) . (+ 1)
