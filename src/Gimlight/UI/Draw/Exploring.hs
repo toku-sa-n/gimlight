@@ -30,8 +30,8 @@ import           Gimlight.Dungeon.Map.Cell       (CellMap, exploredMap, lower,
 import           Gimlight.Dungeon.Map.Tile       (getImage)
 import           Gimlight.GameConfig             (GameConfig)
 import           Gimlight.GameStatus.Exploring   (ExploringHandler,
-                                                  getCurrentDungeon,
-                                                  getMessageLog, getPlayerActor,
+                                                  currentDungeon, getMessageLog,
+                                                  getPlayerActor,
                                                   getTileCollection)
 import           Gimlight.Item                   (getName)
 import           Gimlight.Item.SomeItem          (getIconImagePath)
@@ -69,9 +69,9 @@ drawExploring eh c =
 
 messageLogArea :: ExploringHandler -> GameConfig -> GameWidgetNode
 messageLogArea eh c =
-    vstack $
-    fmap (\x -> label_ (getLocalizedText c x) [multiline]) $
-    take logRows $ getMessageLog eh
+    vstack $ fmap (\x -> label_ (getLocalizedText c x) [multiline]) $
+    take logRows $
+    getMessageLog eh
 
 mapGrid :: ExploringHandler -> GameWidgetNode
 mapGrid eh =
@@ -86,11 +86,9 @@ statusGrid eh c = vstack $ maybe [] actorToStatus $ getPlayerActor eh
     actorToStatus x =
         [ label "Player"
         , label $ lvl <> ": " <> showt (getLevel x)
-        , label $
-          experience <>
-          ": " <>
-          showt (getCurrentExperiencePoint x) <>
-          " / " <> showt (getExperiencePointForNextLevel x)
+        , label $ experience <> ": " <> showt (getCurrentExperiencePoint x) <>
+          " / " <>
+          showt (getExperiencePointForNextLevel x)
         , label $ "HP: " <> showt (getHp x) <> " / " <> showt (getMaxHp x)
         , label $ atk <> ": " <> showt (getPower x)
         , label $ defence <> ": " <> showt (getDefence x)
@@ -141,7 +139,7 @@ mapWidget eh = vstack rows
     getTileIdOfLayerAt which c = tileIdLayer c >>= (^. which)
     tileIdLayer c = tileIdLayerAt c cm
     V2 topLeftCoordX topLeftCoordY = topLeftCoord cm
-    cm = getCurrentDungeon eh ^. cellMap
+    cm = eh ^. currentDungeon . cellMap
 
 mapItems :: ExploringHandler -> [GameWidgetNode]
 mapItems eh = mapMaybe itemToImage $ positionsAndItems cm
@@ -152,9 +150,10 @@ mapItems eh = mapMaybe itemToImage $ positionsAndItems cm
     isItemDrawed position =
         let displayPosition = itemPositionOnDisplay position
             isVisible = playerFov cm ! position
-         in V2 0 0 <= displayPosition &&
-            displayPosition < V2 tileColumns tileRows && isVisible
-    cm = getCurrentDungeon eh ^. cellMap
+         in V2 0 0 <= displayPosition && displayPosition <
+            V2 tileColumns tileRows &&
+            isVisible
+    cm = eh ^. currentDungeon . cellMap
     leftPadding position =
         fromIntegral $ itemPositionOnDisplay position ^. _x * tileWidth
     topPadding position =
@@ -166,7 +165,7 @@ mapItems eh = mapMaybe itemToImage $ positionsAndItems cm
 mapActors :: ExploringHandler -> [GameWidgetNode]
 mapActors eh = mapMaybe actorToImage $ positionsAndActors cm
   where
-    cm = getCurrentDungeon eh ^. cellMap
+    cm = eh ^. currentDungeon . cellMap
     leftPadding actor =
         fromIntegral $ actorPositionOnDisplay actor ^. _x * tileWidth
     topPadding actor =
@@ -177,8 +176,9 @@ mapActors eh = mapMaybe actorToImage $ positionsAndActors cm
     isActorDrawed position =
         let displayPosition = actorPositionOnDisplay position
             isVisible = playerFov cm ! position
-         in V2 0 0 <= displayPosition &&
-            displayPosition < V2 tileColumns tileRows && isVisible
+         in V2 0 0 <= displayPosition && displayPosition <
+            V2 tileColumns tileRows &&
+            isVisible
     actorToImage (position, actor) =
         guard (isActorDrawed position) >>
         return (image (actor ^. walkingImagePath) `styleBasic` style position)

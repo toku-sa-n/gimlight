@@ -4,25 +4,25 @@
 module Gimlight.GameStatus.Exploring
     ( ExploringHandler
     , exploringHandler
+    , quests
     , getTileCollection
     , ascendStairsAtPlayerPosition
     , descendStairsAtPlayerPosition
     , exitDungeon
     , doPlayerAction
     , processAfterPlayerTurn
-    , updateQuests
-    , getQuests
     , getPlayerActor
     , getPlayerPosition
-    , getCurrentDungeon
+    , currentDungeon
     , getMessageLog
     ) where
 
-import           Control.Lens                                    (makeLenses,
-                                                                  (%%~), (%=),
-                                                                  (%~), (&),
-                                                                  (.=), (.~),
-                                                                  (^.))
+import           Control.Lens                                    (Getter,
+                                                                  makeLenses,
+                                                                  view, (%%~),
+                                                                  (%=), (%~),
+                                                                  (&), (.=),
+                                                                  (.~), (^.))
 import           Control.Monad                                   ((>=>))
 import           Control.Monad.State                             (execState)
 import           Control.Monad.Trans.Writer                      (runWriter)
@@ -33,8 +33,8 @@ import           Gimlight.Actor                                  (Actor,
                                                                   getIdentifier)
 import           Gimlight.Coord                                  (Coord)
 import           Gimlight.Dungeon                                (Dungeon,
-                                                                  cellMap)
-import qualified Gimlight.Dungeon                                as D
+                                                                  cellMap,
+                                                                  identifier)
 import           Gimlight.Dungeon.Map.Cell                       (playerActor,
                                                                   updateExploredMap,
                                                                   updatePlayerFov)
@@ -92,14 +92,14 @@ doPlayerAction action eh = (status, newHandler)
             dungeons .= dungeonsAfterAction
             quests %=
                 handleWithTurnResult
-                    (D.getIdentifier (dungeonsAfterAction ^. focused))
+                    (dungeonsAfterAction ^. focused . identifier)
                     (map getIdentifier killed)
 
 processAfterPlayerTurn :: ExploringHandler -> Maybe ExploringHandler
 processAfterPlayerTurn eh =
     (\x ->
          handlerAfterNpcTurns & dungeons . focused .~ x & quests %~
-         updateQuestsForResult (D.getIdentifier x)) <$>
+         updateQuestsForResult (x ^. identifier)) <$>
     newCurrentDungeon
   where
     updateQuestsForResult d = handleWithTurnResult d $ map getIdentifier killed
@@ -118,20 +118,14 @@ handleNpcTurns eh = (newHandler, killed)
     ((dungeonsAfterNpcTurns, killed), newLog) =
         runWriter $ DS.handleNpcTurns (eh ^. tileCollection) (eh ^. dungeons)
 
-updateQuests :: QuestCollection -> ExploringHandler -> ExploringHandler
-updateQuests q e = e & quests .~ q
-
-getQuests :: ExploringHandler -> QuestCollection
-getQuests e = e ^. quests
-
 getPlayerActor :: ExploringHandler -> Maybe Actor
-getPlayerActor = fmap snd . playerActor . (^. cellMap) . getCurrentDungeon
+getPlayerActor = fmap snd . playerActor . view (currentDungeon . cellMap)
 
 getPlayerPosition :: ExploringHandler -> Maybe Coord
-getPlayerPosition = fmap fst . playerActor . (^. cellMap) . getCurrentDungeon
+getPlayerPosition = fmap fst . playerActor . view (currentDungeon . cellMap)
 
-getCurrentDungeon :: ExploringHandler -> Dungeon
-getCurrentDungeon eh = eh ^. dungeons . focused
+currentDungeon :: Getter ExploringHandler Dungeon
+currentDungeon = dungeons . focused
 
 getMessageLog :: ExploringHandler -> MessageLog
 getMessageLog eh = eh ^. messageLog

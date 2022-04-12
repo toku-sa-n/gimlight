@@ -18,14 +18,14 @@ import           Gimlight.Actor                    (Actor, getTalkingPart,
                                                     isMonster)
 import qualified Gimlight.Actor                    as A
 import           Gimlight.Data.Maybe               (expectJust)
-import           Gimlight.Dungeon                  (cellMap, getIdentifier)
+import           Gimlight.Dungeon                  (cellMap, identifier)
 import           Gimlight.Dungeon.Identifier       (isTown)
 import           Gimlight.Dungeon.Map.Cell         (isPositionInMap,
                                                     positionsAndActors)
 import           Gimlight.GameStatus               (GameStatus (Exploring, GameOver, ReadingBook, SelectingItem, Talking))
 import           Gimlight.GameStatus.Exploring     (ExploringHandler,
+                                                    currentDungeon,
                                                     doPlayerAction,
-                                                    getCurrentDungeon,
                                                     getPlayerActor,
                                                     getPlayerPosition,
                                                     processAfterPlayerTurn)
@@ -98,7 +98,7 @@ playerBumpAction offset eh = action eh
         snd <$>
         find
             (\(x, _) -> x == destination)
-            (positionsAndActors $ getCurrentDungeon eh ^. cellMap)
+            (positionsAndActors $ eh ^. currentDungeon . cellMap)
     destination =
         case getPlayerPosition eh of
             Just p  -> p + offset
@@ -120,8 +120,8 @@ meleeOrTalk offset target eh
 
 moveOrExitMap :: V2 Int -> ExploringHandler -> (Bool, GameStatus)
 moveOrExitMap offset eh
-    | isPositionInMap destination (getCurrentDungeon eh ^. cellMap) ||
-          not (isTown . getIdentifier $ getCurrentDungeon eh) =
+    | isPositionInMap destination (eh ^. currentDungeon . cellMap) ||
+          not (isTown $ eh ^. currentDungeon . identifier) =
         case status of
             Ok               -> (True, Exploring newHandler)
             ReadingStarted _ -> error "Unreachable."

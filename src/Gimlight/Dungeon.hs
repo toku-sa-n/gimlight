@@ -9,7 +9,7 @@
 module Gimlight.Dungeon
     ( Dungeon
     , dungeon
-    , getIdentifier
+    , identifier
     , stairsPositionCandidates
     , positionOnParentMap
     , cellMap
@@ -19,7 +19,8 @@ module Gimlight.Dungeon
     , ascendingStairs
     ) where
 
-import           Control.Lens                (makeLenses, (%~), (&), (?~), (^.))
+import           Control.Lens                (Getter, makeLenses, (%~), (&),
+                                              (?~), (^.))
 import           Data.Array.Base             (assocs)
 import           GHC.Generics                (Generic)
 import           Gimlight.Coord              (Coord)
@@ -40,7 +41,7 @@ data Dungeon =
     -- to the global map.
         , _ascendingStairs     :: Maybe StairsPair
         , _descendingStairs    :: [StairsPair]
-        , _identifier          :: Identifier
+        , _identifier'         :: Identifier
         }
     deriving (Show, Ord, Eq, Generic)
 
@@ -53,11 +54,11 @@ dungeon c ident =
         , _positionOnParentMap = Nothing
         , _ascendingStairs = Nothing
         , _descendingStairs = []
-        , _identifier = ident
+        , _identifier' = ident
         }
 
-getIdentifier :: Dungeon -> Identifier
-getIdentifier d = d ^. identifier
+identifier :: Getter Dungeon Identifier
+identifier = identifier'
 
 addAscendingAndDescendingStiars ::
        StairsPair -> (Dungeon, Dungeon) -> (Dungeon, Dungeon)
