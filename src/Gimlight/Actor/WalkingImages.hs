@@ -1,6 +1,7 @@
 module Gimlight.Actor.WalkingImages
     ( WalkingImages
     , readIntegratedImagesRecursive
+    , numOfPatterns
     ) where
 
 import           Codec.Picture              (Image, PixelRGBA8, convertRGBA8,

@@ -50,6 +50,7 @@ import qualified Gimlight.Actor.Identifier        as Identifier
 import           Gimlight.Actor.Status            (Status)
 import qualified Gimlight.Actor.Status            as S
 import           Gimlight.Actor.Status.Hp         (hp)
+import           Gimlight.Actor.WalkingImages     (numOfPatterns)
 import           Gimlight.Coord                   (Coord)
 import           Gimlight.Direction               (Direction (South))
 import           Gimlight.GameStatus.Talking.Part (TalkingPart)
@@ -222,5 +223,7 @@ equip equipment a = tryEquipWeapon <|> tryEquipArmor
             Nothing -> Just $ a ^. inventoryItems
 
 updateWalkingImage :: Direction -> Actor -> Actor
-updateWalkingImage d a =
-    a & facing .~ d & walkingImagePattern %~ (`mod` (2 * (3 - 1))) . (+ 1)
+updateWalkingImage d a = a & facing .~ d & walkingImagePattern %~ nextPattern
+  where
+    nextPattern = (`mod` n) . (+ 1)
+    n = 2 * (numOfPatterns - 1)
