@@ -194,7 +194,7 @@ topLeftCoord cm =
     V2 unadjustedX unadjestedY =
         maybe
             (V2 0 0)
-            ((\pos -> pos - V2 (tileColumns `div` 2) (tileRows `div` 2)) . fst)
+            (subtract (V2 (tileColumns `div` 2) (tileRows `div` 2)) . fst)
             (playerActor cm)
     V2 maxX maxY = widthAndHeight cm - V2 tileColumns tileRows
 
