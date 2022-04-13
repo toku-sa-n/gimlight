@@ -22,16 +22,15 @@ testReadIntegratedImageSucceeds = do
     expected <-
         runIO $
         Map.fromList <$>
-        sequence
-            [ ((integrated, d, n), ) <$> readPatternImage d n
-            | d <- allPatterns
-            , n <- patterns
-            ]
+        sequence [generateKeyValue d n | d <- allPatterns, n <- patterns]
     it "reads the specified integrated walking image and splits it to each part" $
         result == expected
   where
-    integrated = integratedDir <> "/integrated.png"
     integratedDir = "tests/images/walking/integrated"
+
+generateKeyValue ::
+       Direction -> Int -> IO ((FilePath, Direction, Int), Image PixelRGBA8)
+generateKeyValue d n = ((integratedImagePath, d, n), ) <$> readPatternImage d n
 
 readPatternImage :: Direction -> Int -> IO (Image PixelRGBA8)
 readPatternImage d =
@@ -47,3 +46,9 @@ patterns = [0 .. numOfPatterns - 1]
 
 allPatterns :: (Bounded a, Enum a) => [a]
 allPatterns = [minBound ..]
+
+integratedImagePath :: FilePath
+integratedImagePath = integratedImageDir <> "/integrated.png"
+
+integratedImageDir :: FilePath
+integratedImageDir = "tests/images/walking/integrated"
