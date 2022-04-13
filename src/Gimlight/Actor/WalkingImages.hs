@@ -26,13 +26,12 @@ type WalkingImages = Map (FilePath, Direction, Int) (Image PixelRGBA8)
 
 readIntegratedImagesRecursive :: FilePath -> IO WalkingImages
 readIntegratedImagesRecursive dir =
-    getFilesRecursive dir >>=
-    foldlM (flip addIntegratedImage) empty . filterToPng
+    getFilesRecursive dir >>= foldlM addIntegratedImage empty . filterToPng
   where
     filterToPng = filter ((== ".png") . takeExtension)
 
-addIntegratedImage :: FilePath -> WalkingImages -> IO WalkingImages
-addIntegratedImage path images =
+addIntegratedImage :: WalkingImages -> FilePath -> IO WalkingImages
+addIntegratedImage images path =
     union images <$> readAndParseIntegratedImage path
 
 readAndParseIntegratedImage :: FilePath -> IO WalkingImages
