@@ -7,7 +7,7 @@ import           Control.Monad.Writer        (tell)
 import           Gimlight.Action             (Action,
                                               ActionResult (ActionResult),
                                               ActionStatus (Failed, Ok))
-import           Gimlight.Actor              (changeDirection)
+import           Gimlight.Actor              (updateWalkingImage)
 import           Gimlight.Direction          (Direction, toUnitVector)
 import           Gimlight.Dungeon.Map.Cell   (Error (ActorAlreadyExists, OutOfRange, TileIsNotWalkable),
                                               locateActorAt, removeActorAt)
@@ -25,7 +25,7 @@ moveOneSquareAction dir position tiles cm =
     result = execStateT moveState cm
     moveState = do
         a <- removeActorAt position
-        let facingUpdated = changeDirection dir a
+        let facingUpdated = updateWalkingImage dir a
         locateActorAt tiles dst facingUpdated
     dst = position + toUnitVector dir
     cannotMove = do

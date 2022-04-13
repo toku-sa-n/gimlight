@@ -34,7 +34,7 @@ module Gimlight.Actor
     , equip
     , getWeapon
     , getArmor
-    , changeDirection
+    , updateWalkingImage
     ) where
 
 import           Control.Applicative              ((<|>))
@@ -221,6 +221,6 @@ equip equipment a = tryEquipWeapon <|> tryEquipArmor
             Just x  -> addItem (liftUnion x) (a ^. inventoryItems)
             Nothing -> Just $ a ^. inventoryItems
 
-changeDirection :: Direction -> Actor -> Actor
-changeDirection d a =
+updateWalkingImage :: Direction -> Actor -> Actor
+updateWalkingImage d a =
     a & facing .~ d & walkingImagePattern %~ (`mod` (2 * (3 - 1))) . (+ 1)
