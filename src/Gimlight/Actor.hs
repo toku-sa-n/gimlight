@@ -224,6 +224,11 @@ equip equipment a = tryEquipWeapon <|> tryEquipArmor
 
 updateWalkingImage :: Direction -> Actor -> Actor
 updateWalkingImage d a = a & facing .~ d & walkingImagePattern %~ nextPattern
+    -- We use the walking image pattern 0, 1, .., (numOfPatterns - 1),
+    -- (numOfPatterns - 2), .., 0, 1, etc.
+    -- Here we store the index which is whithin the range of [0 .. n],
+    -- and in the UI code we separate the cases where index < numOfPatterns
+    -- and index >= numOfPatterns.
   where
     nextPattern = (`mod` n) . (+ 1)
     n = 2 * (numOfPatterns - 1)
