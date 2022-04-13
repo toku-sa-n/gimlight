@@ -31,8 +31,7 @@ readIntegratedImagesRecursive dir =
     filterToPng = filter ((== ".png") . takeExtension)
 
 addIntegratedImage :: WalkingImages -> FilePath -> IO WalkingImages
-addIntegratedImage images path =
-    union images <$> readAndParseIntegratedImage path
+addIntegratedImage images = fmap (union images) . readAndParseIntegratedImage
 
 readAndParseIntegratedImage :: FilePath -> IO WalkingImages
 readAndParseIntegratedImage path = do
