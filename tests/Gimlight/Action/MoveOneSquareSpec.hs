@@ -23,7 +23,7 @@ import           Gimlight.Dungeon.Map.TileSpec (mockTileCollection, unwalkable)
 import           Gimlight.IndexGenerator       (generator)
 import qualified Gimlight.Localization.Texts   as T
 import           Linear.V2                     (V2 (V2))
-import           Test.Hspec                    (Spec, it, shouldBe)
+import           Test.Hspec                    (Expectation, Spec, it, shouldBe)
 
 spec :: Spec
 spec = do
@@ -43,20 +43,17 @@ testMoveSucceed =
 testTriedToMoveToUnwalkablePlace :: Spec
 testTriedToMoveToUnwalkablePlace =
     it "fails to move because the destination is not walkable." $
-    resultWhenMoveOffsetTo South `shouldBe`
-    failed
+    failMovingTo South
 
 testTriedToMoveWhereActorExists :: Spec
 testTriedToMoveWhereActorExists =
     it "fails to move because there is an actor on the destination." $
-    resultWhenMoveOffsetTo East `shouldBe`
-    failed
+    failMovingTo East
 
 testTriedToMoveOutsideOfMap :: Spec
 testTriedToMoveOutsideOfMap =
     it "fails to move because the actor tried to move to the outside of the map." $
-    resultWhenMoveOffsetTo West `shouldBe`
-    failed
+    failMovingTo West
 
 succeed :: Direction -> ActionResultWithLog
 succeed dir = writer (okResult cellMapWithPlayer, [])
@@ -64,6 +61,9 @@ succeed dir = writer (okResult cellMapWithPlayer, [])
     cellMapWithPlayer =
         fromRight' $ flip execStateT testMap $ removeActorAt startPos >>=
         locateActorAt mockTileCollection (startPos + toUnitVector dir)
+
+failMovingTo :: Direction -> Expectation
+failMovingTo dir = resultWhenMoveOffsetTo dir `shouldBe` failed
 
 failed :: ActionResultWithLog
 failed = writer (failedResult testMap, [T.youCannotMoveThere])
