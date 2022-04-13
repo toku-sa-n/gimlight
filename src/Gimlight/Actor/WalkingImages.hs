@@ -14,7 +14,8 @@ import           Data.Ix                    (Ix (range))
 import           Data.Map                   (Map, empty, fromList, union)
 import           Gimlight.Coord             (Coord)
 import           Gimlight.Data.Either       (expectRight)
-import           Gimlight.Direction         (Direction (East, North, NorthEast, NorthWest, South, SouthEast, SouthWest, West))
+import           Gimlight.Direction         (Direction (East, North, NorthEast, NorthWest, South, SouthEast, SouthWest, West),
+                                             allDirections)
 import           Gimlight.UI.Draw.Config    (tileHeight, tileWidth)
 import           Linear                     (V2 (V2))
 import           System.Directory           (canonicalizePath,
@@ -45,8 +46,7 @@ splitImage :: FilePath -> Image PixelRGBA8 -> WalkingImages
 splitImage path img = fromList $ fmap keyToPair dirAndPatterns
   where
     keyToPair (dir, pat) = ((path, dir, pat), extractPattern dir pat img)
-    dirAndPatterns =
-        [(dir, pat) | dir <- [minBound ..], pat <- [0 .. numOfPatterns - 1]]
+    dirAndPatterns = (,) <$> allDirections <*> [0 .. numOfPatterns - 1]
 
 extractPattern :: Direction -> Int -> Image PixelRGBA8 -> Image PixelRGBA8
 extractPattern dir n = crop leftTopX leftTopY tileWidth tileHeight

@@ -10,7 +10,7 @@ import           Data.Either.Combinators      (fromRight')
 import qualified Data.Map                     as Map
 import           Gimlight.Actor.WalkingImages (numOfPatterns,
                                                readIntegratedImagesRecursive)
-import           Gimlight.Direction           (Direction)
+import           Gimlight.Direction           (Direction, allDirections)
 import           Test.Hspec                   (Spec, describe, it, runIO)
 
 spec :: Spec
@@ -46,6 +46,3 @@ integratedImageDir = "tests/images/walking/integrated"
 
 patterns :: [Int]
 patterns = [0 .. numOfPatterns - 1]
-
-allDirections :: [Direction]
-allDirections = [minBound ..]
