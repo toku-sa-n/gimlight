@@ -17,7 +17,7 @@ data ReadingBookHandler =
         { content      :: MultilingualText
         , afterReading :: ExploringHandler
         }
-    deriving (Show, Ord, Eq, Generic)
+    deriving (Eq, Generic)
 
 readingBookHandler :: MultilingualText -> ExploringHandler -> ReadingBookHandler
 readingBookHandler = ReadingBookHandler

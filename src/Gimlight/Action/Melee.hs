@@ -6,6 +6,7 @@ import           Control.Monad.State       (StateT (runStateT))
 import           Control.Monad.Writer      (runWriter, tell)
 import           Gimlight.Action           (Action, ActionResult (ActionResult),
                                             ActionStatus (Ok))
+import           Gimlight.Actor            (updateWalkingImage)
 import qualified Gimlight.Actor            as A
 import           Gimlight.Direction        (Direction, toUnitVector)
 import           Gimlight.Dungeon.Map.Cell (locateActorAt, removeActorAt)
@@ -24,7 +25,7 @@ meleeAction direction srcPosition tc cm =
         defender <- removeActorAt dstPosition
         let ((newAttacker, newDefender), l') =
                 runWriter $ A.attackFromTo attacker defender
-        locateActorAt tc srcPosition newAttacker
+        locateActorAt tc srcPosition (updateWalkingImage direction newAttacker)
         case newDefender of
             Just x -> do
                 locateActorAt tc dstPosition x

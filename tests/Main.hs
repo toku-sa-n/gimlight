@@ -8,6 +8,7 @@ import qualified Gimlight.Action.MeleeSpec
 import qualified Gimlight.Action.MoveOneSquareSpec
 import qualified Gimlight.Action.PickUpSpec
 import qualified Gimlight.Action.WaitSpec
+import qualified Gimlight.Actor.WalkingImagesSpec
 import qualified Gimlight.ActorSpec
 import qualified Gimlight.Data.ArraySpec
 import qualified Gimlight.Data.EitherSpec
@@ -38,6 +39,9 @@ spec = do
     describe "Gimlight.Action.PickUp" Gimlight.Action.PickUpSpec.spec
     describe "Gimlight.Action.Wait" Gimlight.Action.WaitSpec.spec
     describe "Gimlight.Actor" Gimlight.ActorSpec.spec
+    describe
+        "Gimlight.Actor.WalkingImages"
+        Gimlight.Actor.WalkingImagesSpec.spec
     describe "Gimlight.Data.Array" Gimlight.Data.ArraySpec.spec
     describe "Gimlight.Data.Either" Gimlight.Data.EitherSpec.spec
     describe "Gimlight.Data.List" Gimlight.Data.ListSpec.spec

@@ -31,7 +31,7 @@ data SceneHandler =
         , _elements        :: NonEmpty SceneElement
         , _afterScene      :: ExploringHandler
         }
-    deriving (Show, Ord, Eq, Generic)
+    deriving (Eq, Generic)
 
 makeLenses ''SceneHandler
 

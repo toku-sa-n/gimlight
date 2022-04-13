@@ -5,6 +5,7 @@ module Gimlight.GameStatus.Exploring
     ( ExploringHandler
     , exploringHandler
     , quests
+    , walkingImages
     , getTileCollection
     , ascendStairsAtPlayerPosition
     , descendStairsAtPlayerPosition
@@ -31,6 +32,7 @@ import           Gimlight.Action                                 (Action,
                                                                   ActionStatus)
 import           Gimlight.Actor                                  (Actor,
                                                                   getIdentifier)
+import           Gimlight.Actor.WalkingImages                    (WalkingImages)
 import           Gimlight.Coord                                  (Coord)
 import           Gimlight.Dungeon                                (Dungeon,
                                                                   cellMap,
@@ -53,8 +55,9 @@ data ExploringHandler =
         , _messageLog     :: MessageLog
         , _quests         :: QuestCollection
         , _tileCollection :: TileCollection
+        , _walkingImages' :: WalkingImages
         }
-    deriving (Show, Ord, Eq, Generic)
+    deriving (Eq, Generic)
 
 makeLenses ''ExploringHandler
 
@@ -63,6 +66,7 @@ exploringHandler ::
     -> MessageLog
     -> QuestCollection
     -> TileCollection
+    -> WalkingImages
     -> ExploringHandler
 exploringHandler = ExploringHandler
 
@@ -126,6 +130,9 @@ getPlayerPosition = fmap fst . playerActor . view (currentDungeon . cellMap)
 
 currentDungeon :: Getter ExploringHandler Dungeon
 currentDungeon = dungeons . focused
+
+walkingImages :: Getter ExploringHandler WalkingImages
+walkingImages = walkingImages'
 
 getMessageLog :: ExploringHandler -> MessageLog
 getMessageLog eh = eh ^. messageLog

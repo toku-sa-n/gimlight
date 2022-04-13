@@ -2,6 +2,7 @@
 
 module Gimlight.Direction
     ( Direction(..)
+    , allDirections
     , fromUnitVector
     , toUnitVector
     ) where
@@ -19,7 +20,10 @@ data Direction
     | NorthWest
     | SouthEast
     | SouthWest
-    deriving (Show, Ord, Eq, Generic)
+    deriving (Show, Ord, Eq, Generic, Enum, Bounded)
+
+allDirections :: [Direction]
+allDirections = [minBound ..]
 
 fromUnitVector :: HasCallStack => V2 Int -> Direction
 fromUnitVector (V2 0 (-1))    = North

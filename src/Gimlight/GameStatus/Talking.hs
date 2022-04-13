@@ -25,7 +25,7 @@ data TalkingHandler =
         , part           :: TalkingPart
         , afterTalking   :: ExploringHandler
         }
-    deriving (Show, Ord, Eq, Generic)
+    deriving (Eq, Generic)
 
 talkingHandler :: Actor -> TalkingPart -> ExploringHandler -> TalkingHandler
 talkingHandler a p h = TalkingHandler a updatedPart updatedHandler

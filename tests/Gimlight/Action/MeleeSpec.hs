@@ -14,13 +14,15 @@ import           Data.OpenUnion                (liftUnion)
 import           Gimlight.Action               (ActionResultWithLog)
 import           Gimlight.Action.Melee         (meleeAction)
 import           Gimlight.ActionSpec           (okResult, okWithKilled)
-import           Gimlight.Actor                (Actor, attackFromTo, monster)
+import           Gimlight.Actor                (Actor, attackFromTo, monster,
+                                                updateWalkingImage)
 import           Gimlight.Actor.Identifier     (Identifier (Orc))
 import           Gimlight.Actor.Status         (Status, status)
 import           Gimlight.Actor.Status.Hp      (hp)
 import           Gimlight.Coord                (Coord)
 import           Gimlight.Direction            (Direction (East))
-import           Gimlight.Dungeon.Map.Cell     (CellMap, removeActorAt)
+import           Gimlight.Dungeon.Map.Cell     (CellMap, mapActorAt,
+                                                removeActorAt)
 import           Gimlight.Dungeon.Map.CellSpec (emptyCellMap, locateItemsActors,
                                                 locateItemsActorsST)
 import           Gimlight.Dungeon.Map.TileSpec (mockTileCollection)
@@ -39,8 +41,12 @@ testKill :: Spec
 testKill = it "kills the weakest orc" $ result cm `shouldBe` expected
   where
     expected = writer (expectedResult, expectedLog)
-    expectedResult = okWithKilled cellMapWithoutDefender [defender]
+    expectedResult = okWithKilled mapAfterAttack [defender]
     (_, expectedLog) = defenderAfterAttackAndLog cm
+    mapAfterAttack =
+        fromRight' $
+        flip execStateT cellMapWithoutDefender $
+        mapActorAt mockTileCollection atkPos (updateWalkingImage East)
     (defender, cellMapWithoutDefender) = defenderAndMap cm
     cm = testMap $ status (hp 1) 0 0
 
@@ -52,8 +58,9 @@ testDamage =
     expectedResult =
         okResult $
         fromRight' $
-        flip execStateT cellMapWithoutDefender $
-        locateItemsActorsST [(defPos, liftUnion $ fromJust newDefender)]
+        flip execStateT cellMapWithoutDefender $ do
+            locateItemsActorsST [(defPos, liftUnion $ fromJust newDefender)]
+            mapActorAt mockTileCollection atkPos (updateWalkingImage East)
     (newDefender, expectedLog) = defenderAfterAttackAndLog cm
     (_, cellMapWithoutDefender) = defenderAndMap cm
     cm = testMap $ status (hp 2) 0 1
