@@ -23,7 +23,7 @@ testReadIntegratedImageSucceeds = do
     it "reads the specified integrated walking image and splits it to each part" $
         result == expected
   where
-    separatedImages = sequence $ generateKeyValue <$> allPatterns <*> patterns
+    separatedImages = sequence $ generateKeyValue <$> allDirections <*> patterns
 
 generateKeyValue ::
        Direction -> Int -> IO ((FilePath, Direction, Int), Image PixelRGBA8)
@@ -47,5 +47,5 @@ integratedImageDir = "tests/images/walking/integrated"
 patterns :: [Int]
 patterns = [0 .. numOfPatterns - 1]
 
-allPatterns :: (Bounded a, Enum a) => [a]
-allPatterns = [minBound ..]
+allDirections :: [Direction]
+allDirections = [minBound ..]
