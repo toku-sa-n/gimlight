@@ -18,15 +18,13 @@ spec = describe "readIntegratedImage" testReadIntegratedImageSucceeds
 
 testReadIntegratedImageSucceeds :: Spec
 testReadIntegratedImageSucceeds = do
-    result <- runIO $ readIntegratedImagesRecursive integratedDir
+    result <- runIO $ readIntegratedImagesRecursive integratedImageDir
     expected <-
         runIO $
         Map.fromList <$>
         sequence [generateKeyValue d n | d <- allPatterns, n <- patterns]
     it "reads the specified integrated walking image and splits it to each part" $
         result == expected
-  where
-    integratedDir = "tests/images/walking/integrated"
 
 generateKeyValue ::
        Direction -> Int -> IO ((FilePath, Direction, Int), Image PixelRGBA8)
