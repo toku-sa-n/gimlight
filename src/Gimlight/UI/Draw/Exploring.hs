@@ -4,14 +4,15 @@ module Gimlight.UI.Draw.Exploring
     ( drawExploring
     ) where
 
-import           Codec.Picture                   (Image (imageData, imageHeight, imageWidth))
+import           Codec.Picture                   (Image (imageData, imageHeight, imageWidth),
+                                                  PixelRGBA8)
 import           Control.Lens                    (Ixed (ix), (&), (.~), (^.),
                                                   (^?!), (^?))
 import           Control.Monad                   (guard)
 import           Data.Array                      ((!))
 import qualified Data.Map                        as Map
 import           Data.Maybe                      (catMaybes, mapMaybe)
-import           Data.Text                       (pack, unpack)
+import           Data.Text                       (Text, pack, unpack)
 import           Data.Vector.Storable.ByteString (vectorToByteString)
 import           Gimlight.Actor                  (getArmor,
                                                   getCurrentExperiencePoint,
@@ -123,15 +124,9 @@ mapWidget eh = vstack rows
     lowerLayerAt = layerOfAt lower
     upperLayerAt = layerOfAt upper
     layerOfAt which c = tileIdToImageMem <$> getTileIdOfLayerAt which c
-    tileIdToImageMem tileId =
-        imageMem
-            (showt tileId)
-            (vectorToByteString $ imageData img)
-            (imgSize img)
+    tileIdToImageMem tileId = imageToWidget img (showt tileId)
       where
         img = getImage $ getTileCollection eh Map.! tileId
-    imgSize img =
-        Size (fromIntegral $ imageWidth img) (fromIntegral $ imageHeight img)
     shadowAt c = filler `styleBasic` [bgColor $ black & L.a .~ cellOpacity c]
     cellOpacity c
         | isVisible c = 0
@@ -184,16 +179,12 @@ mapActors eh = mapMaybe actorToImage $ positionsAndActors cm
             isVisible
     actorToImage (position, actor) =
         guard (isActorDrawed position) >>
-        return
-            (imageMem
-                 (actor ^. walkingImagePath <> pack (show dir) <> showt pat)
-                 (vectorToByteString
-                      (imageData
-                           (eh ^?! walkingImages .
-                            ix (unpack (actor ^. walkingImagePath), dir, pat))))
-                 (Size 48 48) `styleBasic`
-             style position)
+        Just (imageToWidget img name `styleBasic` style position)
       where
+        name = actor ^. walkingImagePath <> pack (show dir) <> showt pat
+        img =
+            eh ^?! walkingImages .
+            ix (unpack $ actor ^. walkingImagePath, dir, pat)
         (dir, pat) = getDirectionAndPattern actor
 
 topLeftCoord :: CellMap -> Coord
@@ -207,6 +198,12 @@ topLeftCoord cm = V2 x y
     V2 maxX maxY = widthAndHeight cm - V2 tileColumns tileRows
     x = max 0 $ min maxX unadjustedX
     y = max 0 $ min maxY unadjestedY
+
+imageToWidget :: Image PixelRGBA8 -> Text -> GameWidgetNode
+imageToWidget img name = imageMem name pixels size
+  where
+    pixels = vectorToByteString $ imageData img
+    size = Size (fromIntegral $ imageWidth img) (fromIntegral $ imageHeight img)
 
 mapDrawingWidth :: Int
 mapDrawingWidth = tileWidth * tileColumns
