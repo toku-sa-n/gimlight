@@ -56,7 +56,9 @@ extractPattern dir n = crop leftTopX leftTopY tileWidth tileHeight
         V2 (tileWidth * numOfPatterns) tileHeight *
         (directionsAndCoords ^?! ix dir)
 
--- This must be the same order as the directions in a walking image.
+-- The order of this Direction list must match the order in which actors
+-- in a walking image are facing in, from top-left to bottom-left, then
+-- top-right, and bottom-right.
 directionsAndCoords :: Map Direction Coord
 directionsAndCoords =
     fromList $
