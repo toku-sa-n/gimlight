@@ -186,18 +186,14 @@ mapActors eh = mapMaybe actorToImage $ positionsAndActors cm
         guard (isActorDrawed position) >>
         return
             (imageMem
-                 (actor ^. walkingImagePath <> pack (show dir) <> showt imgIdx)
+                 (actor ^. walkingImagePath <> pack (show dir) <> showt pat)
                  (vectorToByteString
                       (imageData
                            (eh ^?! walkingImages .
-                            ix (unpack (actor ^. walkingImagePath), dir, imgIdx))))
+                            ix (unpack (actor ^. walkingImagePath), dir, pat))))
                  (Size 48 48) `styleBasic`
              style position)
       where
-        imgIdx =
-            if pat < 3
-                then pat
-                else 4 - pat
         (dir, pat) = getDirectionAndPattern actor
 
 topLeftCoord :: CellMap -> Coord

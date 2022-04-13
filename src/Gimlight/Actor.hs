@@ -202,9 +202,6 @@ getWeapon a = a ^. weapon
 getArmor :: Actor -> Maybe (Item Armor)
 getArmor a = a ^. armor
 
-getDirectionAndPattern :: Actor -> (Direction, Int)
-getDirectionAndPattern a = (a ^. facing, a ^. walkingImagePattern)
-
 equip :: Union '[ Item Weapon, Item Armor] -> Actor -> Maybe Actor
 equip equipment a = tryEquipWeapon <|> tryEquipArmor
   where
@@ -222,13 +219,17 @@ equip equipment a = tryEquipWeapon <|> tryEquipArmor
             Just x  -> addItem (liftUnion x) (a ^. inventoryItems)
             Nothing -> Just $ a ^. inventoryItems
 
+getDirectionAndPattern :: Actor -> (Direction, Int)
+getDirectionAndPattern a = (a ^. facing, idx)
+  where
+    idx =
+        if pat < numOfPatterns
+            then pat
+            else numOfPatterns - pat + 1
+    pat = a ^. walkingImagePattern
+
 updateWalkingImage :: Direction -> Actor -> Actor
 updateWalkingImage d a = a & facing .~ d & walkingImagePattern %~ nextPattern
-    -- We use the walking image pattern 0, 1, .., (numOfPatterns - 1),
-    -- (numOfPatterns - 2), .., 0, 1, etc.
-    -- Here we store the index which is whithin the range of [0 .. n],
-    -- and in the UI code we separate the cases where index < numOfPatterns
-    -- and index >= numOfPatterns.
   where
     nextPattern = (`mod` n) . (+ 1)
     n = 2 * (numOfPatterns - 1)
