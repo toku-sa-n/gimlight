@@ -8,7 +8,6 @@ import           Codec.Picture              (Image, PixelRGBA8, convertRGBA8,
                                              readImage)
 import           Codec.Picture.Extra        (crop)
 import           Control.Lens               (Ixed (ix), (^?!))
-import           Control.Monad              ((>=>))
 import           Data.Foldable              (foldlM)
 import           Data.Ix                    (Ix (range))
 import           Data.Map                   (Map, empty, fromList, union)
@@ -18,8 +17,6 @@ import           Gimlight.Direction         (Direction (East, North, NorthEast, 
                                              allDirections)
 import           Gimlight.UI.Draw.Config    (tileHeight, tileWidth)
 import           Linear                     (V2 (V2))
-import           System.Directory           (canonicalizePath,
-                                             makeRelativeToCurrentDirectory)
 import           System.Directory.Recursive (getFilesRecursive)
 import           System.FilePath            (takeExtension)
 
@@ -35,12 +32,10 @@ addIntegratedImage :: WalkingImages -> FilePath -> IO WalkingImages
 addIntegratedImage images = fmap (union images) . readAndParseIntegratedImage
 
 readAndParseIntegratedImage :: FilePath -> IO WalkingImages
-readAndParseIntegratedImage path = do
-    canonicalizedPath <- canonicalizeAsRelative path
-    splitImage path . convertRGBA8 . unwrap <$> readImage canonicalizedPath
+readAndParseIntegratedImage path =
+    splitImage path . convertRGBA8 . unwrap <$> readImage path
   where
     unwrap = expectRight $ "Failed to read an image: " <> path
-    canonicalizeAsRelative = canonicalizePath >=> makeRelativeToCurrentDirectory
 
 splitImage :: FilePath -> Image PixelRGBA8 -> WalkingImages
 splitImage path img = fromList $ fmap keyToPair dirAndPatterns
