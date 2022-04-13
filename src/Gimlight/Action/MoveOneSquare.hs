@@ -22,11 +22,11 @@ moveOneSquareAction dir position tiles cm =
         Left OutOfRange             -> cannotMove
         _                           -> error "Unreachable."
   where
-    result =
-        flip execStateT cm $ do
-            a <- removeActorAt position
-            let facingUpdated = changeDirection dir a
-            locateActorAt tiles dst facingUpdated
+    result = execStateT moveState cm
+    moveState = do
+        a <- removeActorAt position
+        let facingUpdated = changeDirection dir a
+        locateActorAt tiles dst facingUpdated
     dst = position + toUnitVector dir
     cannotMove = do
         tell [T.youCannotMoveThere]
