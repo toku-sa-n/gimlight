@@ -23,8 +23,7 @@ testReadIntegratedImageSucceeds = do
     it "reads the specified integrated walking image and splits it to each part" $
         result == expected
   where
-    separatedImages =
-        sequence [generateKeyValue d n | d <- allPatterns, n <- patterns]
+    separatedImages = sequence $ generateKeyValue <$> allPatterns <*> patterns
 
 generateKeyValue ::
        Direction -> Int -> IO ((FilePath, Direction, Int), Image PixelRGBA8)
