@@ -39,14 +39,14 @@ patternImagePath direction n = directory <> show direction <> show n <> ".png"
   where
     directory = "tests/images/walking/separated/"
 
-patterns :: [Int]
-patterns = [0 .. numOfPatterns - 1]
-
-allPatterns :: (Bounded a, Enum a) => [a]
-allPatterns = [minBound ..]
-
 integratedImagePath :: FilePath
 integratedImagePath = integratedImageDir <> "/integrated.png"
 
 integratedImageDir :: FilePath
 integratedImageDir = "tests/images/walking/integrated"
+
+patterns :: [Int]
+patterns = [0 .. numOfPatterns - 1]
+
+allPatterns :: (Bounded a, Enum a) => [a]
+allPatterns = [minBound ..]
