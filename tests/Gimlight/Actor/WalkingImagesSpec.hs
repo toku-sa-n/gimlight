@@ -7,8 +7,8 @@ module Gimlight.Actor.WalkingImagesSpec
 import           Codec.Picture                (convertRGBA8, readImage)
 import           Data.Either.Combinators      (fromRight')
 import qualified Data.Map                     as Map
-import           Gimlight.Actor.WalkingImages (readIntegratedImagesRecursive)
-import           Gimlight.Direction           (Direction (East, North, NorthEast, NorthWest, South, SouthEast, SouthWest, West))
+import           Gimlight.Actor.WalkingImages (numOfPatterns,
+                                               readIntegratedImagesRecursive)
 import           Test.Hspec                   (Spec, describe, it, runIO)
 
 spec :: Spec
@@ -23,22 +23,17 @@ testReadIntegratedImageSucceeds = do
         sequence
             [ ((integrated, d, n), ) . convertRGBA8 . fromRight' <$>
             readImage (parts d n)
-            | d <-
-                  [ North
-                  , South
-                  , East
-                  , West
-                  , NorthEast
-                  , NorthWest
-                  , SouthEast
-                  , SouthWest
-                  ]
-            , n <- [0 .. 2]
+            | d <- allPatterns
+            , n <- patterns
             ]
     it "reads the specified integrated walking image and splits it to each part" $
         result == expected
   where
     integrated = integratedDir <> "/integrated.png"
     integratedDir = "tests/images/walking/integrated"
+    patterns = [0 .. numOfPatterns - 1]
     parts direction n =
         "tests/images/walking/separated/" <> show direction <> show n <> ".png"
+
+allPatterns :: (Bounded a, Enum a) => [a]
+allPatterns = [minBound ..]
