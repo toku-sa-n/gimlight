@@ -36,7 +36,7 @@ spec = do
 testMoveSucceed :: Spec
 testMoveSucceed =
     it "succeeds to move if no actor is on the destination and the destination is walkable" $
-    resultWhenMoveOffsetTo moveTo `shouldBe`
+    resultWhenMoveTo moveTo `shouldBe`
     succeed moveTo
   where
     moveTo = SouthEast
@@ -67,14 +67,13 @@ succeed dir = writer (okResult cellMapWithPlayer, [])
     dst = startPos + toUnitVector dir
 
 failMovingTo :: Direction -> Expectation
-failMovingTo dir = resultWhenMoveOffsetTo dir `shouldBe` failed
+failMovingTo dir = resultWhenMoveTo dir `shouldBe` failed
 
 failed :: ActionResultWithLog
 failed = writer (failedResult testMap, [T.youCannotMoveThere])
 
-resultWhenMoveOffsetTo :: Direction -> ActionResultWithLog
-resultWhenMoveOffsetTo d =
-    moveOneSquareAction d (V2 0 0) mockTileCollection testMap
+resultWhenMoveTo :: Direction -> ActionResultWithLog
+resultWhenMoveTo d = moveOneSquareAction d (V2 0 0) mockTileCollection testMap
 
 testMap :: CellMap
 testMap =
