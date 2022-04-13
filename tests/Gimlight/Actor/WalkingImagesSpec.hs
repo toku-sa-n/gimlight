@@ -31,9 +31,11 @@ testReadIntegratedImageSucceeds = do
   where
     integrated = integratedDir <> "/integrated.png"
     integratedDir = "tests/images/walking/integrated"
-    patterns = [0 .. numOfPatterns - 1]
     parts direction n =
         "tests/images/walking/separated/" <> show direction <> show n <> ".png"
+
+patterns :: [Int]
+patterns = [0 .. numOfPatterns - 1]
 
 allPatterns :: (Bounded a, Enum a) => [a]
 allPatterns = [minBound ..]
