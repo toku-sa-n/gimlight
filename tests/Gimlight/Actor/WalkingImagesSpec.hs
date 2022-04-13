@@ -4,11 +4,13 @@ module Gimlight.Actor.WalkingImagesSpec
     ( spec
     ) where
 
-import           Codec.Picture                (convertRGBA8, readImage)
+import           Codec.Picture                (Image, PixelRGBA8, convertRGBA8,
+                                               readImage)
 import           Data.Either.Combinators      (fromRight')
 import qualified Data.Map                     as Map
 import           Gimlight.Actor.WalkingImages (numOfPatterns,
                                                readIntegratedImagesRecursive)
+import           Gimlight.Direction           (Direction)
 import           Test.Hspec                   (Spec, describe, it, runIO)
 
 spec :: Spec
@@ -21,8 +23,7 @@ testReadIntegratedImageSucceeds = do
         runIO $
         Map.fromList <$>
         sequence
-            [ ((integrated, d, n), ) . convertRGBA8 . fromRight' <$>
-            readImage (parts d n)
+            [ ((integrated, d, n), ) <$> readPatternImage d n
             | d <- allPatterns
             , n <- patterns
             ]
@@ -31,8 +32,15 @@ testReadIntegratedImageSucceeds = do
   where
     integrated = integratedDir <> "/integrated.png"
     integratedDir = "tests/images/walking/integrated"
-    parts direction n =
-        "tests/images/walking/separated/" <> show direction <> show n <> ".png"
+
+readPatternImage :: Direction -> Int -> IO (Image PixelRGBA8)
+readPatternImage d =
+    fmap (convertRGBA8 . fromRight') . readImage . patternImagePath d
+
+patternImagePath :: Direction -> Int -> FilePath
+patternImagePath direction n = directory <> show direction <> show n <> ".png"
+  where
+    directory = "tests/images/walking/separated/"
 
 patterns :: [Int]
 patterns = [0 .. numOfPatterns - 1]
