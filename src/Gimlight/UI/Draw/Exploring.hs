@@ -184,7 +184,8 @@ mapActors eh = mapMaybe actorToImage $ positionsAndActors cm
         return (image (actor ^. walkingImagePath) `styleBasic` style position)
 
 topLeftCoord :: CellMap -> Coord
-topLeftCoord cm = V2 x y
+topLeftCoord cm =
+    fmap (max 0) $ min <$> V2 maxX maxY <*> V2 unadjustedX unadjestedY
   where
     V2 unadjustedX unadjestedY =
         maybe
@@ -192,8 +193,6 @@ topLeftCoord cm = V2 x y
             ((\pos -> pos - V2 (tileColumns `div` 2) (tileRows `div` 2)) . fst)
             (playerActor cm)
     V2 maxX maxY = widthAndHeight cm - V2 tileColumns tileRows
-    x = max 0 $ min maxX unadjustedX
-    y = max 0 $ min maxY unadjestedY
 
 mapDrawingWidth :: Int
 mapDrawingWidth = tileWidth * tileColumns
