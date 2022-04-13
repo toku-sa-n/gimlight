@@ -56,15 +56,15 @@ data TalkingPart
 selectionHandler ::
        MultilingualText
     -> NonEmpty (MultilingualText, Maybe TalkingPart)
-    -> SelectionHandler
-selectionHandler q c = SelectionHandler q c 0
+    -> TalkingPart
+selectionHandler q c = Selection $ SelectionHandler q c 0
 
 questInquiryHandler ::
-       Inquiry -> Maybe TalkingPart -> Maybe TalkingPart -> QuestInquiryHandler
-questInquiryHandler = QuestInquiryHandler
+       Inquiry -> Maybe TalkingPart -> Maybe TalkingPart -> TalkingPart
+questInquiryHandler inq tp = QuestInquiry . QuestInquiryHandler inq tp
 
-updateQuestHandler :: Updater -> Maybe TalkingPart -> UpdateQuestHandler
-updateQuestHandler = UpdateQuestHandler
+updateQuestHandler :: Updater -> Maybe TalkingPart -> TalkingPart
+updateQuestHandler u = UpdateQuest . UpdateQuestHandler u
 
 getQuestion :: SelectionHandler -> MultilingualText
 getQuestion = question
