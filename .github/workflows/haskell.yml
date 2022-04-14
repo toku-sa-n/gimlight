@@ -49,13 +49,6 @@ jobs:
         key: ${{ runner.os }}-${{ hashFiles('cabal.project.freeze') }}-${{ github.sha }}
         restore-keys: ${{ runner.os }}-${{ hashFiles('cabal.project.freeze') }}
 
-    # This is necessary for Windows.
-    - name: Add a path to the Cabal direction to the PATH environment variable
-      run: echo "${{ steps.haskell_setup.outputs.ghc-path }}" >> $GITHUB_PATH
-
-    - name: Get PATH
-      run: echo $PATH
-
     - name: Update the PATH environment variable
       run: echo "$HOME/.cabal/bin" >> $GITHUB_PATH
 
