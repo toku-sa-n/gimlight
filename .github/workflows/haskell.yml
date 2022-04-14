@@ -49,7 +49,9 @@ jobs:
 
     - name: Install dependencies (Windows)
       run: |
-          pacman -Syu
+          # See https://www.msys2.org/docs/ci/ why we update twice.
+          pacman --noconfirm -Syuu
+          pacman --noconfirm -Syuu
           pacman -S mingw-w64-x86_64-pkg-config
           pacman -S mingw-w64-x86_64-SDL2
           pacman -S mingw-w64-x86_64-freeglut
