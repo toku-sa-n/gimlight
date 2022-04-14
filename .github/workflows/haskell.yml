@@ -26,6 +26,7 @@ jobs:
 
     - uses: msys2/setup-msys2@v2
       with:
+          path-type: inherit
           update: true
           install: mingw-w64-x86_64-pkg-config mingw-w64-x86_64-SDL2 mingw-w64-x86_64-freeglut mingw-w64-x86_64-glew
       if: runner.os == 'Windows'
