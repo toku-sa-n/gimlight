@@ -9,10 +9,23 @@ on:
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        sys:
+        - { os: ubuntu-latest, shell: bash }
+        - { os: windows-latest, shell: 'msys2 {0}' }
+
+    runs-on: ${{ matrix.sys.os }}
+
+    defaults:
+      run:
+        shell: ${{ matrix.sys.shell }}
 
     steps:
     - uses: actions/checkout@v2
+
+    - uses: msys2/setup-msys2@v2
+      if: runner.os == 'Windows'
 
     - uses: haskell/actions/setup@v1
       with:
@@ -34,10 +47,23 @@ jobs:
     - name: Update the PATH environment variable
       run: echo "$HOME/.cabal/bin" >> $GITHUB_PATH
 
-    - name: Install dependencies
+    - name: Install dependencies (Windows)
+      run: |
+          pacman -Syu
+          pacman -S mingw-w64-x86_64-pkg-config
+          pacman -S mingw-w64-x86_64-SDL2
+          pacman -S mingw-w64-x86_64-freeglut
+          pacman -S mingw-w64-x86_64-glew
+      if: runner.os == 'Windows'
+
+    - name: Install dependencies (Linux)
       run: |
         sudo apt update
         sudo apt install libsdl2-dev libglew-dev moreutils
+      if: runner.os == 'Linux'
+
+    - name: Install os-independant dependencies
+      run: |
         cabal update -j
         cabal install weeder -z -j
         cabal install hlint -z -j
