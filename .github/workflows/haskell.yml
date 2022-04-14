@@ -9,10 +9,27 @@ on:
 jobs:
   test:
 
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        sys:
+        - { os: ubuntu-latest, shell: bash }
+        - { os: windows-latest, shell: 'msys {0}' }
+
+    runs-on: ${{ matrix.sys.os }}
+
+    defaults:
+      run:
+        shell:  ${{ matrix.sys.shell }}
 
     steps:
     - uses: actions/checkout@v2
+
+    - uses: msys2/setup-msys2@v2
+      with:
+        path-type: inherit
+        update: true
+        install: mingw-w64-x86_64-pkg-config mingw-w64-x86_64-SDL2 mingw-w64-x86_64-freeglut mingw-w64-x86_64-gluew
+      if: runner.os == 'Windows'
 
     - uses: haskell/actions/setup@v1
       with:
@@ -31,11 +48,12 @@ jobs:
         key: ${{ runner.os }}-${{ hashFiles('cabal.project.freeze') }}-${{ github.sha }}
         restore-keys: ${{ runner.os }}-${{ hashFiles('cabal.project.freeze') }}
 
-    - name: Install dependencies
+    - name: Install dependencies (Linux)
       run: |
         sudo apt update
         sudo apt install libsdl2-dev libglew-dev moreutils
         cabal update -j
+      if: runner.os == 'Linux'
 
     - name: Build
       run: cabal build --enable-tests --enable-benchmarks all -j
