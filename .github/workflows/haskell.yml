@@ -64,7 +64,7 @@ jobs:
 
         # `weeder` depends on `network`. `network` must be installed via stack on Windows, so we use `stack`, not `cabal`.
         # See: https://github.com/haskell/network/
-        stack install weeder -z -j
+        stack install weeder
         cabal install hlint -z -j
         cabal install hindent -z -j
         cabal install stylish-haskell -z -j
