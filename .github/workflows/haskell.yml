@@ -28,7 +28,7 @@ jobs:
       with:
         path-type: inherit
         update: true
-        install: mingw-w64-x86_64-pkg-config mingw-w64-x86_64-SDL2 mingw-w64-x86_64-freeglut mingw-w64-x86_64-gluew
+        install: mingw-w64-x86_64-pkg-config mingw-w64-x86_64-SDL2 mingw-w64-x86_64-freeglut mingw-w64-x86_64-glew
       if: runner.os == 'Windows'
 
     - uses: haskell/actions/setup@v1
