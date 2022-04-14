@@ -19,7 +19,7 @@ jobs:
 
     defaults:
       run:
-        shell:  ${{ matrix.sys.shell }}
+        shell: ${{ matrix.sys.shell }}
 
     steps:
     - uses: actions/checkout@v2
