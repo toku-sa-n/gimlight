@@ -25,6 +25,9 @@ jobs:
     - uses: actions/checkout@v2
 
     - uses: msys2/setup-msys2@v2
+      with:
+          update: true
+          install: mingw-w64-x86_64-pkg-config mingw-w64-x86_64-SDL2 mingw-w64-x86_64-freeglut mingw-w64-x86_64-glew
       if: runner.os == 'Windows'
 
     - uses: haskell/actions/setup@v1
@@ -46,14 +49,6 @@ jobs:
 
     - name: Update the PATH environment variable
       run: echo "$HOME/.cabal/bin" >> $GITHUB_PATH
-
-    - name: Install dependencies (Windows)
-      run: |
-          # See https://www.msys2.org/docs/ci/ why we update twice.
-          pacman --noconfirm -Syuu
-          pacman --noconfirm -Syuu
-          pacman --noconfirm -S mingw-w64-x86_64-pkg-config mingw-w64-x86_64-SDL2 mingw-w64-x86_64-freeglut mingw-w64-x86_64-glew
-      if: runner.os == 'Windows'
 
     - name: Install dependencies (Linux)
       run: |
