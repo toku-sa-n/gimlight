@@ -38,7 +38,7 @@ jobs:
       if: runner.os == 'Windows'
 
     - name: Print where grep is
-      run: where grep
+      run: which grep
 
     - uses: haskell/actions/setup@v1
       with:
