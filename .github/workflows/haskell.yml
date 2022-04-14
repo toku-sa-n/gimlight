@@ -13,7 +13,7 @@ jobs:
       matrix:
         sys:
         - { os: ubuntu-latest, shell: bash }
-        - { os: windows-latest, shell: 'msys {0}' }
+        - { os: windows-latest, shell: 'msys2 {0}' }
 
     runs-on: ${{ matrix.sys.os }}
 
