@@ -37,9 +37,14 @@ jobs:
       if: runner.os == 'Windows'
 
     - uses: haskell/actions/setup@v1
+      id: haskell_setup
       with:
         ghc-version: '8.10.7'
         cabal-version: '3.6.0.0'
+
+    - name: Add a path to the Cabal directory to the PATH environment variable
+      run: setx -m PATH "${{ steps.haskell_setup.outputs.ghc-path }};%PATH%"
+      if: runner.os == 'Windows'
 
     - name: Cache
       uses: actions/cache@v2
