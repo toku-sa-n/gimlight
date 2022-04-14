@@ -37,9 +37,6 @@ jobs:
             mingw-w64-x86_64-freetype
       if: runner.os == 'Windows'
 
-    - name: Print where grep is
-      run: which grep
-
     - uses: haskell/actions/setup@v1
       with:
         ghc-version: '8.10.7'
