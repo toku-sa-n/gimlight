@@ -28,7 +28,7 @@ jobs:
       with:
         update: true
         install: |
-            mingw-w64-x86_64-grep
+            grep
             mingw-w64-x86_64-pkg-config
             mingw-w64-x86_64-SDL2
             mingw-w64-x86_64-freeglut
