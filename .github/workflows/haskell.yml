@@ -77,8 +77,11 @@ jobs:
     - name: Update Cabal
       run: ./cabal.sh update
 
-    - name: Print where grep is
-      run: which grep
+    - name: Test grep
+      run: |
+        which grep
+        /usr/bin/grep --version
+        /mingw64/bin/grep --version
 
     - name: Build
       run: ./cabal.sh build --enable-tests --enable-benchmarks all -j
