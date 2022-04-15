@@ -46,7 +46,7 @@ jobs:
     # (See https://github.com/msys2/setup-msys2/issues/98 how to add a path to PATH.)
     - name: Store the path to Cabal (Windows)
       run: |
-        echo "$(cygpath --unix '${{ steps.haskell_setup.outputs.cabal-exe }}') "'$@' > cabal.sh
+        echo "export PATH=${{ steps.haskell_setup.outputs.cabal-path }}:PATH;$(cygpath --unix '${{ steps.haskell_setup.outputs.cabal-exe }}') "'$@' > cabal.sh
         chmod +x cabal.sh
       if: runner.os == 'Windows'
 
