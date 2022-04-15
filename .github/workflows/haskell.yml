@@ -57,7 +57,7 @@ jobs:
       if: runner.os == 'Linux'
 
     - name: Generate `cabal.project.local` for `weeder`
-      run: "echo \"package * \n  with-compiler: ${{ steps.haskell_setup.outputs.ghc-exe }}" > cabal.project.local"
+      run: "echo \"package * \n  with-compiler: ${{ steps.haskell_setup.outputs.ghc-exe }}\" > cabal.project.local"
 
     - name: Cache
       uses: actions/cache@v2
