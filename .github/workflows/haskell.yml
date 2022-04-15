@@ -43,7 +43,7 @@ jobs:
         cabal-version: '3.6.0.0'
 
     # Adding a path to msys2's PATH on GitHub Actions is pretty tiring. So I'll output the path to a file.
-    # (See https://github.com/msys2/setup-msys2/issues/98 how to add a path to PATH.)
+    # (See https://github.com/msys2/setup-msys2/issues/98 to how to add a path to PATH.)
     - name: Store the path to Cabal (Windows)
       run: |
         echo "$(cygpath --unix '${{ steps.haskell_setup.outputs.cabal-exe }}') "'$@ '"-w $(cygpath --unix '${{ steps.haskell_setup.outputs.ghc-exe }}')" > cabal.sh
