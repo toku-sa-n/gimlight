@@ -60,6 +60,7 @@ jobs:
       run: |
         "echo \"package * \n  with-compiler: $(cygpath --unix '${{ steps.haskell_setup.outputs.ghc-exe }}')\" > cabal.project.local"
         cat cabal.project.local
+      if: runner.os == 'Windows'
 
     - name: Cache
       uses: actions/cache@v2
