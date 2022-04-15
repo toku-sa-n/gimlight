@@ -75,13 +75,13 @@ jobs:
       if: runner.os == 'Linux'
 
     - name: Update Cabal
-      run: ./cabal update
+      run: ./cabal.sh update
 
     - name: Build
-      run: ./cabal build --enable-tests --enable-benchmarks all -j
+      run: ./cabal.sh build --enable-tests --enable-benchmarks all -j
 
     - name: Run tests
-      run: ./cabal test all -j
+      run: ./cabal.sh test all -j
 
   format_and_lint:
 
