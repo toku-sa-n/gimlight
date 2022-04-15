@@ -46,7 +46,7 @@ jobs:
     # (See https://github.com/msys2/setup-msys2/issues/98 how to add a path to PATH.)
     - name: Store the path to Cabal (Windows)
       run: |
-        echo "$(cygpath --unix '${{ steps.haskell_setup.outputs.cabal-exe }}') "'$@' > cabal.sh
+        echo "$(cygpath --unix '${{ steps.haskell_setup.outputs.cabal-exe }}') "'$@ '"-w $(cygpath --unix '${{ steps.haskell_setup.outputs.ghc-exe }}')" > cabal.sh
         chmod +x cabal.sh
       if: runner.os == 'Windows'
 
@@ -55,11 +55,6 @@ jobs:
         echo '${{ steps.haskell_setup.outputs.cabal-exe }} $@' > cabal.sh
         chmod +x cabal.sh
       if: runner.os == 'Linux'
-
-    - name: Generate `cabal.project.local` for specifying the path to ghc
-      run: |
-        printf "with-compiler: $(cygpath --unix '${{ steps.haskell_setup.outputs.ghc-exe }}')" > cabal.project.local
-      if: runner.os == 'Windows'
 
     - name: Cache
       uses: actions/cache@v2
