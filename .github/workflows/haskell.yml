@@ -57,7 +57,9 @@ jobs:
       if: runner.os == 'Linux'
 
     - name: Generate `cabal.project.local` for specifying the path to ghc
-      run: "echo \"package * \n  with-compiler: $(cygpath --unix '${{ steps.haskell_setup.outputs.ghc-exe }}')\" > cabal.project.local"
+      run: |
+        "echo \"package * \n  with-compiler: $(cygpath --unix '${{ steps.haskell_setup.outputs.ghc-exe }}')\" > cabal.project.local"
+        cat cabal.project.local
 
     - name: Cache
       uses: actions/cache@v2
