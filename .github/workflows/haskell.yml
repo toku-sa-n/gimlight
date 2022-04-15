@@ -45,7 +45,7 @@ jobs:
     - name: Add a path to the Cabal directory to the PATH environment variable
       # The path is a Windows-style path, so we must convert it to the Unix-style one.
       run: |
-        setx -m PATH "$(echo ${{ steps.haskell_setup.outputs.ghc-path }}|sed 's/\\/\//g;s/C:/\/c/g');PATH"
+        echo ${{ steps.haskell_setup.outputs.ghc-path }}|sed 's/\\/\//g;s/C:/\/c/g' >> $GITHUB_PATH
         echo $PATH
       if: runner.os == 'Windows'
 
