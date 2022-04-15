@@ -82,6 +82,7 @@ jobs:
         which grep
         /usr/bin/grep --version
         /mingw64/bin/grep --version
+      if: runner.os == 'Windows'
 
     - name: Build
       run: ./cabal.sh build --enable-tests --enable-benchmarks all -j
