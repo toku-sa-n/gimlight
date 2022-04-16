@@ -96,7 +96,7 @@ jobs:
     - name: Run HLint
       uses: haskell/actions/hlint-run@v1
       with:
-        path: src/ tests/ app/
+        path: '["src/", "tests/", "app/"]'
         fail-on: warning
 
     - name: Check format
