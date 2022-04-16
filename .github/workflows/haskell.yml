@@ -79,7 +79,6 @@ jobs:
 
         # See https://tokuchan3515.hatenablog.com/entry/2022/03/26/133158 why we separate `cabal install`s.
         cabal install weeder -j -z
-        cabal install hlint -j -z
         cabal install hindent -j -z
         cabal install stylish-haskell -j -z
 
@@ -91,8 +90,14 @@ jobs:
         cabal clean # This is necessary to run `weeder` correctly. See https://hackage.haskell.org/package/weeder.
         weeder
 
-    - name: Run hlint
-      run: hlint .
+    - name: Set up HLint
+      uses: haskell/actions/hlint-setup@v1
+
+    - name: Run HLint
+      uses: haskell/actions/hlint-run@v1
+      with:
+        path: src/ tests/ app/
+        fail-on: warning
 
     - name: Check format
       run: ./formatter.sh --check
