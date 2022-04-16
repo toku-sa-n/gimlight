@@ -80,8 +80,8 @@ jobs:
     - name: Test grep
       run: |
         which grep
+        grep --version
         /usr/bin/grep --version
-        /mingw64/bin/grep --version
       if: runner.os == 'Windows'
 
     - name: Build
