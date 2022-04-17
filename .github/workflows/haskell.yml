@@ -80,13 +80,6 @@ jobs:
     - name: Update Cabal
       run: ./cabal.sh update
 
-    - name: Test grep
-      run: |
-        which grep
-        grep --version
-        /usr/bin/grep --version
-      if: runner.os == 'Windows'
-
     - name: Build
       run: ./cabal.sh build --enable-tests --enable-benchmarks all -j
 
