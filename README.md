@@ -17,7 +17,7 @@ sudo apt install libsdl2-dev libglew-dev
 After installing these dependencies, run this command on the project root:
 
 ```sh
-LANG=C cabal run
+LANG=C cabal run gimlight
 ```
 
 `LANG=C` is necessary to prevent a build error. See [the c2hs' issue](https://github.com/haskell/c2hs/issues/238).
