@@ -9,7 +9,8 @@ import           Gimlight.SetUp.TileFile              (generateTile,
                                                        tileWithoutProperties,
                                                        tilesInSingleTileFile,
                                                        tilesInUnitedTileFile,
-                                                       tilesInUnwalkableTileFile)
+                                                       tilesInUnwalkableTileFile,
+                                                       validTileFileDirectory)
 import           Test.Hspec                           (Spec, describe,
                                                        errorCall, it, runIO,
                                                        shouldBe, shouldThrow)
@@ -22,7 +23,7 @@ spec = do
 testReadTileFilesRecursive :: Spec
 testReadTileFilesRecursive = do
     expected <- runIO $ unions <$> sequence tiles
-    result <- runIO $ readTileFileRecursive "tests/tiles/valid/"
+    result <- runIO $ readTileFileRecursive validTileFileDirectory
     describe "readTileFilesRecursive" $
         it "reads all tile files in a directory recursively." $
         result `shouldBe` expected

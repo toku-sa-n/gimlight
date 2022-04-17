@@ -18,7 +18,7 @@ import           Gimlight.Direction         (Direction (East, North, NorthEast, 
 import           Gimlight.UI.Draw.Config    (tileHeight, tileWidth)
 import           Linear                     (V2 (V2))
 import           System.Directory.Recursive (getFilesRecursive)
-import           System.FilePath            (takeExtension)
+import           System.FilePath            (takeExtension, takeFileName)
 
 type WalkingImages = Map (FilePath, Direction, Int) (Image PixelRGBA8)
 
@@ -40,7 +40,8 @@ readAndParseIntegratedImage path =
 splitImage :: FilePath -> Image PixelRGBA8 -> WalkingImages
 splitImage path img = fromList $ fmap keyToPair dirAndPatterns
   where
-    keyToPair (dir, pat) = ((path, dir, pat), extractPattern dir pat img)
+    keyToPair (dir, pat) =
+        ((takeFileName path, dir, pat), extractPattern dir pat img)
     dirAndPatterns = (,) <$> allDirections <*> [0 .. numOfPatterns - 1]
 
 extractPattern :: Direction -> Int -> Image PixelRGBA8 -> Image PixelRGBA8

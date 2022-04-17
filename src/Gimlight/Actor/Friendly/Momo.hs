@@ -21,13 +21,7 @@ import           Gimlight.Quest                   (Inquiry (IsEnoughBatsKilled, 
                                                    Updater (CompleteKillBats, StartKillBats))
 
 momo :: State IndexGenerator Actor
-momo =
-    friendly
-        Momo
-        st
-        talking
-        "images/walking_pictures/momo.png"
-        "images/upper_body/momo/default.png"
+momo = friendly Momo st talking "momo.png" "images/upper_body/momo/default.png"
   where
     st = status (hp 1) 1 1
 

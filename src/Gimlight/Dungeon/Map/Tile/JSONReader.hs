@@ -12,7 +12,7 @@ import           Codec.Picture.Extra        (crop, flipHorizontally,
 import           Control.Applicative        (ZipList (ZipList, getZipList))
 import           Control.Lens               (filtered, has, only, (&), (^..),
                                              (^?))
-import           Control.Monad              (guard, unless, (>=>))
+import           Control.Monad              (guard, unless)
 import           Data.Aeson.Lens            (_Bool, _Integer, _String, key,
                                              values)
 import           Data.Bits                  (Bits (bit), (.|.))
@@ -27,24 +27,19 @@ import           Gimlight.Data.Maybe        (expectJust)
 import           Gimlight.Dungeon.Map.Tile  (Tile, TileCollection, getImage,
                                              isTransparent, isWalkable, tile)
 import           Gimlight.UI.Draw.Config    (tileHeight, tileWidth)
-import           System.Directory           (canonicalizePath,
-                                             makeRelativeToCurrentDirectory)
 import           System.Directory.Recursive (getFilesRecursive)
-import           System.FilePath            (dropFileName, (</>))
+import           System.FilePath            (dropFileName, takeFileName, (</>))
 
 readTileFileRecursive :: FilePath -> IO TileCollection
 readTileFileRecursive dir =
     getFilesRecursive dir >>= foldlM (flip addTileFile) empty
 
 addTileFile :: FilePath -> TileCollection -> IO TileCollection
-addTileFile path tc = do
-    canonicalizedPathToJson <- canonicalizeAsRelative path
+addTileFile path tc =
     fmap
-        (foldl (\acc (idx, t) -> insert (canonicalizedPathToJson, idx) t acc) tc .
+        (foldl (\acc (idx, t) -> insert (takeFileName path, idx) t acc) tc .
          generateTransformedTiles)
         (indexAndTile path)
-  where
-    canonicalizeAsRelative = canonicalizePath >=> makeRelativeToCurrentDirectory
 
 getImagePath :: String -> Text
 getImagePath json =
