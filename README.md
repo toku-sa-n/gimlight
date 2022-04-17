@@ -6,7 +6,7 @@
 
 We assume that you run all commands in this section on the [`msys2`](https://www.msys2.org/) terminal.
 
-Install the dependencies with `pacman`.
+Install the dependencies with `pacman`:
 
 ```sh
 sudo pacman -S base-devel
@@ -16,7 +16,7 @@ sudo pacman -S mingw-w64-x86_64-glew
 sudo pacman -S mingw-w64-x86_64-freetype
 ```
 
-After installing them, run this command on the project root.
+After installing them, run this command on the project root:
 
 ```sh
 cabal run gimlight
