@@ -18,12 +18,13 @@ import           Test.Hspec                      (Spec, context, describe, it,
                                                   runIO, shouldBe)
 
 spec :: Spec
-spec = do
-    testSingleTileMap
-    testReadRectangleButNotSquareMap
-    testReadMapUsingMultipleTileFiles
-    testReadMapUsingRotatedTiles
-    testReadMapUsingMultipleTileFilesAndTransformation
+spec =
+    describe "readMapTileImage" $ do
+        testSingleTileMap
+        testReadRectangleButNotSquareMap
+        testReadMapUsingMultipleTileFiles
+        testReadMapUsingRotatedTiles
+        testReadMapUsingMultipleTileFilesAndTransformation
 
 testSingleTileMap :: Spec
 testSingleTileMap =
@@ -55,5 +56,4 @@ testReadMapUsingMultipleTileFilesAndTransformation =
 testReadMapFile :: FilePath -> CellMap -> Spec
 testReadMapFile path cm = do
     resultCellMap <- runIO $ readMapFile path
-    describe "readMapTileImage" $
-        it "loads the map file" $ resultCellMap `shouldBe` cm
+    it "loads the map file" $ resultCellMap `shouldBe` cm
