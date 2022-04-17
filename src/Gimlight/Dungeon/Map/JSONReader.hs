@@ -1,3 +1,4 @@
+-- For the map file specification, see https://doc.mapeditor.org/en/stable/reference/json-map-format/
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE TupleSections     #-}
 
