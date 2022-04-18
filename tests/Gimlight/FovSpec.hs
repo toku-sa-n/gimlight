@@ -2,7 +2,7 @@ module Gimlight.FovSpec
     ( spec
     ) where
 
-import           Data.Array   (array)
+import           Data.Array   (listArray)
 import           Gimlight.Fov (calculateFov)
 import           Linear.V2    (V2 (V2))
 import           Test.Hspec   (Spec, describe, it, shouldBe)
@@ -23,18 +23,8 @@ testFovCalculationOfWidthHeight mapWidth mapHeight =
     calculatedFov `shouldBe` expectedFov
   where
     expectedFov =
-        array
-            (V2 0 0, V2 (mapWidth - 1) (mapHeight - 1))
-            [ (V2 x y, True)
-            | x <- [0 .. mapWidth - 1]
-            , y <- [0 .. mapHeight - 1]
-            ]
+        listArray (V2 0 0, V2 (mapWidth - 1) (mapHeight - 1)) (repeat True)
     calculatedFov = calculateFov playerPosition transparentMap
     transparentMap =
-        array
-            (V2 0 0, V2 (mapWidth - 1) (mapHeight - 1))
-            [ (V2 x y, True)
-            | x <- [0 .. mapWidth - 1]
-            , y <- [0 .. mapHeight - 1]
-            ]
+        listArray (V2 0 0, V2 (mapWidth - 1) (mapHeight - 1)) (repeat True)
     playerPosition = V2 1 1
