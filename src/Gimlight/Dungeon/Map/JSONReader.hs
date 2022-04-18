@@ -1,5 +1,6 @@
 -- For the map file specification, see https://doc.mapeditor.org/en/stable/reference/json-map-format/
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE TupleSections     #-}
 
 module Gimlight.Dungeon.Map.JSONReader
     ( readMapFile
@@ -8,10 +9,11 @@ module Gimlight.Dungeon.Map.JSONReader
 import           Control.Lens              (Ixed (ix), (^..), (^?))
 import           Control.Monad             (unless)
 import           Control.Monad.Except      (ExceptT (ExceptT), runExceptT)
+import           Control.Monad.Trans.Maybe (MaybeT (MaybeT), maybeToExceptT)
 import           Data.Aeson.Lens           (_Array, _Integer, _String, key,
                                             values)
 import           Data.Array                (array)
-import           Data.Bifunctor            (Bifunctor (bimap))
+import           Data.Bifunctor            (Bifunctor (second))
 import           Data.Bits                 (Bits (clearBit))
 import           Data.Either.Combinators   (maybeToRight)
 import           Data.List                 (find, sortBy)
@@ -23,8 +25,9 @@ import           Gimlight.Data.Maybe       (expectJust)
 import           Gimlight.Dungeon.Map.Cell (CellMap, TileIdLayer (TileIdLayer),
                                             cellMap)
 import           Gimlight.Dungeon.Map.Tile (TileId)
+import           Gimlight.System.Path      (canonicalizeToUnixStyleRelativePath)
 import           Linear.V2                 (V2 (V2))
-import           System.FilePath           (takeFileName)
+import           System.FilePath           (dropFileName, (</>))
 
 readMapFile :: FilePath -> IO CellMap
 readMapFile p = fmap (expectRight msg) $ runExceptT $ readMapFileOrFail p
@@ -34,7 +37,7 @@ readMapFile p = fmap (expectRight msg) $ runExceptT $ readMapFileOrFail p
 readMapFileOrFail :: FilePath -> ExceptT String IO CellMap
 readMapFileOrFail path = do
     json <- ExceptT . fmap return $ readFile path
-    ExceptT (return $ getTiles json) >>= ExceptT . return . parseFile json
+    getTiles json path >>= ExceptT . return . parseFile json
   where
     parseFile json tiles = do
         V2 width height <- maybeToRight noWidthOrHeight $ getMapSize json
@@ -58,25 +61,31 @@ getMapSize json =
   where
     fetch k = json ^? key k . _Integer
 
-getTiles :: String -> Either String (Vector TileIdLayer)
-getTiles json = V.zipWith TileIdLayer <$> uppers <*> lowers
+getTiles :: String -> FilePath -> ExceptT String IO (Vector TileIdLayer)
+getTiles json pathToMap = V.zipWith TileIdLayer <$> uppers <*> lowers
   where
     lowers = getTileIdOfNthLayerOrErr 0
     uppers = getTileIdOfNthLayerOrErr 1
     getTileIdOfNthLayerOrErr n =
-        maybeToRight (missingLayer $ show n) $ getTileIdOfNthLayer n json
+        maybeToExceptT (missingLayer $ show n) $
+        getTileIdOfNthLayer n json pathToMap
     missingLayer which =
         "The map file does not contain the level " ++ which ++ " layer."
 
-getTileIdOfNthLayer :: Int -> String -> Maybe (Vector (Maybe TileId))
-getTileIdOfNthLayer n json = fmap rawIdToIdentifier <$> getDataOfNthLayer n json
+getTileIdOfNthLayer ::
+       Int -> String -> FilePath -> MaybeT IO (Vector (Maybe TileId))
+getTileIdOfNthLayer n json pathToMap =
+    MaybeT . traverse (mapM rawIdToIdentifier) $ getDataOfNthLayer n json
   where
-    rawIdToIdentifier 0 = Nothing
+    rawIdToIdentifier 0 = return Nothing
     rawIdToIdentifier ident =
-        Just $ bimap takeFileName (ident -) $
+        (fmap Just . (\(x, y) -> (, y) <$> canonicalizeIdentifier x)) .
+        second (ident -) $
         expectJust
             ("Invalid tile GID: " ++ show ident)
             (find ((clearAllFlags ident >=) . snd) $ getSourceAndFirstGid json)
+    canonicalizeIdentifier path =
+        canonicalizeToUnixStyleRelativePath (dropFileName pathToMap </> path)
     clearAllFlags = (`clearBit` 29) . (`clearBit` 30) . (`clearBit` 31)
 
 getSourceAndFirstGid :: String -> [(FilePath, Int)]

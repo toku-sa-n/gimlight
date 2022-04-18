@@ -10,7 +10,6 @@ module Gimlight.SetUp.TileFile
     , haskellTilePath
     , tileFileForGeneration
     , tileWithoutProperties
-    , validTileFileDirectory
     ) where
 
 import           Codec.Picture             (Image (imageData), PixelRGBA8)
@@ -68,25 +67,22 @@ generateTile = fromList <$> foldlM foldStep [] [0 .. 29]
     unwalkableAndUntransparentTiles = [1 .. 21]
 
 unitedTileFile :: FilePath
-unitedTileFile = "united.json"
+unitedTileFile = "tests/tiles/valid/united.json"
 
 singleTileFile :: FilePath
-singleTileFile = "single.json"
+singleTileFile = "tests/tiles/valid/single.json"
 
 unwalkableTileFile :: FilePath
-unwalkableTileFile = "unwalkable.json"
+unwalkableTileFile = "tests/tiles/valid/unwalkable.json"
 
 haskellTilePath :: FilePath
-haskellTilePath = "haskell.json"
+haskellTilePath = "tests/tiles/valid/haskell.json"
 
 tileWithoutProperties :: FilePath
 tileWithoutProperties = "tests/tiles/invalid/no_properties.json"
 
 tileFileForGeneration :: FilePath
-tileFileForGeneration = "generate.json"
-
-validTileFileDirectory :: FilePath
-validTileFileDirectory = "tests/tiles/valid/"
+tileFileForGeneration = "tests/tiles/valid/generate.json"
 
 -- Transformation order is important. Tiled's specification says
 --

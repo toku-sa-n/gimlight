@@ -11,7 +11,7 @@ import           Control.Lens                    (Ixed (ix), (&), (.~), (^.),
 import           Control.Monad                   (guard)
 import           Data.Array                      ((!))
 import qualified Data.Map                        as Map
-import           Data.Maybe                      (catMaybes, fromJust, mapMaybe)
+import           Data.Maybe                      (catMaybes, mapMaybe)
 import           Data.Text                       (Text, pack, unpack)
 import           Data.Vector.Storable.ByteString (vectorToByteString)
 import           Gimlight.Actor                  (getArmor,
@@ -126,7 +126,7 @@ mapWidget eh = vstack rows
     layerOfAt which c = tileIdToImageMem <$> getTileIdOfLayerAt which c
     tileIdToImageMem tileId = imageToWidget img (showt tileId)
       where
-        img = getImage $ fromJust $ getTileCollection eh Map.!? tileId
+        img = getImage $ getTileCollection eh Map.! tileId
     shadowAt c = filler `styleBasic` [bgColor $ black & L.a .~ cellOpacity c]
     cellOpacity c
         | isVisible c = 0

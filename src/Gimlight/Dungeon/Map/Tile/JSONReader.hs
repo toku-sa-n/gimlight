@@ -26,18 +26,20 @@ import qualified Data.Vector.Storable       as V
 import           Gimlight.Data.Maybe        (expectJust)
 import           Gimlight.Dungeon.Map.Tile  (Tile, TileCollection, getImage,
                                              isTransparent, isWalkable, tile)
+import           Gimlight.System.Path       (canonicalizeToUnixStyleRelativePath)
 import           Gimlight.UI.Draw.Config    (tileHeight, tileWidth)
 import           System.Directory.Recursive (getFilesRecursive)
-import           System.FilePath            (dropFileName, takeFileName, (</>))
+import           System.FilePath            (dropFileName, (</>))
 
 readTileFileRecursive :: FilePath -> IO TileCollection
 readTileFileRecursive dir =
     getFilesRecursive dir >>= foldlM (flip addTileFile) empty
 
 addTileFile :: FilePath -> TileCollection -> IO TileCollection
-addTileFile path tc =
+addTileFile path tc = do
+    canonicalizedPathToJson <- canonicalizeToUnixStyleRelativePath path
     fmap
-        (foldl (\acc (idx, t) -> insert (takeFileName path, idx) t acc) tc .
+        (foldl (\acc (idx, t) -> insert (canonicalizedPathToJson, idx) t acc) tc .
          generateTransformedTiles)
         (indexAndTile path)
 

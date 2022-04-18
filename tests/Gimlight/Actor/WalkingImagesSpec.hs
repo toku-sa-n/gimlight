@@ -27,7 +27,7 @@ testReadIntegratedImageSucceeds = do
 
 generateKeyValue ::
        Direction -> Int -> IO ((FilePath, Direction, Int), Image PixelRGBA8)
-generateKeyValue d n = ((integratedImageName, d, n), ) <$> readPatternImage d n
+generateKeyValue d n = ((integratedImagePath, d, n), ) <$> readPatternImage d n
 
 readPatternImage :: Direction -> Int -> IO (Image PixelRGBA8)
 readPatternImage d =
@@ -38,8 +38,8 @@ patternImagePath direction n = directory <> show direction <> show n <> ".png"
   where
     directory = "tests/images/walking/separated/"
 
-integratedImageName :: FilePath
-integratedImageName = "integrated.png"
+integratedImagePath :: FilePath
+integratedImagePath = integratedImageDir <> "/integrated.png"
 
 integratedImageDir :: FilePath
 integratedImageDir = "tests/images/walking/integrated"
