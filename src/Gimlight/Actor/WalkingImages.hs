@@ -15,6 +15,7 @@ import           Gimlight.Coord             (Coord)
 import           Gimlight.Data.Either       (expectRight)
 import           Gimlight.Direction         (Direction (East, North, NorthEast, NorthWest, South, SouthEast, SouthWest, West),
                                              allDirections)
+import           Gimlight.System.Path       (canonicalizeToUnixStyleRelativePath)
 import           Gimlight.UI.Draw.Config    (tileHeight, tileWidth)
 import           Linear                     (V2 (V2))
 import           System.Directory.Recursive (getFilesRecursive)
@@ -33,14 +34,16 @@ addIntegratedImage images = fmap (union images) . readAndParseIntegratedImage
 
 readAndParseIntegratedImage :: FilePath -> IO WalkingImages
 readAndParseIntegratedImage path =
-    splitImage path . convertRGBA8 . unwrap <$> readImage path
+    readImage path >>= splitImage path . convertRGBA8 . unwrap
   where
     unwrap = expectRight $ "Failed to read an image: " <> path
 
-splitImage :: FilePath -> Image PixelRGBA8 -> WalkingImages
-splitImage path img = fromList $ fmap keyToPair dirAndPatterns
+splitImage :: FilePath -> Image PixelRGBA8 -> IO WalkingImages
+splitImage path img = do
+    canonicalized <- canonicalizeToUnixStyleRelativePath path
+    return $ fromList $ fmap (keyToPair canonicalized) dirAndPatterns
   where
-    keyToPair (dir, pat) = ((path, dir, pat), extractPattern dir pat img)
+    keyToPair p (dir, pat) = ((p, dir, pat), extractPattern dir pat img)
     dirAndPatterns = (,) <$> allDirections <*> [0 .. numOfPatterns - 1]
 
 extractPattern :: Direction -> Int -> Image PixelRGBA8 -> Image PixelRGBA8
