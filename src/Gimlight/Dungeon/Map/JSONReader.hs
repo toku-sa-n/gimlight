@@ -25,9 +25,8 @@ import           Gimlight.Data.Maybe       (expectJust)
 import           Gimlight.Dungeon.Map.Cell (CellMap, TileIdLayer (TileIdLayer),
                                             cellMap)
 import           Gimlight.Dungeon.Map.Tile (TileId)
+import           Gimlight.System.Path      (canonicalizeToUnixStyleRelativePath)
 import           Linear.V2                 (V2 (V2))
-import           System.Directory          (canonicalizePath,
-                                            makeRelativeToCurrentDirectory)
 import           System.FilePath           (dropFileName, (</>))
 
 readMapFile :: FilePath -> IO CellMap
@@ -86,8 +85,7 @@ getTileIdOfNthLayer n json pathToMap =
             ("Invalid tile GID: " ++ show ident)
             (find ((clearAllFlags ident >=) . snd) $ getSourceAndFirstGid json)
     canonicalizeIdentifier path =
-        canonicalizePath (dropFileName pathToMap </> path) >>=
-        makeRelativeToCurrentDirectory
+        canonicalizeToUnixStyleRelativePath (dropFileName pathToMap </> path)
     clearAllFlags = (`clearBit` 29) . (`clearBit` 30) . (`clearBit` 31)
 
 getSourceAndFirstGid :: String -> [(FilePath, Int)]

@@ -4,7 +4,23 @@
 
 ### Windows
 
-I think we can build and run this project on Windows, but I don't know how. So, if you succeed in building it please let me know how.
+We assume that you run all commands in this section on the [`msys2`](https://www.msys2.org/) terminal.
+
+Install the dependencies with `pacman`:
+
+```sh
+sudo pacman -S base-devel
+sudo pacman -S mingw-w64-x86_64-pkg-config
+sudo pacman -S mingw-w64-x86_64-SDL2
+sudo pacman -S mingw-w64-x86_64-glew
+sudo pacman -S mingw-w64-x86_64-freetype
+```
+
+After installing them, run this command on the project root:
+
+```sh
+cabal run gimlight
+```
 
 ### Linux
 
