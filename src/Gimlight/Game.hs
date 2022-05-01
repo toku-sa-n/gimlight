@@ -14,7 +14,8 @@ import qualified Gimlight.UI.Event       as E
 import           Gimlight.UI.Types       (AppEvent (..))
 import           Monomer                 (Font (unFont),
                                           MainWindowState (MainWindowNormal),
-                                          appFontDef, appInitEvent, appTheme,
+                                          appDisableAutoScale, appFontDef,
+                                          appInitEvent, appTheme,
                                           appWindowResizable, appWindowState,
                                           appWindowTitle, darkTheme, startApp)
 
@@ -36,4 +37,5 @@ start = startApp initModel handleEvent buildUI initUIConfig
         , appInitEvent AppInit
         , appWindowState $ MainWindowNormal (windowWidth, windowHeight)
         , appWindowResizable False
+        , appDisableAutoScale True
         ]
