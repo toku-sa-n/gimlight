@@ -68,8 +68,8 @@ jobs:
           ~/.cabal/packages
           ~/.cabal/store
           dist-newstyle
-        key: ${{ runner.os }}-${{ hashFiles('cabal.project.freeze') }}-${{ github.sha }}
-        restore-keys: ${{ runner.os }}-${{ hashFiles('cabal.project.freeze') }}
+        key: ${{ github.job }}-${{ runner.os }}-${{ hashFiles('cabal.project.freeze') }}-${{ github.sha }}
+        restore-keys: ${{ github.job }}-${{ runner.os }}-${{ hashFiles('cabal.project.freeze') }}
 
     - name: Install dependencies (Linux)
       run: |
@@ -107,8 +107,8 @@ jobs:
           ~/.cabal/packages
           ~/.cabal/store
           dist-newstyle
-        key: ${{ runner.os }}-${{ hashFiles('cabal.project.freeze') }}-${{ github.sha }}
-        restore-keys: ${{ runner.os }}-${{ hashFiles('cabal.project.freeze') }}
+        key: ${{ github.job }}-${{ runner.os }}-${{ hashFiles('cabal.project.freeze') }}-${{ github.sha }}
+        restore-keys: ${{ github.job }}-${{ runner.os }}-${{ hashFiles('cabal.project.freeze') }}
 
     - name: Update the PATH environment variable
       run: echo "$HOME/.cabal/bin" >> $GITHUB_PATH
