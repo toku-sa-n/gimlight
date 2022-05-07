@@ -79,6 +79,7 @@ jobs:
     - name: Update Cabal
       run: ./cabal.sh update
 
+    # Do not use the `-j` option, otherwise the heap corruption error will happen on Windows.
     - name: Build
       run: ./cabal.sh build --enable-tests --enable-benchmarks all
 
