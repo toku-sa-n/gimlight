@@ -13,7 +13,6 @@ You need to install these commands:
 - hindent
 - stylish-haskell
 
-
 Options:
     -c --check  Do not format the source code, and instead check if the source files are formatted. This script will exit with non-zero exit code if one of the source files are not formatted correctly.
     -h --help   Show this help
