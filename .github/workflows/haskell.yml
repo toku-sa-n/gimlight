@@ -80,10 +80,10 @@ jobs:
       run: ./cabal.sh update
 
     - name: Build
-      run: ./cabal.sh build --enable-tests --enable-benchmarks all -j
+      run: ./cabal.sh build --enable-tests --enable-benchmarks all
 
     - name: Run tests
-      run: ./cabal.sh test all -j
+      run: ./cabal.sh test all
 
   format_and_lint:
 
