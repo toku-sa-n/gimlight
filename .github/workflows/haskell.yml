@@ -65,8 +65,7 @@ jobs:
         cache-name: cache-cabal
       with:
         path: |
-          ~/.cabal/packages
-          ~/.cabal/store
+          ${{ steps.haskell_setup.outputs.cabal-store }}
           dist-newstyle
         key: ${{ github.job }}-${{ runner.os }}-${{ hashFiles('cabal.project.freeze') }}-${{ github.sha }}
         restore-keys: ${{ github.job }}-${{ runner.os }}-${{ hashFiles('cabal.project.freeze') }}
