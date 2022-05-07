@@ -80,6 +80,7 @@ jobs:
       run: ./cabal.sh update
 
     # Do not use the `-j` option, otherwise the heap corruption error will happen on Windows.
+    # See https://github.com/toku-sa-n/gimlight/pull/530.
     - name: Build
       run: ./cabal.sh build --enable-tests --enable-benchmarks all
 
