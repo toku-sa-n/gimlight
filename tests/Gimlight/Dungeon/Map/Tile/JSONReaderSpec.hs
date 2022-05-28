@@ -37,6 +37,7 @@ testAddTileFile =
         , ("tests/tiles/valid/single.json", tilesInSingleTileFile)
         , ("tests/tiles/valid/unwalkable.json", tilesInUnwalkableTileFile)
         , ("tests/tiles/valid/haskell.json", haskellTile)
+        , ("tests/tiles/valid/generate.json", generateTile)
         ]
 
 testReadTileFilesRecursive :: Spec
