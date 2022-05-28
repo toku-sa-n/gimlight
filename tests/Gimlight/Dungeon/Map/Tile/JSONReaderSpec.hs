@@ -29,6 +29,9 @@ testAddTileFile =
         result <- liftIO $ addTileFile "tests/tiles/valid/united.json" empty
         expected <- liftIO tilesInUnitedTileFile
         result `shouldBe` expected
+        result2 <- liftIO $ addTileFile "tests/tiles/valid/single.json" empty
+        expected2 <- liftIO tilesInSingleTileFile
+        result2 `shouldBe` expected2
 
 testReadTileFilesRecursive :: Spec
 testReadTileFilesRecursive = do
