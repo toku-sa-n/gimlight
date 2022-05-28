@@ -26,8 +26,7 @@ addTileFile :: FilePath -> TileCollection -> IO TileCollection
 addTileFile path tc = do
     canonicalizedPathToJson <- canonicalizeToUnixStyleRelativePath path
     fmap
-        (foldl (\acc (idx, t) -> insert (canonicalizedPathToJson, idx) t acc) tc .
-         generateTransformedTiles)
+        (foldl (\acc (idx, t) -> insert (canonicalizedPathToJson, idx) t acc) tc)
         (indexAndTile path)
 
 getImagePath :: String -> Text
@@ -35,9 +34,6 @@ getImagePath json =
     expectJust
         "A tile file must associate with an image file."
         (json ^? key "image" . _String)
-
-generateTransformedTiles :: [(Int, Tile)] -> [(Int, Tile)]
-generateTransformedTiles = id
 
 indexAndTile :: FilePath -> IO [(Int, Tile)]
 indexAndTile path = do
