@@ -117,6 +117,7 @@ library
                       , Gimlight.Item.Heal
                       , Gimlight.Item.SomeItem
                       , Gimlight.Item.Weapon
+                      , Gimlight.Localization
                       , Gimlight.Localization.Texts
                       , Gimlight.Log
                       , Gimlight.System.Path
@@ -142,7 +143,6 @@ library
                       , Gimlight.GameStatus.SelectingItem
                       , Gimlight.GameStatus.Talking
                       , Gimlight.GameStatus.Talking.Part
-                      , Gimlight.Localization
                       , Gimlight.Localization.Texts.Actions
                       , Gimlight.Localization.Texts.Actors
                       , Gimlight.Localization.Texts.Actors.Momo
