@@ -60,6 +60,6 @@ testErrorOnReadingTileWithoutProperties :: Spec
 testErrorOnReadingTileWithoutProperties =
     describe "addTileFile" $
     it "panics if it tries to read a tile that misses necessary proeprties." $
-    readTileFileRecursive "tests/tiles/invalid/" `shouldThrow`
+    addTileFile "tests/tiles/invalid/no_properties.json" empty `shouldThrow`
     errorCall
         (tileWithoutProperties ++ ": Some tiles miss necessary properties.")
