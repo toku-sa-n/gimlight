@@ -17,10 +17,10 @@ import           Gimlight.IndexGenerator     (generator)
 import           Gimlight.Inventory          (addItem, removeNthItem)
 import           Gimlight.Item               (getName)
 import qualified Gimlight.Item.Armor         as Armor
-import           Gimlight.Item.Defined       (goldenArmor, hammer, sword,
-                                              woodenArmor)
+import           Gimlight.Item.Defined       (hammer, sword, woodenArmor)
 import           Gimlight.Item.SomeItem      (SomeItem)
 import qualified Gimlight.Item.Weapon        as W
+import           Gimlight.ItemSpec           (goldenArmor)
 import qualified Gimlight.Localization.Texts as T
 import           Test.Hspec                  (Spec, context, describe, it,
                                               shouldBe)

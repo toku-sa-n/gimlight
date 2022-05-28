@@ -63,6 +63,7 @@ Test-Suite spec
                       , Gimlight.Dungeon.Map.Tile.JSONReaderSpec
                       , Gimlight.FovSpec
                       , Gimlight.Generator
+                      , Gimlight.ItemSpec
                       , Gimlight.SetUp.ImageFile
                       , Gimlight.SetUp.MapFile
                       , Gimlight.SetUp.TileFile
