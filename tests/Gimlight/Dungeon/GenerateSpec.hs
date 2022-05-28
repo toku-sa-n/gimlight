@@ -34,7 +34,7 @@ import           Test.Hspec.QuickCheck                (prop)
 
 spec :: Spec
 spec = do
-    tc <- runIO $ addTileFile "tests/tiles/valid/generate.json" empty
+    tc <- runIO $ addTileFile "tests/tiles/generate.json" empty
     expected <- runIO $ readMapFile "tests/maps/generate/seed_0.json"
     let result = generateSingleMap 0 tc
     describe "generateMultipleFloorsDungeon" $ do

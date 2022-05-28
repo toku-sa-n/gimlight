@@ -1,5 +1,5 @@
 { "columns":1,
- "image":"..\/..\/images\/tiles\/single_0.png",
+ "image":"..\/images\/tiles\/single_0.png",
  "imageheight":48,
  "imagewidth":48,
  "margin":0,
@@ -9,7 +9,7 @@
          "name":"transparent",
          "type":"bool",
          "value":true
-        }, 
+        },
         {
          "name":"walkable",
          "type":"bool",
@@ -27,7 +27,7 @@
                  "name":"transparent",
                  "type":"bool",
                  "value":true
-                }, 
+                },
                 {
                  "name":"walkable",
                  "type":"bool",

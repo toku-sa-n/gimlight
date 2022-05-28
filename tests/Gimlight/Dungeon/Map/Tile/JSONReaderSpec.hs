@@ -31,17 +31,17 @@ testAddTileFile =
         e <- liftIO expected
         result `shouldBe` e
     testFileAndExpected =
-        [ ("tests/tiles/valid/united.json", tilesInUnitedTileFile)
-        , ("tests/tiles/valid/single.json", tilesInSingleTileFile)
-        , ("tests/tiles/valid/unwalkable.json", tilesInUnwalkableTileFile)
-        , ("tests/tiles/valid/haskell.json", haskellTile)
-        , ("tests/tiles/valid/generate.json", generateTile)
+        [ ("tests/tiles/united.json", tilesInUnitedTileFile)
+        , ("tests/tiles/single.json", tilesInSingleTileFile)
+        , ("tests/tiles/unwalkable.json", tilesInUnwalkableTileFile)
+        , ("tests/tiles/haskell.json", haskellTile)
+        , ("tests/tiles/generate.json", generateTile)
         ]
 
 testErrorOnReadingTileWithoutProperties :: Spec
 testErrorOnReadingTileWithoutProperties =
     describe "addTileFile" $
     it "panics if it tries to read a tile that misses necessary proeprties." $
-    addTileFile "tests/tiles/invalid/no_properties.json" empty `shouldThrow`
+    addTileFile "tests/tiles/no_properties.json" empty `shouldThrow`
     errorCall
         (tileWithoutProperties ++ ": Some tiles miss necessary properties.")
