@@ -2,8 +2,6 @@ module Gimlight.SetUp.TileFile
     ( tilesInUnitedTileFile
     , tilesInSingleTileFile
     , tilesInUnwalkableTileFile
-    , haskellTile
-    , generateTile
     , unitedTileFile
     , singleTileFile
     , unwalkableTileFile
@@ -21,8 +19,7 @@ import           Data.List.Split           (chunksOf)
 import           Data.Map                  (fromList)
 import qualified Data.Vector.Storable      as V
 import           Gimlight.Dungeon.Map.Tile (Tile, TileCollection, TileId, tile)
-import           Gimlight.SetUp.ImageFile  (generateTileImage, haskellTileImage,
-                                            singleTileImage)
+import           Gimlight.SetUp.ImageFile  (singleTileImage)
 import           Gimlight.UI.Draw.Config   (tileWidth)
 
 tilesInUnitedTileFile :: IO TileCollection
@@ -46,25 +43,6 @@ tilesInUnwalkableTileFile :: IO TileCollection
 tilesInUnwalkableTileFile =
     fromList . tileList unwalkableTileFile 0 (tile False True) <$>
     singleTileImage 0
-
-haskellTile :: IO TileCollection
-haskellTile =
-    fmap
-        (fromList . tileList haskellTilePath 0 (tile True True))
-        haskellTileImage
-
-generateTile :: IO TileCollection
-generateTile = fromList <$> foldlM foldStep [] [0 .. 29]
-  where
-    foldStep :: [(TileId, Tile)] -> Int -> IO [(TileId, Tile)]
-    foldStep acc x =
-        fmap
-            ((acc ++) . tileList tileFileForGeneration x (tileOfIndex x))
-            (generateTileImage x)
-    tileOfIndex n
-        | n `elem` unwalkableAndUntransparentTiles = tile False False
-        | otherwise = tile True True
-    unwalkableAndUntransparentTiles = [1 .. 21]
 
 unitedTileFile :: FilePath
 unitedTileFile = "tests/tiles/united.json"
