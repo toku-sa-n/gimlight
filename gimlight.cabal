@@ -52,7 +52,6 @@ Test-Suite spec
                       , Gimlight.ActionSpec
                       , Gimlight.ActorSpec
                       , Gimlight.Actor.WalkingImagesSpec
-                      , Gimlight.Data.ArraySpec
                       , Gimlight.Data.EitherSpec
                       , Gimlight.Data.ListSpec
                       , Gimlight.Data.MaybeSpec
@@ -94,7 +93,6 @@ library
                       , Gimlight.Actor.Status.Hp
                       , Gimlight.Actor.WalkingImages
                       , Gimlight.Coord
-                      , Gimlight.Data.Array
                       , Gimlight.Data.Either
                       , Gimlight.Data.List
                       , Gimlight.Data.Maybe
