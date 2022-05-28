@@ -2,8 +2,10 @@ module Gimlight.Dungeon.Map.Tile.JSONReaderSpec
     ( spec
     ) where
 
-import           Data.Map                             (unions)
-import           Gimlight.Dungeon.Map.Tile.JSONReader (readTileFileRecursive)
+import           Control.Monad.IO.Class               (liftIO)
+import           Data.Map                             (empty, unions)
+import           Gimlight.Dungeon.Map.Tile.JSONReader (addTileFile,
+                                                       readTileFileRecursive)
 import           Gimlight.SetUp.TileFile              (generateTile,
                                                        haskellTile,
                                                        tileWithoutProperties,
@@ -16,8 +18,17 @@ import           Test.Hspec                           (Spec, describe,
 
 spec :: Spec
 spec = do
+    testAddTileFile
     testReadTileFilesRecursive
     testErrorOnReadingTileWithoutProperties
+
+testAddTileFile :: Spec
+testAddTileFile =
+    describe "addTileFile" $
+    it "reads the tile file specified by an argument and add it to the given tile collection." $ do
+        expected <- liftIO tilesInUnitedTileFile
+        result <- liftIO $ addTileFile "tests/tiles/valid/united.json" empty
+        result `shouldBe` expected
 
 testReadTileFilesRecursive :: Spec
 testReadTileFilesRecursive = do

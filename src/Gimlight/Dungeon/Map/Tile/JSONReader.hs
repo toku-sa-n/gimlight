@@ -2,6 +2,7 @@
 
 module Gimlight.Dungeon.Map.Tile.JSONReader
     ( readTileFileRecursive
+    , addTileFile
     ) where
 
 import           Codec.Picture              (Image (imageData, imageHeight, imageWidth),
