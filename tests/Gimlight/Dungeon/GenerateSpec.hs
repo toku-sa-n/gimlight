@@ -11,7 +11,8 @@ import           Data.Tree                            (Tree (Node))
 import           Gimlight.Coord                       (Coord)
 import           Gimlight.Dungeon                     (Dungeon)
 import qualified Gimlight.Dungeon                     as D
-import           Gimlight.Dungeon.Generate            (generateMultipleFloorsDungeon,
+import           Gimlight.Dungeon.Generate            (floorTileIndex,
+                                                       generateMultipleFloorsDungeon,
                                                        upStairsIndex)
 import           Gimlight.Dungeon.Generate.Config     (Config, config,
                                                        getTileFilePath)
@@ -39,7 +40,7 @@ spec = do
     let result = generateSingleMap 0 tc
     describe "generateMultipleFloorsDungeon" $ do
         it "fills the lower layer with the floor tile." $ tilesOf lower result `shouldSatisfy`
-            all (== Just (getTileFilePath cfg, 0))
+            all (== Just (getTileFilePath cfg, floorTileIndex))
         it "generates the upper layer." $ tilesOf upper result `shouldBe`
             tilesOf upper expected
         testNoActorExistsOnUpStairs tc
