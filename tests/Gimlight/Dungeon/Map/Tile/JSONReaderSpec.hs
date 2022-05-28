@@ -35,6 +35,7 @@ testAddTileFile =
     testFileAndExpected =
         [ ("tests/tiles/valid/united.json", tilesInUnitedTileFile)
         , ("tests/tiles/valid/single.json", tilesInSingleTileFile)
+        , ("tests/tiles/valid/unwalkable.json", tilesInUnwalkableTileFile)
         ]
 
 testReadTileFilesRecursive :: Spec
