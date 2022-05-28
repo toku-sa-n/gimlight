@@ -21,10 +21,9 @@ import           Gimlight.Actor.Status         (Status, status)
 import           Gimlight.Actor.Status.Hp      (hp)
 import           Gimlight.Coord                (Coord)
 import           Gimlight.Direction            (Direction (East))
-import           Gimlight.Dungeon.Map.Cell     (CellMap, mapActorAt,
-                                                removeActorAt)
+import           Gimlight.Dungeon.Map.Cell     (CellMap, removeActorAt)
 import           Gimlight.Dungeon.Map.CellSpec (emptyCellMap, locateItemsActors,
-                                                locateItemsActorsST)
+                                                locateItemsActorsST, mapActorAt)
 import           Gimlight.Dungeon.Map.TileSpec (mockTileCollection)
 import           Gimlight.IndexGenerator       (IndexGenerator, generator)
 import           Gimlight.Log                  (MessageLog)

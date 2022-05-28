@@ -7,6 +7,7 @@ module Gimlight.Dungeon.Map.CellSpec
     , emptyCellMap
     , locateItemsActors
     , locateItemsActorsST
+    , mapActorAt
     ) where
 
 import           Control.Monad.State           (MonadState (get, put), StateT,
@@ -20,7 +21,8 @@ import           Gimlight.Coord                (Coord)
 import           Gimlight.Dungeon.Map.Cell     (CellMap, Error (OutOfRange),
                                                 TileIdLayer (TileIdLayer),
                                                 cellMap, locateActorAt,
-                                                locateItemAt)
+                                                locateItemAt, removeActorAt)
+import           Gimlight.Dungeon.Map.Tile     (TileCollection)
 import           Gimlight.Dungeon.Map.TileSpec (mockTileCollection)
 import           Gimlight.Item.Defined         (herb)
 import           Gimlight.Item.SomeItem        (SomeItem)
@@ -64,3 +66,10 @@ locateItemsActorsST xs = do
     cm <- get
     let cm' = locateItemsActors xs cm
     put cm'
+
+mapActorAt ::
+       TileCollection
+    -> Coord
+    -> (Actor -> Actor)
+    -> StateT CellMap (Either Error) ()
+mapActorAt tc p f = removeActorAt p >>= locateActorAt tc p . f
