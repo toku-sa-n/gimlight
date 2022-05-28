@@ -3,9 +3,8 @@ module Gimlight.Dungeon.Map.Tile.JSONReaderSpec
     ) where
 
 import           Control.Monad.IO.Class               (liftIO)
-import           Data.Map                             (empty, unions)
-import           Gimlight.Dungeon.Map.Tile.JSONReader (addTileFile,
-                                                       readTileFileRecursive)
+import           Data.Map                             (empty)
+import           Gimlight.Dungeon.Map.Tile.JSONReader (addTileFile)
 import           Gimlight.SetUp.TileFile              (generateTile,
                                                        haskellTile,
                                                        tileWithoutProperties,
@@ -13,13 +12,12 @@ import           Gimlight.SetUp.TileFile              (generateTile,
                                                        tilesInUnitedTileFile,
                                                        tilesInUnwalkableTileFile)
 import           Test.Hspec                           (Spec, describe,
-                                                       errorCall, it, runIO,
-                                                       shouldBe, shouldThrow)
+                                                       errorCall, it, shouldBe,
+                                                       shouldThrow)
 
 spec :: Spec
 spec = do
     testAddTileFile
-    testReadTileFilesRecursive
     testErrorOnReadingTileWithoutProperties
 
 testAddTileFile :: Spec
@@ -38,22 +36,6 @@ testAddTileFile =
         , ("tests/tiles/valid/unwalkable.json", tilesInUnwalkableTileFile)
         , ("tests/tiles/valid/haskell.json", haskellTile)
         , ("tests/tiles/valid/generate.json", generateTile)
-        ]
-
-testReadTileFilesRecursive :: Spec
-testReadTileFilesRecursive = do
-    expected <- runIO $ unions <$> sequence tiles
-    result <- runIO $ readTileFileRecursive "tests/tiles/valid/"
-    describe "readTileFilesRecursive" $
-        it "reads all tile files in a directory recursively." $
-        result `shouldBe` expected
-  where
-    tiles =
-        [ tilesInUnitedTileFile
-        , tilesInSingleTileFile
-        , tilesInUnwalkableTileFile
-        , haskellTile
-        , generateTile
         ]
 
 testErrorOnReadingTileWithoutProperties :: Spec

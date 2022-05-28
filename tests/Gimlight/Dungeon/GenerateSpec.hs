@@ -6,6 +6,7 @@ import           Control.Lens                         (Ixed (ix), view, (^.),
                                                        (^?))
 import           Control.Monad.State                  (State, StateT, evalState,
                                                        evalStateT)
+import           Data.Map                             (empty)
 import           Data.Tree                            (Tree (Node))
 import           Gimlight.Coord                       (Coord)
 import           Gimlight.Dungeon                     (Dungeon)
@@ -20,7 +21,7 @@ import           Gimlight.Dungeon.Map.Cell            (CellMap, actorExists,
                                                        upper)
 import           Gimlight.Dungeon.Map.JSONReader      (readMapFile)
 import           Gimlight.Dungeon.Map.Tile            (TileCollection)
-import           Gimlight.Dungeon.Map.Tile.JSONReader (readTileFileRecursive)
+import           Gimlight.Dungeon.Map.Tile.JSONReader (addTileFile)
 import           Gimlight.IndexGenerator              (IndexGenerator,
                                                        generator)
 import           Gimlight.SetUp.TileFile              (tileFileForGeneration)
@@ -33,7 +34,7 @@ import           Test.Hspec.QuickCheck                (prop)
 
 spec :: Spec
 spec = do
-    tc <- runIO $ readTileFileRecursive "tests/tiles/valid/"
+    tc <- runIO $ addTileFile "tests/tiles/valid/generate.json" empty
     expected <- runIO $ readMapFile "tests/maps/generate/seed_0.json"
     let result = generateSingleMap 0 tc
     describe "generateMultipleFloorsDungeon" $ do

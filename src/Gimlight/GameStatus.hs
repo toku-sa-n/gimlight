@@ -10,7 +10,9 @@ module Gimlight.GameStatus
 import           Control.Lens                          ()
 import           Control.Monad.State                   (StateT (runStateT),
                                                         evalState, evalStateT)
+import           Data.Foldable                         (foldlM)
 import           Data.List.NonEmpty                    (fromList)
+import           Data.Map                              (empty)
 import           Data.Tree                             (Tree (Node, rootLabel, subForest))
 import           GHC.Generics                          (Generic)
 import           Gimlight.Actor.WalkingImages          (readIntegratedImagesRecursive)
@@ -18,7 +20,7 @@ import           Gimlight.Data.Maybe                   (expectJust)
 import           Gimlight.Dungeon                      (addAscendingAndDescendingStiars,
                                                         addDescendingStairs)
 import           Gimlight.Dungeon.Init                 (initDungeon)
-import           Gimlight.Dungeon.Map.Tile.JSONReader  (readTileFileRecursive)
+import           Gimlight.Dungeon.Map.Tile.JSONReader  (addTileFile)
 import           Gimlight.Dungeon.Predefined.BatsCave  (batsDungeon)
 import           Gimlight.Dungeon.Predefined.GlobalMap (globalMap)
 import           Gimlight.Dungeon.Stairs               (StairsPair (StairsPair))
@@ -37,6 +39,7 @@ import           Gimlight.Quest                        (questCollection)
 import           Gimlight.TreeZipper                   (appendTree, goDownBy,
                                                         treeZipper)
 import           Linear.V2                             (V2 (V2))
+import           System.Directory.Recursive            (getFilesRecursive)
 import           System.Random                         (getStdGen)
 
 data GameStatus
@@ -53,7 +56,7 @@ data GameStatus
 newGameStatus :: IO GameStatus
 newGameStatus = do
     g <- getStdGen
-    tc <- readTileFileRecursive "tiles/"
+    tc <- getFilesRecursive "tiles/" >>= foldlM (flip addTileFile) empty
     walkingImages <- readIntegratedImagesRecursive "images/walking_pictures/"
     gm <- globalMap
     (beaeve, ig) <- runStateT (initDungeon tc) generator
