@@ -67,22 +67,22 @@ generateTile = fromList <$> foldlM foldStep [] [0 .. 29]
     unwalkableAndUntransparentTiles = [1 .. 21]
 
 unitedTileFile :: FilePath
-unitedTileFile = "tests/tiles/valid/united.json"
+unitedTileFile = "tests/tiles/united.json"
 
 singleTileFile :: FilePath
-singleTileFile = "tests/tiles/valid/single.json"
+singleTileFile = "tests/tiles/single.json"
 
 unwalkableTileFile :: FilePath
-unwalkableTileFile = "tests/tiles/valid/unwalkable.json"
+unwalkableTileFile = "tests/tiles/unwalkable.json"
 
 haskellTilePath :: FilePath
-haskellTilePath = "tests/tiles/valid/haskell.json"
+haskellTilePath = "tests/tiles/haskell.json"
 
 tileWithoutProperties :: FilePath
-tileWithoutProperties = "tests/tiles/invalid/no_properties.json"
+tileWithoutProperties = "tests/tiles/no_properties.json"
 
 tileFileForGeneration :: FilePath
-tileFileForGeneration = "tests/tiles/valid/generate.json"
+tileFileForGeneration = "tests/tiles/generate.json"
 
 -- Transformation order is important. Tiled's specification says
 --
