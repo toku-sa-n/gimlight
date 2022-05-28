@@ -17,10 +17,11 @@ import           Gimlight.IndexGenerator     (generator)
 import           Gimlight.Inventory          (addItem, removeNthItem)
 import           Gimlight.Item               (getName)
 import qualified Gimlight.Item.Armor         as Armor
-import           Gimlight.Item.Defined       (goldenArmor, hammer, sword,
-                                              woodenArmor)
+import           Gimlight.Item.Defined       (sword, woodenArmor)
 import           Gimlight.Item.SomeItem      (SomeItem)
 import qualified Gimlight.Item.Weapon        as W
+import           Gimlight.ItemSpec           (goldenArmor, goldenArmorName,
+                                              hammer, hammerName)
 import qualified Gimlight.Localization.Texts as T
 import           Test.Hspec                  (Spec, context, describe, it,
                                               shouldBe)
@@ -50,7 +51,7 @@ testChangeWeapon :: Spec
 testChangeWeapon =
     context "When the actor already equips a weapon." $ do
         it "equips a new weapon." $ fmap getName (getWeapon after) `shouldBe`
-            Just T.hammer
+            Just hammerName
         it "changes the power." $ A.getPower after `shouldBe` A.getPower before -
             W.getPower sword +
             W.getPower hammer
@@ -77,7 +78,7 @@ testChangeArmor :: Spec
 testChangeArmor =
     context "When the actor already equips an armor." $ do
         it "equips a new armor" $ fmap getName (getArmor after) `shouldBe`
-            Just T.goldenArmor
+            Just goldenArmorName
         it "changes the defence." $ A.getDefence after `shouldBe`
             A.getDefence before -
             Armor.getDefence woodenArmor +

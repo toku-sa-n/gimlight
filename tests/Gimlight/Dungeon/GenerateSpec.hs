@@ -6,7 +6,9 @@ import           Control.Lens                         (Ixed (ix), view, (^.),
                                                        (^?))
 import           Control.Monad.State                  (State, StateT, evalState,
                                                        evalStateT)
+import           Data.Foldable                        (find)
 import           Data.Map                             (empty)
+import           Data.Maybe                           (isNothing)
 import           Data.Tree                            (Tree (Node))
 import           Gimlight.Coord                       (Coord)
 import           Gimlight.Dungeon                     (Dungeon)
@@ -17,9 +19,9 @@ import           Gimlight.Dungeon.Generate            (floorTileIndex,
 import           Gimlight.Dungeon.Generate.Config     (Config, config,
                                                        getTileFilePath)
 import           Gimlight.Dungeon.Identifier          (Identifier (Beaeve))
-import           Gimlight.Dungeon.Map.Cell            (CellMap, actorExists,
-                                                       lower, tileIdLayer,
-                                                       upper)
+import           Gimlight.Dungeon.Map.Cell            (CellMap, lower,
+                                                       positionsAndActors,
+                                                       tileIdLayer, upper)
 import           Gimlight.Dungeon.Map.JSONReader      (readMapFile)
 import           Gimlight.Dungeon.Map.Tile            (TileCollection)
 import           Gimlight.Dungeon.Map.Tile.JSONReader (addTileFile)
@@ -59,7 +61,8 @@ testNoActorExistsOnUpStairs :: TileCollection -> Spec
 testNoActorExistsOnUpStairs tc =
     prop "does not locate an actor at the upstairs." $ \g ->
         let (d, c) = generateDungeonAndUpStairsPosition g tc
-         in not $ actorExists c (d ^. D.cellMap)
+            l = positionsAndActors $ d ^. D.cellMap
+         in isNothing $ find ((== c) . fst) l
 
 generateSingleMap :: Int -> TileCollection -> CellMap
 generateSingleMap g =

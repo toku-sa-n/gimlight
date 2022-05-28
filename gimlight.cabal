@@ -52,11 +52,9 @@ Test-Suite spec
                       , Gimlight.ActionSpec
                       , Gimlight.ActorSpec
                       , Gimlight.Actor.WalkingImagesSpec
-                      , Gimlight.Data.ArraySpec
                       , Gimlight.Data.EitherSpec
                       , Gimlight.Data.ListSpec
                       , Gimlight.Data.MaybeSpec
-                      , Gimlight.Data.StringSpec
                       , Gimlight.Dungeon.GenerateSpec
                       , Gimlight.Dungeon.Generate.ConfigSpec
                       , Gimlight.Dungeon.Map.CellSpec
@@ -65,6 +63,7 @@ Test-Suite spec
                       , Gimlight.Dungeon.Map.Tile.JSONReaderSpec
                       , Gimlight.FovSpec
                       , Gimlight.Generator
+                      , Gimlight.ItemSpec
                       , Gimlight.SetUp.ImageFile
                       , Gimlight.SetUp.MapFile
                       , Gimlight.SetUp.TileFile
@@ -94,11 +93,9 @@ library
                       , Gimlight.Actor.Status.Hp
                       , Gimlight.Actor.WalkingImages
                       , Gimlight.Coord
-                      , Gimlight.Data.Array
                       , Gimlight.Data.Either
                       , Gimlight.Data.List
                       , Gimlight.Data.Maybe
-                      , Gimlight.Data.String
                       , Gimlight.Direction
                       , Gimlight.Dungeon
                       , Gimlight.Dungeon.Generate
@@ -120,6 +117,7 @@ library
                       , Gimlight.Item.Heal
                       , Gimlight.Item.SomeItem
                       , Gimlight.Item.Weapon
+                      , Gimlight.Localization
                       , Gimlight.Localization.Texts
                       , Gimlight.Log
                       , Gimlight.System.Path
@@ -145,7 +143,6 @@ library
                       , Gimlight.GameStatus.SelectingItem
                       , Gimlight.GameStatus.Talking
                       , Gimlight.GameStatus.Talking.Part
-                      , Gimlight.Localization
                       , Gimlight.Localization.Texts.Actions
                       , Gimlight.Localization.Texts.Actors
                       , Gimlight.Localization.Texts.Actors.Momo
