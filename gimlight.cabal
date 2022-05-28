@@ -55,7 +55,6 @@ Test-Suite spec
                       , Gimlight.Data.EitherSpec
                       , Gimlight.Data.ListSpec
                       , Gimlight.Data.MaybeSpec
-                      , Gimlight.Data.StringSpec
                       , Gimlight.Dungeon.GenerateSpec
                       , Gimlight.Dungeon.Generate.ConfigSpec
                       , Gimlight.Dungeon.Map.CellSpec
@@ -96,7 +95,6 @@ library
                       , Gimlight.Data.Either
                       , Gimlight.Data.List
                       , Gimlight.Data.Maybe
-                      , Gimlight.Data.String
                       , Gimlight.Direction
                       , Gimlight.Dungeon
                       , Gimlight.Dungeon.Generate
