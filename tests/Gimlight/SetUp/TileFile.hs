@@ -78,9 +78,7 @@ tileList ::
     -> Image PixelRGBA8
     -> [(TileId, Tile)]
 tileList path idx tileGen img =
-    fmap
-        (identifierAndTileForDVH path idx tileGen img)
-        diagonalVertialHorizontal
+    [identifierAndTileForDVH path idx tileGen img (False, False, False)]
 
 identifierAndTileForDVH ::
        FilePath
@@ -121,7 +119,3 @@ tileFlagsSetter d v h =
         if cond
             then bit b
             else 0
-
-diagonalVertialHorizontal :: [(Bool, Bool, Bool)]
-diagonalVertialHorizontal =
-    (,,) <$> [False, True] <*> [False, True] <*> [False, True]

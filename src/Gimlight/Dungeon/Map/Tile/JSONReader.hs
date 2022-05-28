@@ -46,9 +46,8 @@ generateTransformedTiles :: [(Int, Tile)] -> [(Int, Tile)]
 generateTransformedTiles = concatMap $ uncurry generatePossibleTransformations
   where
     generatePossibleTransformations idx t =
-        [ ( transformationFlagsSetter d v h idx
-          , mapTileImage (transformImage d v h) t)
-        | (d, v, h) <- diagonalVertialHorizontal
+        [ ( transformationFlagsSetter False False False idx
+          , mapTileImage (transformImage False False False) t)
         ]
     mapTileImage f t = tile (isWalkable t) (isTransparent t) (f $ getImage t)
     transformImage d v h =
@@ -69,8 +68,6 @@ generateTransformedTiles = concatMap $ uncurry generatePossibleTransformations
     applyFunctionIf cond f
         | cond = f
         | otherwise = id
-    diagonalVertialHorizontal =
-        (,,) <$> [False, True] <*> [False, True] <*> [False, True]
 
 indexAndTile :: FilePath -> IO [(Int, Tile)]
 indexAndTile path = do
