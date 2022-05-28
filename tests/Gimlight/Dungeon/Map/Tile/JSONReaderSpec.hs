@@ -2,8 +2,9 @@ module Gimlight.Dungeon.Map.Tile.JSONReaderSpec
     ( spec
     ) where
 
-import           Data.Map                             (unions)
-import           Gimlight.Dungeon.Map.Tile.JSONReader (readTileFileRecursive)
+import           Control.Monad.IO.Class               (liftIO)
+import           Data.Map                             (empty)
+import           Gimlight.Dungeon.Map.Tile.JSONReader (addTileFile)
 import           Gimlight.SetUp.TileFile              (generateTile,
                                                        haskellTile,
                                                        tileWithoutProperties,
@@ -11,34 +12,36 @@ import           Gimlight.SetUp.TileFile              (generateTile,
                                                        tilesInUnitedTileFile,
                                                        tilesInUnwalkableTileFile)
 import           Test.Hspec                           (Spec, describe,
-                                                       errorCall, it, runIO,
-                                                       shouldBe, shouldThrow)
+                                                       errorCall, it, shouldBe,
+                                                       shouldThrow)
 
 spec :: Spec
 spec = do
-    testReadTileFilesRecursive
+    testAddTileFile
     testErrorOnReadingTileWithoutProperties
 
-testReadTileFilesRecursive :: Spec
-testReadTileFilesRecursive = do
-    expected <- runIO $ unions <$> sequence tiles
-    result <- runIO $ readTileFileRecursive "tests/tiles/valid/"
-    describe "readTileFilesRecursive" $
-        it "reads all tile files in a directory recursively." $
-        result `shouldBe` expected
+testAddTileFile :: Spec
+testAddTileFile =
+    describe "addTileFile" $
+    it "reads the tile file specified by an argument and add it to the given tile collection." $
+    mapM_ testFunc testFileAndExpected
   where
-    tiles =
-        [ tilesInUnitedTileFile
-        , tilesInSingleTileFile
-        , tilesInUnwalkableTileFile
-        , haskellTile
-        , generateTile
+    testFunc (path, expected) = do
+        result <- liftIO $ addTileFile path empty
+        e <- liftIO expected
+        result `shouldBe` e
+    testFileAndExpected =
+        [ ("tests/tiles/united.json", tilesInUnitedTileFile)
+        , ("tests/tiles/single.json", tilesInSingleTileFile)
+        , ("tests/tiles/unwalkable.json", tilesInUnwalkableTileFile)
+        , ("tests/tiles/haskell.json", haskellTile)
+        , ("tests/tiles/generate.json", generateTile)
         ]
 
 testErrorOnReadingTileWithoutProperties :: Spec
 testErrorOnReadingTileWithoutProperties =
     describe "addTileFile" $
     it "panics if it tries to read a tile that misses necessary proeprties." $
-    readTileFileRecursive "tests/tiles/invalid/" `shouldThrow`
+    addTileFile "tests/tiles/no_properties.json" empty `shouldThrow`
     errorCall
         (tileWithoutProperties ++ ": Some tiles miss necessary properties.")
