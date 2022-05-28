@@ -4,7 +4,6 @@ module Gimlight.Item.Defined
     ( herb
     , sampleBook
     , sword
-    , hammer
     , woodenArmor
     ) where
 
@@ -24,9 +23,6 @@ sampleBook = item T.sampleBook "images/items/book.png" T.sampleBookContent True
 -- Equipment is marked as not usable because it must be removed from the inventory once a player equips it.
 sword :: Item Weapon
 sword = item T.sword "images/items/sword.png" (weapon 4) False
-
-hammer :: Item Weapon
-hammer = item T.hammer "images/items/hammer.png" (weapon 8) False
 
 woodenArmor :: Item Armor
 woodenArmor = item T.woodenArmor "images/items/wood.png" (armor 4) False
