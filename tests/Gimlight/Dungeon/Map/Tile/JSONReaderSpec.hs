@@ -5,9 +5,7 @@ module Gimlight.Dungeon.Map.Tile.JSONReaderSpec
 import           Control.Monad.IO.Class               (liftIO)
 import           Data.Map                             (empty)
 import           Gimlight.Dungeon.Map.Tile.JSONReader (addTileFile)
-import           Gimlight.SetUp.TileFile              (generateTile,
-                                                       haskellTile,
-                                                       tileWithoutProperties,
+import           Gimlight.SetUp.TileFile              (tileWithoutProperties,
                                                        tilesInSingleTileFile,
                                                        tilesInUnitedTileFile,
                                                        tilesInUnwalkableTileFile)
@@ -34,8 +32,6 @@ testAddTileFile =
         [ ("tests/tiles/united.json", tilesInUnitedTileFile)
         , ("tests/tiles/single.json", tilesInSingleTileFile)
         , ("tests/tiles/unwalkable.json", tilesInUnwalkableTileFile)
-        , ("tests/tiles/haskell.json", haskellTile)
-        , ("tests/tiles/generate.json", generateTile)
         ]
 
 testErrorOnReadingTileWithoutProperties :: Spec
