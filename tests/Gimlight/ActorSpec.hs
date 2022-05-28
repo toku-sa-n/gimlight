@@ -20,7 +20,8 @@ import qualified Gimlight.Item.Armor         as Armor
 import           Gimlight.Item.Defined       (sword, woodenArmor)
 import           Gimlight.Item.SomeItem      (SomeItem)
 import qualified Gimlight.Item.Weapon        as W
-import           Gimlight.ItemSpec           (goldenArmor, hammer, hammerName)
+import           Gimlight.ItemSpec           (goldenArmor, goldenArmorName,
+                                              hammer, hammerName)
 import qualified Gimlight.Localization.Texts as T
 import           Test.Hspec                  (Spec, context, describe, it,
                                               shouldBe)
@@ -77,7 +78,7 @@ testChangeArmor :: Spec
 testChangeArmor =
     context "When the actor already equips an armor." $ do
         it "equips a new armor" $ fmap getName (getArmor after) `shouldBe`
-            Just T.goldenArmor
+            Just goldenArmorName
         it "changes the defence." $ A.getDefence after `shouldBe`
             A.getDefence before -
             Armor.getDefence woodenArmor +
