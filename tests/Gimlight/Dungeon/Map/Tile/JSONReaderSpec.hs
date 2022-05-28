@@ -26,8 +26,8 @@ testAddTileFile :: Spec
 testAddTileFile =
     describe "addTileFile" $
     it "reads the tile file specified by an argument and add it to the given tile collection." $ do
-        expected <- liftIO tilesInUnitedTileFile
         result <- liftIO $ addTileFile "tests/tiles/valid/united.json" empty
+        expected <- liftIO tilesInUnitedTileFile
         result `shouldBe` expected
 
 testReadTileFilesRecursive :: Spec
