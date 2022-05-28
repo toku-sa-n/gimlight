@@ -28,11 +28,9 @@ module Gimlight.Dungeon.Map.Cell
     , removeActorAt
     , removeItemAt
     , removeActorIf
-    , mapActorAt
     , positionsAndActors
     , positionsAndItems
     , tileIdLayerAt
-    , actorExists
     ) where
 
 import           Control.Lens              (Ixed (ix), Traversal', makeLenses,
@@ -219,21 +217,8 @@ removeActorIf f =
     maybeToRight ActorNotFound >>=
     removeActorAt
 
-mapActorAt ::
-       TileCollection
-    -> Coord
-    -> (Actor -> Actor)
-    -> StateT CellMap (Either Error) ()
-mapActorAt tc p f = removeActorAt p >>= locateActorAt tc p . f
-
 tileIdLayerAt :: Coord -> CellMap -> Maybe TileIdLayer
 tileIdLayerAt c = preview (ix c . tileIdLayer)
-
-actorExists :: Coord -> CellMap -> Bool
-actorExists c cm =
-    case cm ^? ix c . actor of
-        Just (Just _) -> True
-        _             -> False
 
 coordIsInMap :: Coord -> CellMap -> Bool
 coordIsInMap (V2 x y) cm = x >= 0 && y >= 0 && x < width && y < height

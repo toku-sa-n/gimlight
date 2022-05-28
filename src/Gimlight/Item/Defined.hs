@@ -4,9 +4,7 @@ module Gimlight.Item.Defined
     ( herb
     , sampleBook
     , sword
-    , hammer
     , woodenArmor
-    , goldenArmor
     ) where
 
 import           Gimlight.Item               (Item, item)
@@ -26,11 +24,5 @@ sampleBook = item T.sampleBook "images/items/book.png" T.sampleBookContent True
 sword :: Item Weapon
 sword = item T.sword "images/items/sword.png" (weapon 4) False
 
-hammer :: Item Weapon
-hammer = item T.hammer "images/items/hammer.png" (weapon 8) False
-
 woodenArmor :: Item Armor
 woodenArmor = item T.woodenArmor "images/items/wood.png" (armor 4) False
-
-goldenArmor :: Item Armor
-goldenArmor = item T.goldenArmor "images/items/golden_armor.png" (armor 8) False

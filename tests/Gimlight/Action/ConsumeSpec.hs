@@ -16,8 +16,9 @@ import           Gimlight.Actor                (Actor, equip)
 import qualified Gimlight.Actor                as A
 import           Gimlight.ActorSpec            (addItems, removeItem)
 import           Gimlight.Coord                (Coord)
-import           Gimlight.Dungeon.Map.Cell     (CellMap, mapActorAt)
-import           Gimlight.Dungeon.Map.CellSpec (emptyCellMap, locateItemsActors)
+import           Gimlight.Dungeon.Map.Cell     (CellMap)
+import           Gimlight.Dungeon.Map.CellSpec (emptyCellMap, locateItemsActors,
+                                                mapActorAt)
 import           Gimlight.Dungeon.Map.TileSpec (mockTileCollection)
 import           Gimlight.IndexGenerator       (generator)
 import           Gimlight.Item                 (Item)

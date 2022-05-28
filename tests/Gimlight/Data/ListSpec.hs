@@ -2,20 +2,11 @@ module Gimlight.Data.ListSpec
     ( spec
     ) where
 
-import           Gimlight.Data.List (filterAll, intercalateIncludingHeadTail)
+import           Gimlight.Data.List (filterAll)
 import           Test.Hspec         (Spec, describe, it, shouldBe)
 
 spec :: Spec
-spec = do
-    testIntercalateIncludingHeadTail
-    testFilterAll
-
-testIntercalateIncludingHeadTail :: Spec
-testIntercalateIncludingHeadTail =
-    describe "intercalateIncludingHeadTail" $
-    it "inserts a list between lists of the second argument, append it, prepend it, and concat them." $
-    intercalateIncludingHeadTail "|" ["Ester", "Menyahnya", "Shinobu"] `shouldBe`
-    "|Ester|Menyahnya|Shinobu|"
+spec = testFilterAll
 
 testFilterAll :: Spec
 testFilterAll =
