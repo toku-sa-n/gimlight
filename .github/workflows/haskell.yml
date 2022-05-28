@@ -130,6 +130,7 @@ jobs:
     - name: Detect unused lines
       run: |
         cabal clean # This is necessary to run `weeder` correctly. See https://hackage.haskell.org/package/weeder.
+        cabal build all -j
         weeder
 
     - name: Set up HLint
