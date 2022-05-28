@@ -25,13 +25,17 @@ spec = do
 testAddTileFile :: Spec
 testAddTileFile =
     describe "addTileFile" $
-    it "reads the tile file specified by an argument and add it to the given tile collection." $ do
-        result <- liftIO $ addTileFile "tests/tiles/valid/united.json" empty
-        expected <- liftIO tilesInUnitedTileFile
-        result `shouldBe` expected
-        result2 <- liftIO $ addTileFile "tests/tiles/valid/single.json" empty
-        expected2 <- liftIO tilesInSingleTileFile
-        result2 `shouldBe` expected2
+    it "reads the tile file specified by an argument and add it to the given tile collection." $
+    mapM_ testFunc testFileAndExpected
+  where
+    testFunc (path, expected) = do
+        result <- liftIO $ addTileFile path empty
+        e <- liftIO expected
+        result `shouldBe` e
+    testFileAndExpected =
+        [ ("tests/tiles/valid/united.json", tilesInUnitedTileFile)
+        , ("tests/tiles/valid/single.json", tilesInSingleTileFile)
+        ]
 
 testReadTileFilesRecursive :: Spec
 testReadTileFilesRecursive = do
