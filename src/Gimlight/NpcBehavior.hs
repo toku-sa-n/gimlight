@@ -10,7 +10,6 @@ import           Control.Monad.Writer          (MonadWriter (writer), Writer)
 import           Data.Array                    ((!))
 import           Data.Foldable                 (find)
 import           Data.Maybe                    (fromMaybe)
-import           Data.Text                     (pack)
 import           Gimlight.Action               (Action, ActionResult (killed),
                                                 newCellMap)
 import           Gimlight.Action.Melee         (meleeAction)
@@ -65,7 +64,7 @@ npcAction position ts cm =
         case flip execStateT cellMapBeforeUpdating $
              locateActorAt ts position (entityAfterUpdatingMap a) of
             Right x -> x
-            Left e  -> error $ "Failed to locate an actor: " <> pack (show e)
+            Left e  -> error $ "Failed to locate an actor: " <> showt e
     entityAfterUpdatingMap a =
         fromMaybe
             (entityAfterUpdatingTarget a)

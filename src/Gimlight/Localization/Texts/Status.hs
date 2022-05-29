@@ -12,7 +12,6 @@ module Gimlight.Localization.Texts.Status
 
 import           Gimlight.Localization (MultilingualText, multilingualText)
 import           Gimlight.Prelude
-import           TextShow              (TextShow (showt))
 
 level :: MultilingualText
 level = multilingualText "Level" "レベル"

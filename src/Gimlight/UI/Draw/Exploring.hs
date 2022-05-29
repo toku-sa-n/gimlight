@@ -12,7 +12,7 @@ import           Control.Monad                   (guard)
 import           Data.Array                      ((!))
 import qualified Data.Map                        as Map
 import           Data.Maybe                      (catMaybes, mapMaybe)
-import           Data.Text                       (pack, unpack)
+import           Data.Text                       (unpack)
 import           Data.Vector.Storable.ByteString (vectorToByteString)
 import           Gimlight.Actor                  (getArmor,
                                                   getCurrentExperiencePoint,
@@ -59,7 +59,6 @@ import           Monomer                         (CmbBgColor (bgColor),
                                                   imageMem, label, label_,
                                                   vstack, zstack)
 import qualified Monomer.Lens                    as L
-import           TextShow                        (TextShow (showt))
 
 drawExploring :: ExploringHandler -> GameConfig -> GameWidgetNode
 drawExploring eh c =
@@ -182,7 +181,7 @@ mapActors eh = mapMaybe actorToImage $ positionsAndActors cm
         guard (isActorDrawed position) >>
         Just (imageToWidget img name `styleBasic` style position)
       where
-        name = actor ^. walkingImagePath <> pack (show dir) <> showt pat
+        name = actor ^. walkingImagePath <> showt dir <> showt pat
         img =
             eh ^?! walkingImages .
             ix (unpack $ actor ^. walkingImagePath, dir, pat)
