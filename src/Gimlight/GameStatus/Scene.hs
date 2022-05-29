@@ -12,7 +12,7 @@ module Gimlight.GameStatus.Scene
     , nextSceneOrFinish
     ) where
 
-import           Control.Lens                  (makeLenses, view)
+import           Control.Lens                  (view)
 import           Data.List.NonEmpty            (NonEmpty)
 import qualified Data.List.NonEmpty            as N
 import           GHC.Generics                  (Generic)
