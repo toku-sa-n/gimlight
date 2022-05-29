@@ -6,8 +6,7 @@ module Gimlight.Dungeon.Generate
     , floorTileIndex
     ) where
 
-import           Control.Lens                     (Ixed (ix), _2, _Just, (&),
-                                                   (.~), (?~), (^.), (^?))
+import           Control.Lens                     (_2, _Just)
 import           Control.Monad.Morph              (MFunctor (hoist), generalize)
 import           Control.Monad.State              (MonadTrans (lift), State,
                                                    StateT, execStateT)

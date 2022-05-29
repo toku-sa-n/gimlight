@@ -33,9 +33,7 @@ module Gimlight.Dungeon.Map.Cell
     , tileIdLayerAt
     ) where
 
-import           Control.Lens              (Ixed (ix), Traversal', makeLenses,
-                                            preview, view, (%%~), (&), (.~),
-                                            (<&>), (?~), (^.), (^?))
+import           Control.Lens              (Traversal', preview, view, (<&>))
 import           Control.Monad.State       (MonadTrans (lift), StateT (StateT),
                                             gets)
 import           Data.Array                (Array, assocs, bounds, (!), (//))

@@ -2,8 +2,7 @@ module Gimlight.Dungeon.GenerateSpec
     ( spec
     ) where
 
-import           Control.Lens                         (Ixed (ix), view, (^.),
-                                                       (^?))
+import           Control.Lens                         (view)
 import           Control.Monad.State                  (State, StateT, evalState,
                                                        evalStateT)
 import           Data.Foldable                        (find)

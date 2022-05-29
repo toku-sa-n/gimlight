@@ -2,7 +2,6 @@ module Gimlight.Action.MoveOneSquareSpec
     ( spec
     ) where
 
-import           Control.Lens                  (ix, (&), (.~))
 import           Control.Monad.State           (evalState, execStateT)
 import           Control.Monad.Writer          (writer)
 import           Data.Either.Combinators       (fromRight')

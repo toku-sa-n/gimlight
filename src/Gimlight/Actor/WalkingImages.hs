@@ -7,7 +7,7 @@ module Gimlight.Actor.WalkingImages
 import           Codec.Picture              (Image, PixelRGBA8, convertRGBA8,
                                              readImage)
 import           Codec.Picture.Extra        (crop)
-import           Control.Lens               (Ixed (ix), (^?!))
+import           Control.Lens               ((^?!))
 import           Data.Foldable              (foldlM)
 import           Data.Ix                    (Ix (range))
 import           Data.Map                   (Map, empty, fromList, union)

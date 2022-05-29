@@ -2,7 +2,6 @@ module Gimlight.Dungeon.Init
     ( initDungeon
     ) where
 
-import           Control.Lens                       ((%~), (&))
 import           Control.Monad.Morph                (MFunctor (hoist),
                                                      generalize)
 import           Control.Monad.State                (StateT, execStateT)
