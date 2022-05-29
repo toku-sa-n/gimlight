@@ -17,7 +17,6 @@ module Gimlight.Localization.Texts.Actions
     , equipped
     ) where
 
-import           Gimlight.Data.Text    (showt)
 import           Gimlight.Localization (MultilingualText, multilingualText)
 import           Gimlight.Prelude
 

@@ -10,7 +10,6 @@ module Gimlight.Localization.Texts.Status
     , levelUp
     ) where
 
-import           Gimlight.Data.Text    (showt)
 import           Gimlight.Localization (MultilingualText, multilingualText)
 import           Gimlight.Prelude
 
