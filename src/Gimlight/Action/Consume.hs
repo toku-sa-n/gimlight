@@ -9,6 +9,7 @@ import           Control.Monad.State         (StateT (runStateT), execStateT)
 import           Control.Monad.Writer        (tell)
 import           Data.OpenUnion              (Union, liftUnion, reUnion,
                                               typesExhausted, (@>))
+import           Data.Text                   (pack)
 import           Gimlight.Action             (Action,
                                               ActionResult (ActionResult),
                                               ActionResultWithLog,
@@ -67,7 +68,7 @@ consumeAction n position tc cm =
             case flip execStateT ncm $
                  locateActorAt tc position (healHp amount a) of
                 Right x -> x
-                Left e  -> error $ "Failed to locate an actor." <> show e
+                Left e  -> error $ "Failed to locate an actor." <> pack (show e)
     useBook :: Actor -> CellMap -> Item Book -> ActionResultWithLog
     useBook a ncm b =
         return $ ActionResult (ReadingStarted $ getEffect b) cmAfterReading []
@@ -75,7 +76,7 @@ consumeAction n position tc cm =
         cmAfterReading =
             case flip execStateT ncm $ locateActorAt tc position a of
                 Right x -> x
-                Left e  -> error $ "Failed to locate an actor." <> show e
+                Left e  -> error $ "Failed to locate an actor." <> pack (show e)
     useWeapon :: Actor -> CellMap -> Item Weapon -> ActionResultWithLog
     useWeapon a ncm w = useEquipment a ncm (liftUnion w)
     useArmor :: Actor -> CellMap -> Item Armor -> ActionResultWithLog

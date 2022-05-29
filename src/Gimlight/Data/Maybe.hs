@@ -6,5 +6,5 @@ import           Data.Maybe       (fromMaybe)
 import           GHC.Stack        (HasCallStack)
 import           Gimlight.Prelude
 
-expectJust :: HasCallStack => String -> Maybe a -> a
+expectJust :: HasCallStack => Text -> Maybe a -> a
 expectJust s = fromMaybe (error s)

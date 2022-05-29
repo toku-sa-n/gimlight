@@ -16,6 +16,7 @@ module Gimlight.Dungeon.Generate.Config
     ) where
 
 import           Control.Lens     (_1, _2, view)
+import           Data.Text        (pack)
 import           Gimlight.Prelude
 import           Linear.V2        (V2 (V2))
 
@@ -57,29 +58,30 @@ config nf mr rs@(V2 rmin rmax) ms@(V2 width height) path
     | rmax > height = error $ roomMaxSizeIsLargerThanRoomHeight rmax height -- No need to check if `width` or `height` are negative as `(width or height) >= rmax >= rmin > 0`
     | otherwise = Config nf mr rs ms path
 
-numOfFloorsMustBePositive :: String
+numOfFloorsMustBePositive :: Text
 numOfFloorsMustBePositive = "The number of floors must be positive."
 
-maxRoomMustBePositive :: String
+maxRoomMustBePositive :: Text
 maxRoomMustBePositive = "The maximum number of rooms must be positive."
 
-roomMinSizeMustBePositive :: String
+roomMinSizeMustBePositive :: Text
 roomMinSizeMustBePositive = "The minimum room size must be positive."
 
-roomMinIsLargerThanRoomMax :: Int -> Int -> String
+roomMinIsLargerThanRoomMax :: Int -> Int -> Text
 roomMinIsLargerThanRoomMax rmin rmax =
-    "The room minimum size " ++
-    show rmin ++
-    " is larger than or equal to the room maximum size " ++ show rmax ++ "."
+    "The room minimum size " <>
+    pack (show rmin) <>
+    " is larger than or equal to the room maximum size " <>
+    pack (show rmax) <> "."
 
-roomMaxSizeIsLargerThanRoomWidth :: Int -> Int -> String
+roomMaxSizeIsLargerThanRoomWidth :: Int -> Int -> Text
 roomMaxSizeIsLargerThanRoomWidth rmax width =
-    "The room maximum size " ++
-    show rmax ++
-    " is larger than or equal to the map width " ++ show width ++ "."
+    "The room maximum size " <>
+    pack (show rmax) <>
+    " is larger than or equal to the map width " <> pack (show width) <> "."
 
-roomMaxSizeIsLargerThanRoomHeight :: Int -> Int -> String
+roomMaxSizeIsLargerThanRoomHeight :: Int -> Int -> Text
 roomMaxSizeIsLargerThanRoomHeight rmax height =
-    "The room maximum size " ++
-    show rmax ++
-    " is larger than or equal to the map height " ++ show height ++ "."
+    "The room maximum size " <>
+    pack (show rmax) <>
+    " is larger than or equal to the map height " <> pack (show height) <> "."

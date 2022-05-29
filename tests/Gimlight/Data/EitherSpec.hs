@@ -3,6 +3,7 @@ module Gimlight.Data.EitherSpec
     ) where
 
 import           Control.Exception    (evaluate)
+import           Data.Text            (pack, unpack)
 import           Gimlight.Data.Either (expectRight)
 import           Gimlight.Prelude
 import           Test.Hspec           (Spec, describe, errorCall, it, shouldBe,
@@ -18,8 +19,8 @@ testExpectRight =
             expectRight msg (Right r :: Either String String) `shouldBe` r
         it "panics with the error message if `Left` is passed." $
             evaluate (expectRight msg (Left p)) `shouldThrow`
-            errorCall (msg ++ ": " ++ show p)
+            errorCall (unpack $ msg <> ": " <> pack (show p))
   where
-    r = "Sushi" :: String
-    p = "Pizza" :: String
-    msg = "Why not sushi!" :: String
+    r = "Sushi"
+    p = "Pizza" :: Text
+    msg = "Why not sushi!"

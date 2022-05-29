@@ -15,7 +15,7 @@ import           Data.Aeson.Lens           (_Bool, _Integer, _String, key,
                                             values)
 import           Data.Either               (fromRight)
 import           Data.Map                  (insert)
-import           Data.Text                 (unpack)
+import           Data.Text                 (pack, unpack)
 import           Gimlight.Data.Maybe       (expectJust)
 import           Gimlight.Dungeon.Map.Tile (Tile, TileCollection, tile)
 import           Gimlight.Prelude
@@ -40,7 +40,7 @@ indexAndTile :: FilePath -> IO [(Int, Tile)]
 indexAndTile path = do
     json <- readFile path
     let imagePath = dropFileName path </> unpack (getImagePath json)
-    unless (allTilesHaveNecessaryProperties json) $ error $ path ++
+    unless (allTilesHaveNecessaryProperties json) $ error $ pack path <>
         ": Some tiles miss necessary properties."
     fmap
         (zip (getIds json) . getZipList .
@@ -88,7 +88,7 @@ readTileImageFile path = do
     guard $ isValidTileMapFile tileFile
     return tileFile
   where
-    noSuchImage = path ++ " not found."
+    noSuchImage = pack path <> " not found."
 
 isValidTileMapFile :: Image PixelRGBA8 -> Bool
 isValidTileMapFile img =

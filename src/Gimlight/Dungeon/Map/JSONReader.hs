@@ -17,7 +17,7 @@ import           Data.Bifunctor            (Bifunctor (second))
 import           Data.Bits                 (Bits (clearBit, testBit))
 import           Data.Either.Combinators   (maybeToRight)
 import           Data.List                 (find, sortBy)
-import           Data.Text                 (unpack)
+import           Data.Text                 (pack, unpack)
 import           Data.Vector               (Vector, toList)
 import qualified Data.Vector               as V
 import           Gimlight.Data.Either      (expectRight)
@@ -33,7 +33,7 @@ import           System.FilePath           (dropFileName, (</>))
 readMapFile :: FilePath -> IO CellMap
 readMapFile p = fmap (expectRight msg) $ runExceptT $ readMapFileOrFail p
   where
-    msg = "Failed to load a map: " ++ p
+    msg = "Failed to load a map: " <> pack p
 
 readMapFileOrFail :: FilePath -> ExceptT String IO CellMap
 readMapFileOrFail path = do
@@ -81,13 +81,13 @@ getTileIdOfNthLayer n json pathToMap =
     rawIdToIdentifier 0 = return Nothing
     rawIdToIdentifier ident
         | or $ fmap (testBit ident) [29, 30, 31] =
-            error $ pathToMap ++
+            error $ pack pathToMap <>
             " contains rotated tiles. This game does not support them."
         | otherwise =
             (fmap Just . (\(x, y) -> (, y) <$> canonicalizeIdentifier x)) .
             second (ident -) $
             expectJust
-                ("Invalid tile GID: " ++ show ident)
+                ("Invalid tile GID: " <> pack (show ident))
                 (find ((clearAllFlags ident >=) . snd) $
                  getSourceAndFirstGid json)
     canonicalizeIdentifier path =

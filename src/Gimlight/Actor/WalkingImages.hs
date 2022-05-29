@@ -11,6 +11,7 @@ import           Control.Lens               (Ixed (ix), (^?!))
 import           Data.Foldable              (foldlM)
 import           Data.Ix                    (Ix (range))
 import           Data.Map                   (Map, empty, fromList, union)
+import           Data.Text                  (pack)
 import           Gimlight.Coord             (Coord)
 import           Gimlight.Data.Either       (expectRight)
 import           Gimlight.Direction         (Direction (East, North, NorthEast, NorthWest, South, SouthEast, SouthWest, West),
@@ -37,7 +38,7 @@ readAndParseIntegratedImage :: FilePath -> IO WalkingImages
 readAndParseIntegratedImage path =
     readImage path >>= splitImage path . convertRGBA8 . unwrap
   where
-    unwrap = expectRight $ "Failed to read an image: " <> path
+    unwrap = expectRight $ "Failed to read an image: " <> pack path
 
 splitImage :: FilePath -> Image PixelRGBA8 -> IO WalkingImages
 splitImage path img = do
