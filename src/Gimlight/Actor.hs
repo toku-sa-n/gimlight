@@ -66,6 +66,7 @@ import           Gimlight.Item.SomeItem           (SomeItem)
 import           Gimlight.Item.Weapon             (Weapon)
 import qualified Gimlight.Item.Weapon             as W
 import           Gimlight.Log                     (MessageLog)
+import           Gimlight.Prelude
 
 data ActorKind
     = Player

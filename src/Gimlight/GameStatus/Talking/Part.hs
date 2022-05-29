@@ -21,6 +21,7 @@ import qualified Data.List.NonEmpty    as NonEmpty
 import           GHC.Generics          (Generic)
 import           Gimlight.Data.Maybe   (expectJust)
 import           Gimlight.Localization (MultilingualText)
+import           Gimlight.Prelude
 import           Gimlight.Quest        (Inquiry, QuestCollection, Updater)
 import qualified Gimlight.Quest        as Quest
 

@@ -13,6 +13,7 @@ import           Gimlight.Item.Book          (Book)
 import           Gimlight.Item.Heal          (Heal, heal)
 import           Gimlight.Item.Weapon        (Weapon, weapon)
 import qualified Gimlight.Localization.Texts as T
+import           Gimlight.Prelude
 
 herb :: Item Heal
 herb = item T.herb "images/items/herb.png" (heal 4) False

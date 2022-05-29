@@ -15,6 +15,7 @@ import           Gimlight.Coord             (Coord)
 import           Gimlight.Data.Either       (expectRight)
 import           Gimlight.Direction         (Direction (East, North, NorthEast, NorthWest, South, SouthEast, SouthWest, West),
                                              allDirections)
+import           Gimlight.Prelude
 import           Gimlight.System.Path       (canonicalizeToUnixStyleRelativePath)
 import           Gimlight.UI.Draw.Config    (tileHeight, tileWidth)
 import           Linear                     (V2 (V2))

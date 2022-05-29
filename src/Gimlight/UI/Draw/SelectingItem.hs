@@ -13,6 +13,7 @@ import           Gimlight.Item.SomeItem            (getIconImagePath, getName)
 import           Gimlight.Localization             (MultilingualText,
                                                     getLocalizedText)
 import qualified Gimlight.Localization.Texts       as T
+import           Gimlight.Prelude
 import           Gimlight.UI.Draw.Config           (tileHeight, tileWidth,
                                                     windowHeight, windowWidth)
 import           Gimlight.UI.Draw.Dialog           (boldTextStyle, heading,

@@ -17,6 +17,7 @@ import           Gimlight.Dungeon.Map.Cell   (Error (ItemAlreadyExists),
 import           Gimlight.Inventory          (removeNthItem)
 import           Gimlight.Item.SomeItem      (getName)
 import qualified Gimlight.Localization.Texts as T
+import           Gimlight.Prelude
 
 dropAction :: Int -> Action
 dropAction n position tc cm =

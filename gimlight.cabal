@@ -36,6 +36,7 @@ common common
                       , unordered-containers >= 0.2.14 && < 0.3
                       , vector >= 0.12.3.1 && < 0.13
                       , vector-split >= 1.0.0.2 && < 1.1
+    default-extensions: NoImplicitPrelude
     ghc-options:        -Wall -Werror
 
 
@@ -118,6 +119,7 @@ library
                       , Gimlight.Localization
                       , Gimlight.Localization.Texts
                       , Gimlight.Log
+                      , Gimlight.Prelude
                       , Gimlight.System.Path
                       , Gimlight.System.Random
                       , Gimlight.UI.Draw.Config

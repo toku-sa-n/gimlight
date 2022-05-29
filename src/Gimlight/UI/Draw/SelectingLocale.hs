@@ -4,6 +4,7 @@ module Gimlight.UI.Draw.SelectingLocale
     ( drawSelectingLocale
     ) where
 
+import           Gimlight.Prelude
 import           Gimlight.UI.Draw.KeyEvent (withKeyEvents)
 import           Gimlight.UI.Types         (GameWidgetNode)
 import           Monomer                   (label, vstack)

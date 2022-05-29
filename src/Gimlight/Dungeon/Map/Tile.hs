@@ -11,10 +11,11 @@ module Gimlight.Dungeon.Map.Tile
     , getImage
     ) where
 
-import           Codec.Picture (Image (imageData, imageHeight, imageWidth),
-                                PixelRGBA8)
-import           Data.Map      (Map)
-import           GHC.Generics  (Generic)
+import           Codec.Picture    (Image (imageData, imageHeight, imageWidth),
+                                   PixelRGBA8)
+import           Data.Map         (Map)
+import           GHC.Generics     (Generic)
+import           Gimlight.Prelude
 
 data Tile =
     Tile

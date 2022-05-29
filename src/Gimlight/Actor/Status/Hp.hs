@@ -11,6 +11,7 @@ module Gimlight.Actor.Status.Hp
 
 import           GHC.Generics        (Generic)
 import           Gimlight.Data.Maybe (expectJust)
+import           Gimlight.Prelude
 
 data Hp =
     Hp

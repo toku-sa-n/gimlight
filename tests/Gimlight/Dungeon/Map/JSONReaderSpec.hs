@@ -4,6 +4,7 @@ module Gimlight.Dungeon.Map.JSONReaderSpec
 
 import           Gimlight.Dungeon.Map.Cell       (CellMap)
 import           Gimlight.Dungeon.Map.JSONReader (readMapFile)
+import           Gimlight.Prelude
 import           Gimlight.SetUp.MapFile          (cellMapContainingMultipleFilesTile,
                                                   cellMapOfSingleTileMap,
                                                   mapUsingMultipleTileFiles,

@@ -11,6 +11,7 @@ import           Data.Text           (Text, append)
 import           GHC.Generics        (Generic)
 import           Gimlight.GameConfig (GameConfig, Language (English, Japanese),
                                       getLocale)
+import           Gimlight.Prelude
 
 data MultilingualText =
     MultilingualText

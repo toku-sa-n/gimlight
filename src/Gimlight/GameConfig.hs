@@ -8,7 +8,8 @@ module Gimlight.GameConfig
     , getLocale
     ) where
 
-import           GHC.Generics (Generic)
+import           GHC.Generics     (Generic)
+import           Gimlight.Prelude
 
 data Language
     = English

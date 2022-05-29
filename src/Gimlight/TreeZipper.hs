@@ -13,10 +13,11 @@ module Gimlight.TreeZipper
     , appendTree
     ) where
 
-import           Control.Lens  (Lens', lens)
-import           Data.Foldable (find)
-import           Data.Tree     (Tree (Node, rootLabel, subForest))
-import           GHC.Generics  (Generic)
+import           Control.Lens     (Lens', lens)
+import           Data.Foldable    (find)
+import           Data.Tree        (Tree (Node, rootLabel, subForest))
+import           GHC.Generics     (Generic)
+import           Gimlight.Prelude
 
 data TreeCrumb a =
     TreeCrumb a [Tree a]

@@ -8,6 +8,7 @@ import           Data.HashSet              (HashSet, fromList)
 import           Gimlight.Coord            (Coord)
 import           Gimlight.Dungeon.Map.Cell (CellMap, walkableFloors)
 import           Gimlight.Dungeon.Map.Tile (TileCollection)
+import           Gimlight.Prelude
 import           Linear.V2                 (V2 (..))
 
 getPathTo :: TileCollection -> CellMap -> Coord -> Coord -> Maybe [Coord]

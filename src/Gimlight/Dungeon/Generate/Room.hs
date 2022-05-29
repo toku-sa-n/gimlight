@@ -8,6 +8,7 @@ module Gimlight.Dungeon.Generate.Room
 
 import           Control.Lens.Getter ((^.))
 import           Gimlight.Coord      (Coord)
+import           Gimlight.Prelude
 import           Linear.V2           (V2 (..), _x, _y)
 
 data Room =

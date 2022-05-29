@@ -18,6 +18,7 @@ module Gimlight.Localization.Texts.Actions
     ) where
 
 import           Gimlight.Localization (MultilingualText, multilingualText)
+import           Gimlight.Prelude
 import           TextShow              (TextShow (showt))
 
 youCannotMoveThere :: MultilingualText

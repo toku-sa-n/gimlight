@@ -12,6 +12,7 @@ import           Gimlight.Direction          (Direction, toUnitVector)
 import           Gimlight.Dungeon.Map.Cell   (Error (ActorAlreadyExists, OutOfRange, TileIsNotWalkable),
                                               locateActorAt, removeActorAt)
 import qualified Gimlight.Localization.Texts as T
+import           Gimlight.Prelude
 
 moveOneSquareAction :: Direction -> Action
 moveOneSquareAction dir position tiles cm =

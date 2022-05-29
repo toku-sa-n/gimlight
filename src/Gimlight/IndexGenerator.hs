@@ -6,6 +6,7 @@ module Gimlight.IndexGenerator
     ) where
 
 import           Control.Monad.State (MonadState (state), State)
+import           Gimlight.Prelude
 
 type IndexGenerator = Int
 

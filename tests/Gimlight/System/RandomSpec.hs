@@ -2,6 +2,7 @@ module Gimlight.System.RandomSpec
     ( spec
     ) where
 
+import           Gimlight.Prelude
 import           Gimlight.System.Random (choice)
 import           System.Random          (mkStdGen)
 import           Test.Hspec             (Spec, describe, it, shouldBe)

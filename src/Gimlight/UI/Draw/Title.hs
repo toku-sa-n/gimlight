@@ -7,6 +7,7 @@ module Gimlight.UI.Draw.Title
 import           Gimlight.GameConfig         (GameConfig)
 import           Gimlight.Localization       (getLocalizedText)
 import qualified Gimlight.Localization.Texts as T
+import           Gimlight.Prelude
 import           Gimlight.UI.Draw.KeyEvent   (withKeyEvents)
 import           Gimlight.UI.Types           (GameWidgetNode)
 import           Monomer                     (CmbStyleBasic (styleBasic),

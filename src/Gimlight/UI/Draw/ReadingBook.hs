@@ -6,6 +6,7 @@ import           Gimlight.GameConfig             (GameConfig)
 import           Gimlight.GameStatus.ReadingBook (ReadingBookHandler,
                                                   getContent)
 import           Gimlight.Localization           (getLocalizedText)
+import           Gimlight.Prelude
 import           Gimlight.UI.Draw.KeyEvent       (withKeyEvents)
 import           Gimlight.UI.Types               (GameWidgetNode)
 import           Monomer                         (label_, multiline, styleBasic,

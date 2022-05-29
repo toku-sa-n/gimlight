@@ -39,6 +39,7 @@ import           Gimlight.GameStatus.SelectingItem (Reason (Drop, Use),
                                                     getSelectingIndex,
                                                     selectingItemHandler)
 import           Gimlight.GameStatus.Talking       (talkingHandler)
+import           Gimlight.Prelude
 
 handlePlayerMoving :: Direction -> ExploringHandler -> GameStatus
 handlePlayerMoving dir gs

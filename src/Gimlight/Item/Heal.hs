@@ -6,8 +6,9 @@ module Gimlight.Item.Heal
     , getHealAmount
     ) where
 
-import           GHC.Generics  (Generic)
-import           Gimlight.Item (Item, getEffect)
+import           GHC.Generics     (Generic)
+import           Gimlight.Item    (Item, getEffect)
+import           Gimlight.Prelude
 
 newtype Heal =
     Heal

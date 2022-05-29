@@ -26,6 +26,7 @@ import           Gimlight.Inventory            (maxSlot)
 import           Gimlight.Item.Defined         (herb)
 import           Gimlight.Item.SomeItem        (SomeItem)
 import qualified Gimlight.Localization.Texts   as T
+import           Gimlight.Prelude
 import           Linear                        (V2 (V2))
 import           Test.Hspec                    (Spec, it, shouldBe)
 

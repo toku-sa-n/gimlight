@@ -11,6 +11,7 @@ module Gimlight.SetUp.MapFile
 import           Data.Array                (array)
 import           Gimlight.Dungeon.Map.Cell (CellMap, TileIdLayer (TileIdLayer),
                                             cellMap)
+import           Gimlight.Prelude
 import           Gimlight.SetUp.TileFile   (singleTileFile, unitedTileFile)
 import           Linear.V2                 (V2 (V2))
 

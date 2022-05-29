@@ -23,6 +23,7 @@ import qualified Gimlight.Item.Weapon        as W
 import           Gimlight.ItemSpec           (goldenArmor, goldenArmorName,
                                               hammer, hammerName)
 import qualified Gimlight.Localization.Texts as T
+import           Gimlight.Prelude
 import           Test.Hspec                  (Spec, context, describe, it,
                                               shouldBe)
 

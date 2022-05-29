@@ -13,6 +13,7 @@ module Gimlight.Inventory
 import           Control.Lens           (makeLenses, (%~), (&), (.~), (^.))
 import           GHC.Generics           (Generic)
 import           Gimlight.Item.SomeItem (SomeItem)
+import           Gimlight.Prelude
 
 data Inventory =
     Inventory

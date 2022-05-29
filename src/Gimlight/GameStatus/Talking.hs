@@ -18,6 +18,7 @@ import           Gimlight.GameStatus.Exploring    (ExploringHandler, quests)
 import           Gimlight.GameStatus.Talking.Part (TalkingPart,
                                                    proceedNonVisiblePartsIfNecessary)
 import qualified Gimlight.GameStatus.Talking.Part as Part
+import           Gimlight.Prelude
 
 data TalkingHandler =
     TalkingHandler

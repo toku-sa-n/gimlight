@@ -25,6 +25,7 @@ import           Gimlight.Dungeon.Map.Tile  (TileCollection)
 import           Gimlight.Dungeon.Stairs    (StairsPair (StairsPair, downStairs, upStairs))
 import           Gimlight.Log               (MessageLog)
 import qualified Gimlight.NpcBehavior       as NPC
+import           Gimlight.Prelude
 import           Gimlight.TreeZipper        (TreeZipper, focused, goDownBy,
                                              goUp)
 

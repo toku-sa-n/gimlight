@@ -29,6 +29,7 @@ import           Gimlight.Item.Heal            (getHealAmount)
 import           Gimlight.Item.SomeItem        (SomeItem, getName)
 import           Gimlight.Item.Weapon          (Weapon)
 import qualified Gimlight.Localization.Texts   as T
+import           Gimlight.Prelude
 import           Linear                        (V2 (V2))
 import           Test.Hspec                    (Expectation, Spec, it, shouldBe)
 

@@ -48,6 +48,7 @@ import           Gimlight.Dungeon.Stairs          (StairsPair (StairsPair))
 import           Gimlight.IndexGenerator          (IndexGenerator)
 import           Gimlight.Item.Defined            (herb, sampleBook, sword,
                                                    woodenArmor)
+import           Gimlight.Prelude
 import           Gimlight.System.Random           (choiceST, randomRST,
                                                    randomST)
 import           Gimlight.TreeZipper              (TreeZipper, appendNode,

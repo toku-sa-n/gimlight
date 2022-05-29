@@ -20,6 +20,7 @@ import           Data.Text                     (Text)
 import           GHC.Generics                  (Generic)
 import           Gimlight.GameStatus.Exploring (ExploringHandler)
 import           Gimlight.Localization         (MultilingualText)
+import           Gimlight.Prelude
 
 newtype SceneElement =
     WithoutSpeaker MultilingualText

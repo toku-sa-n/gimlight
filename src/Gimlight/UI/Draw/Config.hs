@@ -8,6 +8,8 @@ module Gimlight.UI.Draw.Config
     , windowHeight
     ) where
 
+import           Gimlight.Prelude
+
 tileWidth :: Int
 tileWidth = 48
 

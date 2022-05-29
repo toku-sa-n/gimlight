@@ -13,6 +13,7 @@ import           Gimlight.Dungeon.Map.Cell       (locateActorAt)
 import           Gimlight.Dungeon.Map.JSONReader (readMapFile)
 import           Gimlight.Dungeon.Map.Tile       (TileCollection)
 import           Gimlight.IndexGenerator         (IndexGenerator)
+import           Gimlight.Prelude
 import           Linear.V2                       (V2 (V2))
 
 beaeve :: TileCollection -> StateT IndexGenerator IO Dungeon

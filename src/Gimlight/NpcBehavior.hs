@@ -29,6 +29,7 @@ import           Gimlight.Dungeon.Map.Tile     (TileCollection)
 import           Gimlight.Dungeon.PathFinder   (getPathTo)
 import           Gimlight.Fov                  (calculateFov)
 import           Gimlight.Log                  (MessageLog)
+import           Gimlight.Prelude
 import           Linear.V2                     (V2 (V2))
 
 handleNpcTurns ::

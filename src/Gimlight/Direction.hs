@@ -7,9 +7,10 @@ module Gimlight.Direction
     , toUnitVector
     ) where
 
-import           GHC.Generics (Generic)
-import           GHC.Stack    (HasCallStack)
-import           Linear       (V2 (V2))
+import           GHC.Generics     (Generic)
+import           GHC.Stack        (HasCallStack)
+import           Gimlight.Prelude
+import           Linear           (V2 (V2))
 
 data Direction
     = North

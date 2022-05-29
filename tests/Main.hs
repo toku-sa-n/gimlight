@@ -18,6 +18,7 @@ import qualified Gimlight.Dungeon.Map.CellSpec
 import qualified Gimlight.Dungeon.Map.JSONReaderSpec
 import qualified Gimlight.Dungeon.Map.Tile.JSONReaderSpec
 import qualified Gimlight.FovSpec
+import           Gimlight.Prelude
 import qualified Gimlight.System.PathSpec
 import qualified Gimlight.System.RandomSpec
 import           Test.Hspec                               (Spec, describe,

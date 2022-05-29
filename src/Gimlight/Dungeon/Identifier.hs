@@ -5,7 +5,8 @@ module Gimlight.Dungeon.Identifier
     , isTown
     ) where
 
-import           GHC.Generics (Generic)
+import           GHC.Generics     (Generic)
+import           Gimlight.Prelude
 
 data Identifier
     = Beaeve

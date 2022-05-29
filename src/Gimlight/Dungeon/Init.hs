@@ -16,6 +16,7 @@ import           Gimlight.Dungeon.Map.Cell          (locateActorAt,
 import           Gimlight.Dungeon.Map.Tile          (TileCollection)
 import           Gimlight.Dungeon.Predefined.Beaeve (beaeve)
 import           Gimlight.IndexGenerator            (IndexGenerator)
+import           Gimlight.Prelude
 import           Linear.V2                          (V2 (V2))
 
 initDungeon :: TileCollection -> StateT IndexGenerator IO Dungeon

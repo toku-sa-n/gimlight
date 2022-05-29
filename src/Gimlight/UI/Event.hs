@@ -28,6 +28,7 @@ import           Gimlight.Player                   (handlePlayerAfterSelecting,
                                                     handlePlayerMoving,
                                                     handlePlayerPickingUp,
                                                     handlePlayerSelectingItem)
+import           Gimlight.Prelude
 import           Gimlight.UI.Types                 (AppEvent (AppInit, AppKeyboardInput, NewGameLoaded, ShowNextScene),
                                                     GameEventResponse,
                                                     GameWidgetEnv,

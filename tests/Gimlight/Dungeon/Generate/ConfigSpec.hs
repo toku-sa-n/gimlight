@@ -12,6 +12,7 @@ import           Gimlight.Dungeon.Generate.Config (config,
                                                    roomMinSizeMustBePositive)
 import           Gimlight.Generator               (generateNonPositive,
                                                    generatePositiveBigSmallNumbers)
+import           Gimlight.Prelude
 import           Gimlight.SetUp.TileFile          (tileFileForGeneration)
 import           Linear.V2                        (V2 (V2))
 import           Test.Hspec                       (Spec, describe, errorCall,

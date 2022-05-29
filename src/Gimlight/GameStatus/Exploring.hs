@@ -44,6 +44,7 @@ import           Gimlight.Dungeon.Map.Tile                       (TileCollection
 import qualified Gimlight.GameStatus.Exploring.DungeonTreeZipper as DS
 import           Gimlight.Log                                    (MessageLog)
 import qualified Gimlight.Log                                    as L
+import           Gimlight.Prelude
 import           Gimlight.Quest                                  (QuestCollection,
                                                                   handleWithTurnResult)
 import           Gimlight.TreeZipper                             (TreeZipper,

@@ -35,6 +35,7 @@ import           Gimlight.GameStatus.Talking           (TalkingHandler)
 import           Gimlight.IndexGenerator               (generator)
 import qualified Gimlight.Localization.Texts.Scene     as T (title, welcome)
 import qualified Gimlight.Log                          as L
+import           Gimlight.Prelude
 import           Gimlight.Quest                        (questCollection)
 import           Gimlight.TreeZipper                   (appendTree, goDownBy,
                                                         treeZipper)
