@@ -22,7 +22,7 @@ singleTileImagePath n
 
 readImageOrError :: FilePath -> IO (Image PixelRGBA8)
 readImageOrError =
-    fmap (convertRGBA8 . expectRight "Failed to load an image." . mapLeft pack) .
+    fmap (convertRGBA8 . expectRight "Failed to load an image" . mapLeft pack) .
     readImage
 
 numOfSeparatedTileImages :: Int
