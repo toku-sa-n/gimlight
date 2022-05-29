@@ -19,5 +19,5 @@ testExpectJust =
         it "panics if it receives a `Nothing` value." $
             evaluate (expectJust msg Nothing) `shouldThrow` errorCall msg
   where
-    v = "Marion"
-    msg = "We need a Marion."
+    v = "Marion" :: String
+    msg = "We need a Marion." :: String
