@@ -12,7 +12,6 @@ module Gimlight.SetUp.TileFile
 
 import           Codec.Picture             (Image (imageData), PixelRGBA8)
 import           Codec.Picture.Extra       (flipHorizontally, flipVertically)
-import           Data.Bits                 (Bits (bit, (.|.)))
 import           Data.Foldable             (foldlM)
 import           Data.List                 (transpose)
 import           Data.List.Split           (chunksOf)
@@ -88,7 +87,7 @@ identifierAndTileForDVH ::
     -> (Bool, Bool, Bool)
     -> (TileId, Tile)
 identifierAndTileForDVH path idx tileGen img (d, v, h) =
-    ((path, tileFlagsSetter d v h idx), tileGen (transformImage d v h img))
+    ((path, idx), tileGen (transformImage d v h img))
 
 transformImage :: Bool -> Bool -> Bool -> Image PixelRGBA8 -> Image PixelRGBA8
 transformImage d v h =
@@ -110,12 +109,3 @@ swapImageXY img =
                    transpose $
                    chunksOf tileWidth $ chunksOf 4 $ V.toList $ imageData img)
         }
-
-tileFlagsSetter :: Bool -> Bool -> Bool -> Int -> Int
-tileFlagsSetter d v h =
-    (setBitWhen d 29 .|. setBitWhen v 30 .|. setBitWhen h 31 .|.)
-  where
-    setBitWhen cond b =
-        if cond
-            then bit b
-            else 0
