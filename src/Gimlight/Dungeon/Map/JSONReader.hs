@@ -87,7 +87,7 @@ getTileIdOfNthLayer n json pathToMap =
             (fmap Just . (\(x, y) -> (, y) <$> canonicalizeIdentifier x)) .
             second (ident -) $
             expectJust
-                ("Invalid tile GID: " <> pack (show ident))
+                ("Invalid tile GID: " <> showt ident)
                 (find ((clearAllFlags ident >=) . snd) $
                  getSourceAndFirstGid json)
     canonicalizeIdentifier path =
