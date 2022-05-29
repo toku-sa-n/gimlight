@@ -16,7 +16,6 @@ module Gimlight.Dungeon.Generate.Config
     ) where
 
 import           Control.Lens     (_1, _2, view)
-import           Data.Text        (pack)
 import           Gimlight.Prelude
 import           Linear.V2        (V2 (V2))
 
@@ -70,18 +69,17 @@ roomMinSizeMustBePositive = "The minimum room size must be positive."
 roomMinIsLargerThanRoomMax :: Int -> Int -> Text
 roomMinIsLargerThanRoomMax rmin rmax =
     "The room minimum size " <>
-    pack (show rmin) <>
-    " is larger than or equal to the room maximum size " <>
-    pack (show rmax) <> "."
+    showt rmin <>
+    " is larger than or equal to the room maximum size " <> showt rmax <> "."
 
 roomMaxSizeIsLargerThanRoomWidth :: Int -> Int -> Text
 roomMaxSizeIsLargerThanRoomWidth rmax width =
     "The room maximum size " <>
-    pack (show rmax) <>
-    " is larger than or equal to the map width " <> pack (show width) <> "."
+    showt rmax <>
+    " is larger than or equal to the map width " <> showt width <> "."
 
 roomMaxSizeIsLargerThanRoomHeight :: Int -> Int -> Text
 roomMaxSizeIsLargerThanRoomHeight rmax height =
     "The room maximum size " <>
-    pack (show rmax) <>
-    " is larger than or equal to the map height " <> pack (show height) <> "."
+    showt rmax <>
+    " is larger than or equal to the map height " <> showt height <> "."
