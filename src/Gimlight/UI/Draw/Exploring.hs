@@ -12,7 +12,7 @@ import           Control.Monad                   (guard)
 import           Data.Array                      ((!))
 import qualified Data.Map                        as Map
 import           Data.Maybe                      (catMaybes, mapMaybe)
-import           Data.Text                       (Text, pack, unpack)
+import           Data.Text                       (pack, unpack)
 import           Data.Vector.Storable.ByteString (vectorToByteString)
 import           Gimlight.Actor                  (getArmor,
                                                   getCurrentExperiencePoint,

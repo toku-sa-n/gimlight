@@ -9,7 +9,6 @@ module Gimlight.Item.SomeItem
     ) where
 
 import           Data.OpenUnion        (Union, typesExhausted, (@>))
-import           Data.Text             (Text)
 import           Gimlight.Item         (Item)
 import qualified Gimlight.Item         as I
 import           Gimlight.Item.Armor   (Armor)

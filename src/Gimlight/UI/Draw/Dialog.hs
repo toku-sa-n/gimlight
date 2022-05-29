@@ -9,7 +9,6 @@ module Gimlight.UI.Draw.Dialog
     , normalTextStyle
     ) where
 
-import           Data.Text              (Text)
 import           Gimlight.Prelude
 import           Gimlight.UI.Draw.Fonts (bold)
 import           Gimlight.UI.Types      (GameWidgetNode)

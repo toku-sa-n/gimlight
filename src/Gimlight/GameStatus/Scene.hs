@@ -16,7 +16,6 @@ import           Control.Lens                  (makeLenses, view, (&), (.~),
                                                 (^.))
 import           Data.List.NonEmpty            (NonEmpty)
 import qualified Data.List.NonEmpty            as N
-import           Data.Text                     (Text)
 import           GHC.Generics                  (Generic)
 import           Gimlight.GameStatus.Exploring (ExploringHandler)
 import           Gimlight.Localization         (MultilingualText)

@@ -3,7 +3,6 @@ module Gimlight.Actor.Friendly
     ) where
 
 import           Control.Monad.State              (State)
-import           Data.Text                        (Text)
 import           Gimlight.Actor                   (Actor,
                                                    ActorKind (FriendlyNpc),
                                                    actor)
