@@ -6,7 +6,7 @@ module Gimlight.UI.Draw.Exploring
 
 import           Codec.Picture                   (Image (imageData, imageHeight, imageWidth),
                                                   PixelRGBA8)
-import           Control.Lens                    (Ixed (ix), (^?!), (^?))
+import           Control.Lens                    (Ixed (ix), (^?!))
 import           Control.Monad                   (guard)
 import           Data.Array                      ((!))
 import qualified Data.Map                        as Map

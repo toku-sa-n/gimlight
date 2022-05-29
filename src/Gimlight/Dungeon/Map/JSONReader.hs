@@ -6,7 +6,7 @@ module Gimlight.Dungeon.Map.JSONReader
     ( readMapFile
     ) where
 
-import           Control.Lens              (Ixed (ix), (^..), (^?))
+import           Control.Lens              (Ixed (ix), (^..))
 import           Control.Monad             (unless)
 import           Control.Monad.Except      (ExceptT (ExceptT), runExceptT)
 import           Control.Monad.Trans.Maybe (MaybeT (MaybeT), maybeToExceptT)
