@@ -4,6 +4,7 @@ module Gimlight.UI.Draw.KeyEvent
     ( withKeyEvents
     ) where
 
+import           Gimlight.Prelude
 import           Gimlight.UI.Types (AppEvent (AppKeyboardInput))
 import           Monomer           (WidgetNode, keystroke)
 

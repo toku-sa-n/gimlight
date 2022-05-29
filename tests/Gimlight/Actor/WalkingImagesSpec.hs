@@ -11,6 +11,7 @@ import qualified Data.Map                     as Map
 import           Gimlight.Actor.WalkingImages (numOfPatterns,
                                                readIntegratedImagesRecursive)
 import           Gimlight.Direction           (Direction, allDirections)
+import           Gimlight.Prelude
 import           Test.Hspec                   (Spec, describe, it, runIO)
 
 spec :: Spec

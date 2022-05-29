@@ -3,7 +3,8 @@ module Gimlight.Generator
     , generatePositiveBigSmallNumbers
     ) where
 
-import           Test.QuickCheck (Arbitrary (arbitrary), Gen, suchThat)
+import           Gimlight.Prelude
+import           Test.QuickCheck  (Arbitrary (arbitrary), Gen, suchThat)
 
 generateNonPositive :: Gen Int
 generateNonPositive = negate . abs <$> arbitrary

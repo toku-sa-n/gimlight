@@ -18,6 +18,7 @@ import           Gimlight.GameStatus.Talking.Part (SelectionHandler,
                                                    getChoices, getQuestion,
                                                    getSelectingIndex)
 import           Gimlight.Localization            (getLocalizedText)
+import           Gimlight.Prelude
 import           Gimlight.UI.Draw.Config          (windowWidth)
 import           Gimlight.UI.Draw.Dialog          (dialog, heading, normalText)
 import qualified Gimlight.UI.Draw.Dialog          as Dialog

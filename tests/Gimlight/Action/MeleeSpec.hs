@@ -27,6 +27,7 @@ import           Gimlight.Dungeon.Map.CellSpec (emptyCellMap, locateItemsActors,
 import           Gimlight.Dungeon.Map.TileSpec (mockTileCollection)
 import           Gimlight.IndexGenerator       (IndexGenerator, generator)
 import           Gimlight.Log                  (MessageLog)
+import           Gimlight.Prelude
 import           Linear                        (V2 (V2))
 import           Test.Hspec                    (Spec, describe, it, shouldBe)
 

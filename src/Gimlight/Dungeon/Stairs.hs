@@ -4,8 +4,9 @@ module Gimlight.Dungeon.Stairs
     ( StairsPair(..)
     ) where
 
-import           GHC.Generics   (Generic)
-import           Gimlight.Coord (Coord)
+import           GHC.Generics     (Generic)
+import           Gimlight.Coord   (Coord)
+import           Gimlight.Prelude
 
 data StairsPair =
     StairsPair

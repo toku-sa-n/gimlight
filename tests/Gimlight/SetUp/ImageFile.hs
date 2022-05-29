@@ -3,7 +3,8 @@ module Gimlight.SetUp.ImageFile
     , singleTileImagePath
     ) where
 
-import           Codec.Picture (Image, PixelRGBA8, convertRGBA8, readImage)
+import           Codec.Picture    (Image, PixelRGBA8, convertRGBA8, readImage)
+import           Gimlight.Prelude
 
 singleTileImage :: Int -> IO (Image PixelRGBA8)
 singleTileImage = readImageOrError . singleTileImagePath

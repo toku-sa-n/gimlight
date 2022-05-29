@@ -11,6 +11,7 @@ import           Gimlight.Actor.Identifier        (Identifier)
 import           Gimlight.Actor.Status            (Status)
 import           Gimlight.GameStatus.Talking.Part (TalkingPart)
 import           Gimlight.IndexGenerator          (IndexGenerator)
+import           Gimlight.Prelude
 
 friendly ::
        Identifier

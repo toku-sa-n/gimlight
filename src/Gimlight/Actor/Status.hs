@@ -28,6 +28,7 @@ import           Gimlight.Localization            (MultilingualText)
 import qualified Gimlight.Localization.Texts      as T
 import           Gimlight.Log                     (MessageLog)
 import qualified Gimlight.Log                     as M
+import           Gimlight.Prelude
 
 data Status =
     Status

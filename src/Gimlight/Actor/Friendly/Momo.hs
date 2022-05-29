@@ -17,6 +17,7 @@ import           Gimlight.GameStatus.Talking.Part (TalkingPart,
                                                    updateQuestHandler)
 import           Gimlight.IndexGenerator          (IndexGenerator)
 import qualified Gimlight.Localization.Texts      as T
+import           Gimlight.Prelude
 import           Gimlight.Quest                   (Inquiry (IsEnoughBatsKilled, IsKillBatsCompleted, IsKillBatsStarted),
                                                    Updater (CompleteKillBats, StartKillBats))
 

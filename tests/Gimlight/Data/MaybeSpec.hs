@@ -4,6 +4,7 @@ module Gimlight.Data.MaybeSpec
 
 import           Control.Exception   (evaluate)
 import           Gimlight.Data.Maybe (expectJust)
+import           Gimlight.Prelude
 import           Test.Hspec          (Spec, describe, errorCall, it, shouldBe,
                                       shouldThrow)
 

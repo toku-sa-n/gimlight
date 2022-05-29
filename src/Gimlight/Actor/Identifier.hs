@@ -8,6 +8,7 @@ module Gimlight.Actor.Identifier
 import           GHC.Generics                (Generic)
 import           Gimlight.Localization       (MultilingualText)
 import qualified Gimlight.Localization.Texts as T
+import           Gimlight.Prelude
 
 data Identifier
     = Orc

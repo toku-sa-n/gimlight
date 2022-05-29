@@ -10,6 +10,7 @@ import           Gimlight.Actor            (updateWalkingImage)
 import qualified Gimlight.Actor            as A
 import           Gimlight.Direction        (Direction, toUnitVector)
 import           Gimlight.Dungeon.Map.Cell (locateActorAt, removeActorAt)
+import           Gimlight.Prelude
 
 meleeAction :: Direction -> Action
 meleeAction direction srcPosition tc cm =

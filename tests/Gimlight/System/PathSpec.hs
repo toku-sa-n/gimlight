@@ -2,6 +2,7 @@ module Gimlight.System.PathSpec
     ( spec
     ) where
 
+import           Gimlight.Prelude
 import           Gimlight.System.Path (canonicalizeToUnixStyleRelativePath)
 import           Test.Hspec           (Spec, describe, it, runIO, shouldBe)
 

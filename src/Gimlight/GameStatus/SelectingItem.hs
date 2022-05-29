@@ -15,6 +15,7 @@ module Gimlight.GameStatus.SelectingItem
 import           GHC.Generics                  (Generic)
 import           Gimlight.GameStatus.Exploring (ExploringHandler)
 import           Gimlight.Item.SomeItem        (SomeItem)
+import           Gimlight.Prelude
 
 data Reason
     = Drop

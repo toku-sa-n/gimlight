@@ -7,6 +7,7 @@ module Gimlight.Game
 import           Gimlight.GameConfig     (initConfig)
 import           Gimlight.GameModel      (GameModel (GameModel, config, status))
 import           Gimlight.GameStatus     (GameStatus (SelectingLocale))
+import           Gimlight.Prelude
 import           Gimlight.UI.Draw        (drawUI)
 import           Gimlight.UI.Draw.Config (windowHeight, windowWidth)
 import           Gimlight.UI.Draw.Fonts  (bold, regular)

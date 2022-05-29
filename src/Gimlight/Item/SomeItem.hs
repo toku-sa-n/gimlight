@@ -17,6 +17,7 @@ import           Gimlight.Item.Book    (Book)
 import           Gimlight.Item.Heal    (Heal)
 import           Gimlight.Item.Weapon  (Weapon)
 import           Gimlight.Localization (MultilingualText)
+import           Gimlight.Prelude
 
 type SomeItem = Union '[ Item Heal, Item Book, Item Weapon, Item Armor]
 

@@ -23,6 +23,7 @@ import           Gimlight.Dungeon.Map.CellSpec (emptyCellMap, locateItemsActors)
 import           Gimlight.Dungeon.Map.TileSpec (mockTileCollection, unwalkable)
 import           Gimlight.IndexGenerator       (generator)
 import qualified Gimlight.Localization.Texts   as T
+import           Gimlight.Prelude
 import           Linear.V2                     (V2 (V2))
 import           Test.Hspec                    (Expectation, Spec, it, shouldBe)
 

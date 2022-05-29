@@ -16,6 +16,7 @@ import           Gimlight.Dungeon.Map.Cell   (Error (ItemNotFound),
 import           Gimlight.Inventory          (addItem)
 import           Gimlight.Item.SomeItem      (getName)
 import qualified Gimlight.Localization.Texts as T
+import           Gimlight.Prelude
 
 pickUpAction :: Action
 pickUpAction position tc cm =

@@ -4,6 +4,7 @@ module Gimlight.Data.EitherSpec
 
 import           Control.Exception    (evaluate)
 import           Gimlight.Data.Either (expectRight)
+import           Gimlight.Prelude
 import           Test.Hspec           (Spec, describe, errorCall, it, shouldBe,
                                        shouldThrow)
 

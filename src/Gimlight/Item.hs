@@ -12,6 +12,7 @@ module Gimlight.Item
 import           Data.Text             (Text)
 import           GHC.Generics          (Generic)
 import           Gimlight.Localization (MultilingualText)
+import           Gimlight.Prelude
 
 data Item a =
     Item

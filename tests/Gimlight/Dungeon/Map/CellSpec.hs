@@ -26,6 +26,7 @@ import           Gimlight.Dungeon.Map.Tile     (TileCollection)
 import           Gimlight.Dungeon.Map.TileSpec (mockTileCollection)
 import           Gimlight.Item.Defined         (herb)
 import           Gimlight.Item.SomeItem        (SomeItem)
+import           Gimlight.Prelude
 import           Linear                        (V2 (V2))
 import           Test.Hspec                    (Spec, describe, it, shouldBe)
 

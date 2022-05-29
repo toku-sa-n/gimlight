@@ -10,6 +10,7 @@ import           Gimlight.GameStatus.Scene (SceneHandler,
                                             getBackgroundImagePath,
                                             getCurrentScene, text)
 import           Gimlight.Localization     (getLocalizedText)
+import           Gimlight.Prelude
 import           Gimlight.UI.Draw.Fonts    (bold)
 import           Gimlight.UI.Draw.KeyEvent (withKeyEvents)
 import           Gimlight.UI.Types         (AppEvent (ShowNextScene),

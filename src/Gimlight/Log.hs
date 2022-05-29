@@ -8,6 +8,7 @@ module Gimlight.Log
     ) where
 
 import           Gimlight.Localization (MultilingualText)
+import           Gimlight.Prelude
 
 type Message = MultilingualText
 

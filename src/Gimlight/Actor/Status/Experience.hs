@@ -9,7 +9,8 @@ module Gimlight.Actor.Status.Experience
     , pointForNextLevel
     ) where
 
-import           GHC.Generics (Generic)
+import           GHC.Generics     (Generic)
+import           Gimlight.Prelude
 
 data Experience =
     Experience

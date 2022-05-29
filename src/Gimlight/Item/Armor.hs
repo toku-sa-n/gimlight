@@ -4,7 +4,8 @@ module Gimlight.Item.Armor
     , getDefence
     ) where
 
-import           Gimlight.Item (Item, getEffect)
+import           Gimlight.Item    (Item, getEffect)
+import           Gimlight.Prelude
 
 newtype Armor =
     Armor

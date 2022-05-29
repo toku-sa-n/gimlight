@@ -12,6 +12,7 @@ import           Gimlight.Dungeon.Map.Cell  (CellMap)
 import           Gimlight.Dungeon.Map.Tile  (TileCollection)
 import           Gimlight.Item.Book         (Book)
 import           Gimlight.Log               (MessageLog)
+import           Gimlight.Prelude
 
 data ActionStatus
     = Ok

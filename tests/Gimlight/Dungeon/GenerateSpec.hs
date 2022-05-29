@@ -27,6 +27,7 @@ import           Gimlight.Dungeon.Map.Tile            (TileCollection)
 import           Gimlight.Dungeon.Map.Tile.JSONReader (addTileFile)
 import           Gimlight.IndexGenerator              (IndexGenerator,
                                                        generator)
+import           Gimlight.Prelude
 import           Gimlight.SetUp.TileFile              (tileFileForGeneration)
 import           Linear.V2                            (V2 (V2))
 import           System.Random                        (StdGen, mkStdGen)

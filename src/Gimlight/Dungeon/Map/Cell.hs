@@ -51,6 +51,7 @@ import           Gimlight.Dungeon.Map.Tile (TileCollection, TileId)
 import qualified Gimlight.Dungeon.Map.Tile as Tile
 import           Gimlight.Fov              (calculateFov)
 import           Gimlight.Item.SomeItem    (SomeItem)
+import           Gimlight.Prelude
 import           Linear.V2                 (V2 (V2))
 
 data Error

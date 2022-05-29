@@ -15,8 +15,9 @@ module Gimlight.Dungeon.Generate.Config
     , roomMaxSizeIsLargerThanRoomHeight
     ) where
 
-import           Control.Lens (_1, _2, view)
-import           Linear.V2    (V2 (V2))
+import           Control.Lens     (_1, _2, view)
+import           Gimlight.Prelude
+import           Linear.V2        (V2 (V2))
 
 data Config =
     Config

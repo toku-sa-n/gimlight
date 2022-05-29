@@ -3,6 +3,7 @@ module Gimlight.System.Path
     ) where
 
 import           Control.Monad    ((>=>))
+import           Gimlight.Prelude
 import           System.Directory (canonicalizePath,
                                    makeRelativeToCurrentDirectory)
 import           System.Info      (os)

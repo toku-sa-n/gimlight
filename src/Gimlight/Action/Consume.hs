@@ -28,6 +28,7 @@ import           Gimlight.Item.SomeItem      (SomeItem, getName,
                                               isUsableManyTimes)
 import           Gimlight.Item.Weapon        (Weapon)
 import qualified Gimlight.Localization.Texts as T
+import           Gimlight.Prelude
 
 consumeAction :: Int -> Action
 consumeAction n position tc cm =

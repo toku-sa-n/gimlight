@@ -4,7 +4,8 @@ module Gimlight.Item.Weapon
     , getPower
     ) where
 
-import           Gimlight.Item (Item, getEffect)
+import           Gimlight.Item    (Item, getEffect)
+import           Gimlight.Prelude
 
 newtype Weapon =
     Weapon

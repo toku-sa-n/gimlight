@@ -13,6 +13,7 @@ import           Codec.Picture             (Image, PixelRGBA8)
 import           Data.Foldable             (foldlM)
 import           Data.Map                  (empty, singleton, union)
 import           Gimlight.Dungeon.Map.Tile (Tile, TileCollection, TileId, tile)
+import           Gimlight.Prelude
 import           Gimlight.SetUp.ImageFile  (singleTileImage)
 
 tilesInUnitedTileFile :: IO TileCollection

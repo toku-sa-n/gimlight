@@ -6,6 +6,7 @@ module Gimlight.Localization.Texts.Scene
     ) where
 
 import           Gimlight.Localization (MultilingualText, multilingualText)
+import           Gimlight.Prelude
 
 title :: [MultilingualText]
 title = fmap (uncurry multilingualText) texts

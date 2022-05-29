@@ -7,6 +7,7 @@ module Gimlight.GameModel
 
 import           Gimlight.GameConfig (GameConfig)
 import           Gimlight.GameStatus (GameStatus)
+import           Gimlight.Prelude
 
 data GameModel =
     GameModel

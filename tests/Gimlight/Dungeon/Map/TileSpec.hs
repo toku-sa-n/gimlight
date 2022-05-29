@@ -10,6 +10,7 @@ import           Codec.Picture             (PixelRGBA8 (PixelRGBA8),
                                             generateImage)
 import           Data.Map                  (fromList)
 import           Gimlight.Dungeon.Map.Tile (TileCollection, TileId, tile)
+import           Gimlight.Prelude
 import           Gimlight.UI.Draw.Config   (tileHeight, tileWidth)
 
 mockTileCollection :: TileCollection

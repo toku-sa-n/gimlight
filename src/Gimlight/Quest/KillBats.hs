@@ -14,6 +14,7 @@ module Gimlight.Quest.KillBats
 import           GHC.Generics                (Generic)
 import qualified Gimlight.Actor.Identifier   as A
 import qualified Gimlight.Dungeon.Identifier as D
+import           Gimlight.Prelude
 
 data KillBats
     = NotStarted

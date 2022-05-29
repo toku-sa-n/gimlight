@@ -7,6 +7,7 @@ module Gimlight.UI.Types
 
 import           Data.Text          (Text)
 import           Gimlight.GameModel (GameModel)
+import           Gimlight.Prelude
 import           Monomer            (AppEventResponse, WidgetEnv, WidgetNode)
 
 data AppEvent

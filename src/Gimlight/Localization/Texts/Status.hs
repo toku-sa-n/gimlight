@@ -11,6 +11,7 @@ module Gimlight.Localization.Texts.Status
     ) where
 
 import           Gimlight.Localization (MultilingualText, multilingualText)
+import           Gimlight.Prelude
 import           TextShow              (TextShow (showt))
 
 level :: MultilingualText

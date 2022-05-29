@@ -28,6 +28,7 @@ import           Gimlight.Dungeon.Identifier (Identifier)
 import           Gimlight.Dungeon.Map.Cell   (CellMap, walkableFloors)
 import           Gimlight.Dungeon.Map.Tile   (TileCollection)
 import           Gimlight.Dungeon.Stairs     (StairsPair (StairsPair, downStairs, upStairs))
+import           Gimlight.Prelude
 
 -- We do not store the positions of stairs in `CellMap` because it is
 -- difficult to guarantee that there is only one upstairs on the map.

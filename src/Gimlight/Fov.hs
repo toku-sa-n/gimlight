@@ -3,9 +3,10 @@ module Gimlight.Fov
     , calculateFov
     ) where
 
-import           Data.Array     (Array, array, bounds, (!), (//))
-import           Gimlight.Coord (Coord)
-import           Linear.V2      (V2 (..))
+import           Data.Array       (Array, array, bounds, (!), (//))
+import           Gimlight.Coord   (Coord)
+import           Gimlight.Prelude
+import           Linear.V2        (V2 (..))
 
 type Fov = Array (V2 Int) Bool
 

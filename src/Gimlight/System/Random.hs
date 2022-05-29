@@ -6,6 +6,7 @@ module Gimlight.System.Random
     ) where
 
 import           Control.Monad.State (MonadState (get, put), State)
+import           Gimlight.Prelude
 import           System.Random       (Random (random, randomR), RandomGen)
 
 choice :: (RandomGen g) => [a] -> g -> (a, g)

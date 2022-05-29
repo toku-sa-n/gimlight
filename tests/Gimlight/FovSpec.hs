@@ -2,10 +2,11 @@ module Gimlight.FovSpec
     ( spec
     ) where
 
-import           Data.Array   (listArray)
-import           Gimlight.Fov (calculateFov)
-import           Linear.V2    (V2 (V2))
-import           Test.Hspec   (Spec, describe, it, shouldBe)
+import           Data.Array       (listArray)
+import           Gimlight.Fov     (calculateFov)
+import           Gimlight.Prelude
+import           Linear.V2        (V2 (V2))
+import           Test.Hspec       (Spec, describe, it, shouldBe)
 
 spec :: Spec
 spec = do

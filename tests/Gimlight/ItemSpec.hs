@@ -11,6 +11,7 @@ import           Gimlight.Item         (Item, item)
 import           Gimlight.Item.Armor   (Armor, armor)
 import           Gimlight.Item.Weapon  (Weapon, weapon)
 import           Gimlight.Localization (MultilingualText, multilingualText)
+import           Gimlight.Prelude
 
 goldenArmor :: Item Armor
 goldenArmor =

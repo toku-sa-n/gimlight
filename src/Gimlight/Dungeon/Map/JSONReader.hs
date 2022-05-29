@@ -25,6 +25,7 @@ import           Gimlight.Data.Maybe       (expectJust)
 import           Gimlight.Dungeon.Map.Cell (CellMap, TileIdLayer (TileIdLayer),
                                             cellMap)
 import           Gimlight.Dungeon.Map.Tile (TileId)
+import           Gimlight.Prelude
 import           Gimlight.System.Path      (canonicalizeToUnixStyleRelativePath)
 import           Linear.V2                 (V2 (V2))
 import           System.FilePath           (dropFileName, (</>))

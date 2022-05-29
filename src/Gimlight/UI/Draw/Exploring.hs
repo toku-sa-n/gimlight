@@ -41,6 +41,7 @@ import           Gimlight.Item                   (getName)
 import           Gimlight.Item.SomeItem          (getIconImagePath)
 import           Gimlight.Localization           (getLocalizedText)
 import qualified Gimlight.Localization.Texts     as T
+import           Gimlight.Prelude
 import           Gimlight.UI.Draw.Config         (logRows, tileColumns,
                                                   tileHeight, tileRows,
                                                   tileWidth, windowWidth)

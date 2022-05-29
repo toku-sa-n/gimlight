@@ -11,6 +11,7 @@ import           GHC.Generics                  (Generic)
 import           Gimlight.GameStatus.Exploring (ExploringHandler,
                                                 processAfterPlayerTurn)
 import           Gimlight.Localization         (MultilingualText)
+import           Gimlight.Prelude
 
 data ReadingBookHandler =
     ReadingBookHandler

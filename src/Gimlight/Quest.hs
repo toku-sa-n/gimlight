@@ -15,6 +15,7 @@ import           Control.Lens                (makeLenses, (%~), (&), (.~), (^.))
 import           GHC.Generics                (Generic)
 import qualified Gimlight.Actor.Identifier   as A
 import qualified Gimlight.Dungeon.Identifier as D
+import           Gimlight.Prelude
 import           Gimlight.Quest.KillBats     (KillBats)
 import qualified Gimlight.Quest.KillBats     as KillBats
 

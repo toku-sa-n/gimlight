@@ -5,6 +5,7 @@ module Gimlight.Dungeon.Map.Tile.JSONReaderSpec
 import           Control.Monad.IO.Class               (liftIO)
 import           Data.Map                             (empty)
 import           Gimlight.Dungeon.Map.Tile.JSONReader (addTileFile)
+import           Gimlight.Prelude
 import           Gimlight.SetUp.TileFile              (tileWithoutProperties,
                                                        tilesInSingleTileFile,
                                                        tilesInUnitedTileFile,

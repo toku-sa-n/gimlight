@@ -10,6 +10,7 @@ module Gimlight.UI.Draw.Dialog
     ) where
 
 import           Data.Text              (Text)
+import           Gimlight.Prelude
 import           Gimlight.UI.Draw.Fonts (bold)
 import           Gimlight.UI.Types      (GameWidgetNode)
 import           Monomer                (CmbBgColor (bgColor),

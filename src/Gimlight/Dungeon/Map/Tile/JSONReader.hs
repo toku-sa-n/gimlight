@@ -18,6 +18,7 @@ import           Data.Map                  (insert)
 import           Data.Text                 (Text, unpack)
 import           Gimlight.Data.Maybe       (expectJust)
 import           Gimlight.Dungeon.Map.Tile (Tile, TileCollection, tile)
+import           Gimlight.Prelude
 import           Gimlight.System.Path      (canonicalizeToUnixStyleRelativePath)
 import           Gimlight.UI.Draw.Config   (tileHeight, tileWidth)
 import           System.FilePath           (dropFileName, (</>))
