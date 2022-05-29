@@ -10,7 +10,7 @@ module Gimlight.Inventory
     , maxSlot
     ) where
 
-import           Control.Lens           (makeLenses, (%~), (.~))
+import           Control.Lens           (makeLenses, (%~))
 import           GHC.Generics           (Generic)
 import           Gimlight.Item.SomeItem (SomeItem)
 import           Gimlight.Prelude
