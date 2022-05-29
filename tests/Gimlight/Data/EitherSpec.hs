@@ -16,7 +16,7 @@ testExpectRight :: Spec
 testExpectRight =
     describe "expectRight" $ do
         it "returns the inner value if `Right` is passed." $
-            expectRight msg (Right r :: Either String String) `shouldBe` r
+            expectRight msg (Right r :: Either Text Text) `shouldBe` r
         it "panics with the error message if `Left` is passed." $
             evaluate (expectRight msg (Left p)) `shouldThrow`
             errorCall (unpack $ msg <> ": " <> showt p)

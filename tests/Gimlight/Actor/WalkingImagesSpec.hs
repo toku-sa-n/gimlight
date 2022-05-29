@@ -4,12 +4,12 @@ module Gimlight.Actor.WalkingImagesSpec
     ( spec
     ) where
 
-import           Codec.Picture                (Image, PixelRGBA8, convertRGBA8,
-                                               readImage)
+import           Codec.Picture                (Image, PixelRGBA8, convertRGBA8)
 import           Data.Either.Combinators      (fromRight')
 import qualified Data.Map                     as Map
 import           Gimlight.Actor.WalkingImages (numOfPatterns,
                                                readIntegratedImagesRecursive)
+import           Gimlight.Codec.Picture       (readImage)
 import           Gimlight.Direction           (Direction, allDirections)
 import           Gimlight.Prelude
 import           Test.Hspec                   (Spec, describe, it, runIO)
@@ -35,7 +35,7 @@ readPatternImage d =
     fmap (convertRGBA8 . fromRight') . readImage . patternImagePath d
 
 patternImagePath :: Direction -> Int -> FilePath
-patternImagePath direction n = directory <> show direction <> show n <> ".png"
+patternImagePath direction n = directory <> showt direction <> showt n <> ".png"
   where
     directory = "tests/images/walking/separated/"
 

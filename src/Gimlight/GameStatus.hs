@@ -37,10 +37,10 @@ import qualified Gimlight.Localization.Texts.Scene     as T (title, welcome)
 import qualified Gimlight.Log                          as L
 import           Gimlight.Prelude
 import           Gimlight.Quest                        (questCollection)
+import           Gimlight.System.Directory             (getFilesRecursive)
 import           Gimlight.TreeZipper                   (appendTree, goDownBy,
                                                         treeZipper)
 import           Linear.V2                             (V2 (V2))
-import           System.Directory.Recursive            (getFilesRecursive)
 import           System.Random                         (getStdGen)
 
 data GameStatus
