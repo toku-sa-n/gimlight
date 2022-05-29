@@ -43,7 +43,6 @@ import           Control.Lens                     (makeLenses, (%~), (&), (.~),
 import           Control.Monad.State              (State)
 import           Control.Monad.Writer             (MonadWriter (writer), Writer)
 import           Data.OpenUnion                   (Union, liftUnion, restrict)
-import           Data.Text                        (Text)
 import           GHC.Generics                     (Generic)
 import           Gimlight.Actor.Identifier        (Identifier, toName)
 import qualified Gimlight.Actor.Identifier        as Identifier

@@ -5,7 +5,6 @@ module Gimlight.UI.Event
     ) where
 
 import           Data.Maybe                        (fromMaybe)
-import           Data.Text                         (Text)
 import           Gimlight.Direction                (Direction (..))
 import           Gimlight.GameConfig               (Language (English, Japanese),
                                                     setLocale)

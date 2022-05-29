@@ -15,7 +15,7 @@ import           Data.Aeson.Lens           (_Bool, _Integer, _String, key,
                                             values)
 import           Data.Either               (fromRight)
 import           Data.Map                  (insert)
-import           Data.Text                 (Text, unpack)
+import           Data.Text                 (unpack)
 import           Gimlight.Data.Maybe       (expectJust)
 import           Gimlight.Dungeon.Map.Tile (Tile, TileCollection, tile)
 import           Gimlight.Prelude

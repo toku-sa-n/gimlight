@@ -9,7 +9,6 @@ module Gimlight.Item
     , isUsableManyTimes
     ) where
 
-import           Data.Text             (Text)
 import           GHC.Generics          (Generic)
 import           Gimlight.Localization (MultilingualText)
 import           Gimlight.Prelude

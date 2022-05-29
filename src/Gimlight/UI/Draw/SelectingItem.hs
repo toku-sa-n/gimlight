@@ -2,7 +2,6 @@ module Gimlight.UI.Draw.SelectingItem
     ( drawSelectingItem
     ) where
 
-import           Data.Text                         (Text)
 import           Gimlight.GameConfig               (GameConfig)
 import           Gimlight.GameStatus.SelectingItem (Reason (Drop, Use),
                                                     SelectingItemHandler,

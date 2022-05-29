@@ -7,7 +7,7 @@ module Gimlight.Localization
     , getLocalizedText
     ) where
 
-import           Data.Text           (Text, append)
+import           Data.Text           (append)
 import           GHC.Generics        (Generic)
 import           Gimlight.GameConfig (GameConfig, Language (English, Japanese),
                                       getLocale)
