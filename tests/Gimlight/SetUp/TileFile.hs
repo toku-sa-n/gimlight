@@ -5,7 +5,6 @@ module Gimlight.SetUp.TileFile
     , unitedTileFile
     , singleTileFile
     , unwalkableTileFile
-    , haskellTilePath
     , tileFileForGeneration
     , tileWithoutProperties
     ) where
@@ -47,9 +46,6 @@ singleTileFile = "tests/tiles/single.json"
 
 unwalkableTileFile :: FilePath
 unwalkableTileFile = "tests/tiles/unwalkable.json"
-
-haskellTilePath :: FilePath
-haskellTilePath = "tests/tiles/haskell.json"
 
 tileWithoutProperties :: FilePath
 tileWithoutProperties = "tests/tiles/no_properties.json"
