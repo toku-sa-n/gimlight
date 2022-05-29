@@ -8,7 +8,7 @@ module Gimlight.Prelude
     ) where
 
 import           Control.Lens       (Ixed (ix), makeLenses, (%%~), (%=), (%~),
-                                     (+=), (.=), (.~), (?~), (^.), (^?))
+                                     (+=), (.=), (.~), (?~), (^.), (^..), (^?))
 import           Data.Function      ((&))
 import           Data.Text          (Text)
 import           Gimlight.Data.Text

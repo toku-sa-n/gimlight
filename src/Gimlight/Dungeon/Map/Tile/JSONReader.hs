@@ -8,7 +8,7 @@ import           Codec.Picture             (Image (imageHeight, imageWidth),
                                             PixelRGBA8, convertRGBA8, readImage)
 import           Codec.Picture.Extra       (crop)
 import           Control.Applicative       (ZipList (ZipList, getZipList))
-import           Control.Lens              (filtered, has, only, (^..))
+import           Control.Lens              (filtered, has, only)
 import           Control.Monad             (guard, unless)
 import           Data.Aeson.Lens           (_Bool, _Integer, _String, key,
                                             values)
