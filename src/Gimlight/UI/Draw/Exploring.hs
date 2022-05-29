@@ -23,6 +23,7 @@ import           Gimlight.Actor                  (getArmor,
                                                   getPower, getWeapon,
                                                   walkingImagePath)
 import           Gimlight.Coord                  (Coord)
+import           Gimlight.Data.Text              (showt)
 import           Gimlight.Dungeon                (cellMap)
 import           Gimlight.Dungeon.Map.Cell       (CellMap, exploredMap, lower,
                                                   playerActor, playerFov,
@@ -59,7 +60,6 @@ import           Monomer                         (CmbBgColor (bgColor),
                                                   imageMem, label, label_,
                                                   vstack, zstack)
 import qualified Monomer.Lens                    as L
-import           TextShow                        (TextShow (showt))
 
 drawExploring :: ExploringHandler -> GameConfig -> GameWidgetNode
 drawExploring eh c =

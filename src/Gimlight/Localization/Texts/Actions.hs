@@ -17,9 +17,9 @@ module Gimlight.Localization.Texts.Actions
     , equipped
     ) where
 
+import           Gimlight.Data.Text    (showt)
 import           Gimlight.Localization (MultilingualText, multilingualText)
 import           Gimlight.Prelude
-import           TextShow              (TextShow (showt))
 
 youCannotMoveThere :: MultilingualText
 youCannotMoveThere = multilingualText "That way is blocked." "その方向には進めない．"
