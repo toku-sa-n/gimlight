@@ -3,7 +3,7 @@ module Gimlight.Action.Drop
     ) where
 
 import           Control.Arrow               (Arrow (first))
-import           Control.Lens                ((&), (.~))
+import           Control.Lens                ((.~))
 import           Control.Monad.State         (runStateT)
 import           Control.Monad.Writer        (tell)
 import           Data.Maybe                  (fromMaybe)

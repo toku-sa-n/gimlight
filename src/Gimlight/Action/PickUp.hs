@@ -2,7 +2,7 @@ module Gimlight.Action.PickUp
     ( pickUpAction
     ) where
 
-import           Control.Lens                ((%%~), (&))
+import           Control.Lens                ((%%~))
 import           Control.Monad.State         (StateT (runStateT))
 import           Control.Monad.Writer        (tell)
 import           Data.Either.Combinators     (maybeToRight)

@@ -4,7 +4,7 @@ module Gimlight.UI.Draw.Scene
     ( drawScene
     ) where
 
-import           Control.Lens              ((&), (.~))
+import           Control.Lens              ((.~))
 import           Gimlight.GameConfig       (GameConfig)
 import           Gimlight.GameStatus.Scene (SceneHandler,
                                             getBackgroundImagePath,

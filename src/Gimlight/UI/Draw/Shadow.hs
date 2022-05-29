@@ -2,7 +2,7 @@ module Gimlight.UI.Draw.Shadow
     ( shadow
     ) where
 
-import           Control.Lens      ((&), (.~))
+import           Control.Lens      ((.~))
 import           Gimlight.Prelude
 import           Gimlight.UI.Types (GameWidgetNode)
 import           Monomer           (CmbBgColor (bgColor),

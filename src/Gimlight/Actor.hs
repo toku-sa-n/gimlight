@@ -38,8 +38,7 @@ module Gimlight.Actor
     ) where
 
 import           Control.Applicative              ((<|>))
-import           Control.Lens                     (makeLenses, (%~), (&), (.~),
-                                                   (?~))
+import           Control.Lens                     (makeLenses, (%~), (.~), (?~))
 import           Control.Monad.State              (State)
 import           Control.Monad.Writer             (MonadWriter (writer), Writer)
 import           Data.OpenUnion                   (Union, liftUnion, restrict)

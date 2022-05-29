@@ -4,7 +4,7 @@ module Gimlight.Action.Consume
     ( consumeAction
     ) where
 
-import           Control.Lens                ((&), (.~))
+import           Control.Lens                ((.~))
 import           Control.Monad.State         (StateT (runStateT), execStateT)
 import           Control.Monad.Writer        (tell)
 import           Data.OpenUnion              (Union, liftUnion, reUnion,
