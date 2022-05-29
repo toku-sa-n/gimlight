@@ -10,16 +10,11 @@ module Gimlight.SetUp.TileFile
     , tileWithoutProperties
     ) where
 
-import           Codec.Picture             (Image (imageData), PixelRGBA8)
-import           Codec.Picture.Extra       (flipHorizontally, flipVertically)
+import           Codec.Picture             (Image, PixelRGBA8)
 import           Data.Foldable             (foldlM)
-import           Data.List                 (transpose)
-import           Data.List.Split           (chunksOf)
 import           Data.Map                  (fromList)
-import qualified Data.Vector.Storable      as V
 import           Gimlight.Dungeon.Map.Tile (Tile, TileCollection, TileId, tile)
 import           Gimlight.SetUp.ImageFile  (singleTileImage)
-import           Gimlight.UI.Draw.Config   (tileWidth)
 
 tilesInUnitedTileFile :: IO TileCollection
 tilesInUnitedTileFile = fromList <$> foldlM foldStep [] [0 .. 5]
@@ -76,36 +71,12 @@ tileList ::
     -> (Image PixelRGBA8 -> Tile)
     -> Image PixelRGBA8
     -> [(TileId, Tile)]
-tileList path idx tileGen img =
-    [identifierAndTileForDVH path idx tileGen img (False, False, False)]
+tileList path idx tileGen img = [identifierAndTileForDVH path idx tileGen img]
 
 identifierAndTileForDVH ::
        FilePath
     -> Int
     -> (Image PixelRGBA8 -> Tile)
     -> Image PixelRGBA8
-    -> (Bool, Bool, Bool)
     -> (TileId, Tile)
-identifierAndTileForDVH path idx tileGen img (d, v, h) =
-    ((path, idx), tileGen (transformImage d v h img))
-
-transformImage :: Bool -> Bool -> Bool -> Image PixelRGBA8 -> Image PixelRGBA8
-transformImage d v h =
-    applyFunctionWhen h flipHorizontally .
-    applyFunctionWhen v flipVertically . applyFunctionWhen d swapImageXY
-  where
-    applyFunctionWhen cond f =
-        if cond
-            then f
-            else id
-
-swapImageXY :: Image PixelRGBA8 -> Image PixelRGBA8
-swapImageXY img =
-    img
-        { imageData =
-              V.fromList
-                  (concat $
-                   concat $
-                   transpose $
-                   chunksOf tileWidth $ chunksOf 4 $ V.toList $ imageData img)
-        }
+identifierAndTileForDVH path idx tileGen img = ((path, idx), tileGen img)
