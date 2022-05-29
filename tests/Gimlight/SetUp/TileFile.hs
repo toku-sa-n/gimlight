@@ -12,17 +12,17 @@ module Gimlight.SetUp.TileFile
 
 import           Codec.Picture             (Image, PixelRGBA8)
 import           Data.Foldable             (foldlM)
-import           Data.Map                  (fromList, singleton)
+import           Data.Map                  (empty, singleton, union)
 import           Gimlight.Dungeon.Map.Tile (Tile, TileCollection, TileId, tile)
 import           Gimlight.SetUp.ImageFile  (singleTileImage)
 
 tilesInUnitedTileFile :: IO TileCollection
-tilesInUnitedTileFile = fromList <$> foldlM foldStep [] [0 .. 5]
+tilesInUnitedTileFile = foldlM foldStep empty [0 .. 5]
   where
-    foldStep :: [(TileId, Tile)] -> Int -> IO [(TileId, Tile)]
     foldStep acc x =
         fmap
-            ((acc ++) . (: []) . tileList unitedTileFile x (tileOfIndex x))
+            (union acc .
+             uncurry singleton . tileList unitedTileFile x (tileOfIndex x))
             (singleTileImage x)
     tileOfIndex n
         | n == unwalkableAndUntransparentTile = tile False False
