@@ -57,15 +57,6 @@ tileWithoutProperties = "tests/tiles/no_properties.json"
 tileFileForGeneration :: FilePath
 tileFileForGeneration = "tests/tiles/generate.json"
 
--- Transformation order is important. Tiled's specification says
---
--- > When rendering an orthographic or isometric tile, the order of
---   operations matters. The diagonal flip is done first, followed by the
---   horizontal and vertical flips. The diagonal flip should flip the
---   bottom left and top right corners of the tile, and can be thought of
---   as an x/y axis swap. For hexagonal tiles, the order does not matter.
---
--- See: https://docs.mapeditor.org/en/stable/reference/global-tile-ids/#gid-tile-flipping
 tileList ::
        FilePath
     -> Int
