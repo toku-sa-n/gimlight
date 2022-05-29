@@ -78,36 +78,27 @@ getBoolProperty property json =
     key "value" .
     _Bool
 
-readAndCutTileImageFile ::
-       FilePath -> IO [Codec.Picture.Image Codec.Picture.PixelRGBA8]
+readAndCutTileImageFile :: FilePath -> IO [Image PixelRGBA8]
 readAndCutTileImageFile = fmap cutTileMap . readTileImageFile
 
-readTileImageFile ::
-       FilePath -> IO (Codec.Picture.Image Codec.Picture.PixelRGBA8)
+readTileImageFile :: FilePath -> IO (Image PixelRGBA8)
 readTileImageFile path = do
-    tileFile <-
-        Codec.Picture.convertRGBA8 . fromRight (error noSuchImage) <$>
-        Codec.Picture.readImage path
+    tileFile <- convertRGBA8 . fromRight (error noSuchImage) <$> readImage path
     guard $ isValidTileMapFile tileFile
     return tileFile
   where
     noSuchImage = path ++ " not found."
 
-isValidTileMapFile :: Codec.Picture.Image Codec.Picture.PixelRGBA8 -> Bool
+isValidTileMapFile :: Image PixelRGBA8 -> Bool
 isValidTileMapFile img =
-    Codec.Picture.imageWidth img `mod` tileWidth == 0 &&
-    Codec.Picture.imageHeight img `mod`
-    tileHeight ==
-    0
+    imageWidth img `mod` tileWidth == 0 && imageHeight img `mod` tileHeight == 0
 
-cutTileMap ::
-       Codec.Picture.Image Codec.Picture.PixelRGBA8
-    -> [Codec.Picture.Image Codec.Picture.PixelRGBA8]
+cutTileMap :: Image PixelRGBA8 -> [Image PixelRGBA8]
 cutTileMap img =
     [ crop (col * tileWidth) (row * tileHeight) tileWidth tileHeight img
     | row <- [0 .. rowsOfTilesInImage - 1]
     , col <- [0 .. columnsOfTilesInImage - 1]
     ]
   where
-    columnsOfTilesInImage = Codec.Picture.imageWidth img `div` tileWidth
-    rowsOfTilesInImage = Codec.Picture.imageHeight img `div` tileHeight
+    columnsOfTilesInImage = imageWidth img `div` tileWidth
+    rowsOfTilesInImage = imageHeight img `div` tileHeight
