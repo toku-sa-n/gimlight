@@ -22,7 +22,7 @@ tilesInUnitedTileFile = foldlM foldStep empty [0 .. 5]
     foldStep acc x =
         fmap
             (union acc .
-             uncurry singleton . tileList unitedTileFile x (tileOfIndex x))
+             uncurry singleton . tileIdAndTile unitedTileFile x (tileOfIndex x))
             (singleTileImage x)
     tileOfIndex n
         | n == unwalkableAndUntransparentTile = tile False False
@@ -31,12 +31,12 @@ tilesInUnitedTileFile = foldlM foldStep empty [0 .. 5]
 
 tilesInSingleTileFile :: IO TileCollection
 tilesInSingleTileFile =
-    uncurry singleton . tileList singleTileFile 0 (tile True True) <$>
+    uncurry singleton . tileIdAndTile singleTileFile 0 (tile True True) <$>
     singleTileImage 0
 
 tilesInUnwalkableTileFile :: IO TileCollection
 tilesInUnwalkableTileFile =
-    uncurry singleton . tileList unwalkableTileFile 0 (tile False True) <$>
+    uncurry singleton . tileIdAndTile unwalkableTileFile 0 (tile False True) <$>
     singleTileImage 0
 
 unitedTileFile :: FilePath
@@ -57,10 +57,10 @@ tileWithoutProperties = "tests/tiles/no_properties.json"
 tileFileForGeneration :: FilePath
 tileFileForGeneration = "tests/tiles/generate.json"
 
-tileList ::
+tileIdAndTile ::
        FilePath
     -> Int
     -> (Image PixelRGBA8 -> Tile)
     -> Image PixelRGBA8
     -> (TileId, Tile)
-tileList path idx tileGen img = ((path, idx), tileGen img)
+tileIdAndTile path idx tileGen img = ((path, idx), tileGen img)
