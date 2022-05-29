@@ -12,7 +12,7 @@ module Gimlight.SetUp.TileFile
 
 import           Codec.Picture             (Image, PixelRGBA8)
 import           Data.Foldable             (foldlM)
-import           Data.Map                  (fromList)
+import           Data.Map                  (fromList, singleton)
 import           Gimlight.Dungeon.Map.Tile (Tile, TileCollection, TileId, tile)
 import           Gimlight.SetUp.ImageFile  (singleTileImage)
 
@@ -31,12 +31,12 @@ tilesInUnitedTileFile = fromList <$> foldlM foldStep [] [0 .. 5]
 
 tilesInSingleTileFile :: IO TileCollection
 tilesInSingleTileFile =
-    fromList . (: []) . tileList singleTileFile 0 (tile True True) <$>
+    uncurry singleton . tileList singleTileFile 0 (tile True True) <$>
     singleTileImage 0
 
 tilesInUnwalkableTileFile :: IO TileCollection
 tilesInUnwalkableTileFile =
-    fromList . (: []) . tileList unwalkableTileFile 0 (tile False True) <$>
+    uncurry singleton . tileList unwalkableTileFile 0 (tile False True) <$>
     singleTileImage 0
 
 unitedTileFile :: FilePath
