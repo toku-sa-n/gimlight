@@ -11,7 +11,6 @@ import           Control.Monad                   (guard)
 import           Data.Array                      ((!))
 import qualified Data.Map                        as Map
 import           Data.Maybe                      (catMaybes, mapMaybe)
-import           Data.Text                       (unpack)
 import           Data.Vector.Storable.ByteString (vectorToByteString)
 import           Gimlight.Actor                  (getArmor,
                                                   getCurrentExperiencePoint,
@@ -181,9 +180,7 @@ mapActors eh = mapMaybe actorToImage $ positionsAndActors cm
         Just (imageToWidget img name `styleBasic` style position)
       where
         name = actor ^. walkingImagePath <> showt dir <> showt pat
-        img =
-            eh ^?! walkingImages .
-            ix (unpack $ actor ^. walkingImagePath, dir, pat)
+        img = eh ^?! walkingImages . ix (actor ^. walkingImagePath, dir, pat)
         (dir, pat) = getDirectionAndPattern actor
 
 topLeftCoord :: CellMap -> Coord

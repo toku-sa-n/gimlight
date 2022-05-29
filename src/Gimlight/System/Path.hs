@@ -1,11 +1,16 @@
 module Gimlight.System.Path
     ( canonicalizeToUnixStyleRelativePath
+    , dropFileName
+    , takeExtension
+    , (</>)
     ) where
 
 import           Control.Monad    ((>=>))
+import           Data.Text        (pack, replace, unpack)
 import           Gimlight.Prelude
 import           System.Directory (canonicalizePath,
                                    makeRelativeToCurrentDirectory)
+import qualified System.FilePath  as FilePath
 import           System.Info      (os)
 
 -- `canonicalizePath` makes a Windows-style path on Windows. However, all
@@ -20,9 +25,17 @@ canonicalizeToUnixStyleRelativePath =
         "mingw32" -> fmap replaceBackSlash . toRel
         _         -> toRel
   where
-    toRel = canonicalizePath >=> makeRelativeToCurrentDirectory
+    toRel =
+        canonicalizePath . unpack >=> fmap pack . makeRelativeToCurrentDirectory
 
-replaceBackSlash :: String -> String
-replaceBackSlash []        = []
-replaceBackSlash ('\\':xs) = '/' : replaceBackSlash xs
-replaceBackSlash (x:xs)    = x : replaceBackSlash xs
+dropFileName :: FilePath -> FilePath
+dropFileName = pack . FilePath.dropFileName . unpack
+
+takeExtension :: FilePath -> FilePath
+takeExtension = pack . FilePath.takeExtension . unpack
+
+(</>) :: Text -> Text -> Text
+x </> y = pack $ unpack x FilePath.</> unpack y
+
+replaceBackSlash :: Text -> Text
+replaceBackSlash = replace "\\" "/"

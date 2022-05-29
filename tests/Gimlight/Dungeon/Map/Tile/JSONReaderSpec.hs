@@ -4,6 +4,7 @@ module Gimlight.Dungeon.Map.Tile.JSONReaderSpec
 
 import           Control.Monad.IO.Class               (liftIO)
 import           Data.Map                             (empty)
+import           Data.Text                            (unpack)
 import           Gimlight.Dungeon.Map.Tile.JSONReader (addTileFile)
 import           Gimlight.Prelude
 import           Gimlight.SetUp.TileFile              (tileWithoutProperties,
@@ -40,4 +41,5 @@ testErrorOnReadingTileWithoutProperties =
     it "panics if it tries to read a tile that misses necessary proeprties." $
     addTileFile "tests/tiles/no_properties.json" empty `shouldThrow`
     errorCall
-        (tileWithoutProperties ++ ": Some tiles miss necessary properties.")
+        (unpack $
+         tileWithoutProperties <> ": Some tiles miss necessary properties.")

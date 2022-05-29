@@ -4,24 +4,23 @@ module Gimlight.Actor.WalkingImages
     , numOfPatterns
     ) where
 
-import           Codec.Picture              (Image, PixelRGBA8, convertRGBA8,
-                                             readImage)
-import           Codec.Picture.Extra        (crop)
-import           Control.Lens               ((^?!))
-import           Data.Foldable              (foldlM)
-import           Data.Ix                    (Ix (range))
-import           Data.Map                   (Map, empty, fromList, union)
-import           Data.Text                  (pack)
-import           Gimlight.Coord             (Coord)
-import           Gimlight.Data.Either       (expectRight)
-import           Gimlight.Direction         (Direction (East, North, NorthEast, NorthWest, South, SouthEast, SouthWest, West),
-                                             allDirections)
+import           Codec.Picture             (Image, PixelRGBA8, convertRGBA8)
+import           Codec.Picture.Extra       (crop)
+import           Control.Lens              ((^?!))
+import           Data.Foldable             (foldlM)
+import           Data.Ix                   (Ix (range))
+import           Data.Map                  (Map, empty, fromList, union)
+import           Gimlight.Codec.Picture    (readImage)
+import           Gimlight.Coord            (Coord)
+import           Gimlight.Data.Either      (expectRight)
+import           Gimlight.Direction        (Direction (East, North, NorthEast, NorthWest, South, SouthEast, SouthWest, West),
+                                            allDirections)
 import           Gimlight.Prelude
-import           Gimlight.System.Path       (canonicalizeToUnixStyleRelativePath)
-import           Gimlight.UI.Draw.Config    (tileHeight, tileWidth)
-import           Linear                     (V2 (V2))
-import           System.Directory.Recursive (getFilesRecursive)
-import           System.FilePath            (takeExtension)
+import           Gimlight.System.Directory (getFilesRecursive)
+import           Gimlight.System.Path      (canonicalizeToUnixStyleRelativePath,
+                                            takeExtension)
+import           Gimlight.UI.Draw.Config   (tileHeight, tileWidth)
+import           Linear                    (V2 (V2))
 
 type WalkingImages = Map (FilePath, Direction, Int) (Image PixelRGBA8)
 
@@ -38,7 +37,7 @@ readAndParseIntegratedImage :: FilePath -> IO WalkingImages
 readAndParseIntegratedImage path =
     readImage path >>= splitImage path . convertRGBA8 . unwrap
   where
-    unwrap = expectRight $ "Failed to read an image: " <> pack path
+    unwrap = expectRight $ "Failed to read an image: " <> path
 
 splitImage :: FilePath -> Image PixelRGBA8 -> IO WalkingImages
 splitImage path img = do

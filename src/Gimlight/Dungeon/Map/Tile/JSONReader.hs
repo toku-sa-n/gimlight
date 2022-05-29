@@ -5,7 +5,7 @@ module Gimlight.Dungeon.Map.Tile.JSONReader
     ) where
 
 import           Codec.Picture             (Image (imageHeight, imageWidth),
-                                            PixelRGBA8, convertRGBA8, readImage)
+                                            PixelRGBA8, convertRGBA8)
 import           Codec.Picture.Extra       (crop)
 import           Control.Applicative       (ZipList (ZipList, getZipList))
 import           Control.Lens              (filtered, has, only)
@@ -14,13 +14,13 @@ import           Data.Aeson.Lens           (_Bool, _Integer, _String, key,
                                             values)
 import           Data.Either               (fromRight)
 import           Data.Map                  (insert)
-import           Data.Text                 (pack, unpack)
+import           Gimlight.Codec.Picture    (readImage)
 import           Gimlight.Data.Maybe       (expectJust)
 import           Gimlight.Dungeon.Map.Tile (Tile, TileCollection, tile)
 import           Gimlight.Prelude
-import           Gimlight.System.Path      (canonicalizeToUnixStyleRelativePath)
+import           Gimlight.System.Path      (canonicalizeToUnixStyleRelativePath,
+                                            dropFileName, (</>))
 import           Gimlight.UI.Draw.Config   (tileHeight, tileWidth)
-import           System.FilePath           (dropFileName, (</>))
 
 addTileFile :: FilePath -> TileCollection -> IO TileCollection
 addTileFile path tc = do
@@ -29,7 +29,7 @@ addTileFile path tc = do
         (foldl (\acc (idx, t) -> insert (canonicalizedPathToJson, idx) t acc) tc)
         (indexAndTile path)
 
-getImagePath :: String -> Text
+getImagePath :: Text -> Text
 getImagePath json =
     expectJust
         "A tile file must associate with an image file."
@@ -38,8 +38,8 @@ getImagePath json =
 indexAndTile :: FilePath -> IO [(Int, Tile)]
 indexAndTile path = do
     json <- readFile path
-    let imagePath = dropFileName path </> unpack (getImagePath json)
-    unless (allTilesHaveNecessaryProperties json) $ error $ pack path <>
+    let imagePath = dropFileName path </> getImagePath json
+    unless (allTilesHaveNecessaryProperties json) $ error $ path <>
         ": Some tiles miss necessary properties."
     fmap
         (zip (getIds json) . getZipList .
@@ -50,28 +50,28 @@ indexAndTile path = do
     transparents = ZipList . getTransparent
     walkables = ZipList . getWalkable
 
-allTilesHaveNecessaryProperties :: String -> Bool
+allTilesHaveNecessaryProperties :: Text -> Bool
 allTilesHaveNecessaryProperties json =
     all ((== tileCount) . length . (json &)) [getTransparent, getWalkable]
   where
     tileCount = getTileCount json
 
-getTileCount :: String -> Int
+getTileCount :: Text -> Int
 getTileCount json =
     fromInteger $ expectJust "No tilecount entry." $ json ^? key "tilecount" .
     _Integer
 
-getIds :: String -> [Int]
+getIds :: Text -> [Int]
 getIds json =
     fromInteger <$> json ^.. (key "tiles" . values . key "id") . _Integer
 
-getTransparent :: String -> [Bool]
+getTransparent :: Text -> [Bool]
 getTransparent = getBoolProperty "transparent"
 
-getWalkable :: String -> [Bool]
+getWalkable :: Text -> [Bool]
 getWalkable = getBoolProperty "walkable"
 
-getBoolProperty :: Text -> String -> [Bool]
+getBoolProperty :: Text -> Text -> [Bool]
 getBoolProperty property json =
     json ^.. key "tiles" . values . key "properties" . values .
     filtered (has (key "name" . _String . only property)) .
@@ -87,7 +87,7 @@ readTileImageFile path = do
     guard $ isValidTileMapFile tileFile
     return tileFile
   where
-    noSuchImage = pack path <> " not found."
+    noSuchImage = path <> " not found."
 
 isValidTileMapFile :: Image PixelRGBA8 -> Bool
 isValidTileMapFile img =

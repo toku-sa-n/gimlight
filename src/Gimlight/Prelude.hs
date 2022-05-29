@@ -13,4 +13,4 @@ import           Data.Function      ((&))
 import           Data.Text          (Text)
 import           Gimlight.Data.Text
 import           Gimlight.Err
-import           Prelude            hiding (error)
+import           Prelude            hiding (FilePath, String, error, readFile)

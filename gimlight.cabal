@@ -92,6 +92,7 @@ library
                       , Gimlight.Actor.Status
                       , Gimlight.Actor.Status.Hp
                       , Gimlight.Actor.WalkingImages
+                      , Gimlight.Codec.Picture
                       , Gimlight.Coord
                       , Gimlight.Data.Either
                       , Gimlight.Data.Maybe
@@ -122,6 +123,7 @@ library
                       , Gimlight.Localization.Texts
                       , Gimlight.Log
                       , Gimlight.Prelude
+                      , Gimlight.System.Directory
                       , Gimlight.System.Path
                       , Gimlight.System.Random
                       , Gimlight.UI.Draw.Config

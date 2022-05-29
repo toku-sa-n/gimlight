@@ -2,6 +2,7 @@ module Gimlight.Dungeon.Map.JSONReaderSpec
     ( spec
     ) where
 
+import           Data.Text                       (unpack)
 import           Gimlight.Dungeon.Map.Cell       (CellMap)
 import           Gimlight.Dungeon.Map.JSONReader (readMapFile)
 import           Gimlight.Prelude
@@ -50,5 +51,6 @@ testReadMapUsingRotatedTiles =
     it "fails to load a map." $
     readMapFile mapUsingRotatedTiles `shouldThrow`
     errorCall
-        (mapUsingRotatedTiles ++
+        (unpack $
+         mapUsingRotatedTiles <>
          " contains rotated tiles. This game does not support them.")
