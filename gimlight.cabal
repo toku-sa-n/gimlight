@@ -106,6 +106,7 @@ library
                       , Gimlight.Dungeon.Map.Tile
                       , Gimlight.Dungeon.Map.Tile.JSONReader
                       , Gimlight.Dungeon.Stairs
+                      , Gimlight.Err
                       , Gimlight.Fov
                       , Gimlight.Game
                       , Gimlight.IndexGenerator

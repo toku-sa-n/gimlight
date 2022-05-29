@@ -3,6 +3,7 @@ module Gimlight.Data.MaybeSpec
     ) where
 
 import           Control.Exception   (evaluate)
+import           Data.Text           (unpack)
 import           Gimlight.Data.Maybe (expectJust)
 import           Gimlight.Prelude
 import           Test.Hspec          (Spec, describe, errorCall, it, shouldBe,
@@ -17,7 +18,8 @@ testExpectJust =
         it "returns the inner value if it receives a `Just` value." $
             expectJust msg (Just v) `shouldBe` v
         it "panics if it receives a `Nothing` value." $
-            evaluate (expectJust msg Nothing) `shouldThrow` errorCall msg
+            evaluate (unpack $ expectJust msg Nothing) `shouldThrow`
+            errorCall (unpack msg)
   where
-    v = "Marion" :: String
-    msg = "We need a Marion." :: String
+    v = "Marion" :: Text
+    msg = "We need a Marion."

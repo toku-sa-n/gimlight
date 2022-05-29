@@ -3,7 +3,11 @@ module Gimlight.SetUp.ImageFile
     , singleTileImagePath
     ) where
 
-import           Codec.Picture    (Image, PixelRGBA8, convertRGBA8, readImage)
+import           Codec.Picture           (Image, PixelRGBA8, convertRGBA8,
+                                          readImage)
+import           Data.Either.Combinators (mapLeft)
+import           Data.Text               (pack)
+import           Gimlight.Data.Either    (expectRight)
 import           Gimlight.Prelude
 
 singleTileImage :: Int -> IO (Image PixelRGBA8)
@@ -17,10 +21,9 @@ singleTileImagePath n
     indexToPath = "tests/images/tiles/single_" ++ show n ++ ".png"
 
 readImageOrError :: FilePath -> IO (Image PixelRGBA8)
-readImageOrError = fmap (convertRGBA8 . rightOrError) . readImage
-  where
-    rightOrError (Right x) = x
-    rightOrError (Left x)  = error $ "Failed to load an image: " ++ x
+readImageOrError =
+    fmap (convertRGBA8 . expectRight "Failed to load an image" . mapLeft pack) .
+    readImage
 
 numOfSeparatedTileImages :: Int
 numOfSeparatedTileImages = 6
