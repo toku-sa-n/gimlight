@@ -20,6 +20,6 @@ testExpectRight =
             evaluate (expectRight msg (Left p)) `shouldThrow`
             errorCall (msg ++ ": " ++ show p)
   where
-    r = "Sushi"
-    p = "Pizza"
-    msg = "Why not sushi!"
+    r = "Sushi" :: String
+    p = "Pizza" :: String
+    msg = "Why not sushi!" :: String
