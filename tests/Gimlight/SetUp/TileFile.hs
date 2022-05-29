@@ -22,7 +22,7 @@ tilesInUnitedTileFile = fromList <$> foldlM foldStep [] [0 .. 5]
     foldStep :: [(TileId, Tile)] -> Int -> IO [(TileId, Tile)]
     foldStep acc x =
         fmap
-            ((acc ++) . tileList unitedTileFile x (tileOfIndex x))
+            ((acc ++) . (: []) . tileList unitedTileFile x (tileOfIndex x))
             (singleTileImage x)
     tileOfIndex n
         | n == unwalkableAndUntransparentTile = tile False False
@@ -31,11 +31,12 @@ tilesInUnitedTileFile = fromList <$> foldlM foldStep [] [0 .. 5]
 
 tilesInSingleTileFile :: IO TileCollection
 tilesInSingleTileFile =
-    fromList . tileList singleTileFile 0 (tile True True) <$> singleTileImage 0
+    fromList . (: []) . tileList singleTileFile 0 (tile True True) <$>
+    singleTileImage 0
 
 tilesInUnwalkableTileFile :: IO TileCollection
 tilesInUnwalkableTileFile =
-    fromList . tileList unwalkableTileFile 0 (tile False True) <$>
+    fromList . (: []) . tileList unwalkableTileFile 0 (tile False True) <$>
     singleTileImage 0
 
 unitedTileFile :: FilePath
@@ -70,13 +71,5 @@ tileList ::
     -> Int
     -> (Image PixelRGBA8 -> Tile)
     -> Image PixelRGBA8
-    -> [(TileId, Tile)]
-tileList path idx tileGen img = [identifierAndTileForDVH path idx tileGen img]
-
-identifierAndTileForDVH ::
-       FilePath
-    -> Int
-    -> (Image PixelRGBA8 -> Tile)
-    -> Image PixelRGBA8
     -> (TileId, Tile)
-identifierAndTileForDVH path idx tileGen img = ((path, idx), tileGen img)
+tileList path idx tileGen img = ((path, idx), tileGen img)
