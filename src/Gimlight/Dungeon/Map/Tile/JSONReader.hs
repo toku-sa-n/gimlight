@@ -4,26 +4,20 @@ module Gimlight.Dungeon.Map.Tile.JSONReader
     ( addTileFile
     ) where
 
-import           Codec.Picture             (Image (imageData, imageHeight, imageWidth),
+import           Codec.Picture             (Image (imageHeight, imageWidth),
                                             PixelRGBA8, convertRGBA8, readImage)
-import           Codec.Picture.Extra       (crop, flipHorizontally,
-                                            flipVertically)
+import           Codec.Picture.Extra       (crop)
 import           Control.Applicative       (ZipList (ZipList, getZipList))
 import           Control.Lens              (filtered, has, only, (&), (^..),
                                             (^?))
 import           Control.Monad             (guard, unless)
 import           Data.Aeson.Lens           (_Bool, _Integer, _String, key,
                                             values)
-import           Data.Bits                 (Bits (bit), (.|.))
 import           Data.Either               (fromRight)
-import           Data.List                 (transpose)
-import           Data.List.Split           (chunksOf)
 import           Data.Map                  (insert)
 import           Data.Text                 (Text, unpack)
-import qualified Data.Vector.Storable      as V
 import           Gimlight.Data.Maybe       (expectJust)
-import           Gimlight.Dungeon.Map.Tile (Tile, TileCollection, getImage,
-                                            isTransparent, isWalkable, tile)
+import           Gimlight.Dungeon.Map.Tile (Tile, TileCollection, tile)
 import           Gimlight.System.Path      (canonicalizeToUnixStyleRelativePath)
 import           Gimlight.UI.Draw.Config   (tileHeight, tileWidth)
 import           System.FilePath           (dropFileName, (</>))
@@ -32,8 +26,7 @@ addTileFile :: FilePath -> TileCollection -> IO TileCollection
 addTileFile path tc = do
     canonicalizedPathToJson <- canonicalizeToUnixStyleRelativePath path
     fmap
-        (foldl (\acc (idx, t) -> insert (canonicalizedPathToJson, idx) t acc) tc .
-         generateTransformedTiles)
+        (foldl (\acc (idx, t) -> insert (canonicalizedPathToJson, idx) t acc) tc)
         (indexAndTile path)
 
 getImagePath :: String -> Text
@@ -41,36 +34,6 @@ getImagePath json =
     expectJust
         "A tile file must associate with an image file."
         (json ^? key "image" . _String)
-
-generateTransformedTiles :: [(Int, Tile)] -> [(Int, Tile)]
-generateTransformedTiles = concatMap $ uncurry generatePossibleTransformations
-  where
-    generatePossibleTransformations idx t =
-        [ ( transformationFlagsSetter d v h idx
-          , mapTileImage (transformImage d v h) t)
-        | (d, v, h) <- diagonalVertialHorizontal
-        ]
-    mapTileImage f t = tile (isWalkable t) (isTransparent t) (f $ getImage t)
-    transformImage d v h =
-        applyFunctionIf h flipHorizontally . applyFunctionIf v flipVertically .
-        applyFunctionIf d swapImageXY
-    swapImageXY :: Image PixelRGBA8 -> Image PixelRGBA8
-    swapImageXY img = img {imageData = swapVectorXY $ imageData img}
-    swapVectorXY =
-        V.fromList . concat . concat . transpose . chunksOf tileWidth .
-        chunksOf 4 .
-        V.toList
-    transformationFlagsSetter :: Bool -> Bool -> Bool -> Int -> Int
-    transformationFlagsSetter d v h =
-        (setBitIf d 29 .|. setBitIf v 30 .|. setBitIf h 31 .|.)
-    setBitIf cond b
-        | cond = bit b
-        | otherwise = 0
-    applyFunctionIf cond f
-        | cond = f
-        | otherwise = id
-    diagonalVertialHorizontal =
-        (,,) <$> [False, True] <*> [False, True] <*> [False, True]
 
 indexAndTile :: FilePath -> IO [(Int, Tile)]
 indexAndTile path = do

@@ -1,11 +1,11 @@
-{ "columns":15,
+{ "columns":8,
  "image":"..\/images\/tiles\/cave.png",
- "imageheight":96,
- "imagewidth":720,
+ "imageheight":336,
+ "imagewidth":384,
  "margin":0,
- "name":"cave",
+ "name":"generate",
  "spacing":0,
- "tilecount":30,
+ "tilecount":56,
  "tiledversion":"1.7.2",
  "tileheight":48,
  "tiles":[
@@ -15,12 +15,12 @@
                 {
                  "name":"transparent",
                  "type":"bool",
-                 "value":true
+                 "value":false
                 }, 
                 {
                  "name":"walkable",
                  "type":"bool",
-                 "value":true
+                 "value":false
                 }]
         }, 
         {
@@ -323,12 +323,12 @@
                 {
                  "name":"transparent",
                  "type":"bool",
-                 "value":true
+                 "value":false
                 }, 
                 {
                  "name":"walkable",
                  "type":"bool",
-                 "value":true
+                 "value":false
                 }]
         }, 
         {
@@ -337,12 +337,12 @@
                 {
                  "name":"transparent",
                  "type":"bool",
-                 "value":true
+                 "value":false
                 }, 
                 {
                  "name":"walkable",
                  "type":"bool",
-                 "value":true
+                 "value":false
                 }]
         }, 
         {
@@ -428,15 +428,372 @@
                  "type":"bool",
                  "value":false
                 }]
+        }, 
+        {
+         "id":30,
+         "properties":[
+                {
+                 "name":"transparent",
+                 "type":"bool",
+                 "value":false
+                }, 
+                {
+                 "name":"walkable",
+                 "type":"bool",
+                 "value":false
+                }]
+        }, 
+        {
+         "id":31,
+         "properties":[
+                {
+                 "name":"transparent",
+                 "type":"bool",
+                 "value":false
+                }, 
+                {
+                 "name":"walkable",
+                 "type":"bool",
+                 "value":false
+                }]
+        }, 
+        {
+         "id":32,
+         "properties":[
+                {
+                 "name":"transparent",
+                 "type":"bool",
+                 "value":false
+                }, 
+                {
+                 "name":"walkable",
+                 "type":"bool",
+                 "value":false
+                }]
+        }, 
+        {
+         "id":33,
+         "properties":[
+                {
+                 "name":"transparent",
+                 "type":"bool",
+                 "value":false
+                }, 
+                {
+                 "name":"walkable",
+                 "type":"bool",
+                 "value":false
+                }]
+        }, 
+        {
+         "id":34,
+         "properties":[
+                {
+                 "name":"transparent",
+                 "type":"bool",
+                 "value":false
+                }, 
+                {
+                 "name":"walkable",
+                 "type":"bool",
+                 "value":false
+                }]
+        }, 
+        {
+         "id":35,
+         "properties":[
+                {
+                 "name":"transparent",
+                 "type":"bool",
+                 "value":false
+                }, 
+                {
+                 "name":"walkable",
+                 "type":"bool",
+                 "value":false
+                }]
+        }, 
+        {
+         "id":36,
+         "properties":[
+                {
+                 "name":"transparent",
+                 "type":"bool",
+                 "value":false
+                }, 
+                {
+                 "name":"walkable",
+                 "type":"bool",
+                 "value":false
+                }]
+        }, 
+        {
+         "id":37,
+         "properties":[
+                {
+                 "name":"transparent",
+                 "type":"bool",
+                 "value":false
+                }, 
+                {
+                 "name":"walkable",
+                 "type":"bool",
+                 "value":false
+                }]
+        }, 
+        {
+         "id":38,
+         "properties":[
+                {
+                 "name":"transparent",
+                 "type":"bool",
+                 "value":false
+                }, 
+                {
+                 "name":"walkable",
+                 "type":"bool",
+                 "value":false
+                }]
+        }, 
+        {
+         "id":39,
+         "properties":[
+                {
+                 "name":"transparent",
+                 "type":"bool",
+                 "value":false
+                }, 
+                {
+                 "name":"walkable",
+                 "type":"bool",
+                 "value":false
+                }]
+        }, 
+        {
+         "id":40,
+         "properties":[
+                {
+                 "name":"transparent",
+                 "type":"bool",
+                 "value":false
+                }, 
+                {
+                 "name":"walkable",
+                 "type":"bool",
+                 "value":false
+                }]
+        }, 
+        {
+         "id":41,
+         "properties":[
+                {
+                 "name":"transparent",
+                 "type":"bool",
+                 "value":false
+                }, 
+                {
+                 "name":"walkable",
+                 "type":"bool",
+                 "value":false
+                }]
+        }, 
+        {
+         "id":42,
+         "properties":[
+                {
+                 "name":"transparent",
+                 "type":"bool",
+                 "value":false
+                }, 
+                {
+                 "name":"walkable",
+                 "type":"bool",
+                 "value":false
+                }]
+        }, 
+        {
+         "id":43,
+         "properties":[
+                {
+                 "name":"transparent",
+                 "type":"bool",
+                 "value":false
+                }, 
+                {
+                 "name":"walkable",
+                 "type":"bool",
+                 "value":false
+                }]
+        }, 
+        {
+         "id":44,
+         "properties":[
+                {
+                 "name":"transparent",
+                 "type":"bool",
+                 "value":false
+                }, 
+                {
+                 "name":"walkable",
+                 "type":"bool",
+                 "value":false
+                }]
+        }, 
+        {
+         "id":45,
+         "properties":[
+                {
+                 "name":"transparent",
+                 "type":"bool",
+                 "value":false
+                }, 
+                {
+                 "name":"walkable",
+                 "type":"bool",
+                 "value":false
+                }]
+        }, 
+        {
+         "id":46,
+         "properties":[
+                {
+                 "name":"transparent",
+                 "type":"bool",
+                 "value":false
+                }, 
+                {
+                 "name":"walkable",
+                 "type":"bool",
+                 "value":false
+                }]
+        }, 
+        {
+         "id":47,
+         "properties":[
+                {
+                 "name":"transparent",
+                 "type":"bool",
+                 "value":false
+                }, 
+                {
+                 "name":"walkable",
+                 "type":"bool",
+                 "value":false
+                }]
+        }, 
+        {
+         "id":48,
+         "properties":[
+                {
+                 "name":"transparent",
+                 "type":"bool",
+                 "value":true
+                }, 
+                {
+                 "name":"walkable",
+                 "type":"bool",
+                 "value":true
+                }]
+        }, 
+        {
+         "id":49,
+         "properties":[
+                {
+                 "name":"transparent",
+                 "type":"bool",
+                 "value":true
+                }, 
+                {
+                 "name":"walkable",
+                 "type":"bool",
+                 "value":true
+                }]
+        }, 
+        {
+         "id":50,
+         "properties":[
+                {
+                 "name":"transparent",
+                 "type":"bool",
+                 "value":true
+                }, 
+                {
+                 "name":"walkable",
+                 "type":"bool",
+                 "value":true
+                }]
+        }, 
+        {
+         "id":51,
+         "properties":[
+                {
+                 "name":"transparent",
+                 "type":"bool",
+                 "value":true
+                }, 
+                {
+                 "name":"walkable",
+                 "type":"bool",
+                 "value":true
+                }]
+        }, 
+        {
+         "id":52,
+         "properties":[
+                {
+                 "name":"transparent",
+                 "type":"bool",
+                 "value":true
+                }, 
+                {
+                 "name":"walkable",
+                 "type":"bool",
+                 "value":true
+                }]
+        }, 
+        {
+         "id":53,
+         "properties":[
+                {
+                 "name":"transparent",
+                 "type":"bool",
+                 "value":true
+                }, 
+                {
+                 "name":"walkable",
+                 "type":"bool",
+                 "value":true
+                }]
+        }, 
+        {
+         "id":54,
+         "properties":[
+                {
+                 "name":"transparent",
+                 "type":"bool",
+                 "value":true
+                }, 
+                {
+                 "name":"walkable",
+                 "type":"bool",
+                 "value":true
+                }]
+        }, 
+        {
+         "id":55,
+         "properties":[
+                {
+                 "name":"transparent",
+                 "type":"bool",
+                 "value":true
+                }, 
+                {
+                 "name":"walkable",
+                 "type":"bool",
+                 "value":true
+                }]
         }],
  "tilewidth":48,
- "transformations":
-    {
-     "hflip":true,
-     "preferuntransformed":true,
-     "rotate":true,
-     "vflip":true
-    },
  "type":"tileset",
  "version":"1.6",
  "wangsets":[
@@ -444,49 +801,53 @@
          "colors":[
                 {
                  "color":"#ff0000",
-                 "name":"cave_wall",
+                 "name":"generate",
                  "probability":1,
                  "tile":-1
                 }],
-         "name":"cave",
+         "name":"generate",
          "tile":-1,
          "type":"mixed",
          "wangtiles":[
                 {
+                 "tileid":0,
+                 "wangid":[0, 0, 1, 0, 1, 0, 0, 0]
+                }, 
+                {
                  "tileid":1,
-                 "wangid":[1, 0, 0, 0, 0, 0, 0, 0]
+                 "wangid":[0, 0, 1, 0, 0, 0, 1, 0]
                 }, 
                 {
                  "tileid":2,
-                 "wangid":[1, 0, 1, 0, 0, 0, 0, 0]
+                 "wangid":[0, 0, 1, 1, 1, 0, 1, 0]
                 }, 
                 {
                  "tileid":3,
-                 "wangid":[1, 1, 1, 0, 0, 0, 0, 0]
+                 "wangid":[0, 0, 0, 0, 1, 1, 1, 0]
                 }, 
                 {
                  "tileid":4,
-                 "wangid":[1, 0, 0, 0, 1, 0, 0, 0]
+                 "wangid":[0, 0, 1, 1, 1, 0, 0, 0]
                 }, 
                 {
                  "tileid":5,
-                 "wangid":[1, 0, 1, 0, 1, 0, 0, 0]
+                 "wangid":[0, 0, 1, 1, 1, 1, 1, 0]
                 }, 
                 {
                  "tileid":6,
-                 "wangid":[1, 1, 1, 0, 1, 0, 0, 0]
+                 "wangid":[0, 0, 1, 0, 1, 1, 1, 0]
                 }, 
                 {
                  "tileid":7,
-                 "wangid":[1, 0, 1, 1, 1, 0, 0, 0]
+                 "wangid":[0, 0, 0, 0, 1, 0, 1, 0]
                 }, 
                 {
                  "tileid":8,
-                 "wangid":[1, 1, 1, 1, 1, 0, 0, 0]
+                 "wangid":[1, 0, 1, 0, 1, 0, 0, 0]
                 }, 
                 {
                  "tileid":9,
-                 "wangid":[1, 0, 1, 0, 1, 0, 1, 0]
+                 "wangid":[0, 0, 1, 0, 1, 0, 1, 0]
                 }, 
                 {
                  "tileid":10,
@@ -494,19 +855,143 @@
                 }, 
                 {
                  "tileid":11,
-                 "wangid":[1, 0, 1, 1, 1, 0, 1, 0]
+                 "wangid":[1, 0, 1, 1, 1, 0, 1, 1]
                 }, 
                 {
                  "tileid":12,
-                 "wangid":[1, 1, 1, 0, 1, 1, 1, 0]
-                }, 
-                {
-                 "tileid":13,
                  "wangid":[1, 1, 1, 1, 1, 1, 1, 0]
                 }, 
                 {
-                 "tileid":14,
+                 "tileid":13,
                  "wangid":[1, 1, 1, 1, 1, 1, 1, 1]
+                }, 
+                {
+                 "tileid":14,
+                 "wangid":[1, 0, 0, 0, 1, 1, 1, 1]
+                }, 
+                {
+                 "tileid":15,
+                 "wangid":[1, 0, 0, 0, 1, 0, 0, 0]
+                }, 
+                {
+                 "tileid":16,
+                 "wangid":[1, 0, 1, 1, 1, 0, 0, 0]
+                }, 
+                {
+                 "tileid":17,
+                 "wangid":[1, 0, 1, 0, 1, 1, 1, 0]
+                }, 
+                {
+                 "tileid":18,
+                 "wangid":[1, 0, 1, 0, 1, 0, 1, 0]
+                }, 
+                {
+                 "tileid":19,
+                 "wangid":[1, 1, 1, 1, 1, 0, 1, 0]
+                }, 
+                {
+                 "tileid":20,
+                 "wangid":[1, 1, 1, 0, 1, 1, 1, 1]
+                }, 
+                {
+                 "tileid":21,
+                 "wangid":[1, 1, 1, 0, 1, 0, 1, 1]
+                }, 
+                {
+                 "tileid":22,
+                 "wangid":[1, 0, 0, 0, 1, 0, 1, 1]
+                }, 
+                {
+                 "tileid":23,
+                 "wangid":[1, 0, 0, 0, 0, 0, 0, 0]
+                }, 
+                {
+                 "tileid":24,
+                 "wangid":[1, 1, 1, 0, 1, 0, 0, 0]
+                }, 
+                {
+                 "tileid":25,
+                 "wangid":[1, 0, 1, 0, 1, 0, 1, 1]
+                }, 
+                {
+                 "tileid":26,
+                 "wangid":[1, 0, 0, 0, 1, 0, 1, 0]
+                }, 
+                {
+                 "tileid":27,
+                 "wangid":[1, 1, 1, 1, 1, 0, 0, 0]
+                }, 
+                {
+                 "tileid":28,
+                 "wangid":[1, 0, 1, 1, 1, 1, 1, 1]
+                }, 
+                {
+                 "tileid":29,
+                 "wangid":[1, 0, 1, 1, 1, 1, 1, 0]
+                }, 
+                {
+                 "tileid":30,
+                 "wangid":[1, 0, 0, 0, 1, 1, 1, 0]
+                }, 
+                {
+                 "tileid":31,
+                 "wangid":[0, 0, 0, 0, 1, 0, 0, 0]
+                }, 
+                {
+                 "tileid":32,
+                 "wangid":[1, 0, 1, 0, 0, 0, 0, 0]
+                }, 
+                {
+                 "tileid":33,
+                 "wangid":[1, 0, 1, 0, 0, 0, 1, 0]
+                }, 
+                {
+                 "tileid":34,
+                 "wangid":[1, 0, 1, 1, 1, 0, 1, 0]
+                }, 
+                {
+                 "tileid":35,
+                 "wangid":[1, 1, 1, 0, 1, 1, 1, 0]
+                }, 
+                {
+                 "tileid":36,
+                 "wangid":[1, 1, 1, 1, 1, 0, 1, 1]
+                }, 
+                {
+                 "tileid":38,
+                 "wangid":[1, 0, 1, 0, 1, 1, 1, 1]
+                }, 
+                {
+                 "tileid":39,
+                 "wangid":[1, 0, 0, 0, 0, 0, 1, 0]
+                }, 
+                {
+                 "tileid":41,
+                 "wangid":[0, 0, 1, 0, 0, 0, 0, 0]
+                }, 
+                {
+                 "tileid":42,
+                 "wangid":[1, 1, 1, 0, 0, 0, 1, 0]
+                }, 
+                {
+                 "tileid":43,
+                 "wangid":[1, 0, 0, 0, 0, 0, 1, 1]
+                }, 
+                {
+                 "tileid":44,
+                 "wangid":[1, 1, 1, 0, 0, 0, 0, 0]
+                }, 
+                {
+                 "tileid":45,
+                 "wangid":[1, 1, 1, 0, 0, 0, 1, 1]
+                }, 
+                {
+                 "tileid":46,
+                 "wangid":[1, 0, 1, 0, 0, 0, 1, 1]
+                }, 
+                {
+                 "tileid":47,
+                 "wangid":[0, 0, 0, 0, 0, 0, 1, 0]
                 }]
         }]
 }

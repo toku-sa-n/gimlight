@@ -14,7 +14,7 @@ import           Data.Aeson.Lens           (_Array, _Integer, _String, key,
                                             values)
 import           Data.Array                (array)
 import           Data.Bifunctor            (Bifunctor (second))
-import           Data.Bits                 (Bits (clearBit))
+import           Data.Bits                 (Bits (clearBit, testBit))
 import           Data.Either.Combinators   (maybeToRight)
 import           Data.List                 (find, sortBy)
 import           Data.Text                 (unpack)
@@ -78,12 +78,17 @@ getTileIdOfNthLayer n json pathToMap =
     MaybeT . traverse (mapM rawIdToIdentifier) $ getDataOfNthLayer n json
   where
     rawIdToIdentifier 0 = return Nothing
-    rawIdToIdentifier ident =
-        (fmap Just . (\(x, y) -> (, y) <$> canonicalizeIdentifier x)) .
-        second (ident -) $
-        expectJust
-            ("Invalid tile GID: " ++ show ident)
-            (find ((clearAllFlags ident >=) . snd) $ getSourceAndFirstGid json)
+    rawIdToIdentifier ident
+        | or $ fmap (testBit ident) [29, 30, 31] =
+            error $ pathToMap ++
+            " contains rotated tiles. This game does not support them."
+        | otherwise =
+            (fmap Just . (\(x, y) -> (, y) <$> canonicalizeIdentifier x)) .
+            second (ident -) $
+            expectJust
+                ("Invalid tile GID: " ++ show ident)
+                (find ((clearAllFlags ident >=) . snd) $
+                 getSourceAndFirstGid json)
     canonicalizeIdentifier path =
         canonicalizeToUnixStyleRelativePath (dropFileName pathToMap </> path)
     clearAllFlags = (`clearBit` 29) . (`clearBit` 30) . (`clearBit` 31)

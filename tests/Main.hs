@@ -11,7 +11,6 @@ import qualified Gimlight.Action.WaitSpec
 import qualified Gimlight.Actor.WalkingImagesSpec
 import qualified Gimlight.ActorSpec
 import qualified Gimlight.Data.EitherSpec
-import qualified Gimlight.Data.ListSpec
 import qualified Gimlight.Data.MaybeSpec
 import qualified Gimlight.Dungeon.Generate.ConfigSpec
 import qualified Gimlight.Dungeon.GenerateSpec
@@ -42,7 +41,6 @@ spec = do
         "Gimlight.Actor.WalkingImages"
         Gimlight.Actor.WalkingImagesSpec.spec
     describe "Gimlight.Data.Either" Gimlight.Data.EitherSpec.spec
-    describe "Gimlight.Data.List" Gimlight.Data.ListSpec.spec
     describe "Gimlight.Data.Maybe" Gimlight.Data.MaybeSpec.spec
     describe "Gimlight.Dungeon.Generate" Gimlight.Dungeon.GenerateSpec.spec
     describe

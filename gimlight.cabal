@@ -53,7 +53,6 @@ Test-Suite spec
                       , Gimlight.ActorSpec
                       , Gimlight.Actor.WalkingImagesSpec
                       , Gimlight.Data.EitherSpec
-                      , Gimlight.Data.ListSpec
                       , Gimlight.Data.MaybeSpec
                       , Gimlight.Dungeon.GenerateSpec
                       , Gimlight.Dungeon.Generate.ConfigSpec
@@ -94,7 +93,6 @@ library
                       , Gimlight.Actor.WalkingImages
                       , Gimlight.Coord
                       , Gimlight.Data.Either
-                      , Gimlight.Data.List
                       , Gimlight.Data.Maybe
                       , Gimlight.Direction
                       , Gimlight.Dungeon

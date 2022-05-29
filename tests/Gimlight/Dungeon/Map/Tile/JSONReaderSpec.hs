@@ -14,13 +14,13 @@ import           Test.Hspec                           (Spec, describe,
                                                        shouldThrow)
 
 spec :: Spec
-spec = do
-    testAddTileFile
-    testErrorOnReadingTileWithoutProperties
+spec =
+    describe "addTileFile" $ do
+        testAddTileFile
+        testErrorOnReadingTileWithoutProperties
 
 testAddTileFile :: Spec
 testAddTileFile =
-    describe "addTileFile" $
     it "reads the tile file specified by an argument and add it to the given tile collection." $
     mapM_ testFunc testFileAndExpected
   where
@@ -36,7 +36,6 @@ testAddTileFile =
 
 testErrorOnReadingTileWithoutProperties :: Spec
 testErrorOnReadingTileWithoutProperties =
-    describe "addTileFile" $
     it "panics if it tries to read a tile that misses necessary proeprties." $
     addTileFile "tests/tiles/no_properties.json" empty `shouldThrow`
     errorCall
