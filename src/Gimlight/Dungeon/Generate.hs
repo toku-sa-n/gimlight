@@ -7,7 +7,7 @@ module Gimlight.Dungeon.Generate
     ) where
 
 import           Control.Lens                     (Ixed (ix), _2, _Just, (&),
-                                                   (.~), (?~), (^.), (^?))
+                                                   (.~), (?~), (^?))
 import           Control.Monad.Morph              (MFunctor (hoist), generalize)
 import           Control.Monad.State              (MonadTrans (lift), State,
                                                    StateT, execStateT)

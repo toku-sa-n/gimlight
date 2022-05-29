@@ -6,10 +6,9 @@ module Gimlight.Dungeon.Generate.Room
     , roomOverlaps
     ) where
 
-import           Control.Lens.Getter ((^.))
-import           Gimlight.Coord      (Coord)
+import           Gimlight.Coord   (Coord)
 import           Gimlight.Prelude
-import           Linear.V2           (V2 (..), _x, _y)
+import           Linear.V2        (V2 (..), _x, _y)
 
 data Room =
     Room

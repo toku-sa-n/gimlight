@@ -16,7 +16,7 @@ module Gimlight.Actor.Status
     ) where
 
 import           Control.Lens                     (makeLenses, (%%~), (%~), (&),
-                                                   (+=), (.=), (^.))
+                                                   (+=), (.=))
 import           Control.Monad.State              (execState)
 import           Data.Maybe                       (isNothing)
 import           GHC.Generics                     (Generic)

@@ -6,7 +6,6 @@ module Gimlight.Player
     , handlePlayerAfterSelecting
     ) where
 
-import           Control.Lens                      ((^.))
 import           Data.Foldable                     (find)
 import           Gimlight.Action                   (ActionStatus (Failed, Ok, ReadingStarted))
 import           Gimlight.Action.Consume           (consumeAction)

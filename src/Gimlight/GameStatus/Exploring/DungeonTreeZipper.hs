@@ -6,7 +6,7 @@ module Gimlight.GameStatus.Exploring.DungeonTreeZipper
     , handleNpcTurns
     ) where
 
-import           Control.Lens               ((%%~), (&), (.~), (^.))
+import           Control.Lens               ((%%~), (&), (.~))
 import           Control.Monad.State        (execStateT, runStateT)
 import           Control.Monad.Trans.Writer (Writer)
 import           Data.Either.Combinators    (rightToMaybe)

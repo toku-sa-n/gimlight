@@ -11,7 +11,7 @@ module Gimlight.Quest
     , update
     ) where
 
-import           Control.Lens                (makeLenses, (%~), (&), (.~), (^.))
+import           Control.Lens                (makeLenses, (%~), (&), (.~))
 import           GHC.Generics                (Generic)
 import qualified Gimlight.Actor.Identifier   as A
 import qualified Gimlight.Dungeon.Identifier as D

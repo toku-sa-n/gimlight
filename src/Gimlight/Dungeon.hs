@@ -20,7 +20,7 @@ module Gimlight.Dungeon
     ) where
 
 import           Control.Lens                (Getter, makeLenses, (%~), (&),
-                                              (?~), (^.))
+                                              (?~))
 import           Data.Array.Base             (assocs)
 import           GHC.Generics                (Generic)
 import           Gimlight.Coord              (Coord)

@@ -11,7 +11,7 @@ module Gimlight.GameStatus.Talking
     , selectNextChoice
     ) where
 
-import           Control.Lens                     ((&), (.~), (^.))
+import           Control.Lens                     ((&), (.~))
 import           GHC.Generics                     (Generic)
 import           Gimlight.Actor                   (Actor)
 import           Gimlight.GameStatus.Exploring    (ExploringHandler, quests)

@@ -4,7 +4,6 @@ module Gimlight.UI.Draw.Talking
     ( drawTalking
     ) where
 
-import           Control.Lens                     ((^.))
 import           Gimlight.Actor                   (Actor, getIdentifier,
                                                    standingImagePath)
 import           Gimlight.Actor.Identifier        (toName)

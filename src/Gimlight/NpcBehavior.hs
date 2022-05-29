@@ -3,7 +3,7 @@ module Gimlight.NpcBehavior
     ) where
 
 import           Control.Arrow                 ((&&&))
-import           Control.Lens                  ((&), (.~), (^.))
+import           Control.Lens                  ((&), (.~))
 import           Control.Monad.State           (StateT (runStateT), evalStateT,
                                                 execStateT)
 import           Control.Monad.Writer          (MonadWriter (writer), Writer)
