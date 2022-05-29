@@ -18,8 +18,7 @@ module Gimlight.GameStatus.Exploring
     , getMessageLog
     ) where
 
-import           Control.Lens                                    (Getter, view,
-                                                                  (%=))
+import           Control.Lens                                    (Getter, view)
 import           Control.Monad                                   ((>=>))
 import           Control.Monad.State                             (execState)
 import           Control.Monad.Trans.Writer                      (runWriter)
