@@ -7,7 +7,7 @@ module Gimlight.Prelude
     , module Prelude
     ) where
 
-import           Control.Lens       (makeLenses, (.~), (^.))
+import           Control.Lens       (makeLenses, (%~), (.~), (^.))
 import           Data.Function      ((&))
 import           Data.Text          (Text)
 import           Gimlight.Data.Text

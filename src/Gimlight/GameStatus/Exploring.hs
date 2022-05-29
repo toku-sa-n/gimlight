@@ -20,7 +20,7 @@ module Gimlight.GameStatus.Exploring
 
 import           Control.Lens                                    (Getter, view,
                                                                   (%%~), (%=),
-                                                                  (%~), (.=))
+                                                                  (.=))
 import           Control.Monad                                   ((>=>))
 import           Control.Monad.State                             (execState)
 import           Control.Monad.Trans.Writer                      (runWriter)

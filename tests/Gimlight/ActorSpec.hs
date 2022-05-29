@@ -6,7 +6,7 @@ module Gimlight.ActorSpec
     , removeItem
     ) where
 
-import           Control.Lens                (over, (%~))
+import           Control.Lens                (over)
 import           Control.Monad.State         (evalState)
 import           Data.Maybe                  (fromJust)
 import           Data.OpenUnion              (liftUnion)

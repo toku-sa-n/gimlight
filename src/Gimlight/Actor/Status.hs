@@ -15,7 +15,7 @@ module Gimlight.Actor.Status
     , getDefence
     ) where
 
-import           Control.Lens                     ((%%~), (%~), (+=), (.=))
+import           Control.Lens                     ((%%~), (+=), (.=))
 import           Control.Monad.State              (execState)
 import           Data.Maybe                       (isNothing)
 import           GHC.Generics                     (Generic)
