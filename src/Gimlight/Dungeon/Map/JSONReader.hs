@@ -13,7 +13,7 @@ import           Data.Aeson.Lens           (_Array, _Integer, _String, key,
 import           Data.Bifunctor            (Bifunctor (second))
 import           Data.Bits                 (Bits (testBit))
 import           Data.List                 (find, sortBy, transpose)
-import           Data.Vector               (Vector, fromList, toList)
+import           Data.Vector               (Vector, toList)
 import           Gimlight.Data.Maybe       (expectJust)
 import           Gimlight.Dungeon.Map.Cell (CellMap, TileIdLayer, cellMap)
 import           Gimlight.Prelude
@@ -26,15 +26,14 @@ readMapFile path = do
     json <- readFile path
     parseFile path json <$> getTileIdOfAllLayer json path
 
-parseFile :: FilePath -> Text -> Vector TileIdLayer -> CellMap
+parseFile :: FilePath -> Text -> [TileIdLayer] -> CellMap
 parseFile path json tiles = assertMapSizeIsCorrect convertToCellMap
   where
     V2 width height = getMapSize path json
     assertMapSizeIsCorrect = assert (height * width == length tiles)
     convertToCellMap =
         cellMap $ array (V2 0 0, V2 (width - 1) (height - 1)) $
-        zip [V2 x y | y <- [0 .. height - 1], x <- [0 .. width - 1]] $
-        toList tiles
+        zip [V2 x y | y <- [0 .. height - 1], x <- [0 .. width - 1]] tiles
 
 getMapSize :: FilePath -> Text -> V2 Int
 getMapSize mapPath json =
@@ -44,7 +43,7 @@ getMapSize mapPath json =
   where
     fetch k = json ^? key k . _Integer
 
-getTileIdOfAllLayer :: Text -> FilePath -> IO (Vector TileIdLayer)
+getTileIdOfAllLayer :: Text -> FilePath -> IO [TileIdLayer]
 getTileIdOfAllLayer json pathToMap
     -- From https://doc.mapeditor.org/en/stable/reference/tmx-map-format/:
     --
@@ -53,7 +52,7 @@ getTileIdOfAllLayer json pathToMap
     -- That is why we reverse here because we store tiles of each cell from top
     -- to bottom.
  =
-    fmap (transposeListVector . reverse) $ traverse (mapM rawIdToIdentifier) $
+    fmap (transpose . reverse) $ traverse (mapM rawIdToIdentifier) $
     getDataOfAllLayer json
   where
     rawIdToIdentifier 0 = return Nothing
@@ -83,8 +82,9 @@ getSourceAndFirstGid json = sortByGidInDescendingOrder $ zip sources firstGids
         fmap fromIntegral $ json ^.. key "tilesets" . values . key "firstgid" .
         _Integer
 
-getDataOfAllLayer :: Text -> [Vector Int]
-getDataOfAllLayer json = expectJust errMsg $ mapToInt (json ^.. lens)
+getDataOfAllLayer :: Text -> [[Int]]
+getDataOfAllLayer json =
+    fmap toList $ expectJust errMsg $ mapToInt (json ^.. lens)
   where
     lens = key "layers" . values . key "data" . _Array
     errMsg = "The data sections in layers contain non-integer values."
@@ -94,9 +94,6 @@ transformationFlagsAreSet = or . flip fmap [29, 30, 31] . testBit
 
 mapToInt :: [Vector Value] -> Maybe [Vector Int]
 mapToInt = mapM (mapM (fmap fromInteger . (^? _Integer)))
-
-transposeListVector :: [Vector a] -> Vector [a]
-transposeListVector = fromList . transpose . fmap toList
 
 messageUsingTransformedTiles :: FilePath -> Text
 messageUsingTransformedTiles =
