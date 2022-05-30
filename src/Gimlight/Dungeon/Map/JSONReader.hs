@@ -67,8 +67,7 @@ getTileIdOfAllLayer json pathToMap
     rawIdToIdentifier 0 = return Nothing
     rawIdToIdentifier ident
         | transformationFlagsAreSet ident =
-            error $ pathToMap <>
-            " contains rotated tiles. This game does not support them."
+            error $ messageUsingTransformedTiles pathToMap
         | otherwise =
             (fmap Just . (\(x, y) -> (, y) <$> canonicalizeSource x)) .
             second (ident -) $
@@ -106,3 +105,7 @@ mapToInt = mapM (mapM (fmap fromInteger . (^? _Integer)))
 
 transposeListVector :: [Vector a] -> Vector [a]
 transposeListVector = fromList . transpose . fmap toList
+
+messageUsingTransformedTiles :: FilePath -> Text
+messageUsingTransformedTiles =
+    (<> " contains rotated tiles. This game does not support them.")
