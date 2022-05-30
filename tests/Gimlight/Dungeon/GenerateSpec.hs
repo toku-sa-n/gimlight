@@ -18,9 +18,9 @@ import           Gimlight.Dungeon.Generate            (floorTileIndex,
 import           Gimlight.Dungeon.Generate.Config     (Config, config,
                                                        getTileFilePath)
 import           Gimlight.Dungeon.Identifier          (Identifier (Beaeve))
-import           Gimlight.Dungeon.Map.Cell            (CellMap, lower,
+import           Gimlight.Dungeon.Map.Cell            (CellMap,
                                                        positionsAndActors,
-                                                       tileIdLayer, upper)
+                                                       tileIdLayer)
 import           Gimlight.Dungeon.Map.JSONReader      (readMapFile)
 import           Gimlight.Dungeon.Map.Tile            (TileCollection)
 import           Gimlight.Dungeon.Map.Tile.JSONReader (addTileFile)
@@ -41,20 +41,23 @@ spec = do
     expected <- runIO $ readMapFile "tests/maps/generate/seed_0.json"
     let result = generateSingleMap 0 tc
     describe "generateMultipleFloorsDungeon" $ do
-        it "fills the lower layer with the floor tile." $ tilesOf lower result `shouldSatisfy`
+        it "fills the lowest layer with the floor tile." $
+            lowerLayerTiles result `shouldSatisfy`
             all (== Just (getTileFilePath cfg, floorTileIndex))
-        it "generates the upper layer." $ tilesOf upper result `shouldBe`
-            tilesOf upper expected
+        it "generates the upper layer." $ upperLayerTiles result `shouldBe`
+            upperLayerTiles expected
         testNoActorExistsOnUpStairs tc
         testUpstairsIsOnCorrectPosition tc
   where
-    tilesOf layer = fmap (view (tileIdLayer . layer))
+    upperLayerTiles = tilesOf 0
+    lowerLayerTiles = tilesOf 1
+    tilesOf layerLevel = fmap ((!! layerLevel) . view tileIdLayer)
 
 testUpstairsIsOnCorrectPosition :: TileCollection -> Spec
 testUpstairsIsOnCorrectPosition tc =
     prop "upstairs appears on the correct position." $ \g ->
         let (d, c) = generateDungeonAndUpStairsPosition g tc
-         in d ^? D.cellMap . ix c . tileIdLayer . upper `shouldBe`
+         in d ^? D.cellMap . ix c . tileIdLayer . ix 0 `shouldBe`
             Just (Just (tileFileForGeneration, upStairsIndex))
 
 testNoActorExistsOnUpStairs :: TileCollection -> Spec

@@ -14,10 +14,8 @@ import           Gimlight.Actor.Monsters       (orc)
 import           Gimlight.Coord                (Coord)
 import           Gimlight.Direction            (Direction (East, South, SouthEast, West),
                                                 toUnitVector)
-import           Gimlight.Dungeon.Map.Cell     (CellMap,
-                                                TileIdLayer (TileIdLayer),
-                                                locateActorAt, removeActorAt,
-                                                tileIdLayer)
+import           Gimlight.Dungeon.Map.Cell     (CellMap, locateActorAt,
+                                                removeActorAt, tileIdLayer)
 import           Gimlight.Dungeon.Map.CellSpec (emptyCellMap, locateItemsActors)
 import           Gimlight.Dungeon.Map.TileSpec (mockTileCollection, unwalkable)
 import           Gimlight.IndexGenerator       (generator)
@@ -81,7 +79,7 @@ testMap =
   where
     cm =
         emptyCellMap (V2 2 2) & ix (V2 0 1) . tileIdLayer .~
-        TileIdLayer (Just unwalkable) Nothing
+        [Just unwalkable, Nothing]
     (o1, o2) = flip evalState generator $ (,) <$> orc <*> orc
 
 startPos :: Coord

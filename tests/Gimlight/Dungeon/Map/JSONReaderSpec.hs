@@ -8,8 +8,10 @@ import           Gimlight.Dungeon.Map.JSONReader (readMapFile)
 import           Gimlight.Prelude
 import           Gimlight.SetUp.MapFile          (cellMapContainingMultipleFilesTile,
                                                   cellMapOfSingleTileMap,
+                                                  cellMapUsingThreeLayers,
                                                   mapUsingMultipleTileFiles,
                                                   mapUsingRotatedTiles,
+                                                  mapUsingThreeLayers,
                                                   rectangleButNotSquareCellMap,
                                                   rectangleButNotSquareMap,
                                                   singleTileMap)
@@ -23,6 +25,7 @@ spec =
         testSingleTileMap
         testReadRectangleButNotSquareMap
         testReadMapUsingMultipleTileFiles
+        testReadMapUsingThreeLayers
         testReadMapUsingRotatedTiles
 
 testSingleTileMap :: Spec
@@ -39,6 +42,11 @@ testReadMapUsingMultipleTileFiles :: Spec
 testReadMapUsingMultipleTileFiles =
     context "Map using multiple tile files." $
     testReadMapFile mapUsingMultipleTileFiles cellMapContainingMultipleFilesTile
+
+testReadMapUsingThreeLayers :: Spec
+testReadMapUsingThreeLayers =
+    context "Map using three layers." $
+    testReadMapFile mapUsingThreeLayers cellMapUsingThreeLayers
 
 testReadMapFile :: FilePath -> CellMap -> Spec
 testReadMapFile path cm = do

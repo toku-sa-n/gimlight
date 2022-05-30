@@ -19,9 +19,9 @@ import           Data.OpenUnion                (Union, liftUnion,
 import           Gimlight.Actor                (Actor)
 import           Gimlight.Coord                (Coord)
 import           Gimlight.Dungeon.Map.Cell     (CellMap, Error (OutOfRange),
-                                                TileIdLayer (TileIdLayer),
-                                                cellMap, locateActorAt,
-                                                locateItemAt, removeActorAt)
+                                                TileIdLayer, cellMap,
+                                                locateActorAt, locateItemAt,
+                                                removeActorAt)
 import           Gimlight.Dungeon.Map.Tile     (TileCollection)
 import           Gimlight.Dungeon.Map.TileSpec (mockTileCollection)
 import           Gimlight.Item.Defined         (herb)
@@ -44,7 +44,7 @@ testLocateItemAt =
     cm = emptyCellMap (V2 1 1)
 
 emptyTile :: TileIdLayer
-emptyTile = TileIdLayer Nothing Nothing
+emptyTile = [Nothing, Nothing]
 
 emptyCellMap :: V2 Int -> CellMap
 emptyCellMap widthHeight =
