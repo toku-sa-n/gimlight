@@ -6,7 +6,7 @@ module Gimlight.Dungeon.Map.JSONReader
     ( readMapFile
     ) where
 
-import           Control.Monad             (unless)
+import           Control.Exception         (assert)
 import           Data.Aeson                (Value)
 import           Data.Aeson.Lens           (_Array, _Integer, _String, key,
                                             values)
@@ -24,15 +24,17 @@ import           Linear.V2                 (V2 (V2))
 readMapFile :: FilePath -> IO CellMap
 readMapFile path = do
     json <- readFile path
-    getTileIdOfAllLayer json path >>= parseFile json
+    parseFile path json <$> getTileIdOfAllLayer json path
+
+parseFile :: FilePath -> Text -> Vector TileIdLayer -> CellMap
+parseFile path json tiles = assertMapSizeIsCorrect convertToCellMap
   where
-    parseFile json tiles = do
-        let V2 width height = getMapSize path json
-        unless (height * width == length tiles) $ error $
-            invalidWidthHeight path (V2 width height) (length tiles)
-        return $ cellMap $ array (V2 0 0, V2 (width - 1) (height - 1)) $
-            zip [V2 x y | y <- [0 .. height - 1], x <- [0 .. width - 1]] $
-            toList tiles
+    V2 width height = getMapSize path json
+    assertMapSizeIsCorrect = assert (height * width == length tiles)
+    convertToCellMap =
+        cellMap $ array (V2 0 0, V2 (width - 1) (height - 1)) $
+        zip [V2 x y | y <- [0 .. height - 1], x <- [0 .. width - 1]] $
+        toList tiles
 
 getMapSize :: FilePath -> Text -> V2 Int
 getMapSize mapPath json =
@@ -99,15 +101,6 @@ transposeListVector = fromList . transpose . fmap toList
 messageUsingTransformedTiles :: FilePath -> Text
 messageUsingTransformedTiles =
     (<> " contains rotated tiles. This game does not support them.")
-
-invalidWidthHeight :: FilePath -> V2 Int -> Int -> Text
-invalidWidthHeight mapPath size l =
-    "The multiplication of width and height of the map " <> mapPath <>
-    " does not equal to the number of tiles. The size is " <>
-    showt size <>
-    " but the number of tiles is " <>
-    showt l <>
-    "."
 
 noWidthOrHeight :: FilePath -> Text
 noWidthOrHeight mapPath =
