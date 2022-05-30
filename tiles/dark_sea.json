@@ -1,9 +1,9 @@
 { "columns":8,
- "image":"..\/images\/tiles\/grass.png",
+ "image":"..\/images\/tiles\/dark_sea.png",
  "imageheight":288,
  "imagewidth":384,
  "margin":0,
- "name":"grass",
+ "name":"dark sea",
  "spacing":0,
  "tilecount":48,
  "tiledversion":"1.7.2",
@@ -15,7 +15,7 @@
                 {
                  "name":"type",
                  "type":"string",
-                 "value":"FloorTile"
+                 "value":"SeaTile"
                 }]
         },
         {
@@ -24,7 +24,7 @@
                 {
                  "name":"type",
                  "type":"string",
-                 "value":"FloorTile"
+                 "value":"SeaTile"
                 }]
         },
         {
@@ -33,7 +33,7 @@
                 {
                  "name":"type",
                  "type":"string",
-                 "value":"FloorTile"
+                 "value":"SeaTile"
                 }]
         },
         {
@@ -42,7 +42,7 @@
                 {
                  "name":"type",
                  "type":"string",
-                 "value":"FloorTile"
+                 "value":"SeaTile"
                 }]
         },
         {
@@ -51,7 +51,7 @@
                 {
                  "name":"type",
                  "type":"string",
-                 "value":"FloorTile"
+                 "value":"SeaTile"
                 }]
         },
         {
@@ -60,7 +60,7 @@
                 {
                  "name":"type",
                  "type":"string",
-                 "value":"FloorTile"
+                 "value":"SeaTile"
                 }]
         },
         {
@@ -69,7 +69,7 @@
                 {
                  "name":"type",
                  "type":"string",
-                 "value":"FloorTile"
+                 "value":"SeaTile"
                 }]
         },
         {
@@ -78,7 +78,7 @@
                 {
                  "name":"type",
                  "type":"string",
-                 "value":"FloorTile"
+                 "value":"SeaTile"
                 }]
         },
         {
@@ -87,7 +87,7 @@
                 {
                  "name":"type",
                  "type":"string",
-                 "value":"FloorTile"
+                 "value":"SeaTile"
                 }]
         },
         {
@@ -96,7 +96,7 @@
                 {
                  "name":"type",
                  "type":"string",
-                 "value":"FloorTile"
+                 "value":"SeaTile"
                 }]
         },
         {
@@ -105,7 +105,7 @@
                 {
                  "name":"type",
                  "type":"string",
-                 "value":"FloorTile"
+                 "value":"SeaTile"
                 }]
         },
         {
@@ -114,7 +114,7 @@
                 {
                  "name":"type",
                  "type":"string",
-                 "value":"FloorTile"
+                 "value":"SeaTile"
                 }]
         },
         {
@@ -123,7 +123,7 @@
                 {
                  "name":"type",
                  "type":"string",
-                 "value":"FloorTile"
+                 "value":"SeaTile"
                 }]
         },
         {
@@ -132,7 +132,7 @@
                 {
                  "name":"type",
                  "type":"string",
-                 "value":"FloorTile"
+                 "value":"SeaTile"
                 }]
         },
         {
@@ -141,7 +141,7 @@
                 {
                  "name":"type",
                  "type":"string",
-                 "value":"FloorTile"
+                 "value":"SeaTile"
                 }]
         },
         {
@@ -150,7 +150,7 @@
                 {
                  "name":"type",
                  "type":"string",
-                 "value":"FloorTile"
+                 "value":"SeaTile"
                 }]
         },
         {
@@ -159,7 +159,7 @@
                 {
                  "name":"type",
                  "type":"string",
-                 "value":"FloorTile"
+                 "value":"SeaTile"
                 }]
         },
         {
@@ -168,7 +168,7 @@
                 {
                  "name":"type",
                  "type":"string",
-                 "value":"FloorTile"
+                 "value":"SeaTile"
                 }]
         },
         {
@@ -177,7 +177,7 @@
                 {
                  "name":"type",
                  "type":"string",
-                 "value":"FloorTile"
+                 "value":"SeaTile"
                 }]
         },
         {
@@ -186,7 +186,7 @@
                 {
                  "name":"type",
                  "type":"string",
-                 "value":"FloorTile"
+                 "value":"SeaTile"
                 }]
         },
         {
@@ -195,7 +195,7 @@
                 {
                  "name":"type",
                  "type":"string",
-                 "value":"FloorTile"
+                 "value":"SeaTile"
                 }]
         },
         {
@@ -204,7 +204,7 @@
                 {
                  "name":"type",
                  "type":"string",
-                 "value":"FloorTile"
+                 "value":"SeaTile"
                 }]
         },
         {
@@ -213,7 +213,7 @@
                 {
                  "name":"type",
                  "type":"string",
-                 "value":"FloorTile"
+                 "value":"SeaTile"
                 }]
         },
         {
@@ -222,7 +222,7 @@
                 {
                  "name":"type",
                  "type":"string",
-                 "value":"FloorTile"
+                 "value":"SeaTile"
                 }]
         },
         {
@@ -231,7 +231,7 @@
                 {
                  "name":"type",
                  "type":"string",
-                 "value":"FloorTile"
+                 "value":"SeaTile"
                 }]
         },
         {
@@ -240,7 +240,7 @@
                 {
                  "name":"type",
                  "type":"string",
-                 "value":"FloorTile"
+                 "value":"SeaTile"
                 }]
         },
         {
@@ -249,7 +249,7 @@
                 {
                  "name":"type",
                  "type":"string",
-                 "value":"FloorTile"
+                 "value":"SeaTile"
                 }]
         },
         {
@@ -258,7 +258,7 @@
                 {
                  "name":"type",
                  "type":"string",
-                 "value":"FloorTile"
+                 "value":"SeaTile"
                 }]
         },
         {
@@ -267,7 +267,7 @@
                 {
                  "name":"type",
                  "type":"string",
-                 "value":"FloorTile"
+                 "value":"SeaTile"
                 }]
         },
         {
@@ -276,7 +276,7 @@
                 {
                  "name":"type",
                  "type":"string",
-                 "value":"FloorTile"
+                 "value":"SeaTile"
                 }]
         },
         {
@@ -285,7 +285,7 @@
                 {
                  "name":"type",
                  "type":"string",
-                 "value":"FloorTile"
+                 "value":"SeaTile"
                 }]
         },
         {
@@ -294,7 +294,7 @@
                 {
                  "name":"type",
                  "type":"string",
-                 "value":"FloorTile"
+                 "value":"SeaTile"
                 }]
         },
         {
@@ -303,7 +303,7 @@
                 {
                  "name":"type",
                  "type":"string",
-                 "value":"FloorTile"
+                 "value":"SeaTile"
                 }]
         },
         {
@@ -312,7 +312,7 @@
                 {
                  "name":"type",
                  "type":"string",
-                 "value":"FloorTile"
+                 "value":"SeaTile"
                 }]
         },
         {
@@ -321,7 +321,7 @@
                 {
                  "name":"type",
                  "type":"string",
-                 "value":"FloorTile"
+                 "value":"SeaTile"
                 }]
         },
         {
@@ -330,7 +330,7 @@
                 {
                  "name":"type",
                  "type":"string",
-                 "value":"FloorTile"
+                 "value":"SeaTile"
                 }]
         },
         {
@@ -339,7 +339,7 @@
                 {
                  "name":"type",
                  "type":"string",
-                 "value":"FloorTile"
+                 "value":"SeaTile"
                 }]
         },
         {
@@ -348,7 +348,7 @@
                 {
                  "name":"type",
                  "type":"string",
-                 "value":"FloorTile"
+                 "value":"SeaTile"
                 }]
         },
         {
@@ -357,7 +357,7 @@
                 {
                  "name":"type",
                  "type":"string",
-                 "value":"FloorTile"
+                 "value":"SeaTile"
                 }]
         },
         {
@@ -366,7 +366,7 @@
                 {
                  "name":"type",
                  "type":"string",
-                 "value":"FloorTile"
+                 "value":"SeaTile"
                 }]
         },
         {
@@ -375,7 +375,7 @@
                 {
                  "name":"type",
                  "type":"string",
-                 "value":"FloorTile"
+                 "value":"SeaTile"
                 }]
         },
         {
@@ -384,7 +384,7 @@
                 {
                  "name":"type",
                  "type":"string",
-                 "value":"FloorTile"
+                 "value":"SeaTile"
                 }]
         },
         {
@@ -393,7 +393,7 @@
                 {
                  "name":"type",
                  "type":"string",
-                 "value":"FloorTile"
+                 "value":"SeaTile"
                 }]
         },
         {
@@ -402,7 +402,7 @@
                 {
                  "name":"type",
                  "type":"string",
-                 "value":"FloorTile"
+                 "value":"SeaTile"
                 }]
         },
         {
@@ -411,7 +411,7 @@
                 {
                  "name":"type",
                  "type":"string",
-                 "value":"FloorTile"
+                 "value":"SeaTile"
                 }]
         },
         {
@@ -420,7 +420,7 @@
                 {
                  "name":"type",
                  "type":"string",
-                 "value":"FloorTile"
+                 "value":"SeaTile"
                 }]
         },
         {
@@ -429,7 +429,7 @@
                 {
                  "name":"type",
                  "type":"string",
-                 "value":"FloorTile"
+                 "value":"SeaTile"
                 }]
         },
         {
@@ -438,7 +438,7 @@
                 {
                  "name":"type",
                  "type":"string",
-                 "value":"FloorTile"
+                 "value":"SeaTile"
                 }]
         }],
  "tilewidth":48,
@@ -449,11 +449,11 @@
          "colors":[
                 {
                  "color":"#ff0000",
-                 "name":"Grass floor",
+                 "name":"Dark sea",
                  "probability":1,
                  "tile":-1
                 }],
-         "name":"Grass floor",
+         "name":"Dark sea",
          "tile":-1,
          "type":"mixed",
          "wangtiles":[

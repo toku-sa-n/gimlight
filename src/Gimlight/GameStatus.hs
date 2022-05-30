@@ -65,12 +65,12 @@ newGameStatus = do
             flip evalState g $ evalStateT (batsDungeon tc) ig
         (gmWithBatsStairs, batsRootMapWithParentMap) =
             addAscendingAndDescendingStiars
-                (StairsPair (V2 7 0) stairsPosition)
+                (StairsPair (V2 7 5) stairsPosition)
                 (gm, rootLabel bats)
         batsTreeWithParentMap = bats {rootLabel = batsRootMapWithParentMap}
         (initGm, beaeveWithParentMap) =
             addDescendingStairs
-                (StairsPair (V2 1 10) (V2 7 0))
+                (StairsPair (V2 4 6) (V2 7 0))
                 (gmWithBatsStairs, beaeve)
         dungeonTree =
             Node
