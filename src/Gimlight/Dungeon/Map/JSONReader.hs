@@ -16,7 +16,6 @@ import           Data.List                 (find, sortBy, transpose)
 import           Data.Vector               (Vector, fromList, toList)
 import           Gimlight.Data.Maybe       (expectJust)
 import           Gimlight.Dungeon.Map.Cell (CellMap, TileIdLayer, cellMap)
-import           Gimlight.Dungeon.Map.Tile (TileId)
 import           Gimlight.Prelude
 import           Gimlight.System.Path      (canonicalizeToUnixStyleRelativePath,
                                             dropFileName, (</>))
@@ -25,7 +24,7 @@ import           Linear.V2                 (V2 (V2))
 readMapFile :: FilePath -> IO CellMap
 readMapFile path = do
     json <- readFile path
-    getTiles json path >>= parseFile json
+    getTileIdOfAllLayer json path >>= parseFile json
   where
     parseFile json tiles = do
         let V2 width height = expectJust noWidthOrHeight $ getMapSize json
@@ -59,14 +58,10 @@ getMapSize json =
 --
 -- That is why we reverse here because we store tiles of each cell from top
 -- to bottom.
-getTiles :: Text -> FilePath -> IO (Vector TileIdLayer)
-getTiles json =
-    fmap (fromList . transpose . reverse . fmap toList) .
-    getTileIdOfAllLayer json
-
-getTileIdOfAllLayer :: Text -> FilePath -> IO [Vector (Maybe TileId)]
+getTileIdOfAllLayer :: Text -> FilePath -> IO (Vector TileIdLayer)
 getTileIdOfAllLayer json pathToMap =
-    traverse (mapM rawIdToIdentifier) $ getDataOfAllLayer json
+    fmap (transposeListVector . reverse) $ traverse (mapM rawIdToIdentifier) $
+    getDataOfAllLayer json
   where
     rawIdToIdentifier 0 = return Nothing
     rawIdToIdentifier ident
@@ -101,6 +96,9 @@ getDataOfAllLayer json = expectJust errMsg $ mapToInt (json ^.. lens)
 
 mapToInt :: [Vector Value] -> Maybe [Vector Int]
 mapToInt = mapM (mapM (fmap fromInteger . (^? _Integer)))
+
+transposeListVector :: [Vector a] -> Vector [a]
+transposeListVector = fromList . transpose . fmap toList
 
 transformationFlagsAreSet :: Int -> Bool
 transformationFlagsAreSet = or . flip fmap [29, 30, 31] . testBit
