@@ -27,19 +27,18 @@ readMapFile path = do
     getTileIdOfAllLayer json path >>= parseFile json
   where
     parseFile json tiles = do
-        let V2 width height =
-                expectJust (noWidthOrHeight path) $ getMapSize json
+        let V2 width height = getMapSize path json
         unless (height * width == length tiles) $ error $
             invalidWidthHeight path (V2 width height) (length tiles)
         return $ cellMap $ array (V2 0 0, V2 (width - 1) (height - 1)) $
             zip [V2 x y | y <- [0 .. height - 1], x <- [0 .. width - 1]] $
             toList tiles
 
-getMapSize :: Text -> Maybe (V2 Int)
-getMapSize json =
+getMapSize :: FilePath -> Text -> V2 Int
+getMapSize mapPath json =
     case (fetch "width", fetch "height") of
-        (Just w, Just h) -> Just $ fromIntegral <$> V2 w h
-        _                -> Nothing
+        (Just w, Just h) -> fromIntegral <$> V2 w h
+        _                -> error $ noWidthOrHeight mapPath
   where
     fetch k = json ^? key k . _Integer
 
