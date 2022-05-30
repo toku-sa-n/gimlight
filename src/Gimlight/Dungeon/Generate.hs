@@ -37,8 +37,7 @@ import           Gimlight.Dungeon.Generate.Room   (Room (..), center,
 import           Gimlight.Dungeon.Identifier      (Identifier)
 import           Gimlight.Dungeon.Map.Cell        (CellMap, TileIdLayer,
                                                    locateActorAt, locateItemAt,
-                                                   tileIdLayer, topLayerAt,
-                                                   widthAndHeight)
+                                                   topLayerAt, widthAndHeight)
 import qualified Gimlight.Dungeon.Map.Cell        as C
 import           Gimlight.Dungeon.Map.Tile        (TileCollection, TileId,
                                                    TileIndex)
@@ -154,7 +153,7 @@ addEdgeTiles :: Config -> CellMap -> CellMap
 addEdgeTiles cfg cm = foldl updateTileId cm ceilTiles
   where
     updateTileId cm' pos =
-        cm' & ix pos . tileIdLayer . ix 0 . _Just . _2 .~
+        cm' & topLayerAt pos . _Just . _2 .~
         blobTilesetIdToTileIndex (calculateBlob pos)
     calculateBlob c =
         foldl
