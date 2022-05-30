@@ -95,11 +95,11 @@ getDataOfAllLayer json = expectJust errMsg $ mapToInt (json ^.. lens)
     lens = key "layers" . values . key "data" . _Array
     errMsg = "The data sections in layers contain non-integer values."
 
+transformationFlagsAreSet :: Int -> Bool
+transformationFlagsAreSet = or . flip fmap [29, 30, 31] . testBit
+
 mapToInt :: [Vector Value] -> Maybe [Vector Int]
 mapToInt = mapM (mapM (fmap fromInteger . (^? _Integer)))
 
 transposeListVector :: [Vector a] -> Vector [a]
 transposeListVector = fromList . transpose . fmap toList
-
-transformationFlagsAreSet :: Int -> Bool
-transformationFlagsAreSet = or . flip fmap [29, 30, 31] . testBit
