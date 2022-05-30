@@ -13,672 +13,432 @@
          "id":0,
          "properties":[
                 {
-                 "name":"transparent",
-                 "type":"bool",
-                 "value":true
-                }, 
-                {
-                 "name":"walkable",
-                 "type":"bool",
-                 "value":true
+                 "name":"type",
+                 "type":"string",
+                 "value":"FloorTile"
                 }]
         }, 
         {
          "id":1,
          "properties":[
                 {
-                 "name":"transparent",
-                 "type":"bool",
-                 "value":true
-                }, 
-                {
-                 "name":"walkable",
-                 "type":"bool",
-                 "value":true
+                 "name":"type",
+                 "type":"string",
+                 "value":"FloorTile"
                 }]
         }, 
         {
          "id":2,
          "properties":[
                 {
-                 "name":"transparent",
-                 "type":"bool",
-                 "value":true
-                }, 
-                {
-                 "name":"walkable",
-                 "type":"bool",
-                 "value":true
+                 "name":"type",
+                 "type":"string",
+                 "value":"FloorTile"
                 }]
         }, 
         {
          "id":3,
          "properties":[
                 {
-                 "name":"transparent",
-                 "type":"bool",
-                 "value":true
-                }, 
-                {
-                 "name":"walkable",
-                 "type":"bool",
-                 "value":true
+                 "name":"type",
+                 "type":"string",
+                 "value":"FloorTile"
                 }]
         }, 
         {
          "id":4,
          "properties":[
                 {
-                 "name":"transparent",
-                 "type":"bool",
-                 "value":true
-                }, 
-                {
-                 "name":"walkable",
-                 "type":"bool",
-                 "value":true
+                 "name":"type",
+                 "type":"string",
+                 "value":"FloorTile"
                 }]
         }, 
         {
          "id":5,
          "properties":[
                 {
-                 "name":"transparent",
-                 "type":"bool",
-                 "value":true
-                }, 
-                {
-                 "name":"walkable",
-                 "type":"bool",
-                 "value":true
+                 "name":"type",
+                 "type":"string",
+                 "value":"FloorTile"
                 }]
         }, 
         {
          "id":6,
          "properties":[
                 {
-                 "name":"transparent",
-                 "type":"bool",
-                 "value":true
-                }, 
-                {
-                 "name":"walkable",
-                 "type":"bool",
-                 "value":true
+                 "name":"type",
+                 "type":"string",
+                 "value":"FloorTile"
                 }]
         }, 
         {
          "id":7,
          "properties":[
                 {
-                 "name":"transparent",
-                 "type":"bool",
-                 "value":true
-                }, 
-                {
-                 "name":"walkable",
-                 "type":"bool",
-                 "value":true
+                 "name":"type",
+                 "type":"string",
+                 "value":"FloorTile"
                 }]
         }, 
         {
          "id":8,
          "properties":[
                 {
-                 "name":"transparent",
-                 "type":"bool",
-                 "value":true
-                }, 
-                {
-                 "name":"walkable",
-                 "type":"bool",
-                 "value":true
+                 "name":"type",
+                 "type":"string",
+                 "value":"FloorTile"
                 }]
         }, 
         {
          "id":9,
          "properties":[
                 {
-                 "name":"transparent",
-                 "type":"bool",
-                 "value":true
-                }, 
-                {
-                 "name":"walkable",
-                 "type":"bool",
-                 "value":true
+                 "name":"type",
+                 "type":"string",
+                 "value":"FloorTile"
                 }]
         }, 
         {
          "id":10,
          "properties":[
                 {
-                 "name":"transparent",
-                 "type":"bool",
-                 "value":true
-                }, 
-                {
-                 "name":"walkable",
-                 "type":"bool",
-                 "value":true
+                 "name":"type",
+                 "type":"string",
+                 "value":"FloorTile"
                 }]
         }, 
         {
          "id":11,
          "properties":[
                 {
-                 "name":"transparent",
-                 "type":"bool",
-                 "value":true
-                }, 
-                {
-                 "name":"walkable",
-                 "type":"bool",
-                 "value":true
+                 "name":"type",
+                 "type":"string",
+                 "value":"FloorTile"
                 }]
         }, 
         {
          "id":12,
          "properties":[
                 {
-                 "name":"transparent",
-                 "type":"bool",
-                 "value":true
-                }, 
-                {
-                 "name":"walkable",
-                 "type":"bool",
-                 "value":true
+                 "name":"type",
+                 "type":"string",
+                 "value":"FloorTile"
                 }]
         }, 
         {
          "id":13,
          "properties":[
                 {
-                 "name":"transparent",
-                 "type":"bool",
-                 "value":true
-                }, 
-                {
-                 "name":"walkable",
-                 "type":"bool",
-                 "value":true
+                 "name":"type",
+                 "type":"string",
+                 "value":"FloorTile"
                 }]
         }, 
         {
          "id":14,
          "properties":[
                 {
-                 "name":"transparent",
-                 "type":"bool",
-                 "value":true
-                }, 
-                {
-                 "name":"walkable",
-                 "type":"bool",
-                 "value":true
+                 "name":"type",
+                 "type":"string",
+                 "value":"FloorTile"
                 }]
         }, 
         {
          "id":15,
          "properties":[
                 {
-                 "name":"transparent",
-                 "type":"bool",
-                 "value":true
-                }, 
-                {
-                 "name":"walkable",
-                 "type":"bool",
-                 "value":true
+                 "name":"type",
+                 "type":"string",
+                 "value":"FloorTile"
                 }]
         }, 
         {
          "id":16,
          "properties":[
                 {
-                 "name":"transparent",
-                 "type":"bool",
-                 "value":true
-                }, 
-                {
-                 "name":"walkable",
-                 "type":"bool",
-                 "value":true
+                 "name":"type",
+                 "type":"string",
+                 "value":"FloorTile"
                 }]
         }, 
         {
          "id":17,
          "properties":[
                 {
-                 "name":"transparent",
-                 "type":"bool",
-                 "value":true
-                }, 
-                {
-                 "name":"walkable",
-                 "type":"bool",
-                 "value":true
+                 "name":"type",
+                 "type":"string",
+                 "value":"FloorTile"
                 }]
         }, 
         {
          "id":18,
          "properties":[
                 {
-                 "name":"transparent",
-                 "type":"bool",
-                 "value":true
-                }, 
-                {
-                 "name":"walkable",
-                 "type":"bool",
-                 "value":true
+                 "name":"type",
+                 "type":"string",
+                 "value":"FloorTile"
                 }]
         }, 
         {
          "id":19,
          "properties":[
                 {
-                 "name":"transparent",
-                 "type":"bool",
-                 "value":true
-                }, 
-                {
-                 "name":"walkable",
-                 "type":"bool",
-                 "value":true
+                 "name":"type",
+                 "type":"string",
+                 "value":"FloorTile"
                 }]
         }, 
         {
          "id":20,
          "properties":[
                 {
-                 "name":"transparent",
-                 "type":"bool",
-                 "value":true
-                }, 
-                {
-                 "name":"walkable",
-                 "type":"bool",
-                 "value":true
+                 "name":"type",
+                 "type":"string",
+                 "value":"FloorTile"
                 }]
         }, 
         {
          "id":21,
          "properties":[
                 {
-                 "name":"transparent",
-                 "type":"bool",
-                 "value":true
-                }, 
-                {
-                 "name":"walkable",
-                 "type":"bool",
-                 "value":true
+                 "name":"type",
+                 "type":"string",
+                 "value":"FloorTile"
                 }]
         }, 
         {
          "id":22,
          "properties":[
                 {
-                 "name":"transparent",
-                 "type":"bool",
-                 "value":true
-                }, 
-                {
-                 "name":"walkable",
-                 "type":"bool",
-                 "value":true
+                 "name":"type",
+                 "type":"string",
+                 "value":"FloorTile"
                 }]
         }, 
         {
          "id":23,
          "properties":[
                 {
-                 "name":"transparent",
-                 "type":"bool",
-                 "value":true
-                }, 
-                {
-                 "name":"walkable",
-                 "type":"bool",
-                 "value":true
+                 "name":"type",
+                 "type":"string",
+                 "value":"FloorTile"
                 }]
         }, 
         {
          "id":24,
          "properties":[
                 {
-                 "name":"transparent",
-                 "type":"bool",
-                 "value":true
-                }, 
-                {
-                 "name":"walkable",
-                 "type":"bool",
-                 "value":true
+                 "name":"type",
+                 "type":"string",
+                 "value":"FloorTile"
                 }]
         }, 
         {
          "id":25,
          "properties":[
                 {
-                 "name":"transparent",
-                 "type":"bool",
-                 "value":true
-                }, 
-                {
-                 "name":"walkable",
-                 "type":"bool",
-                 "value":true
+                 "name":"type",
+                 "type":"string",
+                 "value":"FloorTile"
                 }]
         }, 
         {
          "id":26,
          "properties":[
                 {
-                 "name":"transparent",
-                 "type":"bool",
-                 "value":true
-                }, 
-                {
-                 "name":"walkable",
-                 "type":"bool",
-                 "value":true
+                 "name":"type",
+                 "type":"string",
+                 "value":"FloorTile"
                 }]
         }, 
         {
          "id":27,
          "properties":[
                 {
-                 "name":"transparent",
-                 "type":"bool",
-                 "value":true
-                }, 
-                {
-                 "name":"walkable",
-                 "type":"bool",
-                 "value":true
+                 "name":"type",
+                 "type":"string",
+                 "value":"FloorTile"
                 }]
         }, 
         {
          "id":28,
          "properties":[
                 {
-                 "name":"transparent",
-                 "type":"bool",
-                 "value":true
-                }, 
-                {
-                 "name":"walkable",
-                 "type":"bool",
-                 "value":true
+                 "name":"type",
+                 "type":"string",
+                 "value":"FloorTile"
                 }]
         }, 
         {
          "id":29,
          "properties":[
                 {
-                 "name":"transparent",
-                 "type":"bool",
-                 "value":true
-                }, 
-                {
-                 "name":"walkable",
-                 "type":"bool",
-                 "value":true
+                 "name":"type",
+                 "type":"string",
+                 "value":"FloorTile"
                 }]
         }, 
         {
          "id":30,
          "properties":[
                 {
-                 "name":"transparent",
-                 "type":"bool",
-                 "value":true
-                }, 
-                {
-                 "name":"walkable",
-                 "type":"bool",
-                 "value":true
+                 "name":"type",
+                 "type":"string",
+                 "value":"FloorTile"
                 }]
         }, 
         {
          "id":31,
          "properties":[
                 {
-                 "name":"transparent",
-                 "type":"bool",
-                 "value":true
-                }, 
-                {
-                 "name":"walkable",
-                 "type":"bool",
-                 "value":true
+                 "name":"type",
+                 "type":"string",
+                 "value":"FloorTile"
                 }]
         }, 
         {
          "id":32,
          "properties":[
                 {
-                 "name":"transparent",
-                 "type":"bool",
-                 "value":true
-                }, 
-                {
-                 "name":"walkable",
-                 "type":"bool",
-                 "value":true
+                 "name":"type",
+                 "type":"string",
+                 "value":"FloorTile"
                 }]
         }, 
         {
          "id":33,
          "properties":[
                 {
-                 "name":"transparent",
-                 "type":"bool",
-                 "value":true
-                }, 
-                {
-                 "name":"walkable",
-                 "type":"bool",
-                 "value":true
+                 "name":"type",
+                 "type":"string",
+                 "value":"FloorTile"
                 }]
         }, 
         {
          "id":34,
          "properties":[
                 {
-                 "name":"transparent",
-                 "type":"bool",
-                 "value":true
-                }, 
-                {
-                 "name":"walkable",
-                 "type":"bool",
-                 "value":true
+                 "name":"type",
+                 "type":"string",
+                 "value":"FloorTile"
                 }]
         }, 
         {
          "id":35,
          "properties":[
                 {
-                 "name":"transparent",
-                 "type":"bool",
-                 "value":true
-                }, 
-                {
-                 "name":"walkable",
-                 "type":"bool",
-                 "value":true
+                 "name":"type",
+                 "type":"string",
+                 "value":"FloorTile"
                 }]
         }, 
         {
          "id":36,
          "properties":[
                 {
-                 "name":"transparent",
-                 "type":"bool",
-                 "value":true
-                }, 
-                {
-                 "name":"walkable",
-                 "type":"bool",
-                 "value":true
+                 "name":"type",
+                 "type":"string",
+                 "value":"FloorTile"
                 }]
         }, 
         {
          "id":37,
          "properties":[
                 {
-                 "name":"transparent",
-                 "type":"bool",
-                 "value":true
-                }, 
-                {
-                 "name":"walkable",
-                 "type":"bool",
-                 "value":true
+                 "name":"type",
+                 "type":"string",
+                 "value":"FloorTile"
                 }]
         }, 
         {
          "id":38,
          "properties":[
                 {
-                 "name":"transparent",
-                 "type":"bool",
-                 "value":true
-                }, 
-                {
-                 "name":"walkable",
-                 "type":"bool",
-                 "value":true
+                 "name":"type",
+                 "type":"string",
+                 "value":"FloorTile"
                 }]
         }, 
         {
          "id":39,
          "properties":[
                 {
-                 "name":"transparent",
-                 "type":"bool",
-                 "value":true
-                }, 
-                {
-                 "name":"walkable",
-                 "type":"bool",
-                 "value":true
+                 "name":"type",
+                 "type":"string",
+                 "value":"FloorTile"
                 }]
         }, 
         {
          "id":40,
          "properties":[
                 {
-                 "name":"transparent",
-                 "type":"bool",
-                 "value":true
-                }, 
-                {
-                 "name":"walkable",
-                 "type":"bool",
-                 "value":true
+                 "name":"type",
+                 "type":"string",
+                 "value":"FloorTile"
                 }]
         }, 
         {
          "id":41,
          "properties":[
                 {
-                 "name":"transparent",
-                 "type":"bool",
-                 "value":true
-                }, 
-                {
-                 "name":"walkable",
-                 "type":"bool",
-                 "value":true
+                 "name":"type",
+                 "type":"string",
+                 "value":"FloorTile"
                 }]
         }, 
         {
          "id":42,
          "properties":[
                 {
-                 "name":"transparent",
-                 "type":"bool",
-                 "value":true
-                }, 
-                {
-                 "name":"walkable",
-                 "type":"bool",
-                 "value":true
+                 "name":"type",
+                 "type":"string",
+                 "value":"FloorTile"
                 }]
         }, 
         {
          "id":43,
          "properties":[
                 {
-                 "name":"transparent",
-                 "type":"bool",
-                 "value":true
-                }, 
-                {
-                 "name":"walkable",
-                 "type":"bool",
-                 "value":true
+                 "name":"type",
+                 "type":"string",
+                 "value":"FloorTile"
                 }]
         }, 
         {
          "id":44,
          "properties":[
                 {
-                 "name":"transparent",
-                 "type":"bool",
-                 "value":true
-                }, 
-                {
-                 "name":"walkable",
-                 "type":"bool",
-                 "value":true
+                 "name":"type",
+                 "type":"string",
+                 "value":"FloorTile"
                 }]
         }, 
         {
          "id":45,
          "properties":[
                 {
-                 "name":"transparent",
-                 "type":"bool",
-                 "value":true
-                }, 
-                {
-                 "name":"walkable",
-                 "type":"bool",
-                 "value":true
+                 "name":"type",
+                 "type":"string",
+                 "value":"FloorTile"
                 }]
         }, 
         {
          "id":46,
          "properties":[
                 {
-                 "name":"transparent",
-                 "type":"bool",
-                 "value":true
-                }, 
-                {
-                 "name":"walkable",
-                 "type":"bool",
-                 "value":true
+                 "name":"type",
+                 "type":"string",
+                 "value":"FloorTile"
                 }]
         }, 
         {
          "id":47,
          "properties":[
                 {
-                 "name":"transparent",
-                 "type":"bool",
-                 "value":true
-                }, 
-                {
-                 "name":"walkable",
-                 "type":"bool",
-                 "value":true
+                 "name":"type",
+                 "type":"string",
+                 "value":"FloorTile"
                 }]
         }],
  "tilewidth":48,

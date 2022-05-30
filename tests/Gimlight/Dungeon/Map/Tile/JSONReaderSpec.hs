@@ -7,10 +7,13 @@ import           Data.Map                             (empty)
 import           Data.Text                            (unpack)
 import           Gimlight.Dungeon.Map.Tile.JSONReader (addTileFile)
 import           Gimlight.Prelude
-import           Gimlight.SetUp.TileFile              (tileWithoutProperties,
+import           Gimlight.SetUp.TileFile              (seaTileFile,
+                                                       singleTileFile,
+                                                       tileWithoutProperties,
+                                                       tilesInSeaTileFile,
                                                        tilesInSingleTileFile,
                                                        tilesInUnitedTileFile,
-                                                       tilesInUnwalkableTileFile)
+                                                       unitedTileFile)
 import           Test.Hspec                           (Spec, describe,
                                                        errorCall, it, shouldBe,
                                                        shouldThrow)
@@ -31,9 +34,9 @@ testAddTileFile =
         e <- liftIO expected
         result `shouldBe` e
     testFileAndExpected =
-        [ ("tests/tiles/united.json", tilesInUnitedTileFile)
-        , ("tests/tiles/single.json", tilesInSingleTileFile)
-        , ("tests/tiles/unwalkable.json", tilesInUnwalkableTileFile)
+        [ (unitedTileFile, tilesInUnitedTileFile)
+        , (singleTileFile, tilesInSingleTileFile)
+        , (seaTileFile, tilesInSeaTileFile)
         ]
 
 testErrorOnReadingTileWithoutProperties :: Spec

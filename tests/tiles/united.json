@@ -13,84 +13,54 @@
          "id":0,
          "properties":[
                 {
-                 "name":"transparent",
-                 "type":"bool",
-                 "value":true
-                },
-                {
-                 "name":"walkable",
-                 "type":"bool",
-                 "value":true
+                 "name":"type",
+                 "type":"string",
+                 "value":"FloorTile"
                 }]
-        },
+        }, 
         {
          "id":1,
          "properties":[
                 {
-                 "name":"transparent",
-                 "type":"bool",
-                 "value":true
-                },
-                {
-                 "name":"walkable",
-                 "type":"bool",
-                 "value":true
+                 "name":"type",
+                 "type":"string",
+                 "value":"FloorTile"
                 }]
-        },
+        }, 
         {
          "id":2,
          "properties":[
                 {
-                 "name":"transparent",
-                 "type":"bool",
-                 "value":false
-                },
-                {
-                 "name":"walkable",
-                 "type":"bool",
-                 "value":false
+                 "name":"type",
+                 "type":"string",
+                 "value":"WallTile"
                 }]
-        },
+        }, 
         {
          "id":3,
          "properties":[
                 {
-                 "name":"transparent",
-                 "type":"bool",
-                 "value":true
-                },
-                {
-                 "name":"walkable",
-                 "type":"bool",
-                 "value":true
+                 "name":"type",
+                 "type":"string",
+                 "value":"FloorTile"
                 }]
-        },
+        }, 
         {
          "id":4,
          "properties":[
                 {
-                 "name":"transparent",
-                 "type":"bool",
-                 "value":true
-                },
-                {
-                 "name":"walkable",
-                 "type":"bool",
-                 "value":true
+                 "name":"type",
+                 "type":"string",
+                 "value":"FloorTile"
                 }]
-        },
+        }, 
         {
          "id":5,
          "properties":[
                 {
-                 "name":"transparent",
-                 "type":"bool",
-                 "value":true
-                },
-                {
-                 "name":"walkable",
-                 "type":"bool",
-                 "value":true
+                 "name":"type",
+                 "type":"string",
+                 "value":"FloorTile"
                 }]
         }],
  "tilewidth":48,

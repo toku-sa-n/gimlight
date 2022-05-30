@@ -10,17 +10,19 @@ import           Codec.Picture.Extra       (crop)
 import           Control.Applicative       (ZipList (ZipList, getZipList))
 import           Control.Lens              (filtered, has, only)
 import           Control.Monad             (guard, unless)
-import           Data.Aeson.Lens           (_Bool, _Integer, _String, key,
-                                            values)
+import           Data.Aeson.Lens           (_Integer, _String, key, values)
 import           Data.Either               (fromRight)
 import           Data.Map                  (insert)
+import           Data.Text                 (unpack)
 import           Gimlight.Codec.Picture    (readImage)
 import           Gimlight.Data.Maybe       (expectJust)
-import           Gimlight.Dungeon.Map.Tile (Tile, TileCollection, tile)
+import           Gimlight.Dungeon.Map.Tile (Tile, TileCollection, TileType,
+                                            tile)
 import           Gimlight.Prelude
 import           Gimlight.System.Path      (canonicalizeToUnixStyleRelativePath,
                                             dropFileName, (</>))
 import           Gimlight.UI.Draw.Config   (tileHeight, tileWidth)
+import           Text.Read                 (readMaybe)
 
 addTileFile :: FilePath -> TileCollection -> IO TileCollection
 addTileFile path tc = do
@@ -42,17 +44,15 @@ indexAndTile path = do
     unless (allTilesHaveNecessaryProperties json) $ error $ path <>
         ": Some tiles miss necessary properties."
     fmap
-        (zip (getIds json) . getZipList .
-         (tile <$> walkables json <*> transparents json <*>))
+        (zip (getIds json) . getZipList . (tile <$> tileTypes json <*>))
         (images imagePath)
   where
     images = fmap ZipList . readAndCutTileImageFile
-    transparents = ZipList . getTransparent
-    walkables = ZipList . getWalkable
+    tileTypes = ZipList . getTileType
 
 allTilesHaveNecessaryProperties :: Text -> Bool
 allTilesHaveNecessaryProperties json =
-    all ((== tileCount) . length . (json &)) [getTransparent, getWalkable]
+    all ((== tileCount) . length . (json &)) [getTileType]
   where
     tileCount = getTileCount json
 
@@ -65,18 +65,18 @@ getIds :: Text -> [Int]
 getIds json =
     fromInteger <$> json ^.. (key "tiles" . values . key "id") . _Integer
 
-getTransparent :: Text -> [Bool]
-getTransparent = getBoolProperty "transparent"
+getTileType :: Text -> [TileType]
+getTileType = fmap readOrFail . getTextProperty "type"
+  where
+    readOrFail t =
+        expectJust ("Unknow type: " <> showt t) $ readMaybe $ unpack t
 
-getWalkable :: Text -> [Bool]
-getWalkable = getBoolProperty "walkable"
-
-getBoolProperty :: Text -> Text -> [Bool]
-getBoolProperty property json =
+getTextProperty :: Text -> Text -> [Text]
+getTextProperty property json =
     json ^.. key "tiles" . values . key "properties" . values .
     filtered (has (key "name" . _String . only property)) .
     key "value" .
-    _Bool
+    _String
 
 readAndCutTileImageFile :: FilePath -> IO [Image PixelRGBA8]
 readAndCutTileImageFile = fmap cutTileMap . readTileImageFile

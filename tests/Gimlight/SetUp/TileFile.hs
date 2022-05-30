@@ -1,10 +1,10 @@
 module Gimlight.SetUp.TileFile
     ( tilesInUnitedTileFile
     , tilesInSingleTileFile
-    , tilesInUnwalkableTileFile
+    , tilesInSeaTileFile
     , unitedTileFile
     , singleTileFile
-    , unwalkableTileFile
+    , seaTileFile
     , tileFileForGeneration
     , tileWithoutProperties
     ) where
@@ -12,7 +12,9 @@ module Gimlight.SetUp.TileFile
 import           Codec.Picture             (Image, PixelRGBA8)
 import           Data.Foldable             (foldlM)
 import           Data.Map                  (empty, singleton, union)
-import           Gimlight.Dungeon.Map.Tile (Tile, TileCollection, TileId, tile)
+import           Gimlight.Dungeon.Map.Tile (Tile, TileCollection, TileId,
+                                            TileType (FloorTile, SeaTile, WallTile),
+                                            tile)
 import           Gimlight.Prelude
 import           Gimlight.SetUp.ImageFile  (singleTileImage)
 
@@ -25,18 +27,18 @@ tilesInUnitedTileFile = foldlM foldStep empty [0 .. 5]
              uncurry singleton . tileIdAndTile unitedTileFile x (tileOfIndex x))
             (singleTileImage x)
     tileOfIndex n
-        | n == unwalkableAndUntransparentTile = tile False False
-        | otherwise = tile True True
+        | n == unwalkableAndUntransparentTile = tile WallTile
+        | otherwise = tile FloorTile
     unwalkableAndUntransparentTile = 2
 
 tilesInSingleTileFile :: IO TileCollection
 tilesInSingleTileFile =
-    uncurry singleton . tileIdAndTile singleTileFile 0 (tile True True) <$>
+    uncurry singleton . tileIdAndTile singleTileFile 0 (tile FloorTile) <$>
     singleTileImage 0
 
-tilesInUnwalkableTileFile :: IO TileCollection
-tilesInUnwalkableTileFile =
-    uncurry singleton . tileIdAndTile unwalkableTileFile 0 (tile False True) <$>
+tilesInSeaTileFile :: IO TileCollection
+tilesInSeaTileFile =
+    uncurry singleton . tileIdAndTile seaTileFile 0 (tile SeaTile) <$>
     singleTileImage 0
 
 unitedTileFile :: FilePath
@@ -45,8 +47,8 @@ unitedTileFile = "tests/tiles/united.json"
 singleTileFile :: FilePath
 singleTileFile = "tests/tiles/single.json"
 
-unwalkableTileFile :: FilePath
-unwalkableTileFile = "tests/tiles/unwalkable.json"
+seaTileFile :: FilePath
+seaTileFile = "tests/tiles/sea.json"
 
 tileWithoutProperties :: FilePath
 tileWithoutProperties = "tests/tiles/no_properties.json"

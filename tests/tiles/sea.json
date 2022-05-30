@@ -13,14 +13,9 @@
          "id":0,
          "properties":[
                 {
-                 "name":"transparent",
-                 "type":"bool",
-                 "value":true
-                },
-                {
-                 "name":"walkable",
-                 "type":"bool",
-                 "value":false
+                 "name":"type",
+                 "type":"string",
+                 "value":"SeaTile"
                 }]
         }],
  "tilewidth":48,
