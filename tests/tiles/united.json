@@ -33,7 +33,7 @@
                 {
                  "name":"type",
                  "type":"string",
-                 "value":"Floor"
+                 "value":"Wall"
                 }]
         }, 
         {
