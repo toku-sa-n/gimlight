@@ -99,4 +99,4 @@ getDataOfAllLayer json =
         (mapM (fmap fromInteger . (^? _Integer)))
         (json ^.. key "layers" . values . key "data" . _Array)
   where
-    errMsg = "No layers section found."
+    errMsg = "The data sections in layers contain non-integer values."
