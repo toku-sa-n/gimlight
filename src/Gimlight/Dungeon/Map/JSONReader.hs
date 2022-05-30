@@ -29,20 +29,13 @@ readMapFile path = do
     parseFile json tiles = do
         let V2 width height = expectJust noWidthOrHeight $ getMapSize json
         unless (height * width == length tiles) $ error $
-            invalidWidthHeight width height (length tiles)
+            invalidWidthHeight path (V2 width height) (length tiles)
         return $ cellMap $ array (V2 0 0, V2 (width - 1) (height - 1)) $
             zip [V2 x y | y <- [0 .. height - 1], x <- [0 .. width - 1]] $
             toList tiles
     noWidthOrHeight =
         "The map file " <> path <>
         " does not contain both `width` and `height` fields."
-    invalidWidthHeight w h l =
-        "The multiplication of width and height of the map " <> path <>
-        " does not equal to the number of tiles. The size is " <>
-        showt (V2 w h) <>
-        " but the length is " <>
-        showt l <>
-        "."
 
 getMapSize :: Text -> Maybe (V2 Int)
 getMapSize json =
@@ -109,3 +102,12 @@ transposeListVector = fromList . transpose . fmap toList
 messageUsingTransformedTiles :: FilePath -> Text
 messageUsingTransformedTiles =
     (<> " contains rotated tiles. This game does not support them.")
+
+invalidWidthHeight :: FilePath -> V2 Int -> Int -> Text
+invalidWidthHeight mapPath size l =
+    "The multiplication of width and height of the map " <> mapPath <>
+    " does not equal to the number of tiles. The size is " <>
+    showt size <>
+    " but the number of tiles is " <>
+    showt l <>
+    "."
