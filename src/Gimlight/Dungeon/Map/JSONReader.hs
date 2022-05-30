@@ -11,7 +11,7 @@ import           Data.Aeson.Lens           (_Array, _Integer, _String, key,
                                             values)
 import           Data.Array                (array)
 import           Data.Bifunctor            (Bifunctor (second))
-import           Data.Bits                 (Bits (clearBit, testBit))
+import           Data.Bits                 (Bits (testBit))
 import           Data.List                 (find, sortBy, transpose)
 import           Data.Vector               (Vector, fromList, toList)
 import           Gimlight.Data.Maybe       (expectJust)
@@ -78,11 +78,9 @@ getTileIdOfAllLayer json pathToMap =
             second (ident -) $
             expectJust
                 ("Invalid tile GID: " <> showt ident)
-                (find ((clearAllFlags ident >=) . snd) $
-                 getSourceAndFirstGid json)
+                (find ((ident >=) . snd) $ getSourceAndFirstGid json)
     canonicalizeIdentifier path =
         canonicalizeToUnixStyleRelativePath (dropFileName pathToMap </> path)
-    clearAllFlags = (`clearBit` 29) . (`clearBit` 30) . (`clearBit` 31)
 
 getSourceAndFirstGid :: FilePath -> [(FilePath, Int)]
 getSourceAndFirstGid json =
