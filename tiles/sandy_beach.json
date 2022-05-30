@@ -1,9 +1,9 @@
 { "columns":8,
- "image":"..\/images\/tiles\/grass.png",
+ "image":"..\/images\/tiles\/sandy_beach.png",
  "imageheight":288,
  "imagewidth":384,
  "margin":0,
- "name":"grass",
+ "name":"sandy beach",
  "spacing":0,
  "tilecount":48,
  "tiledversion":"1.7.2",
@@ -449,11 +449,11 @@
          "colors":[
                 {
                  "color":"#ff0000",
-                 "name":"Grass floor",
+                 "name":"Sandy beach",
                  "probability":1,
                  "tile":-1
                 }],
-         "name":"Grass floor",
+         "name":"Sandy beach",
          "tile":-1,
          "type":"mixed",
          "wangtiles":[
