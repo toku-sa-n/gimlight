@@ -77,6 +77,9 @@ getTileIdOfAllLayer json pathToMap
         expectJust
             ("Invalid tile GID: " <> showt ident)
             (find ((ident >=) . snd) $ getSourceAndFirstGid json)
+    -- The image path writtein in a map JSON file is a relative path from
+    -- the map file. We need to convert it to a relative path from the
+    -- project root directory.
     canonicalizeSource path =
         canonicalizeToUnixStyleRelativePath (dropFileName pathToMap </> path)
 
