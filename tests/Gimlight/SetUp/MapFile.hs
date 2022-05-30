@@ -10,7 +10,6 @@ module Gimlight.SetUp.MapFile
     , mapUsingThreeLayers
     ) where
 
-import           Data.Array                (array)
 import           Gimlight.Dungeon.Map.Cell (CellMap, cellMap)
 import           Gimlight.Prelude
 import           Gimlight.SetUp.TileFile   (singleTileFile, unitedTileFile)

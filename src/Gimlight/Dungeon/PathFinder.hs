@@ -2,7 +2,7 @@ module Gimlight.Dungeon.PathFinder
     ( getPathTo
     ) where
 
-import           Data.Array                (Array, bounds, (!))
+import           Data.Array                (bounds, (!))
 import           Data.Graph.AStar          (aStar)
 import           Data.HashSet              (HashSet, fromList)
 import           Gimlight.Coord            (Coord)

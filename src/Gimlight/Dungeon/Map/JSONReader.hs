@@ -9,7 +9,6 @@ module Gimlight.Dungeon.Map.JSONReader
 import           Control.Monad             (unless)
 import           Data.Aeson.Lens           (_Array, _Integer, _String, key,
                                             values)
-import           Data.Array                (array)
 import           Data.Bifunctor            (Bifunctor (second))
 import           Data.Bits                 (Bits (testBit))
 import           Data.List                 (find, sortBy, transpose)

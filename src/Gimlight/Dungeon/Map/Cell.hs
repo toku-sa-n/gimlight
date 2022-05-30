@@ -34,7 +34,7 @@ module Gimlight.Dungeon.Map.Cell
 import           Control.Lens              (Traversal', preview, view, (<&>))
 import           Control.Monad.State       (MonadTrans (lift), StateT (StateT),
                                             gets)
-import           Data.Array                (Array, assocs, bounds, (!), (//))
+import           Data.Array                (assocs, bounds, (!), (//))
 import           Data.Bifunctor            (Bifunctor (second))
 import           Data.Either.Combinators   (maybeToRight)
 import           Data.Foldable             (find, msum)
