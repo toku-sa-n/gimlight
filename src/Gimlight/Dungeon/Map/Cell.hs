@@ -11,6 +11,7 @@ module Gimlight.Dungeon.Map.Cell
     , Error(..)
     , tileIdLayer
     , cellMap
+    , topLayerAt
     , updateExploredMap
     , updatePlayerFov
     , playerFov
@@ -30,7 +31,7 @@ module Gimlight.Dungeon.Map.Cell
     , tileIdLayerAt
     ) where
 
-import           Control.Lens              (preview, view, (<&>))
+import           Control.Lens              (Traversal', preview, view, (<&>))
 import           Control.Monad.State       (MonadTrans (lift), StateT (StateT),
                                             gets)
 import           Data.Array                (Array, assocs, bounds, (!), (//))
@@ -118,6 +119,9 @@ type CellMap = Array (V2 Int) Cell
 
 cellMap :: Array (V2 Int) TileIdLayer -> CellMap
 cellMap = fmap (\x -> Cell x Nothing Nothing False False)
+
+topLayerAt :: V2 Int -> Traversal' CellMap (Maybe TileId)
+topLayerAt x = ix x . tileIdLayer . ix 0
 
 widthAndHeight :: CellMap -> V2 Int
 widthAndHeight = (+ V2 1 1) . snd . bounds

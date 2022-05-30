@@ -20,7 +20,7 @@ import           Gimlight.Dungeon.Generate.Config     (Config, config,
 import           Gimlight.Dungeon.Identifier          (Identifier (Beaeve))
 import           Gimlight.Dungeon.Map.Cell            (CellMap,
                                                        positionsAndActors,
-                                                       tileIdLayer)
+                                                       tileIdLayer, topLayerAt)
 import           Gimlight.Dungeon.Map.JSONReader      (readMapFile)
 import           Gimlight.Dungeon.Map.Tile            (TileCollection)
 import           Gimlight.Dungeon.Map.Tile.JSONReader (addTileFile)
@@ -57,7 +57,7 @@ testUpstairsIsOnCorrectPosition :: TileCollection -> Spec
 testUpstairsIsOnCorrectPosition tc =
     prop "upstairs appears on the correct position." $ \g ->
         let (d, c) = generateDungeonAndUpStairsPosition g tc
-         in d ^? D.cellMap . ix c . tileIdLayer . ix 0 `shouldBe`
+         in d ^? D.cellMap . topLayerAt c `shouldBe`
             Just (Just (tileFileForGeneration, upStairsIndex))
 
 testNoActorExistsOnUpStairs :: TileCollection -> Spec

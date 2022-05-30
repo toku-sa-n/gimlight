@@ -37,7 +37,8 @@ import           Gimlight.Dungeon.Generate.Room   (Room (..), center,
 import           Gimlight.Dungeon.Identifier      (Identifier)
 import           Gimlight.Dungeon.Map.Cell        (CellMap, TileIdLayer,
                                                    locateActorAt, locateItemAt,
-                                                   tileIdLayer, widthAndHeight)
+                                                   tileIdLayer, topLayerAt,
+                                                   widthAndHeight)
 import qualified Gimlight.Dungeon.Map.Cell        as C
 import           Gimlight.Dungeon.Map.Tile        (TileCollection, TileId,
                                                    TileIndex)
@@ -85,8 +86,7 @@ generateDungeonAndAppend zipper ts cfg ident = do
                 (StairsPair upperStairsPosition lowerStairsPosition)
                 (zipper ^. focused, generatedDungeon)
         upperWithStairs =
-            newUpperDungeon & cellMap . ix upperStairsPosition . tileIdLayer .
-            ix 0 ?~
+            newUpperDungeon & cellMap . topLayerAt upperStairsPosition ?~
             downStairsId cfg
         newZipper =
             appendNode newLowerDungeon $ zipper & focused .~ upperWithStairs
@@ -111,7 +111,7 @@ generateDungeon tc cfg ident = do
         generateDungeonAccum [] tc initialMap (V2 0 0) cfg (getMaxRooms cfg)
     let d =
             dungeon
-                (addEdgeTiles cfg tiles & ix enterPosition . tileIdLayer . ix 0 ?~
+                (addEdgeTiles cfg tiles & topLayerAt enterPosition ?~
                  (getTileFilePath cfg, upStairsIndex))
                 ident
     return (d, enterPosition)
@@ -184,13 +184,13 @@ addEdgeTiles cfg cm = foldl updateTileId cm ceilTiles
     isStairs = tileIdSatisfies isStairsId
     tileIdSatisfies cond = maybe False (maybe False (cond . snd)) . upperTileAt
     allCoordsInMap = [V2 x y | x <- [0 .. width - 1], y <- [0 .. height - 1]]
-    upperTileAt c = cm ^? ix c . tileIdLayer . ix 0
+    upperTileAt c = cm ^? topLayerAt c
     V2 width height = widthAndHeight cm
 
 createRoom :: Room -> CellMap -> CellMap
 createRoom room = flip (foldl removeTileAt) coords
   where
-    removeTileAt cm x = cm & ix x . tileIdLayer . ix 0 .~ Nothing
+    removeTileAt cm x = cm & topLayerAt x .~ Nothing
     coords =
         [V2 x y | x <- [x1 room .. x2 room - 1], y <- [y1 room .. y2 room - 1]]
 
