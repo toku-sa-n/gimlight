@@ -70,14 +70,14 @@ getTileIdOfAllLayer json pathToMap
             error $ pathToMap <>
             " contains rotated tiles. This game does not support them."
         | otherwise =
-            (fmap Just . (\(x, y) -> (, y) <$> canonicalizeIdentifier x)) .
+            (fmap Just . (\(x, y) -> (, y) <$> canonicalizeSource x)) .
             second (ident -) $
             whichMapOfId ident
     whichMapOfId ident =
         expectJust
             ("Invalid tile GID: " <> showt ident)
             (find ((ident >=) . snd) $ getSourceAndFirstGid json)
-    canonicalizeIdentifier path =
+    canonicalizeSource path =
         canonicalizeToUnixStyleRelativePath (dropFileName pathToMap </> path)
 
 getSourceAndFirstGid :: Text -> [(FilePath, Int)]
