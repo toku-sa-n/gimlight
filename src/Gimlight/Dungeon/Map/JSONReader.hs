@@ -92,13 +92,13 @@ getSourceAndFirstGid json =
         _Integer
 
 getDataOfAllLayer :: Text -> [Vector Int]
-getDataOfAllLayer json =
-    mapToInt (json ^.. key "layers" . values . key "data" . _Array)
-
-mapToInt :: [Vector Value] -> [Vector Int]
-mapToInt = expectJust errMsg . mapM (mapM (fmap fromInteger . (^? _Integer)))
+getDataOfAllLayer json = expectJust errMsg $ mapToInt (json ^.. lens)
   where
+    lens = key "layers" . values . key "data" . _Array
     errMsg = "The data sections in layers contain non-integer values."
+
+mapToInt :: [Vector Value] -> Maybe [Vector Int]
+mapToInt = mapM (mapM (fmap fromInteger . (^? _Integer)))
 
 transformationFlagsAreSet :: Int -> Bool
 transformationFlagsAreSet = or . flip fmap [29, 30, 31] . testBit
