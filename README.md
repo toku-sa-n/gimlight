@@ -9,11 +9,11 @@ We assume that you run all commands in this section on the [`msys2`](https://www
 Install the dependencies with `pacman`:
 
 ```sh
-sudo pacman -S base-devel
-sudo pacman -S mingw-w64-x86_64-pkg-config
-sudo pacman -S mingw-w64-x86_64-SDL2
-sudo pacman -S mingw-w64-x86_64-glew
-sudo pacman -S mingw-w64-x86_64-freetype
+pacman -S base-devel
+pacman -S mingw-w64-x86_64-pkg-config
+pacman -S mingw-w64-x86_64-SDL2
+pacman -S mingw-w64-x86_64-glew
+pacman -S mingw-w64-x86_64-freetype
 ```
 
 After installing them, run this command on the project root:
