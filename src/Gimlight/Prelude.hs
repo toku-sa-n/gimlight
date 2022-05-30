@@ -10,7 +10,7 @@ module Gimlight.Prelude
 
 import           Control.Lens       (Ixed (ix), makeLenses, (%%~), (%=), (%~),
                                      (+=), (.=), (.~), (?~), (^.), (^..), (^?))
-import           Data.Array         (array)
+import           Data.Array         (Array, array)
 import           Data.Function      ((&))
 import           Data.Text          (Text)
 import           Gimlight.Data.Text
