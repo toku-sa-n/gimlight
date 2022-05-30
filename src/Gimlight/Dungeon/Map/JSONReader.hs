@@ -76,16 +76,18 @@ getTileIdOfAllLayer json pathToMap =
         | otherwise =
             (fmap Just . (\(x, y) -> (, y) <$> canonicalizeIdentifier x)) .
             second (ident -) $
-            expectJust
-                ("Invalid tile GID: " <> showt ident)
-                (find ((ident >=) . snd) $ getSourceAndFirstGid json)
+            whichMapOfId ident
+    whichMapOfId ident =
+        expectJust
+            ("Invalid tile GID: " <> showt ident)
+            (find ((ident >=) . snd) $ getSourceAndFirstGid json)
     canonicalizeIdentifier path =
         canonicalizeToUnixStyleRelativePath (dropFileName pathToMap </> path)
 
 getSourceAndFirstGid :: Text -> [(FilePath, Int)]
-getSourceAndFirstGid json =
-    sortBy (\(_, a) (_, b) -> compare b a) $ zip sources firstGids
+getSourceAndFirstGid json = sortByGidInDescendingOrder $ zip sources firstGids
   where
+    sortByGidInDescendingOrder = sortBy (\(_, a) (_, b) -> compare b a)
     sources = json ^.. key "tilesets" . values . key "source" . _String
     firstGids =
         fmap fromIntegral $ json ^.. key "tilesets" . values . key "firstgid" .
