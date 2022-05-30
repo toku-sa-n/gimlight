@@ -1,5 +1,7 @@
 # Gimlight
 
+![30-05-2022_21:44:27_screenshot](https://user-images.githubusercontent.com/42336339/170999467-226e50c3-a325-4a0a-81aa-10bd9da841ea.png)
+
 ## Running
 
 ### Windows
