@@ -64,7 +64,7 @@ getTiles json =
     fmap (fromList . transpose . reverse . fmap toList) .
     getTileIdOfAllLayer json
 
-getTileIdOfAllLayer :: FilePath -> FilePath -> IO [Vector (Maybe TileId)]
+getTileIdOfAllLayer :: Text -> FilePath -> IO [Vector (Maybe TileId)]
 getTileIdOfAllLayer json pathToMap =
     traverse (mapM rawIdToIdentifier) $ getDataOfAllLayer json
   where
@@ -82,7 +82,7 @@ getTileIdOfAllLayer json pathToMap =
     canonicalizeIdentifier path =
         canonicalizeToUnixStyleRelativePath (dropFileName pathToMap </> path)
 
-getSourceAndFirstGid :: FilePath -> [(FilePath, Int)]
+getSourceAndFirstGid :: Text -> [(FilePath, Int)]
 getSourceAndFirstGid json =
     sortBy (\(_, a) (_, b) -> compare b a) $ zip sources firstGids
   where
@@ -91,7 +91,7 @@ getSourceAndFirstGid json =
         fmap fromIntegral $ json ^.. key "tilesets" . values . key "firstgid" .
         _Integer
 
-getDataOfAllLayer :: FilePath -> [Vector Int]
+getDataOfAllLayer :: Text -> [Vector Int]
 getDataOfAllLayer json =
     expectJust errMsg $
     mapM
