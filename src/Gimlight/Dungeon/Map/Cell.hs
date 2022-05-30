@@ -13,7 +13,6 @@ module Gimlight.Dungeon.Map.Cell
     , cellMap
     , updateExploredMap
     , updatePlayerFov
-    , pushTileId
     , playerFov
     , playerActor
     , walkableFloors
@@ -77,15 +76,15 @@ makeLenses ''Cell
 isWalkable :: TileCollection -> Cell -> Bool
 isWalkable tc c =
     all ($ c)
-        [ (/= Just False) . fmap (Tile.isWalkable . (tc M.!)) . msum .
-          view tileIdLayer
+        [ (/= Just False) .
+          fmap (Tile.isWalkable . (tc M.!)) . msum . view tileIdLayer
         , isNothing . view actor
         ]
 
 isTransparent :: TileCollection -> Cell -> Bool
 isTransparent tc =
-    (/= Just False) . fmap (Tile.isTransparent . (tc M.!)) . msum .
-    view tileIdLayer
+    (/= Just False) .
+    fmap (Tile.isTransparent . (tc M.!)) . msum . view tileIdLayer
 
 isTileWalkable :: TileCollection -> Cell -> Bool
 isTileWalkable tc c =
@@ -119,9 +118,6 @@ type CellMap = Array (V2 Int) Cell
 
 cellMap :: Array (V2 Int) TileIdLayer -> CellMap
 cellMap = fmap (\x -> Cell x Nothing Nothing False False)
-
-pushTileId :: V2 Int -> TileId -> CellMap -> CellMap
-pushTileId c i cm = cm & ix c . tileIdLayer %~ (Just i :)
 
 widthAndHeight :: CellMap -> V2 Int
 widthAndHeight = (+ V2 1 1) . snd . bounds
@@ -193,19 +189,19 @@ locateItemAt tc c i =
 removeActorAt :: Coord -> StateT CellMap (Either Error) Actor
 removeActorAt c =
     StateT $ \cm ->
-        maybeToRight OutOfRange (cm ^? ix c) >>= removeActor <&>
-        second (\cell -> cm // [(c, cell)])
+        maybeToRight OutOfRange (cm ^? ix c) >>=
+        removeActor <&> second (\cell -> cm // [(c, cell)])
 
 removeItemAt :: Coord -> StateT CellMap (Either Error) SomeItem
 removeItemAt c =
     StateT $ \cm ->
-        maybeToRight OutOfRange (cm ^? ix c) >>= removeItem <&>
-        second (\cell -> cm // [(c, cell)])
+        maybeToRight OutOfRange (cm ^? ix c) >>=
+        removeItem <&> second (\cell -> cm // [(c, cell)])
 
 removeActorIf :: (Actor -> Bool) -> StateT CellMap (Either Error) Actor
 removeActorIf f =
-    gets (fmap fst . find (f . snd) . positionsAndActors) >>= lift .
-    maybeToRight ActorNotFound >>=
+    gets (fmap fst . find (f . snd) . positionsAndActors) >>=
+    lift . maybeToRight ActorNotFound >>=
     removeActorAt
 
 tileIdLayerAt :: Coord -> CellMap -> Maybe TileIdLayer

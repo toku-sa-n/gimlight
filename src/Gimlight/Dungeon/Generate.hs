@@ -37,8 +37,7 @@ import           Gimlight.Dungeon.Generate.Room   (Room (..), center,
 import           Gimlight.Dungeon.Identifier      (Identifier)
 import           Gimlight.Dungeon.Map.Cell        (CellMap, TileIdLayer,
                                                    locateActorAt, locateItemAt,
-                                                   pushTileId, tileIdLayer,
-                                                   widthAndHeight)
+                                                   tileIdLayer, widthAndHeight)
 import qualified Gimlight.Dungeon.Map.Cell        as C
 import           Gimlight.Dungeon.Map.Tile        (TileCollection, TileId,
                                                    TileIndex)
@@ -86,8 +85,9 @@ generateDungeonAndAppend zipper ts cfg ident = do
                 (StairsPair upperStairsPosition lowerStairsPosition)
                 (zipper ^. focused, generatedDungeon)
         upperWithStairs =
-            newUpperDungeon & cellMap %~
-            pushTileId upperStairsPosition (downStairsId cfg)
+            newUpperDungeon & cellMap . ix upperStairsPosition . tileIdLayer .
+            ix 0 ?~
+            downStairsId cfg
         newZipper =
             appendNode newLowerDungeon $ zipper & focused .~ upperWithStairs
         zipperFocusingNext =
