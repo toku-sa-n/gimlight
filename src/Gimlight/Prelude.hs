@@ -1,5 +1,6 @@
 module Gimlight.Prelude
     ( module Control.Lens
+    , module Data.Array
     , module Data.Function
     , module Data.Text
     , module Gimlight.Data.Text
@@ -9,6 +10,7 @@ module Gimlight.Prelude
 
 import           Control.Lens       (Ixed (ix), makeLenses, (%%~), (%=), (%~),
                                      (+=), (.=), (.~), (?~), (^.), (^..), (^?))
+import           Data.Array         (array)
 import           Data.Function      ((&))
 import           Data.Text          (Text)
 import           Gimlight.Data.Text
