@@ -27,15 +27,13 @@ readMapFile path = do
     getTileIdOfAllLayer json path >>= parseFile json
   where
     parseFile json tiles = do
-        let V2 width height = expectJust noWidthOrHeight $ getMapSize json
+        let V2 width height =
+                expectJust (noWidthOrHeight path) $ getMapSize json
         unless (height * width == length tiles) $ error $
             invalidWidthHeight path (V2 width height) (length tiles)
         return $ cellMap $ array (V2 0 0, V2 (width - 1) (height - 1)) $
             zip [V2 x y | y <- [0 .. height - 1], x <- [0 .. width - 1]] $
             toList tiles
-    noWidthOrHeight =
-        "The map file " <> path <>
-        " does not contain both `width` and `height` fields."
 
 getMapSize :: Text -> Maybe (V2 Int)
 getMapSize json =
@@ -111,3 +109,8 @@ invalidWidthHeight mapPath size l =
     " but the number of tiles is " <>
     showt l <>
     "."
+
+noWidthOrHeight :: FilePath -> Text
+noWidthOrHeight mapPath =
+    "The map file " <> mapPath <>
+    " does not contain both `width` and `height` fields."
