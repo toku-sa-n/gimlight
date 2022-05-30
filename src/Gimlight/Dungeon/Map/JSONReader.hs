@@ -80,7 +80,6 @@ getTileIdOfAllLayer json pathToMap =
                 (find ((ident >=) . snd) $ getSourceAndFirstGid json)
     canonicalizeIdentifier path =
         canonicalizeToUnixStyleRelativePath (dropFileName pathToMap </> path)
-    transformationFlagsAreSet = or . flip fmap [29, 30, 31] . testBit
 
 getSourceAndFirstGid :: Text -> [(FilePath, Int)]
 getSourceAndFirstGid json =
@@ -99,3 +98,6 @@ getDataOfAllLayer json =
         (json ^.. key "layers" . values . key "data" . _Array)
   where
     errMsg = "The data sections in layers contain non-integer values."
+
+transformationFlagsAreSet :: Int -> Bool
+transformationFlagsAreSet = or . flip fmap [29, 30, 31] . testBit
