@@ -52,14 +52,15 @@ getMapSize json =
   where
     fetch k = json ^? key k . _Integer
 
--- From https://doc.mapeditor.org/en/stable/reference/tmx-map-format/:
---
--- > The order in which these layers appear is the order in which the layers are rendered by Tiled.
---
--- That is why we reverse here because we store tiles of each cell from top
--- to bottom.
 getTileIdOfAllLayer :: Text -> FilePath -> IO (Vector TileIdLayer)
-getTileIdOfAllLayer json pathToMap =
+getTileIdOfAllLayer json pathToMap
+    -- From https://doc.mapeditor.org/en/stable/reference/tmx-map-format/:
+    --
+    -- > The order in which these layers appear is the order in which the layers are rendered by Tiled.
+    --
+    -- That is why we reverse here because we store tiles of each cell from top
+    -- to bottom.
+ =
     fmap (transposeListVector . reverse) $ traverse (mapM rawIdToIdentifier) $
     getDataOfAllLayer json
   where
