@@ -2,6 +2,7 @@
 
 module Gimlight.Dungeon.Map.Tile
     ( Tile
+    , TileType(..)
     , TileCollection
     , TileId
     , TileIndex
@@ -17,24 +18,25 @@ import           Data.Map         (Map)
 import           GHC.Generics     (Generic)
 import           Gimlight.Prelude
 
+data TileType
+    = FloorTile
+    | SeaTile
+    | WallTile
+    deriving (Eq, Ord, Show, Read)
+
 data Tile =
     Tile
-        { walkable    :: Bool
-        , transparent :: Bool
-        , image       :: Image PixelRGBA8
+        { tileType :: TileType
+        , image    :: Image PixelRGBA8
         }
     deriving (Eq, Generic)
 
 instance Show Tile where
-    show t =
-        "Tile {walkable = " ++
-        show (walkable t) ++
-        ", transparent = " ++ show (transparent t) ++ ", ...}"
+    show t = "Tile {tileType = " ++ show (tileType t) ++ ", ...}"
 
 instance Ord Tile where
     a <= b =
-        walkable a <= walkable a &&
-        transparent a <= transparent b &&
+        tileType a <= tileType b &&
         imageWidth (image a) <= imageWidth (image b) &&
         imageHeight (image a) <= imageHeight (image b) &&
         imageData (image a) <= imageData (image b)
@@ -45,14 +47,22 @@ type TileId = (FilePath, Int)
 
 type TileIndex = Int
 
-tile :: Bool -> Bool -> Image PixelRGBA8 -> Tile
+tile :: TileType -> Image PixelRGBA8 -> Tile
 tile = Tile
 
 getImage :: Tile -> Image PixelRGBA8
 getImage = image
 
 isWalkable :: Tile -> Bool
-isWalkable = walkable
+isWalkable t =
+    case tileType t of
+        FloorTile -> True
+        SeaTile   -> False
+        WallTile  -> False
 
 isTransparent :: Tile -> Bool
-isTransparent = transparent
+isTransparent t =
+    case tileType t of
+        FloorTile -> True
+        SeaTile   -> True
+        WallTile  -> False

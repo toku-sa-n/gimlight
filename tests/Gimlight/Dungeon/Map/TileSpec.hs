@@ -9,15 +9,16 @@ module Gimlight.Dungeon.Map.TileSpec
 import           Codec.Picture             (PixelRGBA8 (PixelRGBA8),
                                             generateImage)
 import           Data.Map                  (fromList)
-import           Gimlight.Dungeon.Map.Tile (TileCollection, TileId, tile)
+import           Gimlight.Dungeon.Map.Tile (TileCollection, TileId,
+                                            TileType (FloorTile, SeaTile), tile)
 import           Gimlight.Prelude
 import           Gimlight.UI.Draw.Config   (tileHeight, tileWidth)
 
 mockTileCollection :: TileCollection
 mockTileCollection =
     fromList
-        [ (walkable, tile True True emptyImage)
-        , (unwalkable, tile False True emptyImage)
+        [ (walkable, tile FloorTile emptyImage)
+        , (unwalkable, tile SeaTile emptyImage)
         ]
   where
     emptyImage = generateImage (\_ _ -> PixelRGBA8 0 0 0 0) tileWidth tileHeight

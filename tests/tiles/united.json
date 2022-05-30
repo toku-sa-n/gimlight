@@ -15,7 +15,7 @@
                 {
                  "name":"type",
                  "type":"string",
-                 "value":"Floor"
+                 "value":"FloorTile"
                 }]
         }, 
         {
@@ -24,7 +24,7 @@
                 {
                  "name":"type",
                  "type":"string",
-                 "value":"Floor"
+                 "value":"FloorTile"
                 }]
         }, 
         {
@@ -33,7 +33,7 @@
                 {
                  "name":"type",
                  "type":"string",
-                 "value":"Wall"
+                 "value":"WallTile"
                 }]
         }, 
         {
@@ -42,7 +42,7 @@
                 {
                  "name":"type",
                  "type":"string",
-                 "value":"Floor"
+                 "value":"FloorTile"
                 }]
         }, 
         {
@@ -51,7 +51,7 @@
                 {
                  "name":"type",
                  "type":"string",
-                 "value":"Floor"
+                 "value":"FloorTile"
                 }]
         }, 
         {
@@ -60,7 +60,7 @@
                 {
                  "name":"type",
                  "type":"string",
-                 "value":"Floor"
+                 "value":"FloorTile"
                 }]
         }],
  "tilewidth":48,
