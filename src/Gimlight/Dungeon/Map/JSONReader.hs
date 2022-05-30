@@ -7,16 +7,13 @@ module Gimlight.Dungeon.Map.JSONReader
     ) where
 
 import           Control.Monad             (unless)
-import           Control.Monad.Except      (ExceptT (ExceptT), runExceptT)
 import           Data.Aeson.Lens           (_Array, _Integer, _String, key,
                                             values)
 import           Data.Array                (array)
 import           Data.Bifunctor            (Bifunctor (second))
 import           Data.Bits                 (Bits (clearBit, testBit))
-import           Data.Either.Combinators   (maybeToRight)
 import           Data.List                 (find, sortBy, transpose)
 import           Data.Vector               (Vector, fromList, toList)
-import           Gimlight.Data.Either      (expectRight)
 import           Gimlight.Data.Maybe       (expectJust)
 import           Gimlight.Dungeon.Map.Cell (CellMap, TileIdLayer, cellMap)
 import           Gimlight.Dungeon.Map.Tile (TileId)
@@ -26,23 +23,17 @@ import           Gimlight.System.Path      (canonicalizeToUnixStyleRelativePath,
 import           Linear.V2                 (V2 (V2))
 
 readMapFile :: FilePath -> IO CellMap
-readMapFile p = fmap (expectRight msg) $ runExceptT $ readMapFileOrFail p
-  where
-    msg = "Failed to load a map: " <> p
-
-readMapFileOrFail :: FilePath -> ExceptT Text IO CellMap
-readMapFileOrFail path = do
-    json <- ExceptT . fmap return $ readFile path
-    getTiles json path >>= ExceptT . return . parseFile json
+readMapFile path = do
+    json <- readFile path
+    getTiles json path >>= parseFile json
   where
     parseFile json tiles = do
-        V2 width height <- maybeToRight noWidthOrHeight $ getMapSize json
-        unless (height * width == length tiles) $ Left $
+        let V2 width height = expectJust noWidthOrHeight $ getMapSize json
+        unless (height * width == length tiles) $ error $
             invalidWidthHeight width height (length tiles)
-        Right
-            (cellMap $ array (V2 0 0, V2 (width - 1) (height - 1)) $
-             zip [V2 x y | y <- [0 .. height - 1], x <- [0 .. width - 1]] $
-             toList tiles)
+        return $ cellMap $ array (V2 0 0, V2 (width - 1) (height - 1)) $
+            zip [V2 x y | y <- [0 .. height - 1], x <- [0 .. width - 1]] $
+            toList tiles
     noWidthOrHeight =
         "The map file " <> path <>
         " does not contain both `width` and `height` fields."
@@ -68,15 +59,14 @@ getMapSize json =
 --
 -- That is why we reverse here because we store tiles of each cell from top
 -- to bottom.
-getTiles :: Text -> FilePath -> ExceptT Text IO (Vector TileIdLayer)
+getTiles :: Text -> FilePath -> IO (Vector TileIdLayer)
 getTiles json =
     fmap (fromList . transpose . reverse . fmap toList) .
     getTileIdOfAllLayer json
 
-getTileIdOfAllLayer ::
-       FilePath -> FilePath -> ExceptT Text IO [Vector (Maybe TileId)]
+getTileIdOfAllLayer :: FilePath -> FilePath -> IO [Vector (Maybe TileId)]
 getTileIdOfAllLayer json pathToMap =
-    ExceptT . mapM (traverse (mapM rawIdToIdentifier)) $ getDataOfAllLayer json
+    traverse (mapM rawIdToIdentifier) $ getDataOfAllLayer json
   where
     rawIdToIdentifier 0 = return Nothing
     rawIdToIdentifier ident
@@ -103,9 +93,9 @@ getSourceAndFirstGid json =
         fmap fromIntegral $ json ^.. key "tilesets" . values . key "firstgid" .
         _Integer
 
-getDataOfAllLayer :: FilePath -> Either Text [Vector Int]
+getDataOfAllLayer :: FilePath -> [Vector Int]
 getDataOfAllLayer json =
-    maybeToRight errMsg $
+    expectJust errMsg $
     mapM
         (mapM (fmap fromInteger . (^? _Integer)))
         (json ^.. key "layers" . values . key "data" . _Array)
