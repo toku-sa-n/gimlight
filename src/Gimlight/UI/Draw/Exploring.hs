@@ -7,10 +7,11 @@ module Gimlight.UI.Draw.Exploring
 import           Codec.Picture                   (Image (imageData, imageHeight, imageWidth),
                                                   PixelRGBA8)
 import           Control.Lens                    ((^?!))
-import           Control.Monad                   (guard)
+import           Control.Monad                   (guard, join)
 import           Data.Array                      ((!))
 import qualified Data.Map                        as Map
-import           Data.Maybe                      (catMaybes, mapMaybe)
+import           Data.Maybe                      (catMaybes, mapMaybe,
+                                                  maybeToList)
 import           Data.Vector.Storable.ByteString (vectorToByteString)
 import           Gimlight.Actor                  (getArmor,
                                                   getCurrentExperiencePoint,
@@ -22,12 +23,11 @@ import           Gimlight.Actor                  (getArmor,
                                                   walkingImagePath)
 import           Gimlight.Coord                  (Coord)
 import           Gimlight.Dungeon                (cellMap)
-import           Gimlight.Dungeon.Map.Cell       (CellMap, exploredMap, lower,
+import           Gimlight.Dungeon.Map.Cell       (CellMap, exploredMap,
                                                   playerActor, playerFov,
                                                   positionsAndActors,
                                                   positionsAndItems,
-                                                  tileIdLayerAt, upper,
-                                                  widthAndHeight)
+                                                  tileIdLayerAt, widthAndHeight)
 import           Gimlight.Dungeon.Map.Tile       (getImage)
 import           Gimlight.GameConfig             (GameConfig)
 import           Gimlight.GameStatus.Exploring   (ExploringHandler,
@@ -117,11 +117,11 @@ mapWidget eh = vstack rows
         | x <- [topLeftCoordX .. topLeftCoordX + tileColumns - 1]
         ]
     cell c =
-        zstack (catMaybes [lowerLayerAt c, upperLayerAt c, Just $ shadowAt c]) `styleBasic`
+        zstack (reverse (shadowAt c : layers c)) `styleBasic`
         [width $ fromIntegral tileWidth, height $ fromIntegral tileHeight]
-    lowerLayerAt = layerOfAt lower
-    upperLayerAt = layerOfAt upper
-    layerOfAt which c = tileIdToImageMem <$> getTileIdOfLayerAt which c
+    layers =
+        join . maybeToList . fmap (fmap tileIdToImageMem . catMaybes) .
+        tileIdLayer
     tileIdToImageMem tileId = imageToWidget img (showt tileId)
       where
         img = getImage $ getTileCollection eh Map.! tileId
@@ -132,7 +132,6 @@ mapWidget eh = vstack rows
         | otherwise = 1
     isVisible c = playerFov cm ^? ix c == Just True
     isExplored c = exploredMap cm ^? ix c == Just True
-    getTileIdOfLayerAt which c = tileIdLayer c >>= (^. which)
     tileIdLayer c = tileIdLayerAt c cm
     V2 topLeftCoordX topLeftCoordY = topLeftCoord cm
     cm = eh ^. currentDungeon . cellMap

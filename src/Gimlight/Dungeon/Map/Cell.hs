@@ -7,13 +7,11 @@
 
 module Gimlight.Dungeon.Map.Cell
     ( CellMap
-    , TileIdLayer(..)
+    , TileIdLayer
     , Error(..)
     , tileIdLayer
-    , upper
-    , lower
     , cellMap
-    , upperAt
+    , topLayerAt
     , updateExploredMap
     , updatePlayerFov
     , playerFov
@@ -39,7 +37,7 @@ import           Control.Monad.State       (MonadTrans (lift), StateT (StateT),
 import           Data.Array                (Array, assocs, bounds, (!), (//))
 import           Data.Bifunctor            (Bifunctor (second))
 import           Data.Either.Combinators   (maybeToRight)
-import           Data.Foldable             (find)
+import           Data.Foldable             (find, msum)
 import qualified Data.Map                  as M
 import           Data.Maybe                (isNothing, mapMaybe)
 import           GHC.Generics              (Generic)
@@ -61,14 +59,8 @@ data Error
     | TileIsNotWalkable
     deriving (Show, Eq)
 
-data TileIdLayer =
-    TileIdLayer
-        { _upper :: Maybe TileId
-        , _lower :: Maybe TileId
-        }
-    deriving (Show, Ord, Eq, Generic)
-
-makeLenses ''TileIdLayer
+-- From the top layer to the bottom one.
+type TileIdLayer = [Maybe TileId]
 
 data Cell =
     Cell
@@ -85,19 +77,19 @@ makeLenses ''Cell
 isWalkable :: TileCollection -> Cell -> Bool
 isWalkable tc c =
     all ($ c)
-        [ (/= Just False) . fmap (Tile.isWalkable . (tc M.!)) .
-          view (tileIdLayer . upper)
+        [ (/= Just False) .
+          fmap (Tile.isWalkable . (tc M.!)) . msum . view tileIdLayer
         , isNothing . view actor
         ]
 
 isTransparent :: TileCollection -> Cell -> Bool
 isTransparent tc =
-    (/= Just False) . fmap (Tile.isTransparent . (tc M.!)) .
-    view (tileIdLayer . upper)
+    (/= Just False) .
+    fmap (Tile.isTransparent . (tc M.!)) . msum . view tileIdLayer
 
 isTileWalkable :: TileCollection -> Cell -> Bool
 isTileWalkable tc c =
-    fmap (Tile.isWalkable . (tc M.!)) (c ^. tileIdLayer . upper) /= Just False
+    fmap (Tile.isWalkable . (tc M.!)) (msum $ c ^. tileIdLayer) /= Just False
 
 locateActor :: TileCollection -> Actor -> Cell -> Either Error Cell
 locateActor tc a c
@@ -128,8 +120,8 @@ type CellMap = Array (V2 Int) Cell
 cellMap :: Array (V2 Int) TileIdLayer -> CellMap
 cellMap = fmap (\x -> Cell x Nothing Nothing False False)
 
-upperAt :: V2 Int -> Traversal' CellMap (Maybe TileId)
-upperAt x = ix x . tileIdLayer . upper
+topLayerAt :: V2 Int -> Traversal' CellMap (Maybe TileId)
+topLayerAt x = ix x . tileIdLayer . ix 0
 
 widthAndHeight :: CellMap -> V2 Int
 widthAndHeight = (+ V2 1 1) . snd . bounds
@@ -201,19 +193,19 @@ locateItemAt tc c i =
 removeActorAt :: Coord -> StateT CellMap (Either Error) Actor
 removeActorAt c =
     StateT $ \cm ->
-        maybeToRight OutOfRange (cm ^? ix c) >>= removeActor <&>
-        second (\cell -> cm // [(c, cell)])
+        maybeToRight OutOfRange (cm ^? ix c) >>=
+        removeActor <&> second (\cell -> cm // [(c, cell)])
 
 removeItemAt :: Coord -> StateT CellMap (Either Error) SomeItem
 removeItemAt c =
     StateT $ \cm ->
-        maybeToRight OutOfRange (cm ^? ix c) >>= removeItem <&>
-        second (\cell -> cm // [(c, cell)])
+        maybeToRight OutOfRange (cm ^? ix c) >>=
+        removeItem <&> second (\cell -> cm // [(c, cell)])
 
 removeActorIf :: (Actor -> Bool) -> StateT CellMap (Either Error) Actor
 removeActorIf f =
-    gets (fmap fst . find (f . snd) . positionsAndActors) >>= lift .
-    maybeToRight ActorNotFound >>=
+    gets (fmap fst . find (f . snd) . positionsAndActors) >>=
+    lift . maybeToRight ActorNotFound >>=
     removeActorAt
 
 tileIdLayerAt :: Coord -> CellMap -> Maybe TileIdLayer

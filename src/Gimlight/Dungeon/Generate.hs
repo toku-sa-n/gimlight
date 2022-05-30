@@ -35,11 +35,9 @@ import           Gimlight.Dungeon.Generate.Room   (Room (..), center,
                                                    roomFromWidthHeight,
                                                    roomOverlaps)
 import           Gimlight.Dungeon.Identifier      (Identifier)
-import           Gimlight.Dungeon.Map.Cell        (CellMap,
-                                                   TileIdLayer (TileIdLayer),
+import           Gimlight.Dungeon.Map.Cell        (CellMap, TileIdLayer,
                                                    locateActorAt, locateItemAt,
-                                                   tileIdLayer, upper, upperAt,
-                                                   widthAndHeight)
+                                                   topLayerAt, widthAndHeight)
 import qualified Gimlight.Dungeon.Map.Cell        as C
 import           Gimlight.Dungeon.Map.Tile        (TileCollection, TileId,
                                                    TileIndex)
@@ -87,7 +85,7 @@ generateDungeonAndAppend zipper ts cfg ident = do
                 (StairsPair upperStairsPosition lowerStairsPosition)
                 (zipper ^. focused, generatedDungeon)
         upperWithStairs =
-            newUpperDungeon & cellMap . upperAt upperStairsPosition ?~
+            newUpperDungeon & cellMap . topLayerAt upperStairsPosition ?~
             downStairsId cfg
         newZipper =
             appendNode newLowerDungeon $ zipper & focused .~ upperWithStairs
@@ -112,7 +110,7 @@ generateDungeon tc cfg ident = do
         generateDungeonAccum [] tc initialMap (V2 0 0) cfg (getMaxRooms cfg)
     let d =
             dungeon
-                (addEdgeTiles cfg tiles & upperAt enterPosition ?~
+                (addEdgeTiles cfg tiles & topLayerAt enterPosition ?~
                  (getTileFilePath cfg, upStairsIndex))
                 ident
     return (d, enterPosition)
@@ -155,7 +153,7 @@ addEdgeTiles :: Config -> CellMap -> CellMap
 addEdgeTiles cfg cm = foldl updateTileId cm ceilTiles
   where
     updateTileId cm' pos =
-        cm' & ix pos . tileIdLayer . upper . _Just . _2 .~
+        cm' & topLayerAt pos . _Just . _2 .~
         blobTilesetIdToTileIndex (calculateBlob pos)
     calculateBlob c =
         foldl
@@ -185,13 +183,13 @@ addEdgeTiles cfg cm = foldl updateTileId cm ceilTiles
     isStairs = tileIdSatisfies isStairsId
     tileIdSatisfies cond = maybe False (maybe False (cond . snd)) . upperTileAt
     allCoordsInMap = [V2 x y | x <- [0 .. width - 1], y <- [0 .. height - 1]]
-    upperTileAt c = cm ^? ix c . tileIdLayer . upper
+    upperTileAt c = cm ^? topLayerAt c
     V2 width height = widthAndHeight cm
 
 createRoom :: Room -> CellMap -> CellMap
 createRoom room = flip (foldl removeTileAt) coords
   where
-    removeTileAt cm x = cm & ix x . tileIdLayer . upper .~ Nothing
+    removeTileAt cm x = cm & topLayerAt x .~ Nothing
     coords =
         [V2 x y | x <- [x1 room .. x2 room - 1], y <- [y1 room .. y2 room - 1]]
 
@@ -242,7 +240,7 @@ newMonster = do
             else troll
 
 initialTile :: Config -> TileIdLayer
-initialTile cfg = TileIdLayer u l
+initialTile cfg = [u, l]
   where
     u = Just (getTileFilePath cfg, ceilTileIndex)
     l = Just (getTileFilePath cfg, floorTileIndex)

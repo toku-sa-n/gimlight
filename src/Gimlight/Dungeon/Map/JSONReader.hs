@@ -8,20 +8,17 @@ module Gimlight.Dungeon.Map.JSONReader
 
 import           Control.Monad             (unless)
 import           Control.Monad.Except      (ExceptT (ExceptT), runExceptT)
-import           Control.Monad.Trans.Maybe (MaybeT (MaybeT), maybeToExceptT)
 import           Data.Aeson.Lens           (_Array, _Integer, _String, key,
                                             values)
 import           Data.Array                (array)
 import           Data.Bifunctor            (Bifunctor (second))
 import           Data.Bits                 (Bits (clearBit, testBit))
 import           Data.Either.Combinators   (maybeToRight)
-import           Data.List                 (find, sortBy)
-import           Data.Vector               (Vector, toList)
-import qualified Data.Vector               as V
+import           Data.List                 (find, sortBy, transpose)
+import           Data.Vector               (Vector, fromList, toList)
 import           Gimlight.Data.Either      (expectRight)
 import           Gimlight.Data.Maybe       (expectJust)
-import           Gimlight.Dungeon.Map.Cell (CellMap, TileIdLayer (TileIdLayer),
-                                            cellMap)
+import           Gimlight.Dungeon.Map.Cell (CellMap, TileIdLayer, cellMap)
 import           Gimlight.Dungeon.Map.Tile (TileId)
 import           Gimlight.Prelude
 import           Gimlight.System.Path      (canonicalizeToUnixStyleRelativePath,
@@ -40,7 +37,8 @@ readMapFileOrFail path = do
   where
     parseFile json tiles = do
         V2 width height <- maybeToRight noWidthOrHeight $ getMapSize json
-        unless (height * width == length tiles) $ Left invalidWidthHeight
+        unless (height * width == length tiles) $ Left $
+            invalidWidthHeight width height (length tiles)
         Right
             (cellMap $ array (V2 0 0, V2 (width - 1) (height - 1)) $
              zip [V2 x y | y <- [0 .. height - 1], x <- [0 .. width - 1]] $
@@ -48,9 +46,13 @@ readMapFileOrFail path = do
     noWidthOrHeight =
         "The map file " <> path <>
         " does not contain both `width` and `height` fields."
-    invalidWidthHeight =
+    invalidWidthHeight w h l =
         "The multiplication of width and height of the map " <> path <>
-        " does not equal to the number of tiles."
+        " does not equal to the number of tiles. The size is " <>
+        showt (V2 w h) <>
+        " but the length is " <>
+        showt l <>
+        "."
 
 getMapSize :: Text -> Maybe (V2 Int)
 getMapSize json =
@@ -60,21 +62,21 @@ getMapSize json =
   where
     fetch k = json ^? key k . _Integer
 
+-- From https://doc.mapeditor.org/en/stable/reference/tmx-map-format/:
+--
+-- > The order in which these layers appear is the order in which the layers are rendered by Tiled.
+--
+-- That is why we reverse here because we store tiles of each cell from top
+-- to bottom.
 getTiles :: Text -> FilePath -> ExceptT Text IO (Vector TileIdLayer)
-getTiles json pathToMap = V.zipWith TileIdLayer <$> uppers <*> lowers
-  where
-    lowers = getTileIdOfNthLayerOrErr 0
-    uppers = getTileIdOfNthLayerOrErr 1
-    getTileIdOfNthLayerOrErr n =
-        maybeToExceptT (missingLayer $ showt n) $
-        getTileIdOfNthLayer n json pathToMap
-    missingLayer which =
-        "The map file does not contain the level " <> which <> " layer."
+getTiles json =
+    fmap (fromList . transpose . reverse . fmap toList) .
+    getTileIdOfAllLayer json
 
-getTileIdOfNthLayer ::
-       Int -> FilePath -> FilePath -> MaybeT IO (Vector (Maybe TileId))
-getTileIdOfNthLayer n json pathToMap =
-    MaybeT . traverse (mapM rawIdToIdentifier) $ getDataOfNthLayer n json
+getTileIdOfAllLayer ::
+       FilePath -> FilePath -> ExceptT Text IO [Vector (Maybe TileId)]
+getTileIdOfAllLayer json pathToMap =
+    ExceptT . mapM (traverse (mapM rawIdToIdentifier)) $ getDataOfAllLayer json
   where
     rawIdToIdentifier 0 = return Nothing
     rawIdToIdentifier ident
@@ -101,11 +103,11 @@ getSourceAndFirstGid json =
         fmap fromIntegral $ json ^.. key "tilesets" . values . key "firstgid" .
         _Integer
 
-getDataOfNthLayer :: Int -> FilePath -> Maybe (Vector Int)
-getDataOfNthLayer n json = getDataOfAllLayer json >>= (^? ix n)
-
-getDataOfAllLayer :: FilePath -> Maybe [Vector Int]
+getDataOfAllLayer :: FilePath -> Either Text [Vector Int]
 getDataOfAllLayer json =
+    maybeToRight errMsg $
     mapM
         (mapM (fmap fromInteger . (^? _Integer)))
         (json ^.. key "layers" . values . key "data" . _Array)
+  where
+    errMsg = "No layers section found."

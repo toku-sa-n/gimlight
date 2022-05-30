@@ -2,3 +2,4 @@
 - error: {lhs: fromRight undefined, rhs: fromRight'}
 - error: {lhs: fromRight (error s) x, rhs: expectRight s x}
 - error: {lhs: pack (show x), rhs: showt x}
+- error: {lhs: ix x . tileIdLayer . ix 0, rhs: topLayerAt x}
