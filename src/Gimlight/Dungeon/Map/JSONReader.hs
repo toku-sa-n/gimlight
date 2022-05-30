@@ -7,6 +7,7 @@ module Gimlight.Dungeon.Map.JSONReader
     ) where
 
 import           Control.Monad             (unless)
+import           Data.Aeson                (Value)
 import           Data.Aeson.Lens           (_Array, _Integer, _String, key,
                                             values)
 import           Data.Bifunctor            (Bifunctor (second))
@@ -92,10 +93,10 @@ getSourceAndFirstGid json =
 
 getDataOfAllLayer :: Text -> [Vector Int]
 getDataOfAllLayer json =
-    expectJust errMsg $
-    mapM
-        (mapM (fmap fromInteger . (^? _Integer)))
-        (json ^.. key "layers" . values . key "data" . _Array)
+    mapToInt (json ^.. key "layers" . values . key "data" . _Array)
+
+mapToInt :: [Vector Value] -> [Vector Int]
+mapToInt = expectJust errMsg . mapM (mapM (fmap fromInteger . (^? _Integer)))
   where
     errMsg = "The data sections in layers contain non-integer values."
 
