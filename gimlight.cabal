@@ -8,7 +8,8 @@ maintainer:             tokusan441@gmail.com
 extra-source-files:     CHANGELOG.md
 
 common common
-    build-depends:      astar >= 0.3.0 && < 0.4
+    build-depends:      aeson >= 2.0.3.0 && < 2.1
+                      , astar >= 0.3.0 && < 0.4
                       , array >= 0.5.4 && < 0.6
                       , base >= 4.14.3 && < 4.15
                       , bytestring-to-vector >= 0.3.0.1 && < 0.4
