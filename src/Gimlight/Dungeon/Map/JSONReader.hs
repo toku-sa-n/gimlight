@@ -69,7 +69,7 @@ getTileIdOfAllLayer json pathToMap =
   where
     rawIdToIdentifier 0 = return Nothing
     rawIdToIdentifier ident
-        | or $ fmap (testBit ident) [29, 30, 31] =
+        | transformationFlagsAreSet ident =
             error $ pathToMap <>
             " contains rotated tiles. This game does not support them."
         | otherwise =
@@ -80,6 +80,7 @@ getTileIdOfAllLayer json pathToMap =
                 (find ((ident >=) . snd) $ getSourceAndFirstGid json)
     canonicalizeIdentifier path =
         canonicalizeToUnixStyleRelativePath (dropFileName pathToMap </> path)
+    transformationFlagsAreSet = or . flip fmap [29, 30, 31] . testBit
 
 getSourceAndFirstGid :: Text -> [(FilePath, Int)]
 getSourceAndFirstGid json =
