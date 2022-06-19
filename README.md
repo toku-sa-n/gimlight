@@ -40,6 +40,14 @@ LANG=C cabal run gimlight
 
 `LANG=C` is necessary to prevent a build error. See [the c2hs' issue](https://github.com/haskell/c2hs/issues/238).
 
+#### For Gentoo users
+
+You need to enable the `opengl` use flag of `media-libs/libsdl2`:
+
+```sh
+sudo euse -E opengl -p media-libs/libsdl2
+```
+
 ## License
 
 All files in this repository **EXCEPT** any materials in the `third_party` directory are licensed under BSD 3-Clause License. For the licenses of the contents in the `third_party` directory, see the LICENSE files in each directory.
