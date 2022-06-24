@@ -13,11 +13,11 @@ import           Gimlight.Actor.Status.Hp  (hp)
 import           Gimlight.IndexGenerator   (IndexGenerator)
 
 orc :: State IndexGenerator Actor
-orc = monster Orc st "images/walking_pictures/Darnah.png"
+orc = monster Orc st "images/walking_pictures/bee.png"
   where
     st = status (hp 10) 0 3
 
 troll :: State IndexGenerator Actor
-troll = monster Troll st "images/walking_pictures/Darnah.png"
+troll = monster Troll st "images/walking_pictures/bee.png"
   where
     st = status (hp 16) 1 4
