@@ -1,5 +1,7 @@
 # Gimlight
 
+![30-05-2022_21:44:27_screenshot](https://user-images.githubusercontent.com/42336339/170999467-226e50c3-a325-4a0a-81aa-10bd9da841ea.png)
+
 ## Running
 
 ### Windows
@@ -37,6 +39,14 @@ LANG=C cabal run gimlight
 ```
 
 `LANG=C` is necessary to prevent a build error. See [the c2hs' issue](https://github.com/haskell/c2hs/issues/238).
+
+#### For Gentoo users
+
+You need to enable the `opengl` use flag of `media-libs/libsdl2`:
+
+```sh
+sudo euse -E opengl -p media-libs/libsdl2
+```
 
 ## License
 
