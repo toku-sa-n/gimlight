@@ -16,6 +16,8 @@ module Gimlight.GameStatus.Exploring
     , getPlayerPosition
     , currentDungeon
     , getMessageLog
+    , getWalkingImageIndex
+    , incrementWalkingImageIndex
     ) where
 
 import           Control.Lens                                    (Getter, view)
@@ -27,7 +29,8 @@ import           Gimlight.Action                                 (Action,
                                                                   ActionStatus)
 import           Gimlight.Actor                                  (Actor,
                                                                   getIdentifier)
-import           Gimlight.Actor.WalkingImages                    (WalkingImages)
+import           Gimlight.Actor.WalkingImages                    (WalkingImages,
+                                                                  numOfPatterns)
 import           Gimlight.Coord                                  (Coord)
 import           Gimlight.Dungeon                                (Dungeon,
                                                                   cellMap,
@@ -47,11 +50,12 @@ import           Gimlight.TreeZipper                             (TreeZipper,
 
 data ExploringHandler =
     ExploringHandler
-        { _dungeons       :: TreeZipper Dungeon
-        , _messageLog     :: MessageLog
-        , _quests         :: QuestCollection
-        , _tileCollection :: TileCollection
-        , _walkingImages' :: WalkingImages
+        { _walkingImageIndex :: Int
+        , _dungeons          :: TreeZipper Dungeon
+        , _messageLog        :: MessageLog
+        , _quests            :: QuestCollection
+        , _tileCollection    :: TileCollection
+        , _walkingImages'    :: WalkingImages
         }
     deriving (Eq, Generic)
 
@@ -64,7 +68,7 @@ exploringHandler ::
     -> TileCollection
     -> WalkingImages
     -> ExploringHandler
-exploringHandler = ExploringHandler
+exploringHandler = ExploringHandler 0
 
 getTileCollection :: ExploringHandler -> TileCollection
 getTileCollection eh = eh ^. tileCollection
@@ -132,3 +136,18 @@ walkingImages = walkingImages'
 
 getMessageLog :: ExploringHandler -> MessageLog
 getMessageLog eh = eh ^. messageLog
+
+-- If `numOfPatterns == 3`, the value of `_walkingImageIndex` changes like
+-- 0, 1, 2, 3, 0, 1, ..
+-- Here, `getWalkingImageIndex` returns 1 if `_walkingImageIndex == 3`, and
+-- the actual index changes like 0, 1, 2, 1, 0, 1, ..
+getWalkingImageIndex :: ExploringHandler -> Int
+getWalkingImageIndex ExploringHandler {_walkingImageIndex = i} =
+    if i < numOfPatterns
+        then i
+        else numOfPatterns - i + 1
+
+incrementWalkingImageIndex :: ExploringHandler -> ExploringHandler
+incrementWalkingImageIndex eh = eh & walkingImageIndex %~ (`mod` n) . (+ 1)
+  where
+    n = 2 * (numOfPatterns - 1)

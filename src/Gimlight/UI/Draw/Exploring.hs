@@ -13,10 +13,9 @@ import qualified Data.Map                        as Map
 import           Data.Maybe                      (catMaybes, mapMaybe,
                                                   maybeToList)
 import           Data.Vector.Storable.ByteString (vectorToByteString)
-import           Gimlight.Actor                  (getArmor,
+import           Gimlight.Actor                  (facing, getArmor,
                                                   getCurrentExperiencePoint,
                                                   getDefence,
-                                                  getDirectionAndPattern,
                                                   getExperiencePointForNextLevel,
                                                   getHp, getLevel, getMaxHp,
                                                   getPower, getWeapon,
@@ -34,6 +33,7 @@ import           Gimlight.GameStatus.Exploring   (ExploringHandler,
                                                   currentDungeon, getMessageLog,
                                                   getPlayerActor,
                                                   getTileCollection,
+                                                  getWalkingImageIndex,
                                                   walkingImages)
 import           Gimlight.Item                   (getName)
 import           Gimlight.Item.SomeItem          (getIconImagePath)
@@ -180,7 +180,8 @@ mapActors eh = mapMaybe actorToImage $ positionsAndActors cm
       where
         name = actor ^. walkingImagePath <> showt dir <> showt pat
         img = eh ^?! walkingImages . ix (actor ^. walkingImagePath, dir, pat)
-        (dir, pat) = getDirectionAndPattern actor
+        dir = actor ^. facing
+        pat = getWalkingImageIndex eh
 
 topLeftCoord :: CellMap -> Coord
 topLeftCoord cm =

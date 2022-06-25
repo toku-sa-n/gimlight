@@ -4,6 +4,8 @@ module Gimlight.UI.Event
     ( handleEvent
     ) where
 
+import           Control.Concurrent                (threadDelay)
+import           Control.Monad                     (forever)
 import           Data.Maybe                        (fromMaybe)
 import           Gimlight.Direction                (Direction (..))
 import           Gimlight.GameConfig               (Language (English, Japanese),
@@ -13,6 +15,7 @@ import           Gimlight.GameStatus               (GameStatus (Exploring, GameO
                                                     newGameStatus)
 import           Gimlight.GameStatus.Exploring     (ascendStairsAtPlayerPosition,
                                                     descendStairsAtPlayerPosition,
+                                                    incrementWalkingImageIndex,
                                                     processAfterPlayerTurn)
 import           Gimlight.GameStatus.ReadingBook   (finishReading)
 import           Gimlight.GameStatus.Scene         (nextSceneOrFinish)
@@ -28,12 +31,12 @@ import           Gimlight.Player                   (handlePlayerAfterSelecting,
                                                     handlePlayerPickingUp,
                                                     handlePlayerSelectingItem)
 import           Gimlight.Prelude
-import           Gimlight.UI.Types                 (AppEvent (AppInit, AppKeyboardInput, NewGameLoaded, ShowNextScene),
+import           Gimlight.UI.Types                 (AppEvent (AppInit, AppKeyboardInput, NewGameLoaded, ShowNextScene, Tick),
                                                     GameEventResponse,
                                                     GameWidgetEnv,
                                                     GameWidgetNode)
 import           Monomer                           (AnimationMsg (AnimationStart, AnimationStop),
-                                                    EventResponse (Message, Model, Task),
+                                                    EventResponse (Message, Model, Producer, Task),
                                                     WidgetKey (WidgetKey),
                                                     exitApplication)
 
@@ -45,10 +48,11 @@ handleEvent ::
     -> [GameEventResponse]
 handleEvent _ _ gameStatus evt =
     case evt of
-        AppInit            -> []
+        AppInit            -> [Producer tickTask]
         AppKeyboardInput k -> handleKeyInput gameStatus k
         NewGameLoaded gm   -> [Model gm]
         ShowNextScene      -> nextStatus gameStatus
+        Tick               -> handleTick gameStatus
   where
     nextStatus g@GameModel {status = Scene sh} =
         case nextSceneOrFinish sh of
@@ -155,3 +159,14 @@ handleKeyInputDuringSelectingLanguage g@GameModel {config = c} k
     | otherwise = []
   where
     updateConfig l = g {status = Title, config = setLocale l c}
+
+handleTick :: GameModel -> [GameEventResponse]
+handleTick e@GameModel {status = Exploring eh} =
+    [Model e {status = Exploring (incrementWalkingImageIndex eh)}]
+handleTick _ = []
+
+tickTask :: (AppEvent -> IO ()) -> IO ()
+tickTask sendMsg =
+    forever $ do
+        threadDelay $ 500 * 1000
+        sendMsg Tick
