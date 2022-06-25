@@ -2,6 +2,7 @@ module Gimlight.Action.MoveOneSquareSpec
     ( spec
     ) where
 
+import           Control.Lens                  (set)
 import           Control.Monad.State           (evalState, execStateT)
 import           Control.Monad.Writer          (writer)
 import           Data.Either.Combinators       (fromRight')
@@ -58,10 +59,9 @@ succeed :: Direction -> ActionResultWithLog
 succeed dir = writer (okResult cellMapWithPlayer, [])
   where
     cellMapWithPlayer =
-        fromRight' $ flip execStateT testMap $ do
-            a <- removeActorAt startPos
-            let facingUpdated = a & facing .~ dir
-            locateActorAt mockTileCollection dst facingUpdated
+        fromRight' $ flip execStateT testMap $ removeActorAt startPos >>=
+        locateActorAt mockTileCollection dst .
+        set facing dir
     dst = startPos + toUnitVector dir
 
 failMovingTo :: Direction -> Expectation
