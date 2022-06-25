@@ -14,6 +14,7 @@ data AppEvent
     | AppKeyboardInput Text
     | NewGameLoaded GameModel
     | ShowNextScene
+    | Tick
     deriving (Eq)
 
 type GameWidgetEnv = WidgetEnv GameModel AppEvent
