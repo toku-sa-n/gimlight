@@ -139,7 +139,8 @@ getMessageLog eh = eh ^. messageLog
 
 -- If `numOfPatterns == 3`, the value of `_walkingImageIndex` changes like
 -- 0, 1, 2, 3, 0, 1, ..
--- Here, `getWalkingImageIndex` returns 1 if `_walkingImageIndex == 3`.
+-- Here, `getWalkingImageIndex` returns 1 if `_walkingImageIndex == 3`, and
+-- the actual index changes like 0, 1, 2, 1, 0, 1, ..
 getWalkingImageIndex :: ExploringHandler -> Int
 getWalkingImageIndex ExploringHandler {_walkingImageIndex = i} =
     if i < numOfPatterns
