@@ -9,7 +9,7 @@ import           Data.OpenUnion                (liftUnion)
 import           Gimlight.Action               (ActionResultWithLog)
 import           Gimlight.Action.MoveOneSquare (moveOneSquareAction)
 import           Gimlight.ActionSpec           (failedResult, okResult)
-import           Gimlight.Actor                (updateWalkingImage)
+import           Gimlight.Actor                (facing)
 import           Gimlight.Actor.Monsters       (orc)
 import           Gimlight.Coord                (Coord)
 import           Gimlight.Direction            (Direction (East, South, SouthEast, West),
@@ -60,7 +60,7 @@ succeed dir = writer (okResult cellMapWithPlayer, [])
     cellMapWithPlayer =
         fromRight' $ flip execStateT testMap $ do
             a <- removeActorAt startPos
-            let facingUpdated = updateWalkingImage dir a
+            let facingUpdated = a & facing .~ dir
             locateActorAt mockTileCollection dst facingUpdated
     dst = startPos + toUnitVector dir
 
