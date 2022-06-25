@@ -16,7 +16,6 @@ module Gimlight.Actor
     , getPower
     , getDefence
     , getTalkingPart
-    , getDirectionAndPattern
     , monster
     , isPlayer
     , isMonster
@@ -34,7 +33,7 @@ module Gimlight.Actor
     , equip
     , getWeapon
     , getArmor
-    , updateWalkingImage
+    , facing
     ) where
 
 import           Control.Applicative              ((<|>))
@@ -213,9 +212,3 @@ equip equipment a = tryEquipWeapon <|> tryEquipArmor
         case a ^. lens of
             Just x  -> addItem (liftUnion x) (a ^. inventoryItems)
             Nothing -> Just $ a ^. inventoryItems
-
-getDirectionAndPattern :: Actor -> Direction
-getDirectionAndPattern a = a ^. facing
-
-updateWalkingImage :: Direction -> Actor -> Actor
-updateWalkingImage d a = a & facing .~ d
