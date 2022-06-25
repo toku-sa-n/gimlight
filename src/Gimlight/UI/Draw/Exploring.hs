@@ -13,7 +13,6 @@ import qualified Data.Map                        as Map
 import           Data.Maybe                      (catMaybes, mapMaybe,
                                                   maybeToList)
 import           Data.Vector.Storable.ByteString (vectorToByteString)
-import           Debug.Trace                     (trace)
 import           Gimlight.Actor                  (getArmor,
                                                   getCurrentExperiencePoint,
                                                   getDefence,
