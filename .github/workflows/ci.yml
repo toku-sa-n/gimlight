@@ -9,6 +9,19 @@ on:
       - main
 
 jobs:
+  hlint:
+    runs-on: ubuntu-latest
+
+    permissions:
+      security-events: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2.0.0
+
+      - name: Run hlint
+        uses: haskell-actions/hlint-scan@v1.0.0
+
   prettier:
     runs-on: ubuntu-latest
 
