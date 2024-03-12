@@ -1,6 +1,6 @@
 cabal-version: 2.2
 
--- This file has been generated from package.yaml by hpack version 0.35.2.
+-- This file has been generated from package.yaml by hpack version 0.36.0.
 --
 -- see: https://github.com/sol/hpack
 
@@ -13,7 +13,7 @@ homepage:       https://github.com/githubuser/gimlight#readme
 bug-reports:    https://github.com/githubuser/gimlight/issues
 author:         Hiroki Tokunaga
 maintainer:     tokusan441@gmail.com
-copyright:      2023 Hiroki Tokunaga
+copyright:      2024 Hiroki Tokunaga
 license:        AGPL-3.0-or-later
 license-file:   LICENSE
 build-type:     Simple
