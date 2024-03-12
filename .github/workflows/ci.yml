@@ -9,11 +9,21 @@ on:
       - main
 
 jobs:
+  prettier:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2.0.0
+
+      - name: Run Prettier
+        run: npx --yes prettier --check .
+
   markdownlint:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v2.0.0
 
       - uses: DavidAnson/markdownlint-cli2-action@v15.0.0
