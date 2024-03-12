@@ -4,7 +4,7 @@ github:              "githubuser/gimlight"
 license:             AGPL-3.0-or-later
 author:              "Hiroki Tokunaga"
 maintainer:          "tokusan441@gmail.com"
-copyright:           "2023 Hiroki Tokunaga"
+copyright:           "2024 Hiroki Tokunaga"
 
 extra-source-files:
 - README.md
