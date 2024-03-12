@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  markdown:
+  markdownlint:
     runs-on: ubuntu-latest
 
     steps:
