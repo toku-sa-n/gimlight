@@ -61,3 +61,13 @@ jobs:
 
       - name: Run tests
         run: stack test
+
+  trailing-newline:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+
+      - name: List all non-empty files tracked by git that do not end with a newline
+        run: git ls-files | xargs -I {} sh -c '[ -s "{}" ] && echo "{}"' | xargs -I {} sh -c 'tail -c 1 {} | read -r _ || (echo "{}"; false)'
