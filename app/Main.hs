@@ -1,6 +1,11 @@
-module Main (main) where
+{-# LANGUAGE Safe #-}
 
-import Lib
+module Main
+  ( main
+  ) where
+
+import           Lib     (someFunc)
+import           Prelude (IO)
 
 main :: IO ()
 main = someFunc
