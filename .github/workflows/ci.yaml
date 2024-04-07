@@ -32,7 +32,7 @@ jobs:
       - name: Check if the cabal file is up to date
         run: |
           mv gimlight.cabal gimlight.cabal.old
-          stack run build --dry-run
+          stack build --dry-run
           diff gimlight.cabal.old gimlight.cabal
 
   test:
