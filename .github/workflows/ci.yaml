@@ -20,3 +20,30 @@ jobs:
             echo "$binaries"
             exit 1
           fi
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+
+      - name: Install dependencies
+        id: haskell-setup
+        uses: haskell-actions/setup@ca7ecf7b0c7a4300227b1ab05cda52bf019c174b # v2.0.0
+        with:
+          enable-stack: true
+
+      - name: Cache
+        uses: actions/cache@8492260343ad570701412c2f464a5877dc76bace
+        with:
+          path: |
+            .stack-root
+            ${{ steps.haskell-setup.outputs.stack-root }}
+          key: ${{ github.job }}-${{ runner.os }}-${{ hashFiles('stack.yaml.lock') }}-${{ github.sha }}
+          restore-keys: ${{ github.job }}-${{ runner.os }}-${{ hashFiles('stack.yaml.lock') }}
+
+      - name: Build
+        run: stack build
+
+      - name: Run tests
+        run: stack test
