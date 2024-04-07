@@ -9,10 +9,10 @@ version:        0.1.0.0
 description:    Please see the README on GitHub at <https://github.com/githubuser/gimlight#readme>
 homepage:       https://github.com/githubuser/gimlight#readme
 bug-reports:    https://github.com/githubuser/gimlight/issues
-author:         Author name here
-maintainer:     example@example.com
-copyright:      2024 Author name here
-license:        BSD-3-Clause
+author:         Hiroki Tokunaga
+maintainer:     tokusan441@gmail.com
+copyright:      2024 Hiroki Tokunaga
+license:        AGPL-3.0-or-later
 license-file:   LICENSE
 build-type:     Simple
 extra-source-files:
