@@ -3,4 +3,7 @@ resolver: lts-22.15
 packages:
   - .
 
+ghc-options:
+  "$locals": -Weverything -Werror
+
 system-ghc: true

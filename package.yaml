@@ -18,10 +18,6 @@ description: Please see the README on GitHub at <https://github.com/toku-sa-n/gi
 dependencies:
   - base >= 4.7 && < 5
 
-ghc-options:
-  - -Weverything
-  - -Werror
-
 library:
   source-dirs: src
 
