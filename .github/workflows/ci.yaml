@@ -48,7 +48,7 @@ jobs:
           enable-stack: true
 
       - name: Cache
-        uses: actions/cache@b8204782bbb5f872091ecc5eb9cb7d004e35b1fa # v2.0.0
+        uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
         with:
           path: |
             .stack-root
