@@ -84,6 +84,17 @@ jobs:
         uses: haskell-actions/setup@ca7ecf7b0c7a4300227b1ab05cda52bf019c174b # v2.0.0
         with:
           enable-stack: true
+        id: haskell-setup
+
+      - name: Cache
+        uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
+        with:
+          path: |
+            .hie
+            .stack-root
+            ${{ steps.haskell-setup.outputs.stack-root }}
+          key: ${{ github.job }}-${{ runner.os }}-${{ hashFiles('stack.yaml.lock') }}-${{ github.sha }}
+          restore-keys: ${{ github.job }}-${{ runner.os }}-${{ hashFiles('stack.yaml.lock') }}
 
       - name: Record the path to GHC
         run: echo "GHC_PATH=$(stack path --compiler-exe)" >> $GITHUB_OUTPUT
