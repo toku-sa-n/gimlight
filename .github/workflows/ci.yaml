@@ -89,6 +89,9 @@ jobs:
         run: echo "GHC_PATH=$(stack path --compiler-exe)" >> $GITHUB_ENV
         id: record-ghc-path
 
+      - name: Print the path to GHC
+        run: echo ${{ steps.record-ghc-path.outputs.GHC_PATH }}
+
       - name: Install Stan
         uses: ./.github/workflows/install-stan
         with:
