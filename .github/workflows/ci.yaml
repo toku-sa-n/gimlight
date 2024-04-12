@@ -92,6 +92,9 @@ jobs:
       - name: Print the path to GHC
         run: echo ${{ steps.record-ghc-path.outputs.GHC_PATH }}
 
+      - name: Print the path to GHC by stack
+        run: stack path --compiler-exe
+
       - name: Install Stan
         uses: ./.github/workflows/install-stan
         with:
