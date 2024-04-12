@@ -181,12 +181,16 @@ jobs:
           key: ${{ github.job }}-${{ runner.os }}-${{ hashFiles('stack.yaml.lock') }}-${{ github.sha }}
           restore-keys: ${{ github.job }}-${{ runner.os }}-${{ hashFiles('stack.yaml.lock') }}
 
+      - name: Record the path to GHC
+        run: echo "GHC_PATH=$(stack path --compiler-exe)" >> $GITHUB_OUTPUT
+        id: record-ghc-path
+
       - name: Install `weeder`
         uses: ./.github/workflows/cabal-install
         with:
           name: weeder
           version: 2.4.0
-          ghc-path: ${{ steps.haskell-setup.outputs.ghc-path }}
+          ghc-path: ${{ steps.record-ghc-path.outputs.GHC_PATH }}
 
       - name: Run the project with HIE
         run: stack build --ghc-options -fwrite-ide-info --ghc-options -hiedir=.hie
