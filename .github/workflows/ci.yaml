@@ -85,10 +85,15 @@ jobs:
         with:
           enable-stack: true
 
-      - name: Install `stan`
-        run: |
-          cabal update
-          cabal install stan --ignore-project --with-compiler=$(stack path --compiler-exe)
+      - name: Record the path to GHC
+        run: echo "GHC_PATH=$(stack path --compiler-exe)" >> $GITHUB_OUTPUT
+        id: record-ghc-path
+
+      - name: Install Stan
+        uses: ./.github/workflows/install-stan
+        with:
+          version: 0.1.2.1
+          ghc-path: ${{ steps.record-ghc-path.outputs.GHC_PATH }}
 
       - name: Build the project with HIE
         run: stack build --ghc-options -fwrite-ide-info --ghc-options -hiedir=.hie
