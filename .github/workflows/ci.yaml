@@ -35,6 +35,16 @@ jobs:
             exit 1
           fi
 
+  markdown-lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
+
+      - name: Run `markdown-lint`
+        uses: DavidAnson/markdownlint-cli2-action@510b996878fc0d1a46c8a04ec86b06dbfba09de7 # v15.0.0
+
   test:
     runs-on: ubuntu-latest
     steps:
