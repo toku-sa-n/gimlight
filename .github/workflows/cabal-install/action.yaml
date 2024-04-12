@@ -1,7 +1,10 @@
-name: Install Stan
-description: Install Stan
+name: Install by `cabal install`
+description: Install the specified package by `cabal install`
 
 inputs:
+  name:
+    description: "The name of the package to install"
+    required: true
   version:
     description: "The version of Stan to install"
     required: true
@@ -24,7 +27,8 @@ runs:
     - name: Install Stan
       env:
         GHC_PATH: ${{ inputs.ghc-path }}
+        NAME: ${{ inputs.name }}
       run: |
         cabal update
-        cabal install stan --ignore-project --with-compiler=${GHC_PATH}
+        cabal install ${NAME} --ignore-project --with-compiler=${GHC_PATH}
       shell: bash
