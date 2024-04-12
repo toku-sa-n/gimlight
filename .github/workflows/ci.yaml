@@ -73,6 +73,33 @@ jobs:
       - name: Run `prettier` with the check mode
         run: npx --yes prettier --check .
 
+  stan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
+
+      - name: Install Haskell environment
+        uses: haskell-actions/setup@ca7ecf7b0c7a4300227b1ab05cda52bf019c174b # v2.0.0
+        with:
+          enable-stack: true
+
+      - name: Install `stan`
+        run: |
+          cabal update
+          cabal install stan --ignore-project --with-compiler=$(stack path --compiler-exe)
+
+      - name: Build the project with HIE
+        run: stack build --ghc-options -fwrite-ide-info --ghc-options -hiedir=.hie
+
+      - name: Run `stan`
+        run: |
+          stan check --exclude --filter-all --scope-all \
+               check --include --filter-all --directory=app \
+               check --include --filter-all --directory=src \
+               check --include --filter-all --directory=test
+
   test:
     runs-on: ubuntu-latest
 
