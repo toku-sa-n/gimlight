@@ -86,7 +86,9 @@ jobs:
           enable-stack: true
 
       - name: Install `stan`
-        run: cabal install stan --ignore-project --with-compiler=$(stack path --compiler-exe)
+        run: |
+          cabal update
+          cabal install stan --ignore-project --with-compiler=$(stack path --compiler-exe)
 
       - name: Build the project with HIE
         run: stack build --ghc-options -fwrite-ide-info --ghc-options -hiedir=.hie
