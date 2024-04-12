@@ -81,7 +81,7 @@ jobs:
         uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
 
       - name: Install `stan`
-        run: cabal install stan --with-compiler=$(stack path --compiler-exe)
+        run: cabal install stan --ignore-project --with-compiler=$(stack path --compiler-exe)
 
       - name: Build the project with HIE
         run: stack build --ghc-options -fwrite-ide-info --ghc-options -hiedir=.hie
