@@ -84,7 +84,6 @@ jobs:
         uses: haskell-actions/setup@ca7ecf7b0c7a4300227b1ab05cda52bf019c174b # v2.0.0
         with:
           enable-stack: true
-        id: haskell-setup
 
       - name: Record the path to GHC
         run: echo "GHC_PATH=$(stack path --compiler-exe)" >> $GITHUB_ENV
