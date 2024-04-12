@@ -1,0 +1,34 @@
+name: Install Stan
+description: Install Stan
+
+inputs:
+  version:
+    description: "The version of Stan to install"
+    required: true
+  ghc-path:
+    description: "The path to the GHC executable"
+    required: true
+
+runs:
+  using: "composite"
+
+  steps:
+    - name: Install the Haskell environment
+      uses: haskell-actions/setup@ca7ecf7b0c7a4300227b1ab05cda52bf019c174b # v2.0.0
+      with:
+        ghc-version: ${{ inputs.ghc-version }}
+      id: haskell-setup
+
+    - name: Cache
+      uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
+      with:
+        path: |
+          ~/.cabal/packages
+          ~/.cabal/store
+        key: ${{ github.job }}-${{ runner.os }}-${{ inputs.version }}-${{ inputs.ghc-version }}
+
+    - name: Install Stan
+      env: GHC_PATH: ${{ inputs.ghc-path }}
+      run: |
+        cabal update
+        cabal install stan --ignore-project --with-compiler=${GHC_PATH}

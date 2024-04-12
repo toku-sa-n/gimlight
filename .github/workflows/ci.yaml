@@ -84,11 +84,17 @@ jobs:
         uses: haskell-actions/setup@ca7ecf7b0c7a4300227b1ab05cda52bf019c174b # v2.0.0
         with:
           enable-stack: true
+        id: haskell-setup
 
-      - name: Install `stan`
-        run: |
-          cabal update
-          cabal install stan --ignore-project --with-compiler=$(stack path --compiler-exe)
+      - name: Record the path to GHC
+        run: echo "GHC_PATH=$(stack path --compiler-exe)" >> $GITHUB_ENV
+        id: record-ghc-path
+
+      - name: Install Stan
+        uses: ./.github/workflow/install-stan
+        with:
+          version: 0.1.2.1
+          ghc-path: ${{ steps.record-ghc-path.outputs.GHC_PATH }}
 
       - name: Build the project with HIE
         run: stack build --ghc-options -fwrite-ide-info --ghc-options -hiedir=.hie
