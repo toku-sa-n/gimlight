@@ -33,3 +33,4 @@ runs:
       run: |
         cabal update
         cabal install stan --ignore-project --with-compiler=${GHC_PATH}
+      shell: bash
