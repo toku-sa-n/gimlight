@@ -182,7 +182,7 @@ jobs:
           restore-keys: ${{ github.job }}-${{ runner.os }}-${{ hashFiles('stack.yaml.lock') }}
 
       - name: Install `weeder`
-        uses: ./.github/workflows/cache-weeder
+        uses: ./.github/workflows/cabal-install
         with:
           name: weeder
           version: 2.4.0
