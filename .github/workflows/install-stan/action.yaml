@@ -28,7 +28,8 @@ runs:
         key: ${{ github.job }}-${{ runner.os }}-${{ inputs.version }}-${{ inputs.ghc-version }}
 
     - name: Install Stan
-      env: GHC_PATH: ${{ inputs.ghc-path }}
+      env:
+        GHC_PATH: ${{ inputs.ghc-path }}
       run: |
         cabal update
         cabal install stan --ignore-project --with-compiler=${GHC_PATH}
