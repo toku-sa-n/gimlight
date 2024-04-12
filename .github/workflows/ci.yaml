@@ -90,7 +90,7 @@ jobs:
         id: record-ghc-path
 
       - name: Install Stan
-        uses: ./.github/workflow/install-stan
+        uses: ./.github/workflows/install-stan
         with:
           version: 0.1.2.1
           ghc-path: ${{ steps.record-ghc-path.outputs.GHC_PATH }}
