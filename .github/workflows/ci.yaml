@@ -187,11 +187,15 @@ jobs:
           mingw-w64-x86_64-freetype \
         if: runner.os == 'Windows'
 
-      - name: Install dependencies (macOS and Linux)
+      - name: Install dependencies (macOS)
+        run: brew install sdl2 glew
+        if: runner.os == 'macOS'
+
+      - name: Install dependencies (Linux)
         run: |
           sudo apt update
           sudo apt install libsdl2-dev libglew-dev
-        if: runner.os == 'macOS' || runner.os == 'Linux'
+        if: runner.os == 'Linux'
 
       - name: Build
         run: stack build
