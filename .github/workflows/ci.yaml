@@ -185,7 +185,7 @@ jobs:
           mingw-w64-x86_64-freeglut \
           mingw-w64-x86_64-glew \
           mingw-w64-x86_64-freetype \
-        if: runner.os == 'ubuntu-latest'
+        if: runner.os == 'windows-latest'
 
       - name: Install dependencies (macOS and Linux)
         run: |
