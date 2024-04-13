@@ -185,13 +185,13 @@ jobs:
           mingw-w64-x86_64-freeglut \
           mingw-w64-x86_64-glew \
           mingw-w64-x86_64-freetype \
-        if: runner.os == 'windows-latest'
+        if: runner.os == 'Windows'
 
       - name: Install dependencies (macOS and Linux)
         run: |
           sudo apt update
           sudo apt install libsdl2-dev libglew-dev
-        if: runner.os == 'macos-latest' || runner.os == 'ubuntu-latest'
+        if: runner.os == 'macOS' || runner.os == 'Linux'
 
       - name: Build
         run: stack build
