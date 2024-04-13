@@ -177,10 +177,21 @@ jobs:
           key: ${{ github.job }}-${{ runner.os }}-${{ hashFiles('stack.yaml.lock') }}-${{ github.sha }}
           restore-keys: ${{ github.job }}-${{ runner.os }}-${{ hashFiles('stack.yaml.lock') }}
 
-      - name: Install dependencies
+      - name: Install dependencies (Windows)
+        run: stack exec -- pacman -S --noconfirm \
+          base-devel \
+          mingw-w64-x86_64-pkg-config \
+          mingw-w64-x86_64-SDL2 \
+          mingw-w64-x86_64-freeglut \
+          mingw-w64-x86_64-glew \
+          mingw-w64-x86_64-freetype \
+        if: runner.os == 'ubuntu-latest'
+
+      - name: Install dependencies (macOS and Linux)
         run: |
           sudo apt update
           sudo apt install libsdl2-dev libglew-dev
+        if: runner.os == 'macos-latest' || runner.os == 'ubuntu-latest'
 
       - name: Build
         run: stack build
