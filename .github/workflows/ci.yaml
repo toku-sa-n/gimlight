@@ -33,6 +33,11 @@ jobs:
           key: ${{ github.job }}-${{ runner.os }}-${{ hashFiles('stack.yaml.lock') }}-${{ github.sha }}
           restore-keys: ${{ github.job }}-${{ runner.os }}-${{ hashFiles('stack.yaml.lock') }}
 
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install libsdl2-dev libglew-dev
+
       - name: Record the path to GHC
         run: echo "GHC_PATH=$(stack path --compiler-exe)" >> $GITHUB_OUTPUT
         id: record-ghc-path
