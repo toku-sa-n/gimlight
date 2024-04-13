@@ -183,9 +183,10 @@ jobs:
           restore-keys: ${{ github.job }}-${{ runner.os }}-${{ hashFiles('stack.yaml.lock') }}
 
       - name: Install dependencies (Windows)
+        # Install `msys2-keyring` first to avoid the untrusted error.
         run: |
+          stack exec -- pacman -S --noconfirm msys2-keyring
           stack exec -- pacman -S --noconfirm \
-          msys2-keyring \
           mingw-w64-x86_64-pkg-config \
           mingw-w64-x86_64-SDL2 \
           mingw-w64-x86_64-freeglut \
