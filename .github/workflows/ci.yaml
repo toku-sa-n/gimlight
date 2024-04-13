@@ -158,7 +158,7 @@ jobs:
 
     runs-on: ${{ matrix.os }}
 
-    default:
+    defaults:
       run:
         # To split long lines with `\` on every OS.
         shell: bash
