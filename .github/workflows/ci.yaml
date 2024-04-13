@@ -183,8 +183,11 @@ jobs:
           restore-keys: ${{ github.job }}-${{ runner.os }}-${{ hashFiles('stack.yaml.lock') }}
 
       - name: Install dependencies (Windows)
+        # See https://github.com/msys2/MINGW-packages/issues/11731 for the update commands.
         # Install `msys2-keyring` first to avoid the untrusted error.
         run: |
+          stack exec -- pacman -Syyu --noconfirm
+          stack exec -- pacman -Sy --noconfirm
           stack exec -- pacman -S --noconfirm msys2-keyring
           stack exec -- pacman -S --noconfirm \
           mingw-w64-x86_64-pkg-config \
@@ -192,7 +195,6 @@ jobs:
           mingw-w64-x86_64-freeglut \
           mingw-w64-x86_64-glew \
           mingw-w64-x86_64-freetype
-          stack exec -- pacman -Syu --noconfirm
         if: runner.os == 'Windows'
 
       - name: Install dependencies (macOS)
