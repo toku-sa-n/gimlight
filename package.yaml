@@ -30,7 +30,6 @@ executables:
       - -rtsopts
       - -with-rtsopts=-N
     dependencies:
-      - gimlight
       - monomer
 
 tests:
