@@ -80,7 +80,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
 
-      - name: Install Haskell environment
+      - name: Install the Haskell environment
         uses: haskell-actions/setup@ca7ecf7b0c7a4300227b1ab05cda52bf019c174b # v2.0.0
         with:
           enable-stack: true
@@ -101,8 +101,9 @@ jobs:
         id: record-ghc-path
 
       - name: Install Stan
-        uses: ./.github/workflows/install-stan
+        uses: ./.github/workflows/cabal-install
         with:
+          name: stan
           version: 0.1.2.1
           ghc-path: ${{ steps.record-ghc-path.outputs.GHC_PATH }}
 
@@ -157,3 +158,42 @@ jobs:
 
       - name: List all non-empty files tracked by git that do not end with a newline
         run: git ls-files | xargs -I {} sh -c '[ -s "{}" ] && echo "{}"' | xargs -I {} sh -c 'tail -c 1 {} | read -r _ || (echo "{}"; false)'
+
+  weeder:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
+
+      - name: Install the Haskell environment
+        uses: haskell-actions/setup@ca7ecf7b0c7a4300227b1ab05cda52bf019c174b # v2.0.0
+        with:
+          enable-stack: true
+        id: haskell-setup
+
+      - name: Cache
+        uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
+        with:
+          path: |
+            .stack-root
+            ${{ steps.haskell-setup.outputs.stack-root }}
+          key: ${{ github.job }}-${{ runner.os }}-${{ hashFiles('stack.yaml.lock') }}-${{ github.sha }}
+          restore-keys: ${{ github.job }}-${{ runner.os }}-${{ hashFiles('stack.yaml.lock') }}
+
+      - name: Record the path to GHC
+        run: echo "GHC_PATH=$(stack path --compiler-exe)" >> $GITHUB_OUTPUT
+        id: record-ghc-path
+
+      - name: Install `weeder`
+        uses: ./.github/workflows/cabal-install
+        with:
+          name: weeder
+          version: 2.4.0
+          ghc-path: ${{ steps.record-ghc-path.outputs.GHC_PATH }}
+
+      - name: Run the project with HIE
+        run: stack build --ghc-options -fwrite-ide-info --ghc-options -hiedir=.hie
+
+      - name: Run `weeder`
+        run: weeder
