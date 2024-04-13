@@ -178,7 +178,8 @@ jobs:
           restore-keys: ${{ github.job }}-${{ runner.os }}-${{ hashFiles('stack.yaml.lock') }}
 
       - name: Install dependencies (Windows)
-        run: stack exec -- pacman -S --noconfirm \
+        run: |
+          stack exec -- pacman -S --noconfirm \
           base-devel \
           mingw-w64-x86_64-pkg-config \
           mingw-w64-x86_64-SDL2 \
