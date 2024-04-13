@@ -190,7 +190,8 @@ jobs:
           mingw-w64-x86_64-SDL2 \
           mingw-w64-x86_64-freeglut \
           mingw-w64-x86_64-glew \
-          mingw-w64-x86_64-freetype \
+          mingw-w64-x86_64-freetype
+          stack exec -- pacman -Syu --noconfirm
         if: runner.os == 'Windows'
 
       - name: Install dependencies (macOS)
