@@ -190,7 +190,7 @@ jobs:
           stack exec -- pacman -Sy --noconfirm
           stack exec -- pacman -S --noconfirm msys2-keyring
           stack exec -- pacman -S --noconfirm \
-          build-devel \
+          base-devel \
           mingw-w64-x86_64-pkg-config \
           mingw-w64-x86_64-SDL2 \
           mingw-w64-x86_64-freeglut \
