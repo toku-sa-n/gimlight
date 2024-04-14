@@ -183,16 +183,18 @@ jobs:
           restore-keys: ${{ github.job }}-${{ runner.os }}-${{ hashFiles('stack.yaml.lock') }}
 
       - name: Install dependencies (Windows)
+        # See https://github.com/haskell-game/sdl2/issues/277#issuecomment-1339145721 for why we download older SDL2.
         # See https://github.com/msys2/MINGW-packages/issues/11731 for the update commands.
         # Install `msys2-keyring` first to avoid the untrusted error.
         run: |
           stack exec -- pacman -Syyu --noconfirm
           stack exec -- pacman -Sy --noconfirm
           stack exec -- pacman -S --noconfirm msys2-keyring
+          stack exec -- curl -O https://repo.msys2.org/mingw/x86_64/mingw-w64-x86_64-SDL2-2.0.14-2-any.pkg.tar.zst
+          stack exec -- pacman -U mingw-w64-x86_64-SDL2-2.0.14-2-any.pkg.tar.zst --noconfirm
           stack exec -- pacman -S --noconfirm \
           base-devel \
           mingw-w64-x86_64-pkg-config \
-          mingw-w64-x86_64-SDL2 \
           mingw-w64-x86_64-freeglut \
           mingw-w64-x86_64-glew \
           mingw-w64-x86_64-freetype
