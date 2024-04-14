@@ -191,9 +191,8 @@ jobs:
         run: |
           stack exec -- pacman -Syyu --noconfirm
           stack exec -- pacman -Sy --noconfirm
-          stack exec -- pacman -S --noconfirm msys2-keyring
           stack exec -- pacman -S --noconfirm \
-          base-devel \
+          msys2-keyring \
           mingw-w64-x86_64-pkg-config \
           mingw-w64-x86_64-freeglut \
           mingw-w64-x86_64-glew \
