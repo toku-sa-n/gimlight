@@ -27,7 +27,7 @@ handleEvent ::
 handleEvent _ _ _ _ = []
 
 buildUI :: WidgetEnv GameModel () -> GameModel -> WidgetNode GameModel ()
-buildUI _ _ = label "Press q to quit"
+buildUI _ _ = label "Hello, world!"
 
 main :: IO ()
 main = startApp initialModel handleEvent buildUI config
