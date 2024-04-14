@@ -197,7 +197,7 @@ jobs:
           mingw-w64-x86_64-glew \
           mingw-w64-x86_64-freetype
           stack exec -- curl -O  https://repo.msys2.org/mingw/x86_64/mingw-w64-x86_64-SDL2-2.24.1-1-any.pkg.tar.zst
-          stack exec -- pacman -U .\mingw-w64-x86_64-SDL2-2.24.1-1-any.pkg.tar.zst --noconfirm
+          stack exec -- pacman -U mingw-w64-x86_64-SDL2-2.24.1-1-any.pkg.tar.zst --noconfirm
         if: runner.os == 'Windows'
 
       - name: Install dependencies (macOS)
