@@ -190,14 +190,14 @@ jobs:
           stack exec -- pacman -Syyu --noconfirm
           stack exec -- pacman -Sy --noconfirm
           stack exec -- pacman -S --noconfirm msys2-keyring
-          stack exec -- curl -O https://repo.msys2.org/mingw/x86_64/mingw-w64-x86_64-SDL2-2.0.14-2-any.pkg.tar.zst
-          stack exec -- pacman -U mingw-w64-x86_64-SDL2-2.0.14-2-any.pkg.tar.zst --noconfirm
           stack exec -- pacman -S --noconfirm \
           base-devel \
           mingw-w64-x86_64-pkg-config \
           mingw-w64-x86_64-freeglut \
           mingw-w64-x86_64-glew \
           mingw-w64-x86_64-freetype
+          stack exec -- curl -O https://repo.msys2.org/mingw/x86_64/mingw-w64-x86_64-SDL2-2.0.14-2-any.pkg.tar.zst
+          stack exec -- pacman -U mingw-w64-x86_64-SDL2-2.0.14-2-any.pkg.tar.zst --noconfirm
         if: runner.os == 'Windows'
 
       - name: Install dependencies (macOS)
