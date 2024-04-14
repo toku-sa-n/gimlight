@@ -150,7 +150,9 @@ jobs:
                check --include --filter-all --directory=app \
                check --include --filter-all --directory=src \
                check --include --filter-all --directory=test
-
+  # Re-run this job if it fails with code -1073740940 on Windows.
+  #
+  # FIXME: Resolve this occasional problem.
   test:
     strategy:
       matrix:
