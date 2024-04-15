@@ -1,7 +1,6 @@
-{-# LANGUAGE DerivingStrategies       #-}
-{-# LANGUAGE OverloadedStrings        #-}
-{-# LANGUAGE StandaloneKindSignatures #-}
-{-# LANGUAGE Unsafe                   #-}
+{-# LANGUAGE DerivingStrategies #-}
+{-# LANGUAGE OverloadedStrings  #-}
+{-# LANGUAGE Unsafe             #-}
 
 module Main
   ( main
