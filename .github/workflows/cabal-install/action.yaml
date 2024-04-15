@@ -30,5 +30,5 @@ runs:
         NAME: ${{ inputs.name }}
       run: |
         cabal update
-        cabal install ${NAME} --ignore-project --with-compiler=${GHC_PATH}
+        cabal install -j --ignore-project --with-compiler=${GHC_PATH} ${NAME}
       shell: bash
