@@ -33,6 +33,11 @@ jobs:
           key: ${{ github.job }}-${{ runner.os }}-${{ hashFiles('stack.yaml.lock') }}-${{ github.sha }}
           restore-keys: ${{ github.job }}-${{ runner.os }}-${{ hashFiles('stack.yaml.lock') }}
 
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install libsdl2-dev libglew-dev
+
       - name: Record the path to GHC
         run: echo "GHC_PATH=$(stack path --compiler-exe)" >> $GITHUB_OUTPUT
         id: record-ghc-path
@@ -145,13 +150,20 @@ jobs:
                check --include --filter-all --directory=app \
                check --include --filter-all --directory=src \
                check --include --filter-all --directory=test
-
+  # Re-run this job if it fails with code -1073740940 on Windows.
+  #
+  # FIXME: Resolve this occasional problem.
   test:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
 
     runs-on: ${{ matrix.os }}
+
+    defaults:
+      run:
+        # To split long lines with `\` on every OS.
+        shell: bash
 
     steps:
       - name: Checkout code
@@ -171,6 +183,32 @@ jobs:
             ${{ steps.haskell-setup.outputs.stack-root }}
           key: ${{ github.job }}-${{ runner.os }}-${{ hashFiles('stack.yaml.lock') }}-${{ github.sha }}
           restore-keys: ${{ github.job }}-${{ runner.os }}-${{ hashFiles('stack.yaml.lock') }}
+
+      - name: Install dependencies (Windows)
+        # See https://github.com/haskell-game/sdl2/issues/277#issuecomment-1784282404 for why we download older SDL2.
+        # See https://github.com/msys2/MINGW-packages/issues/11731 for the update commands.
+        # Install `msys2-keyring` first to avoid the untrusted error.
+        run: |
+          stack exec -- pacman -Syyu --noconfirm
+          stack exec -- pacman -S --noconfirm \
+          msys2-keyring \
+          mingw-w64-x86_64-pkg-config \
+          mingw-w64-x86_64-freeglut \
+          mingw-w64-x86_64-glew \
+          mingw-w64-x86_64-freetype
+          stack exec -- curl -O  https://repo.msys2.org/mingw/x86_64/mingw-w64-x86_64-SDL2-2.24.1-1-any.pkg.tar.zst
+          stack exec -- pacman -U mingw-w64-x86_64-SDL2-2.24.1-1-any.pkg.tar.zst --noconfirm
+        if: runner.os == 'Windows'
+
+      - name: Install dependencies (macOS)
+        run: brew install sdl2 glew
+        if: runner.os == 'macOS'
+
+      - name: Install dependencies (Linux)
+        run: |
+          sudo apt update
+          sudo apt install libsdl2-dev libglew-dev
+        if: runner.os == 'Linux'
 
       - name: Build
         run: stack build
