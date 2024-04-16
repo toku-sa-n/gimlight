@@ -9,8 +9,8 @@ version:        0.1.0.0
 synopsis:       A roguelike game
 description:    Please see the README on GitHub at <https://github.com/toku-sa-n/gimlight#readme>
 category:       Game
-homepage:       https://github.com/githubuser/gimlight#readme
-bug-reports:    https://github.com/githubuser/gimlight/issues
+homepage:       https://github.com/toku-sa-n/gimlight#readme
+bug-reports:    https://github.com/toku-sa-n/gimlight/issues
 author:         Hiroki Tokunaga
 maintainer:     tokusan441@gmail.com
 copyright:      2024 Hiroki Tokunaga
@@ -19,7 +19,7 @@ build-type:     Simple
 
 source-repository head
   type: git
-  location: https://github.com/githubuser/gimlight
+  location: https://github.com/toku-sa-n/gimlight
 
 library
   exposed-modules:
