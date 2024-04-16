@@ -6,24 +6,8 @@ module Main
   ( main
   ) where
 
-import           Gimlight.GameModel (GameModel, initGameModel)
-import           Monomer            (AppEventResponse, WidgetEnv, WidgetNode,
-                                     label, startApp)
-import           Prelude            (IO)
-
-handleEvent ::
-     WidgetEnv GameModel ()
-  -> WidgetNode GameModel ()
-  -> GameModel
-  -> ()
-  -> [AppEventResponse GameModel ()]
-handleEvent _ _ _ _ = []
-
-buildUI :: WidgetEnv GameModel () -> GameModel -> WidgetNode GameModel ()
-buildUI _ _ = label "Hello, world!"
+import           Gimlight.UI (start)
+import           Prelude     (IO)
 
 main :: IO ()
-main = startApp initGameModel handleEvent buildUI config
-  where
-    config :: [a]
-    config = []
+main = start

@@ -16,6 +16,9 @@ dependencies:
 
 library:
   source-dirs: src
+  dependencies:
+    - gimlight-logic
+    - monomer
 
 executables:
   gimlight-exe:
@@ -26,8 +29,7 @@ executables:
       - -rtsopts
       - -with-rtsopts=-N
     dependencies:
-      - gimlight-logic
-      - monomer
+      - gimlight
 
 tests:
   gimlight-test:
