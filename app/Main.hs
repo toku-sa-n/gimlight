@@ -1,22 +1,15 @@
-{-# LANGUAGE DerivingStrategies       #-}
-{-# LANGUAGE OverloadedStrings        #-}
-{-# LANGUAGE StandaloneKindSignatures #-}
-{-# LANGUAGE Unsafe                   #-}
+{-# LANGUAGE DerivingStrategies #-}
+{-# LANGUAGE OverloadedStrings  #-}
+{-# LANGUAGE Unsafe             #-}
 
 module Main
   ( main
   ) where
 
-import           Data.Kind (Type)
-import           Monomer   (AppEventResponse, WidgetEnv, WidgetNode, label,
-                            startApp)
-import           Prelude   (Eq, IO)
-
-type GameModel :: Type
-
-data GameModel =
-  GameModel
-  deriving stock (Eq)
+import           Gimlight.GameModel (GameModel, initGameModel)
+import           Monomer            (AppEventResponse, WidgetEnv, WidgetNode,
+                                     label, startApp)
+import           Prelude            (IO)
 
 handleEvent ::
      WidgetEnv GameModel ()
@@ -30,8 +23,7 @@ buildUI :: WidgetEnv GameModel () -> GameModel -> WidgetNode GameModel ()
 buildUI _ _ = label "Hello, world!"
 
 main :: IO ()
-main = startApp initialModel handleEvent buildUI config
+main = startApp initGameModel handleEvent buildUI config
   where
-    initialModel = GameModel
     config :: [a]
     config = []
