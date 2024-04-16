@@ -2,8 +2,8 @@
 {-# LANGUAGE OverloadedStrings  #-}
 {-# LANGUAGE Unsafe             #-}
 
-module Main
-  ( main
+module Gimlight.UI
+  ( start
   ) where
 
 import           Gimlight.GameModel (GameModel, initGameModel)
@@ -22,8 +22,8 @@ handleEvent _ _ _ _ = []
 buildUI :: WidgetEnv GameModel () -> GameModel -> WidgetNode GameModel ()
 buildUI _ _ = label "Hello, world!"
 
-main :: IO ()
-main = startApp initGameModel handleEvent buildUI config
+start :: IO ()
+start = startApp initGameModel handleEvent buildUI config
   where
     config :: [a]
     config = []

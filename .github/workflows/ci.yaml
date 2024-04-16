@@ -61,9 +61,8 @@ jobs:
       # See https://github.com/commercialhaskell/stack/issues/3697#issuecomment-353729540.
       - name: Check if the cabal file is up to date
         run: |
-          mv gimlight.cabal gimlight.cabal.old
           stack build --dry-run
-          diff gimlight.cabal.old gimlight.cabal
+          [[ $(git status --short) ]] && exit 1 || exit 0
 
   disallow-binary:
     runs-on: ubuntu-latest

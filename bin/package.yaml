@@ -6,10 +6,6 @@ author: Hiroki Tokunaga
 maintainer: tokusan441@gmail.com
 copyright: 2024 Hiroki Tokunaga
 
-extra-source-files:
-  - README.md
-  - CHANGELOG.md
-
 synopsis: A roguelike game
 category: Game
 
@@ -20,6 +16,9 @@ dependencies:
 
 library:
   source-dirs: src
+  dependencies:
+    - gimlight-logic
+    - monomer
 
 executables:
   gimlight-exe:
@@ -31,7 +30,6 @@ executables:
       - -with-rtsopts=-N
     dependencies:
       - gimlight
-      - monomer
 
 tests:
   gimlight-test:

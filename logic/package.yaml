@@ -1,0 +1,27 @@
+name: gimlight-logic
+version: 0.1.0.0
+github: "toku-sa-n/gimlight"
+license: AGPL-3.0-or-later
+author: Hiroki Tokunaga
+maintainer: tokusan441@gmail.com
+copyright: 2024 Hiroki Tokunaga
+
+synopsis: The game logic for Gimlight
+category: Game
+
+description: Please see the README on GitHub at <https://github.com/toku-sa-n/gimlight#readme>
+
+dependencies:
+  - base >= 4.7 && < 5
+
+library:
+  source-dirs: src
+
+tests:
+  gimlight-test:
+    main: Spec.hs
+    source-dirs: test
+    ghc-options:
+      - -threaded
+      - -rtsopts
+      - -with-rtsopts=-N
