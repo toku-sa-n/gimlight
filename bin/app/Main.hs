@@ -1,6 +1,4 @@
-{-# LANGUAGE DerivingStrategies #-}
-{-# LANGUAGE OverloadedStrings  #-}
-{-# LANGUAGE Unsafe             #-}
+{-# LANGUAGE Unsafe #-}
 
 module Main
   ( main
