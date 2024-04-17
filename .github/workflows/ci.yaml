@@ -68,6 +68,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout code
+        uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
+
       - name: Check if a file is a binary
         run: |
           binaries=$(git ls-files -z|xargs --null file --dereference --mime|grep 'charset=binary'|cut -d: -f1)
