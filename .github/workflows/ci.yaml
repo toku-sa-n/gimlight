@@ -227,7 +227,7 @@ jobs:
         uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
 
       - name: List all non-empty files tracked by git that do not end with a newline
-        run: git ls-files | xargs -I {} sh -c '[ -s "{}" ] && echo "{}"' | xargs -I {} sh -c 'tail -c 1 {} | read -r _ || (echo "{}"; false)'
+        run: git ls-files | xargs -I {} sh -c '[ ! -d "{}" ] && [ -s "{}" ] && echo "{}"' | xargs -I {} sh -c 'tail -c 1 {} | read -r _ || (echo "{}"; false)'
 
   weeder:
     runs-on: ubuntu-latest
