@@ -70,7 +70,7 @@ jobs:
     steps:
       - name: Check if a file is a binary
         run: |
-          binaries=$(git ls-files -z|xargs -I {} sh -c '[ -f "{}" ] && echo {}'|xargs --null file --dereference --mime|grep 'charset=binary'|cut -d: -f1)
+          binaries=$(git ls-files -z|xargs -I {} sh -c '[ ! -d "{}" ] && echo {}'|xargs --null file --dereference --mime|grep 'charset=binary'|cut -d: -f1)
           if [ -n "$binaries" ]; then
             echo "Do not commit the following binary files as git does not handle them well"
             echo "$binaries"
