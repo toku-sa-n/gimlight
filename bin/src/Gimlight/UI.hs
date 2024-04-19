@@ -7,8 +7,9 @@ module Gimlight.UI
   ) where
 
 import           Gimlight.GameModel (GameModel, initGameModel)
-import           Monomer            (AppEventResponse, WidgetEnv, WidgetNode,
-                                     label, startApp)
+import           Monomer            (AppConfig, AppEventResponse, WidgetEnv,
+                                     WidgetNode, appFontDef, appTheme,
+                                     darkTheme, label, startApp)
 import           Prelude            (IO)
 
 handleEvent ::
@@ -25,5 +26,10 @@ buildUI _ _ = label "Hello, world!"
 start :: IO ()
 start = startApp initGameModel handleEvent buildUI config
   where
-    config :: [a]
-    config = []
+    config :: [AppConfig GameModel ()]
+    config =
+      [ appFontDef
+          "Regular"
+          "./zen-kakugothic/fonts/ttf/ZenKakuGothicNew-Regular.ttf"
+      , appTheme darkTheme
+      ]
