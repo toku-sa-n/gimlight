@@ -19,6 +19,7 @@ library:
   dependencies:
     - gimlight-logic
     - monomer
+    - text
 
 executables:
   gimlight-exe:
