@@ -6,11 +6,14 @@ module Gimlight.UI
   ( start
   ) where
 
-import           Gimlight.GameModel (GameModel, initGameModel)
-import           Monomer            (AppConfig, AppEventResponse, WidgetEnv,
+import           Data.Text          (pack)
+import           Gimlight.GameModel (GameModel, getCount, increment,
+                                     initGameModel)
+import           Monomer            (AppConfig, AppEventResponse,
+                                     EventResponse (Model), WidgetEnv,
                                      WidgetNode, appFontDef, appTheme,
-                                     darkTheme, label, startApp)
-import           Prelude            (IO)
+                                     darkTheme, keystroke, label, startApp)
+import           Prelude            (IO, Show (show), ($), (<>))
 
 handleEvent ::
      WidgetEnv GameModel ()
@@ -18,10 +21,13 @@ handleEvent ::
   -> GameModel
   -> ()
   -> [AppEventResponse GameModel ()]
-handleEvent _ _ _ _ = []
+handleEvent _ _ model () = [Model $ increment model]
 
 buildUI :: WidgetEnv GameModel () -> GameModel -> WidgetNode GameModel ()
-buildUI _ _ = label "Hello, world!"
+buildUI _ model =
+  keystroke [("Enter", ())] $
+  label $
+  "You pressed the Enter key " <> pack (show (getCount model)) <> " times"
 
 start :: IO ()
 start = startApp initGameModel handleEvent buildUI config
