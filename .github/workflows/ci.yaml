@@ -65,7 +65,7 @@ jobs:
       - name: Check if the cabal file is up to date
         run: |
           stack build --dry-run
-          git status
+          git diff
           [[ $(git status --short) ]] && exit 1 || exit 0
 
   disallow-binary:
