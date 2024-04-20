@@ -15,9 +15,12 @@ main = defaultMainWithHooks hooks
 hooks :: UserHooks
 hooks =
   simpleUserHooks
-    { buildHook =
-        \pkg lbi hk flags -> do
+    { confHook =
+        \pkg flags -> do
           callCommand "coq_makefile -f _CoqProject **/*.v -o Makefile"
+          confHook simpleUserHooks pkg flags
+    , buildHook =
+        \pkg lbi hk flags -> do
           callCommand "make -j"
           buildHook simpleUserHooks pkg lbi hk flags
     -- We do not implement `cleanHook` because current Cabal has a bug and does
