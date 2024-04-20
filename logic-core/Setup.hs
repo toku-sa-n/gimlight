@@ -31,7 +31,11 @@ hooks =
     -- See https://github.com/haskell/cabal/issues/6112.
     }
 
--- We need to create a dummy file to register the module with the `.cabal` file.
+-- | Create a dummy file if it does not exist.
+--
+-- This is a workaround for Stack not registering files extracted from Coq files
+-- with the `.cabal` file as these files are created during the build process
+-- while Stack generates the `.cabal` file before it.
 createDummyFile :: IO ()
 createDummyFile = do
   fileExists <- doesFileExist "src/GimlightLogicCore.hs"
