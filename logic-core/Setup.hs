@@ -4,9 +4,9 @@ module Main
   ( main
   ) where
 
-import           Distribution.Simple (UserHooks (buildHook, cleanHook),
+import           Distribution.Simple (UserHooks (buildHook),
                                       defaultMainWithHooks, simpleUserHooks)
-import           Prelude             (IO, undefined)
+import           Prelude             (IO)
 import           System.Process      (callCommand)
 
 main :: IO ()
