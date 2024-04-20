@@ -24,7 +24,7 @@ source-repository head
 
 library
   exposed-modules:
-      Gimlight.GameModel
+      Gimlight.Logic.GameModel
       Gimlight.UI
   other-modules:
       Paths_gimlight
