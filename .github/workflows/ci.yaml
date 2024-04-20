@@ -119,7 +119,7 @@ jobs:
   stan:
     runs-on: ubuntu-latest
 
-    needs: build-with-hie
+    needs: build-hie
 
     steps:
       - name: Checkout code
@@ -237,7 +237,7 @@ jobs:
   weeder:
     runs-on: ubuntu-latest
 
-    needs: build-with-hie
+    needs: build-hie
 
     steps:
       - name: Checkout code
