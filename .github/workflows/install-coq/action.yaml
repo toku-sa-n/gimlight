@@ -1,0 +1,19 @@
+name: Install Coq with `opam`
+description: Install the Coq environment with `opam`
+
+runs:
+  using: "composite"
+
+  steps:
+    # See https://github.com/ocaml-opam/opam-repository-mingw#updates for `opam-repositories`.
+    - name: Install OCaml
+      uses: ocaml/setup-ocaml@v2.2.7
+      with:
+        ocaml-compiler: "4.14.1"
+        opam-repositories: |
+          opam-repository-mingw: https://github.com/ocaml-opam/opam-repository-mingw.git#sunset
+          default: https://github.com/ocaml/opam-repository.git
+        dune-cache: true
+
+    - name: Install Coq
+      run: opam install --yes coq

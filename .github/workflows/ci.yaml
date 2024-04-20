@@ -38,6 +38,9 @@ jobs:
           sudo apt update
           sudo apt install libsdl2-dev libglew-dev
 
+      - name: Install Coq
+        uses: ./.github/workflows/install-coq
+
       - name: Record the path to GHC
         run: echo "GHC_PATH=$(stack path --compiler-exe)" >> $GITHUB_OUTPUT
         id: record-ghc-path
@@ -186,6 +189,9 @@ jobs:
             ${{ steps.haskell-setup.outputs.stack-root }}
           key: ${{ github.job }}-${{ runner.os }}-${{ hashFiles('stack.yaml.lock') }}-${{ github.sha }}
           restore-keys: ${{ github.job }}-${{ runner.os }}-${{ hashFiles('stack.yaml.lock') }}
+
+      - name: Install Coq
+        uses: ./.github/workflows/install-coq
 
       - name: Install dependencies (Windows)
         # See https://github.com/haskell-game/sdl2/issues/277#issuecomment-1784282404 for why we download older SDL2.
