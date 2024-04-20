@@ -43,9 +43,7 @@ jobs:
         id: record-ghc-path
 
       - name: Build the project with HIE
-        run: |
-          stack clean
-          stack build --ghc-options -fwrite-ide-info --ghc-options -hiedir=.hie
+        run: stack build --ghc-options -fwrite-ide-info --ghc-options -hiedir=.hie
 
       - name: Upload the HIE files
         uses: actions/upload-artifact@1746f4ab65b179e0ea60a494b83293b640dd5bba # v4.3.2
