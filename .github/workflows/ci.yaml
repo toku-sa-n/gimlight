@@ -30,8 +30,11 @@ jobs:
             .hie
             .stack-root
             ${{ steps.haskell-setup.outputs.stack-root }}
-          key: ${{ github.job }}-${{ runner.os }}-${{ hashFiles('stack.yaml.lock') }}-${{ github.sha }}
-          restore-keys: ${{ github.job }}-${{ runner.os }}-${{ hashFiles('stack.yaml.lock') }}
+          key: ${{ github.job }}-${{ runner.os }}-${{ hashFiles('stack.yaml.lock') }}-${{ hashFiles('package.yaml') }}-${{ hashFiles('**/*.hs') }}
+          restore-keys: |
+            ${{ github.job }}-${{ runner.os }}-${{ hashFiles('stack.yaml.lock') }}-${{ hashFiles('package.yaml') }}-
+            ${{ github.job }}-${{ runner.os }}-${{ hashFiles('stack.yaml.lock') }}-
+            ${{ github.job }}-${{ runner.os }}-
 
       - name: Install dependencies
         run: |
