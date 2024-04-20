@@ -5,10 +5,9 @@ packages:
   - logic
   - logic-core
 
-# As most of packages are inferred as `unsafe`, building with `-Wunsafe` is
-# almost impossible.
+# Safe Haskell makes things really complicated.
 ghc-options:
-  "$locals": -Weverything -Werror -Wno-unsafe
-  "logic-core": -w
+  "$locals": -Weverything -Werror -Wno-safe -Wno-unsafe -Wno-missing-safe-haskell-mode
+  gimlight-logic-core: -w
 
 system-ghc: true

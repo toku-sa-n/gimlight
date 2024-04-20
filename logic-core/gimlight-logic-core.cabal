@@ -23,7 +23,7 @@ source-repository head
 
 library
   exposed-modules:
-      Gimlight.GameModel
+      GimlightLogicCore
   other-modules:
       Paths_gimlight_logic_core
   autogen-modules:
