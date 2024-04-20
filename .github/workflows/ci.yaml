@@ -221,7 +221,7 @@ jobs:
         if: runner.os == 'Linux'
 
       - name: Build
-        run: stack build
+        run: eval $(opam env) && stack build
 
       - name: Run tests
         run: stack test
