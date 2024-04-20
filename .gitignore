@@ -2,3 +2,12 @@
 dist-newstyle/
 *~
 .hie
+
+*.aux
+*.glob
+*.vo
+*.vok
+*.vos
+Makefile
+Makefile.conf
+.Makefile.d
