@@ -19,6 +19,7 @@ custom-setup:
   dependencies:
     - Cabal
     - base
+    - directory
     - process
 
 library:

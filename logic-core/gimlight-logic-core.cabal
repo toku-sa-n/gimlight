@@ -25,6 +25,7 @@ custom-setup
   setup-depends:
       Cabal
     , base
+    , directory
     , process
 
 library
