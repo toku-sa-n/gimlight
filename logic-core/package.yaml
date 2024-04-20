@@ -14,6 +14,13 @@ description: Please see the README on GitHub at <https://github.com/toku-sa-n/gi
 dependencies:
   - base >= 4.7 && < 5
 
+build-type: Custom
+custom-setup:
+  dependencies:
+    - Cabal
+    - base
+    - process
+
 library:
   source-dirs: src
 
