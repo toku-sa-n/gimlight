@@ -11,3 +11,5 @@ dist-newstyle/
 Makefile
 Makefile.conf
 .Makefile.d
+
+logic-core/src/**/*.hs
