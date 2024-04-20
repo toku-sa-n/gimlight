@@ -1,4 +1,4 @@
-name: gimlight-logic
+name: gimlight-logic-core
 version: 0.1.0.0
 github: "toku-sa-n/gimlight"
 license: AGPL-3.0-or-later
@@ -6,7 +6,7 @@ author: Hiroki Tokunaga
 maintainer: tokusan441@gmail.com
 copyright: 2024 Hiroki Tokunaga
 
-synopsis: The wrapper for the game logic of Gimlight
+synopsis: The game logic for Gimlight written in Coq
 category: Game
 
 description: Please see the README on GitHub at <https://github.com/toku-sa-n/gimlight#readme>

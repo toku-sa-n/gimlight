@@ -3,10 +3,12 @@ resolver: lts-22.15
 packages:
   - bin
   - logic
+  - logic-core
 
 # As most of packages are inferred as `unsafe`, building with `-Wunsafe` is
 # almost impossible.
 ghc-options:
   "$locals": -Weverything -Werror -Wno-unsafe
+  "logic-core": -w
 
 system-ghc: true

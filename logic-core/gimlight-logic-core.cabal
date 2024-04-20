@@ -4,9 +4,9 @@ cabal-version: 2.2
 --
 -- see: https://github.com/sol/hpack
 
-name:           gimlight-logic
+name:           gimlight-logic-core
 version:        0.1.0.0
-synopsis:       The wrapper for the game logic of Gimlight
+synopsis:       The game logic for Gimlight written in Coq
 description:    Please see the README on GitHub at <https://github.com/toku-sa-n/gimlight#readme>
 category:       Game
 homepage:       https://github.com/toku-sa-n/gimlight#readme
@@ -25,9 +25,9 @@ library
   exposed-modules:
       Gimlight.GameModel
   other-modules:
-      Paths_gimlight_logic
+      Paths_gimlight_logic_core
   autogen-modules:
-      Paths_gimlight_logic
+      Paths_gimlight_logic_core
   hs-source-dirs:
       src
   build-depends:
@@ -38,9 +38,9 @@ test-suite gimlight-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
-      Paths_gimlight_logic
+      Paths_gimlight_logic_core
   autogen-modules:
-      Paths_gimlight_logic
+      Paths_gimlight_logic_core
   hs-source-dirs:
       test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
