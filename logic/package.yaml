@@ -6,7 +6,7 @@ author: Hiroki Tokunaga
 maintainer: tokusan441@gmail.com
 copyright: 2024 Hiroki Tokunaga
 
-synopsis: The wrapper for the game logic of Gimlight
+synopsis: The Haskell wrapper for the game logic of Gimlight
 category: Game
 
 description: Please see the README on GitHub at <https://github.com/toku-sa-n/gimlight#readme>

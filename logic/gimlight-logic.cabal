@@ -6,7 +6,7 @@ cabal-version: 2.2
 
 name:           gimlight-logic
 version:        0.1.0.0
-synopsis:       The wrapper for the game logic of Gimlight
+synopsis:       The Haskell wrapper for the game logic of Gimlight
 description:    Please see the README on GitHub at <https://github.com/toku-sa-n/gimlight#readme>
 category:       Game
 homepage:       https://github.com/toku-sa-n/gimlight#readme
