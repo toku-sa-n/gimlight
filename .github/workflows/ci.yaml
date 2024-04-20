@@ -10,7 +10,7 @@ on:
       - main
 
 jobs:
-  build-with-hie:
+  build-hie:
     runs-on: ubuntu-latest
 
     steps:
