@@ -200,7 +200,6 @@ jobs:
           stack exec -- pacman -Syyu --noconfirm
           stack exec -- pacman -S --noconfirm `
           msys2-keyring `
-          build-essential `
           mingw-w64-x86_64-gmp `
           mingw-w64-x86_64-pkg-config `
           mingw-w64-x86_64-freeglut `
