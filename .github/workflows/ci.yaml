@@ -288,4 +288,4 @@ jobs:
         run: pip install --user yamllint
 
       - name: Run `yamllint`
-        run: yamllint .
+        run: yamllint --strict .
