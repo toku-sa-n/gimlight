@@ -17,15 +17,8 @@ dependencies:
 library:
   source-dirs: logic
   dependencies:
-    - logic-core
     - monomer
     - text
-
-internal-libraries:
-  logic-core:
-    source-dirs: logic-core
-    dependencies:
-      - base
 
 executables:
   gimlight-exe:

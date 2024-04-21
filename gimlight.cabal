@@ -24,6 +24,7 @@ source-repository head
 
 library
   exposed-modules:
+      Gimlight.Logic.GameModel
       Gimlight.UI
   other-modules:
       Paths_gimlight
@@ -33,22 +34,8 @@ library
       logic
   build-depends:
       base >=4.7 && <5
-    , logic-core
     , monomer
     , text
-  default-language: Haskell2010
-
-library logic-core
-  exposed-modules:
-      Gimlight.Logic.GameModel
-  other-modules:
-      Paths_gimlight
-  autogen-modules:
-      Paths_gimlight
-  hs-source-dirs:
-      logic-core
-  build-depends:
-      base
   default-language: Haskell2010
 
 executable gimlight-exe
