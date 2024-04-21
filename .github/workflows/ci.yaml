@@ -85,7 +85,7 @@ jobs:
       - name: Run `hlint`
         uses: haskell-actions/hlint-run@96199a3357287063c67606b26d533f1acb4b6c4e # v2.4.9
         with:
-          path: .
+          path: '["app/", "logic/", "test", "Setup.hs"]'
           fail-on: status
 
   markdown-lint:
