@@ -43,6 +43,19 @@ jobs:
           sudo apt update
           sudo apt install libsdl2-dev libglew-dev
 
+      # See https://github.com/ocaml-opam/opam-repository-mingw#updates for `opam-repositories`.
+      - name: Install OCaml
+        uses: ocaml/setup-ocaml@2771e408a16f7fedf3b342f0676646dc463bd606 # v2.2.7
+        with:
+          ocaml-compiler: "4.14.1"
+          opam-repositories: |
+            opam-repository-mingw: https://github.com/ocaml-opam/opam-repository-mingw.git#sunset
+            default: https://github.com/ocaml/opam-repository.git
+          dune-cache: true
+
+      - name: Install Coq
+        run: opam install --yes coq
+
       - name: Record the path to GHC
         run: echo "GHC_PATH=$(stack path --compiler-exe)" >> $GITHUB_OUTPUT
         id: record-ghc-path
@@ -209,6 +222,19 @@ jobs:
           sudo apt update
           sudo apt install libsdl2-dev libglew-dev
         if: runner.os == 'Linux'
+
+      # See https://github.com/ocaml-opam/opam-repository-mingw#updates for `opam-repositories`.
+      - name: Install OCaml
+        uses: ocaml/setup-ocaml@2771e408a16f7fedf3b342f0676646dc463bd606 # v2.2.7
+        with:
+          ocaml-compiler: "4.14.1"
+          opam-repositories: |
+            opam-repository-mingw: https://github.com/ocaml-opam/opam-repository-mingw.git#sunset
+            default: https://github.com/ocaml/opam-repository.git
+          dune-cache: true
+
+      - name: Install Coq
+        run: opam install --yes coq
 
       - name: Build
         run: stack build
