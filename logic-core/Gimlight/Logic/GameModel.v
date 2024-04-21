@@ -21,3 +21,11 @@ Theorem initial_counter_is_zero : get_count init_game_model = 0%Z.
 Proof.
   reflexivity.
 Qed.
+
+Theorem increment_counter :
+  forall (gm : game_model), get_count (increment gm) = (get_count gm + 1)%Z.
+Proof.
+  intros.
+  destruct gm.
+  reflexivity.
+Qed.
