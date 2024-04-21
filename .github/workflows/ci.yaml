@@ -229,7 +229,7 @@ jobs:
           dune-cache: true
 
       - name: Install Coq
-        run: opam install --yes coq
+        run: stack exec -- opam install --yes coq
 
       - name: Build
         run: eval $(opam env) && stack build
