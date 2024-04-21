@@ -1,5 +1,5 @@
 {-# LANGUAGE DerivingStrategies       #-}
-{-# LANGUAGE Safe                     #-}
+{-# LANGUAGE ImportQualifiedPost      #-}
 {-# LANGUAGE StandaloneKindSignatures #-}
 
 module Gimlight.Logic.GameModel
@@ -9,20 +9,19 @@ module Gimlight.Logic.GameModel
   , getCount
   ) where
 
-import           Data.Kind (Type)
-import           Prelude   (Eq, Int, (+))
+import           Data.Kind         (Type)
+import           GimlightLogicCore qualified as Core
+import           Prelude           (Int)
 
 type GameModel :: Type
 
-newtype GameModel =
-  GameModel Int
-  deriving stock (Eq)
+type GameModel = Core.Game_model
 
 initGameModel :: GameModel
-initGameModel = GameModel 0
+initGameModel = Core.init_game_model
 
 increment :: GameModel -> GameModel
-increment (GameModel n) = GameModel (n + 1)
+increment = Core.increment
 
 getCount :: GameModel -> Int
-getCount (GameModel n) = n
+getCount = Core.get_count
