@@ -41,6 +41,7 @@ custom-setup:
     - Cabal
     - base
     - directory
+    - filepath
     - process
 
 internal-libraries:
