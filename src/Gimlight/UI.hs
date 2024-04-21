@@ -37,6 +37,6 @@ start = startApp initGameModel handleEvent buildUI config
     config =
       [ appFontDef
           "Regular"
-          "./zen-kakugothic/fonts/ttf/ZenKakuGothicNew-Regular.ttf"
+          "fonts/zen-kakugothic/fonts/ttf/ZenKakuGothicNew-Regular.ttf"
       , appTheme darkTheme
       ]
