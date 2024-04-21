@@ -16,11 +16,18 @@ maintainer:     tokusan441@gmail.com
 copyright:      2024 Hiroki Tokunaga
 license:        AGPL-3.0-or-later
 license-file:   LICENSE
-build-type:     Simple
+build-type:     Custom
 
 source-repository head
   type: git
   location: https://github.com/toku-sa-n/gimlight
+
+custom-setup
+  setup-depends:
+      Cabal
+    , base
+    , directory
+    , process
 
 library
   exposed-modules:

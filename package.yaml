@@ -30,6 +30,14 @@ ghc-options:
   - -Wno-safe
   - -Wno-unsafe
 
+build-type: Custom
+custom-setup:
+  dependencies:
+    - Cabal
+    - base
+    - directory
+    - process
+
 internal-libraries:
   logic-core:
     source-dirs: logic-core
