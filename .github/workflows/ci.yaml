@@ -244,7 +244,7 @@ jobs:
         run: git diff --exit-code
 
       - name: Run tests
-        run: stack test
+        run: eval $(opam env) && stack test
 
   trailing-newline:
     runs-on: ubuntu-latest
