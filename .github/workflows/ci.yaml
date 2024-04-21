@@ -30,8 +30,13 @@ jobs:
             .hie
             .stack-root
             ${{ steps.haskell-setup.outputs.stack-root }}
-          key: ${{ github.job }}-${{ runner.os }}-${{ hashFiles('stack.yaml.lock') }}-${{ github.sha }}
-          restore-keys: ${{ github.job }}-${{ runner.os }}-${{ hashFiles('stack.yaml.lock') }}
+          key: |
+            ${{ github.job }}-${{ runner.os }}-${{ hashFiles('package.yaml') }}-${{ hashFiles('stack.yaml') }}-${{ hashFiles('stack.yaml.lock') }}-${{ hashFiles('**/*.hs') }}
+          restore-keys: |
+            ${{ github.job }}-${{ runner.os }}-${{ hashFiles('package.yaml') }}-${{ hashFiles('stack.yaml') }}-${{ hashFiles('stack.yaml.lock') }}
+            ${{ github.job }}-${{ runner.os }}-${{ hashFiles('package.yaml') }}-${{ hashFiles('stack.yaml') }}
+            ${{ github.job }}-${{ runner.os }}-${{ hashFiles('package.yaml') }}
+            ${{ github.job }}-${{ runner.os }}
 
       - name: Install dependencies
         run: |
@@ -184,8 +189,13 @@ jobs:
           path: |
             .stack-root
             ${{ steps.haskell-setup.outputs.stack-root }}
-          key: ${{ github.job }}-${{ runner.os }}-${{ hashFiles('stack.yaml.lock') }}-${{ github.sha }}
-          restore-keys: ${{ github.job }}-${{ runner.os }}-${{ hashFiles('stack.yaml.lock') }}
+          key: |
+            ${{ github.job }}-${{ runner.os }}-${{ hashFiles('package.yaml') }}-${{ hashFiles('stack.yaml') }}-${{ hashFiles('stack.yaml.lock') }}-${{ hashFiles('**/*.hs') }}
+          restore-keys: |
+            ${{ github.job }}-${{ runner.os }}-${{ hashFiles('package.yaml') }}-${{ hashFiles('stack.yaml') }}-${{ hashFiles('stack.yaml.lock') }}
+            ${{ github.job }}-${{ runner.os }}-${{ hashFiles('package.yaml') }}-${{ hashFiles('stack.yaml') }}
+            ${{ github.job }}-${{ runner.os }}-${{ hashFiles('package.yaml') }}
+            ${{ github.job }}-${{ runner.os }}
 
       - name: Install dependencies (Windows)
         # See https://github.com/haskell-game/sdl2/issues/277#issuecomment-1784282404 for why we download older SDL2.
