@@ -1,3 +1,4 @@
+---
 name: gimlight
 version: 0.1.0.0
 github: "toku-sa-n/gimlight"
@@ -9,7 +10,9 @@ copyright: 2024 Hiroki Tokunaga
 synopsis: A roguelike game
 category: Game
 
-description: Please see the README on GitHub at <https://github.com/toku-sa-n/gimlight#readme>
+description: >
+  Please see the README on GitHub at
+  <https://github.com/toku-sa-n/gimlight#readme>
 
 dependencies:
   - base >= 4.7 && < 5
