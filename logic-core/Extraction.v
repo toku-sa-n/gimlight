@@ -1,6 +1,6 @@
 Require Coq.extraction.Extraction.
 Require Coq.extraction.ExtrHaskellBasic.
-Require Coq.extraction.ExtrHaskellNatInt.
+Require Coq.extraction.ExtrHaskellZInteger.
 
 From Gimlight Require Import Logic.GameModel.
 

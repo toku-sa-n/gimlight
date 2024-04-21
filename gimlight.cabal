@@ -17,6 +17,11 @@ copyright:      2024 Hiroki Tokunaga
 license:        AGPL-3.0-or-later
 license-file:   LICENSE
 build-type:     Custom
+extra-source-files:
+    README.md
+    CHANGELOG.md
+    logic-core/Extraction.v
+    logic-core/Gimlight/Logic/GameModel.v
 
 source-repository head
   type: git

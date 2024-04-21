@@ -11,7 +11,7 @@ module Gimlight.Logic.GameModel
 
 import           Data.Kind         (Type)
 import           GimlightLogicCore qualified as Core
-import           Prelude           (Int)
+import           Prelude           (Integer)
 
 type GameModel :: Type
 
@@ -23,5 +23,5 @@ initGameModel = Core.init_game_model
 increment :: GameModel -> GameModel
 increment = Core.increment
 
-getCount :: GameModel -> Int
+getCount :: GameModel -> Integer
 getCount = Core.get_count
