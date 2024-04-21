@@ -2,7 +2,7 @@
 {-# LANGUAGE Safe                     #-}
 {-# LANGUAGE StandaloneKindSignatures #-}
 
-module Gimlight.GameModel
+module Gimlight.Logic.GameModel
   ( GameModel
   , initGameModel
   , increment

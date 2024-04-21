@@ -17,7 +17,6 @@ dependencies:
 library:
   source-dirs: src
   dependencies:
-    - gimlight-logic
     - monomer
     - text
 

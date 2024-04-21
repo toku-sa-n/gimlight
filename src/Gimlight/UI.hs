@@ -6,14 +6,15 @@ module Gimlight.UI
   ( start
   ) where
 
-import           Data.Text          (pack)
-import           Gimlight.GameModel (GameModel, getCount, increment,
-                                     initGameModel)
-import           Monomer            (AppConfig, AppEventResponse,
-                                     EventResponse (Model), WidgetEnv,
-                                     WidgetNode, appFontDef, appTheme,
-                                     darkTheme, keystroke, label, startApp)
-import           Prelude            (IO, Show (show), ($), (<>))
+import           Data.Text                (pack)
+import           Gimlight.Logic.GameModel (GameModel, getCount, increment,
+                                           initGameModel)
+import           Monomer                  (AppConfig, AppEventResponse,
+                                           EventResponse (Model), WidgetEnv,
+                                           WidgetNode, appFontDef, appTheme,
+                                           darkTheme, keystroke, label,
+                                           startApp)
+import           Prelude                  (IO, Show (show), ($), (<>))
 
 handleEvent ::
      WidgetEnv GameModel ()
