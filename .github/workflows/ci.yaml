@@ -183,7 +183,7 @@ jobs:
           dune-cache: true
 
       - name: Install Coq
-        run: stack exec -- opam install --yes coq
+        run: opam install --yes coq
 
       - name: Install dependencies
         id: haskell-setup
