@@ -12,3 +12,8 @@ Definition get_count (gm : game_model) : nat :=
   match gm with
   | mk_game_model counter => counter
   end.
+
+Theorem initial_counter_is_zero : get_count init_game_model = 0.
+Proof.
+  reflexivity.
+Qed.
