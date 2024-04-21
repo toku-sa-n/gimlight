@@ -172,6 +172,19 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
 
+      # See https://github.com/ocaml-opam/opam-repository-mingw#updates for `opam-repositories`.
+      - name: Install OCaml
+        uses: ocaml/setup-ocaml@2771e408a16f7fedf3b342f0676646dc463bd606 # v2.2.7
+        with:
+          ocaml-compiler: "4.14.1"
+          opam-repositories: |
+            opam-repository-mingw: https://github.com/ocaml-opam/opam-repository-mingw.git#sunset
+            default: https://github.com/ocaml/opam-repository.git
+          dune-cache: true
+
+      - name: Install Coq
+        run: stack exec -- opam install --yes coq
+
       - name: Install dependencies
         id: haskell-setup
         uses: haskell-actions/setup@ca7ecf7b0c7a4300227b1ab05cda52bf019c174b # v2.0.0
@@ -218,19 +231,6 @@ jobs:
           sudo apt update
           sudo apt install libsdl2-dev libglew-dev
         if: runner.os == 'Linux'
-
-      # See https://github.com/ocaml-opam/opam-repository-mingw#updates for `opam-repositories`.
-      - name: Install OCaml
-        uses: ocaml/setup-ocaml@2771e408a16f7fedf3b342f0676646dc463bd606 # v2.2.7
-        with:
-          ocaml-compiler: "4.14.1"
-          opam-repositories: |
-            opam-repository-mingw: https://github.com/ocaml-opam/opam-repository-mingw.git#sunset
-            default: https://github.com/ocaml/opam-repository.git
-          dune-cache: true
-
-      - name: Install Coq
-        run: stack exec -- opam install --yes coq
 
       - name: Build
         run: eval $(opam env) && stack build
