@@ -15,7 +15,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@1d96c772d19495a3b5c517cd2bc0cb401ea0529f # v4.1.3
+        uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4.1.4
 
       - name: Install the Haskell environment
         uses: haskell-actions/setup@ca7ecf7b0c7a4300227b1ab05cda52bf019c174b # v2.0.0
@@ -61,7 +61,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@1d96c772d19495a3b5c517cd2bc0cb401ea0529f # v4.1.3
+        uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4.1.4
 
       # See https://github.com/commercialhaskell/stack/issues/3697#issuecomment-353729540.
       - name: Check if the cabal file is up to date
@@ -74,7 +74,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@1d96c772d19495a3b5c517cd2bc0cb401ea0529f # v4.1.3
+        uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4.1.4
 
       - name: Check if a file is a binary
         run: |
@@ -90,7 +90,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@1d96c772d19495a3b5c517cd2bc0cb401ea0529f # v4.1.3
+        uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4.1.4
 
       - name: Install `hlint`
         uses: haskell-actions/hlint-setup@0b0024319753ba0c8b2fa21b7018ed252aed8181 # v2.4.9
@@ -106,7 +106,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@1d96c772d19495a3b5c517cd2bc0cb401ea0529f # v4.1.3
+        uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4.1.4
 
       - name: Run `markdown-lint`
         uses: DavidAnson/markdownlint-cli2-action@b4c9feab76d8025d1e83c653fa3990936df0e6c8 # v16.0.0
@@ -116,7 +116,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@1d96c772d19495a3b5c517cd2bc0cb401ea0529f # v4.1.3
+        uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4.1.4
 
       - name: Run `prettier` with the check mode
         run: npx --yes prettier --check .
@@ -128,7 +128,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@1d96c772d19495a3b5c517cd2bc0cb401ea0529f # v4.1.3
+        uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4.1.4
 
       - name: Install the Haskell environment
         uses: haskell-actions/setup@ca7ecf7b0c7a4300227b1ab05cda52bf019c174b # v2.0.0
@@ -180,7 +180,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@1d96c772d19495a3b5c517cd2bc0cb401ea0529f # v4.1.3
+        uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4.1.4
 
       - name: Install dependencies
         id: haskell-setup
@@ -239,7 +239,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@1d96c772d19495a3b5c517cd2bc0cb401ea0529f # v4.1.3
+        uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4.1.4
 
       # Do not try to merge two `xargs` like this because it will fail with submodules as the last `||` catches cases where the first two test commands fail.
       #
@@ -256,7 +256,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@1d96c772d19495a3b5c517cd2bc0cb401ea0529f # v4.1.3
+        uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4.1.4
 
       - name: Install the Haskell environment
         uses: haskell-actions/setup@ca7ecf7b0c7a4300227b1ab05cda52bf019c174b # v2.0.0
