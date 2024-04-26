@@ -157,14 +157,19 @@ jobs:
                check --include --filter-all --directory=app \
                check --include --filter-all --directory=src \
                check --include --filter-all --directory=test
-  # Re-run this job if it fails with code -1073740940 on Windows.
+
+  # We do not run this job on Windows because Coq cannot be installed on it. See
+  # #93.
+  #
+  # Re-run this job if you re-introduced the Windows CI and it failed with code
+  # -1073740940 on Windows.
   #
   # FIXME: Resolve this occasional problem.
   test:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ubuntu-latest, macos-latest]
 
     runs-on: ${{ matrix.os }}
 
