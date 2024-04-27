@@ -148,7 +148,13 @@ jobs:
   # We do not run this job on Windows because Coq cannot be installed on it. See
   # #93.
   #
-  # Re-run this job if you re-introduced the Windows CI and it failed with code
+  # When you re-enable the Windows CI, Check the following links.
+  # - https://github.com/haskell-game/sdl2/issues/277#issuecomment-1784282404
+  #   for installing SDL2.
+  # - https://github.com/msys2/MINGW-packages/issues/11731 for the `unknown
+  #   trust` error.
+  #
+  # Re-run this job if you re-enable the Windows CI and it failed with code
   # -1073740940 on Windows.
   #
   # FIXME: Resolve this occasional problem.
@@ -183,23 +189,6 @@ jobs:
             ${{ github.job }}-${{ runner.os }}-${{ hashFiles('package.yaml') }}-${{ hashFiles('stack.yaml') }}
             ${{ github.job }}-${{ runner.os }}-${{ hashFiles('package.yaml') }}
             ${{ github.job }}-${{ runner.os }}
-
-      - name: Install dependencies (Windows)
-        # See https://github.com/haskell-game/sdl2/issues/277#issuecomment-1784282404 for why we download older SDL2.
-        # See https://github.com/msys2/MINGW-packages/issues/11731 for the update commands.
-        # Install `msys2-keyring` first to avoid the untrusted error.
-        run: |
-          stack exec -- pacman -Syyu --noconfirm
-          stack exec -- pacman -S --noconfirm `
-          msys2-keyring `
-          mingw-w64-x86_64-gmp `
-          mingw-w64-x86_64-pkg-config `
-          mingw-w64-x86_64-freeglut `
-          mingw-w64-x86_64-glew `
-          mingw-w64-x86_64-freetype
-          stack exec -- curl -O  https://repo.msys2.org/mingw/x86_64/mingw-w64-x86_64-SDL2-2.24.1-1-any.pkg.tar.zst
-          stack exec -- pacman -U mingw-w64-x86_64-SDL2-2.24.1-1-any.pkg.tar.zst --noconfirm
-        if: runner.os == 'Windows'
 
       - name: Install dependencies (macOS)
         run: brew install sdl2 glew coq
