@@ -18,7 +18,7 @@ jobs:
         uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4.1.4
 
       - name: Install the Haskell environment
-        uses: haskell-actions/setup@ca7ecf7b0c7a4300227b1ab05cda52bf019c174b # v2.0.0
+        uses: haskell-actions/setup@ca7ecf7b0c7a4300227b1ab05cda52bf019c174b # v2.7.0
         with:
           enable-stack: true
         id: haskell-setup
@@ -131,7 +131,7 @@ jobs:
         uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4.1.4
 
       - name: Install the Haskell environment
-        uses: haskell-actions/setup@ca7ecf7b0c7a4300227b1ab05cda52bf019c174b # v2.0.0
+        uses: haskell-actions/setup@ca7ecf7b0c7a4300227b1ab05cda52bf019c174b # v2.7.0
         id: haskell-setup
 
       - name: Record the path to GHC
@@ -184,7 +184,7 @@ jobs:
 
       - name: Install dependencies
         id: haskell-setup
-        uses: haskell-actions/setup@ca7ecf7b0c7a4300227b1ab05cda52bf019c174b # v2.0.0
+        uses: haskell-actions/setup@ca7ecf7b0c7a4300227b1ab05cda52bf019c174b # v2.7.0
         with:
           enable-stack: true
 
@@ -259,7 +259,7 @@ jobs:
         uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4.1.4
 
       - name: Install the Haskell environment
-        uses: haskell-actions/setup@ca7ecf7b0c7a4300227b1ab05cda52bf019c174b # v2.0.0
+        uses: haskell-actions/setup@ca7ecf7b0c7a4300227b1ab05cda52bf019c174b # v2.7.0
         id: haskell-setup
 
       - name: Record the path to GHC
