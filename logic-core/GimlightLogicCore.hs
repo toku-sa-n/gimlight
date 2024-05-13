@@ -170,11 +170,11 @@ init_game_model :: Game_model
 init_game_model =
   0
 
-increment :: Game_model -> Game_model
-increment gm =
-  (Prelude.+) gm ((\x -> x) 1)
-
 get_count :: Game_model -> Prelude.Integer
 get_count gm =
   gm
+
+increment :: Game_model -> Game_model
+increment gm =
+  (Prelude.+) gm ((\x -> x) 1)
 
