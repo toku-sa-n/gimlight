@@ -13,3 +13,5 @@ Makefile
 Makefile.conf
 CoqMakefile.conf
 .Makefile.d
+
+_build/

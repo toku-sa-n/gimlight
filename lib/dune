@@ -1,0 +1,6 @@
+(library
+ (name gimlight))
+
+(coq.extraction
+ (prelude Gimlight)
+ (extracted_modules gimlight))
