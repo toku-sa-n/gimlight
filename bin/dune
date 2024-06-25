@@ -1,4 +1,5 @@
 (executable
  (public_name gimlight)
  (name main)
+ (package gimlight)
  (libraries gimlight))
