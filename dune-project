@@ -25,11 +25,12 @@
   bogue
   ; XXX: This is a temporary workaround for `opam` ignoring dependency constraints.
   ; https://github.com/ocaml/opam/issues/5773 might be relevant.
-  (ctypes-foreign (==0.18.0))
+  (ctypes-foreign
+   (= 0.18.0))
   dune
   ocaml
   (tsdl
-   (== 0.9.8))
+   (= 0.9.8))
   zarith)
  (tags
   (topics "game")))
