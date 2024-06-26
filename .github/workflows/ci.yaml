@@ -108,6 +108,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4.1.4
 
+      # See https://github.com/ocaml-opam/opam-repository-mingw#updates for `opam-repositories`.
+      - uses: ocaml/setup-ocaml@8ea37830f3b2c9f54178d255808ae377b5758062 # v2.2.9
+        with:
+          ocaml-compiler: "4.14.1"
+          opam-repositories: |
+            opam-repository-mingw: https://github.com/ocaml-opam/opam-repository-mingw.git#sunset
+            default: https://github.com/ocaml/opam-repository.git
+          dune-cache: true
+
       - name: Install dependencies (Linux)
         if: matrix.os == 'ubuntu-latest'
         run: |
@@ -123,16 +132,7 @@ jobs:
       - name: Install Coq
         run: opam install coq
 
-      # See https://github.com/ocaml-opam/opam-repository-mingw#updates for `opam-repositories`.
-      - uses: ocaml/setup-ocaml@8ea37830f3b2c9f54178d255808ae377b5758062 # v2.2.9
-        with:
-          ocaml-compiler: "4.14.1"
-          opam-repositories: |
-            opam-repository-mingw: https://github.com/ocaml-opam/opam-repository-mingw.git#sunset
-            default: https://github.com/ocaml/opam-repository.git
-          dune-cache: true
-
-      - name: Install dependencies
+      - name: Install package dependencies
         run: opam install --deps-only --with-test --locked .
 
       # Without `opam exec -- `, these commands will fail due to "dune not found"
