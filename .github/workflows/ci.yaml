@@ -112,13 +112,16 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         run: |
           sudo apt update
-          sudo apt install libsdl2-dev libglew-dev coq
+          sudo apt install libsdl2-dev libglew-dev
 
       - name: Install dependencies (macOS)
         if: matrix.os == 'macos-latest'
         run: |
           brew update
-          brew install sdl2 glew coq
+          brew install sdl2 glew
+
+      - name: Install Coq
+        run: opam install coq
 
       # See https://github.com/ocaml-opam/opam-repository-mingw#updates for `opam-repositories`.
       - uses: ocaml/setup-ocaml@8ea37830f3b2c9f54178d255808ae377b5758062 # v2.2.9
