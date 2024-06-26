@@ -135,8 +135,6 @@ jobs:
       - name: Install package dependencies
         run: opam install --deps-only --with-test --locked .
 
-      # Without `opam exec -- `, these commands will fail due to "dune not found"
-      # error.
       - name: Build
         run: opam exec -- dune build
 
@@ -150,10 +148,5 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4.1.4
 
-      # Do not try to merge two `xargs` like this because it will fail with submodules as the last `||` catches cases where the first two test commands fail.
-      #
-      # ```bash
-      # git ls-files | xargs -I {} sh -c '[ ! -d "{}" ] && [ -s "{}" ] && tail -c 1 {} | read -r _ || (echo "{}"; false)'
-      # ```
       - name: List all non-empty files tracked by git that do not end with a newline
         run: git ls-files | xargs -I {} sh -c '[ ! -d "{}" ] && [ -s "{}" ] && echo {}' | xargs -I {} sh -c 'tail -c 1 {} | read -r _ || (echo "{}"; false)'
