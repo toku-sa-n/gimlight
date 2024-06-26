@@ -23,15 +23,12 @@ let on_user_event ev =
       | _ -> ())
   | _ -> ()
 
-let widgets = [ label ]
-
 let connections =
-  List.map
-    (fun w ->
-      Widget.connect_main w w
-        (fun _ _ -> on_user_event)
-        [ Trigger.key_up; Trigger.key_down ])
-    widgets
+  [
+    Widget.connect_main label label
+      (fun _ _ -> on_user_event)
+      [ Trigger.key_up; Trigger.key_down ];
+  ]
 
-let layout = Layout.flat_of_w ~name:"Counter App" widgets
+let layout = Layout.flat_of_w ~name:"Counter App" [ label ]
 let () = Bogue.of_layout ~on_user_event layout ~connections |> Bogue.run
