@@ -130,7 +130,9 @@ jobs:
           dune-cache: true
 
       - name: Install dependencies
-        run: opam install --deps-only --with-test --locked .
+        run: |
+          opam upgrade --yes
+          opam install --deps-only --with-test --locked .
 
       # Without `opam exec -- `, these commands will fail due to "dune not found"
       # error.
