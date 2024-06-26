@@ -23,8 +23,9 @@
  (description "A roguelike game written in Coq")
  (depends
   bogue
-  ; XXX: This is a temporary workaround for `opam` ignoring dependency constraints.
-  ; It installs `ctypes-foreign` 0.22.0 which is incompatible with `tsdl` 0.9.8.
+  ; XXX: This is a temporary workaround for `opam` ignoring dependency
+  ; constraints. Without this workaround, it will install `ctypes-foreign`
+  ; 0.22.0 which is incompatible with `tsdl` 0.9.8.
   ; https://github.com/ocaml/opam/issues/5773 might be relevant.
   (ctypes-foreign
    (= 0.18.0))
