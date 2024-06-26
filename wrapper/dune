@@ -1,4 +1,3 @@
 (library
  (name gimlight)
- (package core)
  (libraries core))

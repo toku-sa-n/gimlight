@@ -1,5 +1,5 @@
 let model =
-  Gimlight.init_game_model |> Gimlight.increment |> Gimlight.increment
-  |> Gimlight.get_count
+  Gimlight.Game_model.init_game_model |> Gimlight.Game_model.increment
+  |> Gimlight.Game_model.increment |> Gimlight.Game_model.get_count
 
-let () = print_endline (Big_int.string_of_big_int model)
+let () = print_endline (Z.to_string model)

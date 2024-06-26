@@ -24,6 +24,3 @@
  (depends dune ocaml zarith)
  (tags
   (topics "game")))
-
-(package
- (name core))
