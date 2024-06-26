@@ -21,6 +21,6 @@
  (name gimlight)
  (synopsis "A roguelike game")
  (description "A roguelike game written in Coq")
- (depends bogue dune ocaml zarith)
+ (depends bogue dune ocaml tsdl zarith)
  (tags
   (topics "game")))

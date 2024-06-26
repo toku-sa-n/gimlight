@@ -10,9 +10,33 @@ let update c m =
   m |> Gimlight.Game_model.get_count |> Z.to_int |> label_message
   |> Widget.set_text c
 
-let () =
-  let label = Widget.label "You pressed the Enter key 0 times" in
-  let action _ = increment () ; update label !model in
-  let button = Widget.button ~action "Press me" in
-  Layout.flat_of_w ~name:"Counter App" [label; button]
-  |> Bogue.of_layout |> Bogue.run
+let label = Widget.label "You pressed the Enter key 0 times"
+
+let action _ = increment () ; update label !model
+
+let on_user_event ev =
+  let open Tsdl.Sdl in
+  print_endline "user event" ;
+  match Event.get ev Event.typ with
+  | x when x == Event.key_down ->
+      print_endline "key down" ; action ()
+  | _ ->
+      ()
+
+let button = Widget.button ~action "Press me"
+
+let widgets = [label; button]
+
+let connections =
+  List.map
+    (fun w ->
+      Widget.connect_main w w
+        (fun _ _ -> on_user_event)
+        [Trigger.key_up; Trigger.key_down] )
+    widgets
+
+let layout = Layout.flat_of_w ~name:"Counter App" widgets
+
+let () = Layout.claim_keyboard_focus layout
+
+let () = Bogue.of_layout ~on_user_event layout ~connections |> Bogue.run

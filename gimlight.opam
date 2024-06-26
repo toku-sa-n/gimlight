@@ -13,6 +13,7 @@ depends: [
   "bogue"
   "dune" {>= "3.16"}
   "ocaml"
+  "tsdl"
   "zarith"
   "odoc" {with-doc}
 ]
