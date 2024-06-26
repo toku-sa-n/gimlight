@@ -34,5 +34,4 @@ let connections =
     widgets
 
 let layout = Layout.flat_of_w ~name:"Counter App" widgets
-let () = Layout.claim_keyboard_focus layout
 let () = Bogue.of_layout ~on_user_event layout ~connections |> Bogue.run
