@@ -23,8 +23,7 @@ let on_user_event ev =
       action ()
   | _ -> ()
 
-let button = Widget.button ~action "Press me"
-let widgets = [ label; button ]
+let widgets = [ label ]
 
 let connections =
   List.map
