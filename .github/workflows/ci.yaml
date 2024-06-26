@@ -37,6 +37,9 @@ jobs:
           ocaml-compiler: "4.14.1"
           dune-cache: true
 
+      - name: Install Coq
+        run: opam install coq
+
       - uses: ocaml/setup-ocaml/lint-doc@8ea37830f3b2c9f54178d255808ae377b5758062 # v2.2.9
 
   markdown-lint:
