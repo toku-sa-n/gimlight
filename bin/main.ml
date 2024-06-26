@@ -1,9 +1,7 @@
 open Bogue
 
 let model = ref Gimlight.Game_model.init_game_model
-
 let increment () = model := Gimlight.Game_model.increment !model
-
 let label_message n = "You pressed the Enter key " ^ string_of_int n ^ " times"
 
 let update c m =
@@ -12,31 +10,30 @@ let update c m =
 
 let label = Widget.label "You pressed the Enter key 0 times"
 
-let action _ = increment () ; update label !model
+let action _ =
+  increment ();
+  update label !model
 
 let on_user_event ev =
   let open Tsdl.Sdl in
-  print_endline "user event" ;
+  print_endline "user event";
   match Event.get ev Event.typ with
   | x when x == Event.key_down ->
-      print_endline "key down" ; action ()
-  | _ ->
-      ()
+      print_endline "key down";
+      action ()
+  | _ -> ()
 
 let button = Widget.button ~action "Press me"
-
-let widgets = [label; button]
+let widgets = [ label; button ]
 
 let connections =
   List.map
     (fun w ->
       Widget.connect_main w w
         (fun _ _ -> on_user_event)
-        [Trigger.key_up; Trigger.key_down] )
+        [ Trigger.key_up; Trigger.key_down ])
     widgets
 
 let layout = Layout.flat_of_w ~name:"Counter App" widgets
-
 let () = Layout.claim_keyboard_focus layout
-
 let () = Bogue.of_layout ~on_user_event layout ~connections |> Bogue.run
