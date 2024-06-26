@@ -61,4 +61,3 @@ build: [
   ]
 ]
 dev-repo: "git+https://github.com/toku-sa-n/gimlight.git"
-
