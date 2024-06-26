@@ -8,7 +8,7 @@ let update c m =
   m |> Gimlight.Game_model.get_count |> Z.to_int |> label_message
   |> Widget.set_text c
 
-let label = Widget.label "You pressed the Enter key 0 times"
+let label = Widget.label (label_message 0)
 
 let action _ =
   increment ();
