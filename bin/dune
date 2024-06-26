@@ -1,4 +1,4 @@
 (executable
  (public_name gimlight)
  (name main)
- (libraries gimlight))
+ (libraries bogue gimlight))

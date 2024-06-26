@@ -10,6 +10,7 @@ homepage: "https://github.com/toku-sa-n/gimlight"
 doc: "https://github.com/toku-sa-n/gimlight/blob/main/README.md"
 bug-reports: "https://github.com/toku-sa-n/gimlight/issues"
 depends: [
+  "bogue"
   "dune" {>= "3.16"}
   "ocaml"
   "zarith"
