@@ -10,52 +10,6 @@ on:
       - main
 
 jobs:
-  build-hie:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4.1.4
-
-      - name: Install the Haskell environment
-        uses: haskell-actions/setup@64aa5146ed5bd91f181552b8b5fbe50fbd2bd3fe # v2.7.1
-        with:
-          enable-stack: true
-        id: haskell-setup
-
-      - name: Cache
-        uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
-        with:
-          path: |
-            .hie
-            .stack-root
-            ${{ steps.haskell-setup.outputs.stack-root }}
-          key: |
-            ${{ github.job }}-${{ runner.os }}-${{ hashFiles('package.yaml') }}-${{ hashFiles('stack.yaml') }}-${{ hashFiles('stack.yaml.lock') }}-${{ hashFiles('**/*.hs') }}
-          restore-keys: |
-            ${{ github.job }}-${{ runner.os }}-${{ hashFiles('package.yaml') }}-${{ hashFiles('stack.yaml') }}-${{ hashFiles('stack.yaml.lock') }}
-            ${{ github.job }}-${{ runner.os }}-${{ hashFiles('package.yaml') }}-${{ hashFiles('stack.yaml') }}
-            ${{ github.job }}-${{ runner.os }}-${{ hashFiles('package.yaml') }}
-            ${{ github.job }}-${{ runner.os }}
-
-      - name: Install dependencies
-        run: |
-          sudo apt update
-          sudo apt install libsdl2-dev libglew-dev coq
-
-      - name: Record the path to GHC
-        run: echo "GHC_PATH=$(stack path --compiler-exe)" >> $GITHUB_OUTPUT
-        id: record-ghc-path
-
-      - name: Build the project with HIE
-        run: stack build --ghc-options -fwrite-ide-info --ghc-options -hiedir=.hie
-
-      - name: Upload the HIE files
-        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
-        with:
-          name: hie
-          path: .hie
-
   disallow-binary:
     runs-on: ubuntu-latest
 
@@ -72,21 +26,18 @@ jobs:
             exit 1
           fi
 
-  hlint:
+  lint_docs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4.1.4
+      - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
 
-      - name: Install `hlint`
-        uses: haskell-actions/hlint-setup@fe9cd1cd1af94a23900c06738e73f6ddb092966a # v2.4.10
-
-      - name: Run `hlint`
-        uses: haskell-actions/hlint-run@eaca4cfbf4a69f4eb875df38b6bc3e1657020378 # v2.4.10
+      - uses: ocaml/setup-ocaml@8ea37830f3b2c9f54178d255808ae377b5758062 # v2.2.9
         with:
-          path: '["app/", "logic/", "test", "Setup.hs"]'
-          fail-on: status
+          ocaml-compiler: "4.14.1"
+          dune-cache: true
+
+      - uses: ocaml/setup-ocaml/lint-doc@8ea37830f3b2c9f54178d255808ae377b5758062 # v2.2.9
 
   markdown-lint:
     runs-on: ubuntu-latest
@@ -98,6 +49,33 @@ jobs:
       - name: Run `markdown-lint`
         uses: DavidAnson/markdownlint-cli2-action@b4c9feab76d8025d1e83c653fa3990936df0e6c8 # v16.0.0
 
+  ocamlformat:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4.1.4
+
+      - uses: ocaml/setup-ocaml@8ea37830f3b2c9f54178d255808ae377b5758062 # v2.2.9
+        with:
+          ocaml-compiler: "4.14.1"
+          dune-cache: true
+
+      - uses: ocaml/setup-ocaml/lint-fmt@8ea37830f3b2c9f54178d255808ae377b5758062 # v2.2.9
+
+  opamlint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
+
+      - uses: ocaml/setup-ocaml@8ea37830f3b2c9f54178d255808ae377b5758062 # v2.2.9
+        with:
+          ocaml-compiler: "4.14.1"
+          dune-cache: true
+
+      - uses: ocaml/setup-ocaml/lint-opam@8ea37830f3b2c9f54178d255808ae377b5758062 # v2.2.9
+
   prettier:
     runs-on: ubuntu-latest
 
@@ -108,61 +86,13 @@ jobs:
       - name: Run `prettier` with the check mode
         run: npx --yes prettier --check .
 
-  stan:
-    runs-on: ubuntu-latest
-
-    needs: build-hie
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4.1.4
-
-      - name: Install the Haskell environment
-        uses: haskell-actions/setup@64aa5146ed5bd91f181552b8b5fbe50fbd2bd3fe # v2.7.1
-        id: haskell-setup
-
-      - name: Record the path to GHC
-        run: echo "GHC_PATH=$(stack path --compiler-exe)" >> $GITHUB_OUTPUT
-        id: record-ghc-path
-
-      - name: Install Stan
-        uses: ./.github/workflows/cabal-install
-        with:
-          name: stan
-          version: 0.1.2.1
-          ghc-path: ${{ steps.record-ghc-path.outputs.GHC_PATH }}
-
-      - name: Download HIE
-        uses: actions/download-artifact@65a9edc5881444af0b9093a5e628f2fe47ea3b2e # v4.1.7
-        with:
-          name: hie
-          path: .hie
-
-      - name: Run `stan`
-        run: |
-          stan check --exclude --filter-all --scope-all \
-               check --include --filter-all --directory=app \
-               check --include --filter-all --directory=src \
-               check --include --filter-all --directory=test
-
-  # We do not run this job on Windows because Coq cannot be installed on it. See
-  # #93.
-  #
-  # When you re-enable the Windows CI, Check the following links.
-  # - https://github.com/haskell-game/sdl2/issues/277#issuecomment-1784282404
-  #   for installing SDL2.
-  # - https://github.com/msys2/MINGW-packages/issues/11731 for the `unknown
-  #   trust` error.
-  #
-  # Re-run this job if you re-enable the Windows CI and it failed with code
-  # -1073740940 on Windows.
-  #
-  # FIXME: Resolve this occasional problem.
   test:
     strategy:
-      fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os:
+          - ubuntu-latest
+          - windows-latest
+          - macos-latest
 
     runs-on: ${{ matrix.os }}
 
@@ -170,45 +100,25 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4.1.4
 
+      # See https://github.com/ocaml-opam/opam-repository-mingw#updates for `opam-repositories`.
+      - uses: ocaml/setup-ocaml@8ea37830f3b2c9f54178d255808ae377b5758062 # v2.2.9
+        with:
+          ocaml-compiler: "4.14.1"
+          opam-repositories: |
+            opam-repository-mingw: https://github.com/ocaml-opam/opam-repository-mingw.git#sunset
+            default: https://github.com/ocaml/opam-repository.git
+          dune-cache: true
+
       - name: Install dependencies
-        id: haskell-setup
-        uses: haskell-actions/setup@64aa5146ed5bd91f181552b8b5fbe50fbd2bd3fe # v2.7.1
-        with:
-          enable-stack: true
+        run: opam install --deps-only --with-test .
 
-      - name: Cache
-        uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
-        with:
-          path: |
-            .stack-root
-            ${{ steps.haskell-setup.outputs.stack-root }}
-          key: |
-            ${{ github.job }}-${{ runner.os }}-${{ hashFiles('package.yaml') }}-${{ hashFiles('stack.yaml') }}-${{ hashFiles('stack.yaml.lock') }}-${{ hashFiles('**/*.hs') }}
-          restore-keys: |
-            ${{ github.job }}-${{ runner.os }}-${{ hashFiles('package.yaml') }}-${{ hashFiles('stack.yaml') }}-${{ hashFiles('stack.yaml.lock') }}
-            ${{ github.job }}-${{ runner.os }}-${{ hashFiles('package.yaml') }}-${{ hashFiles('stack.yaml') }}
-            ${{ github.job }}-${{ runner.os }}-${{ hashFiles('package.yaml') }}
-            ${{ github.job }}-${{ runner.os }}
-
-      - name: Install dependencies (macOS)
-        run: brew install sdl2 glew coq
-        if: runner.os == 'macOS'
-
-      - name: Install dependencies (Linux)
-        run: |
-          sudo apt update
-          sudo apt install libsdl2-dev libglew-dev coq
-        if: runner.os == 'Linux'
-
+      # Without `opam exec -- `, these commands will fail due to "dune not found"
+      # error.
       - name: Build
-        run: stack build
+        run: opam exec -- dune build
 
-      # This is for `.cabal` files and Haskell files generated by Coq.
-      - name: Ensure all generated files are up-to-date
-        run: git diff --exit-code
-
-      - name: Run tests
-        run: stack test
+      - name: Run tests with dune
+        run: opam exec -- dune test
 
   trailing-newline:
     runs-on: ubuntu-latest
@@ -224,36 +134,3 @@ jobs:
       # ```
       - name: List all non-empty files tracked by git that do not end with a newline
         run: git ls-files | xargs -I {} sh -c '[ ! -d "{}" ] && [ -s "{}" ] && echo {}' | xargs -I {} sh -c 'tail -c 1 {} | read -r _ || (echo "{}"; false)'
-
-  weeder:
-    runs-on: ubuntu-latest
-
-    needs: build-hie
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4.1.4
-
-      - name: Install the Haskell environment
-        uses: haskell-actions/setup@64aa5146ed5bd91f181552b8b5fbe50fbd2bd3fe # v2.7.1
-        id: haskell-setup
-
-      - name: Record the path to GHC
-        run: echo "GHC_PATH=$(stack path --compiler-exe)" >> $GITHUB_OUTPUT
-        id: record-ghc-path
-
-      - name: Install `weeder`
-        uses: ./.github/workflows/cabal-install
-        with:
-          name: weeder
-          version: 2.4.0
-          ghc-path: ${{ steps.record-ghc-path.outputs.GHC_PATH }}
-
-      - name: Download HIE
-        uses: actions/download-artifact@65a9edc5881444af0b9093a5e628f2fe47ea3b2e # v4.1.7
-        with:
-          name: hie
-          path: .hie
-
-      - name: Run `weeder`
-        run: weeder
