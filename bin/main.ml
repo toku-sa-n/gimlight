@@ -16,12 +16,10 @@ let action _ =
 
 let on_user_event ev =
   let open Tsdl.Sdl in
-  match Event.get ev Event.typ with
-  | x when x == Event.key_down -> (
-      match Event.get ev Event.keyboard_keycode with
-      | x when x == K.return -> action ()
-      | _ -> ())
-  | _ -> ()
+  if
+    Event.get ev Event.typ == Event.key_down
+    && Event.get ev Event.keyboard_keycode == K.return
+  then action ()
 
 let connections =
   [
