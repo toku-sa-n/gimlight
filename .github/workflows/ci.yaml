@@ -106,6 +106,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4.1.4
 
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install libsdl2-dev libglew-dev
+
       # See https://github.com/ocaml-opam/opam-repository-mingw#updates for `opam-repositories`.
       - uses: ocaml/setup-ocaml@8ea37830f3b2c9f54178d255808ae377b5758062 # v2.2.9
         with:
