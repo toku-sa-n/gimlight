@@ -16,11 +16,8 @@ let action _ =
 
 let on_user_event ev =
   let open Tsdl.Sdl in
-  print_endline "user event";
   match Event.get ev Event.typ with
-  | x when x == Event.key_down ->
-      print_endline "key down";
-      action ()
+  | x when x == Event.key_down -> action ()
   | _ -> ()
 
 let widgets = [ label ]
