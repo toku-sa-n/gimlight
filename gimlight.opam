@@ -11,9 +11,10 @@ doc: "https://github.com/toku-sa-n/gimlight/blob/main/README.md"
 bug-reports: "https://github.com/toku-sa-n/gimlight/issues"
 depends: [
   "bogue"
+  "ctypes-foreign" {= "0.18.0"}
   "dune" {>= "3.16"}
   "ocaml"
-  "tsdl"
+  "tsdl" {= "0.9.8"}
   "zarith"
   "odoc" {with-doc}
 ]
