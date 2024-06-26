@@ -17,7 +17,10 @@ let action _ =
 let on_user_event ev =
   let open Tsdl.Sdl in
   match Event.get ev Event.typ with
-  | x when x == Event.key_down -> action ()
+  | x when x == Event.key_down -> (
+      match Event.get ev Event.keyboard_keycode with
+      | x when x == K.return -> action ()
+      | _ -> ())
   | _ -> ()
 
 let widgets = [ label ]
