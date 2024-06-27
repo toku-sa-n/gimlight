@@ -1,0 +1,13 @@
+(library
+ (name core)
+ (libraries zarith))
+
+(coq.extraction
+ (prelude Extraction)
+ (extracted_modules BinInt BinPos GameModel)
+ (theories Gimlight))
+
+(env
+ (dev
+  (flags
+   (:standard -w -a))))
