@@ -13,7 +13,7 @@
 
 (maintainers "Hiroki Tokunaga")
 
-(license LICENSE)
+(license AGPL-3.0-or-later)
 
 (documentation https://github.com/toku-sa-n/gimlight/blob/main/README.md)
 
