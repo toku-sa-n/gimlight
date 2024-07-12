@@ -1,4 +1,4 @@
-Set Defauld Goal Selector "!".
+Set Default Goal Selector "!".
 
 From Coq Require Import Numbers.BinNums.
 
