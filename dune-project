@@ -30,7 +30,8 @@
   (ctypes-foreign
    (= 0.18.0))
   dune
-  ocaml
+  (ocaml
+   (>= 4.14.1))
   (tsdl
    (= 0.9.8))
   zarith)
