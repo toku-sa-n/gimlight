@@ -30,6 +30,9 @@
   (ctypes-foreign
    (= 0.18.0))
   dune
+  ; `minttea` requires `ocaml >= 4.14`, and `notty` and `curses` are not
+  ; updated for a few years. That's why we use `lambda-term`.
+  lambda-term
   ocaml
   (tsdl
    (= 0.9.8))
