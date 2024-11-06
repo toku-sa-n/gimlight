@@ -1,32 +1,59 @@
-open Bogue
+(*
+Copyright (c) 2011, Jeremie Dimino <jeremie@dimino.org>
+All rights reserved.
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
 
-let model = ref Gimlight.Game_model.init_game_model
-let increment () = model := Gimlight.Game_model.increment !model
-let label_message n = "You pressed the Enter key " ^ string_of_int n ^ " times"
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer in the
+      documentation and/or other materials provided with the distribution.
+    * Neither the name of Jeremie Dimino nor the names of his
+      contributors may be used to endorse or promote products derived
+      from this software without specific prior written permission.
 
-let update c m =
-  m |> Gimlight.Game_model.get_count |> Z.to_int |> label_message
-  |> Widget.set_text c
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND ANY
+EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE AUTHOR AND CONTRIBUTORS BE LIABLE FOR ANY
+DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+*)
 
-let label = Widget.label (label_message 0)
+open Lwt
 
-let action _ =
-  increment ();
-  update label !model
+let main () =
+  let waiter, wakener = wait () in
 
-let on_user_event ev =
-  let open Tsdl.Sdl in
-  if
-    Event.get ev Event.typ == Event.key_down
-    && Event.get ev Event.keyboard_keycode == K.return
-  then action ()
+  let model = ref Gimlight.Game_model.init_game_model in
+  let increment () = model := Gimlight.Game_model.increment !model in
+  let format_label_message n =
+    Printf.sprintf "You pressed the Enter key %d times." n
+  in
+  let get_count () = !model |> Gimlight.Game_model.get_count |> Z.to_int in
 
-let connections =
-  [
-    Widget.connect_main label label
-      (fun _ _ -> on_user_event)
-      [ Trigger.key_up; Trigger.key_down ];
-  ]
+  let label = new LTerm_widget.label (format_label_message (get_count ())) in
 
-let layout = Layout.flat_of_w ~name:"Counter App" [ label ]
-let () = Bogue.of_layout ~on_user_event layout ~connections |> Bogue.run
+  let event_handler = function
+    | LTerm_event.Key { LTerm_key.code = LTerm_key.Enter; _ } ->
+        increment ();
+        label#set_text (format_label_message (get_count ()));
+        false
+    | LTerm_event.Key { LTerm_key.code = LTerm_key.Escape; _ } ->
+        wakeup wakener ();
+        true
+    | _ -> false
+  in
+
+  let vbox = new LTerm_widget.vbox in
+  vbox#add label;
+  vbox#on_event event_handler;
+
+  Lazy.force LTerm.stdout >>= fun term -> LTerm_widget.run term vbox waiter
+
+let () = Lwt_main.run (main ())
