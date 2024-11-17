@@ -4,7 +4,7 @@
 
 (coq.extraction
  (prelude Extraction)
- (extracted_modules BinInt BinPos GameModel)
+ (extracted_modules Core)
  (theories Gimlight))
 
 (env
