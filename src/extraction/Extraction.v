@@ -13,5 +13,7 @@ Extraction Language OCaml.
 
   To maintain a manageable project structure without flattening our directory hierarchy, we opt to extract all definitions into a single OCaml file. 
   This approach simplifies the build process and avoids potential complications associated with unsupported nested module extractions.
+
+  The name `Kernel` comes from Ruby's Kernel module.
 *)
-Extraction "Core.ml" game_model init_game_model increment get_count.
+Extraction "Kernel.ml" game_model init_game_model increment get_count.

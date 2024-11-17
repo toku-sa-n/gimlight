@@ -1,10 +1,10 @@
 (library
- (name core)
+ (name kernel)
  (libraries zarith))
 
 (coq.extraction
  (prelude Extraction)
- (extracted_modules Core)
+ (extracted_modules Kernel)
  (theories Gimlight))
 
 (env
