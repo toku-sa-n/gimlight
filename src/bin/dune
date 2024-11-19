@@ -1,4 +1,4 @@
 (executable
  (public_name gimlight)
  (name main)
- (libraries gimlight lambda-term lwt))
+ (libraries gimlight.repository gimlight.usecase lambda-term lwt))

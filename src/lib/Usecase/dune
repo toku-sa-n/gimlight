@@ -1,0 +1,4 @@
+(library
+ (name usecase)
+ (public_name gimlight.usecase)
+ (libraries gimlight.entity gimlight.repository))

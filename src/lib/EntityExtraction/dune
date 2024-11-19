@@ -1,11 +1,12 @@
 (library
- (name kernel)
+ (name entity)
+ (public_name gimlight.entity)
  (libraries zarith))
 
 (coq.extraction
  (prelude Extraction)
- (extracted_modules Kernel)
- (theories Gimlight))
+ (extracted_modules Entity)
+ (theories Entity))
 
 (env
  (dev

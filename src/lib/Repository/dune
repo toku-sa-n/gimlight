@@ -1,0 +1,4 @@
+(library
+ (name repository)
+ (public_name gimlight.repository)
+ (libraries gimlight.entity))
