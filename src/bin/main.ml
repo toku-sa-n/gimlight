@@ -30,19 +30,26 @@ open Lwt
 let main () =
   let waiter, wakener = wait () in
 
-  let model = ref Gimlight.Game_model.init_game_model in
-  let increment () = model := Gimlight.Game_model.increment !model in
+  let game_model_repository = Repository.Game_model.make in
+  let initialize_game_model_usecase =
+    Usecase.Initialize_game_model.make game_model_repository
+  in
+  let press_first_button_usecase =
+    Usecase.Press_first_button.make game_model_repository
+  in
+
   let format_label_message n =
     Printf.sprintf "You pressed the Enter key %d times." n
   in
-  let get_count () = !model |> Gimlight.Game_model.get_count |> Z.to_int in
 
-  let label = new LTerm_widget.label (format_label_message (get_count ())) in
+  let label = new LTerm_widget.label (format_label_message 0) in
+
+  let () = initialize_game_model_usecase.execute () in
 
   let event_handler = function
     | LTerm_event.Key { LTerm_key.code = LTerm_key.Enter; _ } ->
-        increment ();
-        label#set_text (format_label_message (get_count ()));
+        let new_count = press_first_button_usecase.execute () in
+        label#set_text (format_label_message (Z.to_int new_count));
         false
     | LTerm_event.Key { LTerm_key.code = LTerm_key.Escape; _ } ->
         wakeup wakener ();
