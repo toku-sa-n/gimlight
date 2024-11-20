@@ -1,0 +1,9 @@
+(library
+ (name controller)
+ (public_name gimlight.controller)
+ (libraries
+  gimlight.repository
+  gimlight.usecase
+  gimlight.view
+  lambda-term
+  lwt))

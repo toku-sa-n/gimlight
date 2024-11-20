@@ -29,6 +29,7 @@
   lwt
   (ocaml
    (>= 4.14.1))
-  zarith)
+  zarith
+  zed)
  (tags
   (topics "game")))

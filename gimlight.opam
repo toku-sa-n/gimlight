@@ -15,6 +15,7 @@ depends: [
   "lwt"
   "ocaml" {>= "4.14.1"}
   "zarith"
+  "zed"
   "odoc" {with-doc}
 ]
 build: [
