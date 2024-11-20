@@ -1,0 +1,4 @@
+(library
+ (name view)
+ (public_name gimlight.view)
+ (libraries lambda-term lwt))
