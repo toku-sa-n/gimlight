@@ -23,14 +23,14 @@ Proof.
     reflexivity.
 Qed.
 
-Fixpoint repeat {A : Type} (x : A) (n : positive) : list A :=
+Fixpoint repeat_pos {A : Type} (x : A) (n : positive) : list A :=
   match n with
   | xH => [x]
-  | xO n' => repeat x n' ++ repeat x n'
-  | xI n' => x::repeat x n' ++ repeat x n'
+  | xO n' => repeat_pos x n' ++ repeat_pos x n'
+  | xI n' => x::repeat_pos x n' ++ repeat_pos x n'
   end.
 
-Theorem repeat_length : forall {A : Type} (x : A) (n : positive), length (repeat x n) = Npos n.
+Theorem repeat_pos_length : forall {A : Type} (x : A) (n : positive), length (repeat_pos x n) = Npos n.
 Proof.
   induction n; try reflexivity.
   - simpl.
@@ -46,4 +46,46 @@ Proof.
     simpl.
     f_equal.
     apply double_0.
+Qed.
+
+Theorem repeat_pos_spec : forall {A : Type} (n : positive) (x y : A), In y (repeat_pos x n) -> y = x.
+Proof.
+  intros.
+  induction n.
+  - simpl in H.
+    destruct H.
+    + auto.
+    + apply IHn.
+      apply in_app_or in H.
+      destruct H; auto.
+  - simpl in H.
+    apply IHn.
+    apply in_app_or in H.
+    destruct H; auto.
+  - simpl in H.
+    destruct H; auto.
+    destruct H.
+Qed.
+
+Definition repeat {A : Type} (x : A) (n : N) : list A :=
+  match n with
+  | 0 => []
+  | Npos p => repeat_pos x p
+  end.
+
+Theorem repeat_length : forall {A : Type} (x : A) (n : N), length (repeat x n) = n.
+Proof.
+  intros.
+  destruct n; try reflexivity.
+  apply repeat_pos_length.
+Qed.
+
+Theorem repeat_spec : forall {A : Type} (x : A) (n : N) (y : A), In y (repeat x n) -> y = x.
+Proof.
+  intros.
+  destruct n.
+  - simpl in H.
+    destruct H.
+  - apply repeat_pos_spec in H.
+    auto.
 Qed.

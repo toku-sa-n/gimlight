@@ -17,5 +17,13 @@ Record game_map : Type := mk_game_map {
     In row1 map -> In row2 map -> length row1 = length row2;
 }.
 
-Definition make_all_wall_cells (width height : Z) : list (list bool) :=
-  repeat (repeat true (Z.to_nat width)) (Z.to_nat height).
+Definition make_all_wall_cells (width height : positive) : list (list bool) :=
+  repeat (repeat true width) height.
+
+Lemma make_all_wall_cells_non_empty : forall (width height : positive),
+  make_all_wall_cells width height <> nil.
+Proof. 
+  unfold make_all_wall_cells.
+  intros width height H.
+  destruct height; simpl in H; inversion H.
+
