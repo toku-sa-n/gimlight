@@ -2,7 +2,7 @@ From Coq Require Import Extraction.
 From Coq Require Import ExtrOcamlBasic.
 From Coq Require Import ExtrOcamlZBigInt.
 
-From Entity Require GameModel.
+From Entity Require Map.
 
 Extraction Language OCaml.
 
@@ -14,4 +14,4 @@ Extraction Language OCaml.
   To maintain a manageable project structure without flattening our directory hierarchy, we opt to extract all definitions into a single OCaml file. 
   This approach simplifies the build process and avoids potential complications associated with unsupported nested module extractions.
 *)
-Extraction "Entity.ml" GameModel.init_game_model GameModel.increment GameModel.get_count.
+Extraction "Entity.ml" Map.all_wall_map.

@@ -6,7 +6,7 @@
 (coq.extraction
  (prelude Extraction)
  (extracted_modules Entity)
- (theories Entity))
+ (theories Coquill Entity))
 
 (env
  (dev

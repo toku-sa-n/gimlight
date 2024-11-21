@@ -1,1 +1,1 @@
-type t = { count : int }
+type t = { is_wall : bool list list }
