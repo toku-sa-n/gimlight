@@ -67,6 +67,23 @@ Proof.
     destruct H.
 Qed.
 
+Theorem repeat_pos_non_empty {A : Type} (x : A) (n : positive) : repeat_pos x n <> [].
+Proof.
+  induction n.
+  - simpl.
+    intro H.
+    inversion H.
+  - simpl.
+    intro H.
+    apply app_eq_nil in H.
+    destruct H.
+    apply IHn.
+    auto.
+  - simpl.
+    intro H.
+    inversion H.
+Qed.
+
 Definition repeat {A : Type} (x : A) (n : N) : list A :=
   match n with
   | 0 => []
