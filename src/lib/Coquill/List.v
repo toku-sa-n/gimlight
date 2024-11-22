@@ -48,16 +48,7 @@ Hint Resolve repeat_pos_length : list.
 Theorem repeat_pos_spec : forall {A : Type} (n : positive) (x y : A), In y (repeat_pos x n) -> y = x.
 Proof.
   intros.
-  induction n; simpl in H.
-  - destruct H; auto.
-    apply IHn.
-    apply in_app_or in H.
-    destruct H; auto.
-  - apply IHn.
-    apply in_app_or in H.
-    destruct H; auto.
-  - destruct H; auto.
-    destruct H.
+  induction n; simpl in H; try destruct H; auto; try (apply IHn; apply in_app_or in H); destruct H; auto.
 Qed.
 
 Hint Resolve repeat_pos_spec : list.
@@ -66,8 +57,7 @@ Theorem repeat_pos_non_empty {A : Type} (x : A) (n : positive) : repeat_pos x n 
 Proof.
   induction n; simpl; intros H; try inversion H.
   apply app_eq_nil in H.
-  destruct H.
-  auto.
+  easy.
 Qed.
 
 Hint Resolve repeat_pos_non_empty : list.
@@ -83,8 +73,7 @@ Hint Unfold repeat : list.
 Theorem repeat_length : forall {A : Type} (x : A) (n : N), length (repeat x n) = n.
 Proof.
   intros.
-  destruct n; auto.
-  apply repeat_pos_length.
+  destruct n; eauto with list.
 Qed.
 
 Hint Resolve repeat_length : list.
@@ -93,8 +82,7 @@ Theorem repeat_spec : forall {A : Type} (x : A) (n : N) (y : A), In y (repeat x 
 Proof.
   intros.
   destruct n.
-  - simpl in H.
-    destruct H.
+  - easy.
   - apply repeat_pos_spec in H.
-    auto.
+    easy.
 Qed.
