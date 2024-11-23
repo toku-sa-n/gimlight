@@ -1,3 +1,5 @@
+Set Default Goal Selector "!".
+
 From Coq Require Import NArith.
 From Coquill Require Import PArith.
 
