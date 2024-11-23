@@ -1,3 +1,3 @@
-type t = { get : unit -> Entity.game_map }
+type t = { get : unit -> Entity.Map.t }
 
 val make : t
