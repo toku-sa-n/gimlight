@@ -1,9 +1,12 @@
 Set Default Goal Selector "!".
 
 From Coq Require Import NArith.
-From Coquill Require Import PArith.
-
+From Coq Require Import Lia.
 From Coq Require Export List.
+
+From Coquill Require Import PArith.
+From Coquill Require HalfOpenRange.
+
 Export ListNotations.
 
 Open Scope N_scope.
@@ -103,3 +106,68 @@ Section Repeat.
       easy.
   Qed.
 End Repeat.
+
+Section UpdateFirstn.
+  Context {A : Type}.
+
+  Program Fixpoint update_firstn (l : list A) (n : positive) (x : A) (n_spec : Npos n <= length l) : list A :=
+    match l with
+    | [] => _
+    | y :: l' =>
+      match n with
+      | xH => x :: l'
+      | n' => x :: update_firstn l' (Pos.pred n') x _
+      end
+    end.
+  Next Obligation.
+  Proof.
+    simpl in n_spec.
+    lia.
+  Qed.
+  Next Obligation.
+  Proof.
+    simpl in n_spec.
+    lia.
+  Qed.
+End UpdateFirstn.
+
+Section UpdateRange.
+  Context {A : Type}.
+
+  Program Fixpoint update_range (l : list A) (range : HalfOpenRange.t) (x : A) (range_spec : HalfOpenRange.upper range <= length l) : list A :=
+    match HalfOpenRange.lower range with
+    | 0 => match HalfOpenRange.upper range with
+           | 0 => _
+           | Npos p => update_firstn l p x _
+           end
+    | n => match l with
+           | [] => _
+           | y :: l' => y :: update_range l' (HalfOpenRange.make (N.pred (HalfOpenRange.lower range)) (N.pred (HalfOpenRange.upper range)) _) x _
+           end
+    end.
+  Next Obligation.
+  Proof.
+    lia.
+  Qed.
+  Next Obligation.
+  Proof.
+    simpl in range_spec.
+    apply N.neq_sym in n0.
+    apply N.neq_0_lt_0 in n0.
+    apply N.lt_trans with (p := HalfOpenRange.upper range) in n0.
+    - lia.
+    - apply HalfOpenRange.lower_lt_upper.
+  Qed.
+  Next Obligation.
+  Proof.
+    rewrite <- N.pred_lt_mono.
+    - apply HalfOpenRange.lower_lt_upper.
+    - apply N.neq_sym.
+      auto.
+  Qed.
+  Next Obligation.
+  Proof.
+    simpl in range_spec.
+    lia.
+  Qed.
+End UpdateRange.
