@@ -36,7 +36,9 @@ Section Length.
 End Length.
 
 Section Repeat.
-  Fixpoint repeat_pos {A : Type} (x : A) (n : positive) : list A :=
+  Context {A : Type}.
+
+  Fixpoint repeat_pos (x : A) (n : positive) : list A :=
     match n with
     | xH => [x]
     | xO n' => repeat_pos x n' ++ repeat_pos x n'
@@ -45,14 +47,14 @@ Section Repeat.
 
   Hint Unfold repeat_pos : list.
 
-  Theorem repeat_pos_length : forall {A : Type} (x : A) (n : positive), length (repeat_pos x n) = Npos n.
+  Theorem repeat_pos_length : forall (x : A) (n : positive), length (repeat_pos x n) = Npos n.
   Proof.
     induction n; try reflexivity; simpl; rewrite app_length; rewrite IHn; unfold N.succ; simpl; f_equal; auto with positive.
   Qed.
 
   Hint Resolve repeat_pos_length : list.
 
-  Theorem repeat_pos_spec : forall {A : Type} (n : positive) (x y : A), In y (repeat_pos x n) -> y = x.
+  Theorem repeat_pos_spec : forall (n : positive) (x y : A), In y (repeat_pos x n) -> y = x.
   Proof.
     intros.
     induction n; simpl in H; try destruct H; auto; try (apply IHn; apply in_app_or in H); destruct H; auto.
@@ -60,7 +62,7 @@ Section Repeat.
 
   Hint Resolve repeat_pos_spec : list.
 
-  Theorem repeat_pos_non_empty {A : Type} (x : A) (n : positive) : repeat_pos x n <> [].
+  Theorem repeat_pos_non_empty (x : A) (n : positive) : repeat_pos x n <> [].
   Proof.
     induction n; simpl; intros H; try inversion H.
     apply app_eq_nil in H.
@@ -69,7 +71,7 @@ Section Repeat.
 
   Hint Resolve repeat_pos_non_empty : list.
 
-  Definition repeat {A : Type} (x : A) (n : N) : list A :=
+  Definition repeat (x : A) (n : N) : list A :=
     match n with
     | 0 => []
     | Npos p => repeat_pos x p
@@ -77,7 +79,7 @@ Section Repeat.
 
   Hint Unfold repeat : list.
 
-  Theorem repeat_length : forall {A : Type} (x : A) (n : N), length (repeat x n) = n.
+  Theorem repeat_length : forall (x : A) (n : N), length (repeat x n) = n.
   Proof.
     intros.
     destruct n; eauto with list.
@@ -85,7 +87,7 @@ Section Repeat.
 
   Hint Resolve repeat_length : list.
 
-  Theorem repeat_spec : forall {A : Type} (x : A) (n : N) (y : A), In y (repeat x n) -> y = x.
+  Theorem repeat_spec : forall (x : A) (n : N) (y : A), In y (repeat x n) -> y = x.
   Proof.
     intros.
     destruct n.
