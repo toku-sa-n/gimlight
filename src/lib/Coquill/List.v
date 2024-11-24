@@ -35,7 +35,7 @@ Section Length.
   Hint Resolve app_length : list.
 End Length.
 
-Section Repeat.
+Section RepeatPos.
   Context {A : Type}.
 
   Fixpoint repeat_pos (x : A) (n : positive) : list A :=
@@ -70,6 +70,10 @@ Section Repeat.
   Qed.
 
   Hint Resolve repeat_pos_non_empty : list.
+End RepeatPos.
+
+Section Repeat.
+  Context {A : Type}.
 
   Definition repeat (x : A) (n : N) : list A :=
     match n with
@@ -82,7 +86,10 @@ Section Repeat.
   Theorem repeat_length : forall (x : A) (n : N), length (repeat x n) = n.
   Proof.
     intros.
-    destruct n; eauto with list.
+    destruct n.
+    - auto.
+    - simpl.
+      apply repeat_pos_length.
   Qed.
 
   Hint Resolve repeat_length : list.
