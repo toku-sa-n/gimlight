@@ -11,7 +11,9 @@ Open Scope N_scope.
 Create HintDb list.
 
 Section Length.
-  Fixpoint length {A : Type} (l : list A) : N :=
+  Context {A : Type}.
+
+  Fixpoint length (l : list A) : N :=
     match l with
     | [] => 0
     | _ :: l' => N.succ (length l')
@@ -19,7 +21,7 @@ Section Length.
 
   Hint Unfold length : list.
 
-  Lemma app_length : forall {A : Type} (l1 l2 : list A), length (l1 ++ l2) = length l1 + length l2.
+  Lemma app_length : forall (l1 l2 : list A), length (l1 ++ l2) = length l1 + length l2.
   Proof.
     induction l1.
     - reflexivity.
