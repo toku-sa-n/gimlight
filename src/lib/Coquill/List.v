@@ -10,26 +10,28 @@ Open Scope N_scope.
 
 Create HintDb list.
 
-Fixpoint length {A : Type} (l : list A) : N :=
-  match l with
-  | [] => 0
-  | _ :: l' => N.succ (length l')
-  end.
+Section Length.
+  Fixpoint length {A : Type} (l : list A) : N :=
+    match l with
+    | [] => 0
+    | _ :: l' => N.succ (length l')
+    end.
 
-Hint Unfold length : list.
+  Hint Unfold length : list.
 
-Lemma app_length : forall {A : Type} (l1 l2 : list A), length (l1 ++ l2) = length l1 + length l2.
-Proof.
-  induction l1.
-  - reflexivity.
-  - simpl.
-    intros.
-    rewrite IHl1.
-    rewrite N.add_succ_l.
-    auto.
-Qed.
+  Lemma app_length : forall {A : Type} (l1 l2 : list A), length (l1 ++ l2) = length l1 + length l2.
+  Proof.
+    induction l1.
+    - reflexivity.
+    - simpl.
+      intros.
+      rewrite IHl1.
+      rewrite N.add_succ_l.
+      auto.
+  Qed.
 
-Hint Resolve app_length : list.
+  Hint Resolve app_length : list.
+End Length.
 
 Fixpoint repeat_pos {A : Type} (x : A) (n : positive) : list A :=
   match n with
