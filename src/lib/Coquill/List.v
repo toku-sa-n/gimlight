@@ -107,6 +107,54 @@ Section Repeat.
   Qed.
 End Repeat.
 
+Section Nth.
+  Context {A : Type}.
+
+  Program Fixpoint nth (n : N) (l : list A) (n_spec : n < length l) : A :=
+    match l with
+    | [] => _
+    | x :: l' =>
+      match n with
+      | 0 => x
+      | Npos p => nth (N.pred n) l' _
+      end
+    end.
+  Next Obligation.
+  Proof.
+    simpl in n_spec.
+    lia.
+  Qed.
+  Next Obligation.
+  Proof.
+    simpl in n_spec.
+    lia.
+  Qed.
+End Nth.
+
+Section Update.
+  Context {A : Type}.
+
+  Program Fixpoint update (l : list A) (n : N) (x : A) (n_spec : n < length l) : list A :=
+    match l with
+    | [] => _
+    | y :: l' =>
+      match n with
+      | 0 => x :: l'
+      | Npos p => y :: update l' (N.pred n) x _
+      end
+    end.
+  Next Obligation.
+  Proof.
+    simpl in n_spec.
+    lia.
+  Qed.
+  Next Obligation.
+  Proof.
+    simpl in n_spec.
+    lia.
+  Qed.
+End Update.
+
 Section UpdateFirstn.
   Context {A : Type}.
 
