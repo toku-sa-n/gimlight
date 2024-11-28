@@ -382,7 +382,7 @@ Section UpdateFirstN.
     | y :: l' =>
       match n with
       | xH => x :: l'
-      | _ => y :: update_first_n l' (Pos.pred n) x _
+      | _ => x :: update_first_n l' (Pos.pred n) x _
       end
     end.
   Next Obligation.
@@ -435,4 +435,55 @@ Section UpdateFirstN.
 
   Hint Resolve update_first_n_in : list.
 
-  Theorem nth_error_update_first_n_eq : forall (l : list A) n x y H, nth_error (update_first_n l n x H) n = Some y -> x = y.
+  Theorem nth_error_update_first_n_eq : forall (l : list A) n idx x y H, idx < N.pos n -> nth_error (update_first_n l n x H) idx = Some y -> x = y.
+  Proof.
+    induction l.
+    - intros.
+      simpl in H.
+      lia.
+    - intros.
+      simpl in H1.
+      destruct n.
+      + simpl in H1.
+        destruct idx.
+        * injection H1.
+          intros.
+          auto.
+        * set (update_first_n_obligation_2 _ _ _ _ _ _ _ _ _) in H1.
+          clearbody l0.
+          simpl in H.
+          simpl in l0.
+          apply IHl with (n := xO n) (idx := (N.pred (N.pos p))) (H := l0).
+          -- simpl.
+             lia.
+          -- auto.
+      + set (update_first_n_obligation_2 _ _ _ _ _ _ _ _ _) in H1.
+        clearbody l0.
+        simpl in H1.
+        destruct idx.
+        * inversion H1.
+          auto.
+        * apply IHl with (n := (Pos.pred_double n)) (idx := (N.pred (N.pos p))) (H := l0).
+          -- simpl.
+             lia.
+          -- auto.
+      + simpl in H1.
+        destruct idx.
+        * injection H1.
+          intros.
+          auto.
+        * lia.
+  Qed.
+
+  Theorem nth_update_first_n_eq : forall (l : list A) n idx x H H1, idx < N.pos n -> nth (update_first_n l n x H) idx H1 = x.
+  Proof.
+    intros.
+    unfold nth.
+    set (nth_obligation_1 _ _ _).
+    clearbody y.
+    simpl in y.
+    destruct nth_error eqn:Heq.
+    - apply nth_error_update_first_n_eq in Heq; auto.
+    - apply nth_error_none_length in Heq.
+      lia.
+  Qed.

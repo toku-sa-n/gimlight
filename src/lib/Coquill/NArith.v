@@ -25,3 +25,12 @@ Proof.
     auto.
   - auto.
 Qed.
+
+Theorem n_pos_1_m_succ : forall n (m : N), N.pos (xI n) <= N.succ m -> N.pos (xO n) <= m.
+Proof.
+  unfold N.succ.
+  intros.
+  induction m.
+  - destruct n; auto.
+  - destruct n; apply N.succ_le_mono; simpl; auto.
+Qed.
