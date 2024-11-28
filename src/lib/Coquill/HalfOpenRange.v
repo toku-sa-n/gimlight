@@ -12,3 +12,6 @@ Record t := make {
   upper : N;
   lower_lt_upper : lower < upper
 }.
+
+Definition contains (r : t) (n : N) : Prop :=
+  lower r <= n < upper r.
