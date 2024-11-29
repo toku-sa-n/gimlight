@@ -545,3 +545,4 @@ Section UpdateFirstN.
       + apply nth_error_none_length in Heq.
         lia.
   Qed.
+End UpdateFirstN.
