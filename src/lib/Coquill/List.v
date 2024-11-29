@@ -546,3 +546,17 @@ Section UpdateFirstN.
         lia.
   Qed.
 End UpdateFirstN.
+
+Section UpdateRange.
+  Context {A : Type}.
+
+  Program Fixpoint update_range (l : list A) (r : HalfOpenRange.t) (x : A) (r_spec : HalfOpenRange.upper r <= length l) : list A :=
+    match l with
+    | [] => _
+    | y :: l' =>
+      match HalfOpenRange.contains r 0 with
+      | true => update_first_n l (HalfOpenRange.length r) x _
+      | false => y :: update_range l' (HalfOpenRange.shift_minus r 1 _) x _
+      end
+    end.
+  Next Obligation.
