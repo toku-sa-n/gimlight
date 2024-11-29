@@ -42,3 +42,22 @@ Next Obligation.
     }
     lia.
   Qed.
+
+Theorem upper_is_positive (r : t) : upper r > 0.
+Proof.
+  assert (lower r < upper r) by apply lower_lt_upper.
+  lia.
+Qed.
+
+Theorem length_le_upper (r : t) : N.pos (length r) <= upper r.
+Proof.
+  unfold length.
+  set (length_obligation_1 _).
+  clearbody p.
+  simpl in p.
+  destruct (upper r - lower r) eqn:H.
+  - assert (lower r < upper r) by apply lower_lt_upper.
+    lia.
+  - rewrite <- H.
+    lia.
+Qed.

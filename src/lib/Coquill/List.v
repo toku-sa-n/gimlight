@@ -560,3 +560,32 @@ Section UpdateRange.
       end
     end.
   Next Obligation.
+  Proof.
+    simpl in r_spec.
+    assert (HalfOpenRange.upper r > 0) by apply HalfOpenRange.upper_is_positive.
+    lia.
+  Qed.
+  Next Obligation.
+  Proof.
+    simpl in r_spec.
+    simpl.
+    assert (N.pos (HalfOpenRange.length r) <= HalfOpenRange.upper r) by apply HalfOpenRange.length_le_upper.
+    lia.
+  Qed.
+  Next Obligation.
+  Proof.
+    unfold HalfOpenRange.contains in Heq_anonymous.
+    symmetry in Heq_anonymous.
+    apply Bool.andb_false_iff in Heq_anonymous.
+    destruct Heq_anonymous.
+    - apply N.leb_gt in H.
+      lia.
+    - apply N.ltb_ge in H.
+      assert (HalfOpenRange.upper r > 0) by apply HalfOpenRange.upper_is_positive.
+      lia.
+  Qed.
+  Next Obligation.
+  Proof.
+    simpl in r_spec.
+    lia.
+  Qed.
