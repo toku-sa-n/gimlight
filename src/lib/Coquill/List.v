@@ -18,7 +18,7 @@ Section Length.
   Context {A : Type}.
 
   Fixpoint length (l : list A) : N :=
-    match l with
+match l with
     | [] => 0
     | _ :: l' => N.succ (length l')
     end.
@@ -32,7 +32,7 @@ Section Length.
     - simpl.
       intros.
       rewrite IHl1.
-      rewrite N.add_succ_l.
+rewrite N.add_succ_l.
       auto.
   Qed.
 
@@ -398,7 +398,7 @@ Section UpdateFirstN.
 
   Hint Unfold update_first_n : list.
 
-  Theorem update_first_n_length : forall (l : list A) n x H, length (update_first_n l n x H) = length l.
+  Theorem length_update_first_n : forall (l : list A) n x H, length (update_first_n l n x H) = length l.
   Proof.
     induction l; intros.
     - simpl in H.
@@ -414,7 +414,7 @@ Section UpdateFirstN.
       + auto.
   Qed.
 
-  Hint Resolve update_first_n_length : list.
+  Hint Resolve update_first_n : list.
 
   Theorem update_first_n_in : forall (l : list A) n x H, In x (update_first_n l n x H).
   Proof.
@@ -588,4 +588,36 @@ Section UpdateRange.
   Proof.
     simpl in r_spec.
     lia.
+  Qed.
+
+  Theorem length_update_range : forall (l : list A) r x H, length (update_range l r x H) = length l.
+  Proof.
+    induction l.
+    - intros.
+      assert (HalfOpenRange.upper r > 0) by apply HalfOpenRange.upper_is_positive.
+      simpl in H.
+      lia.
+    - intros.
+      simpl.
+      set (update_first_n_obligation_2 _ _ _ _ _ _).
+      clearbody l0.
+      set (update_range_obligation_3 _ _ _ _ _ _).
+      clearbody l1.
+      simpl in l1.
+      set (update_range_obligation_4 _ _ _ _ _ _).
+      clearbody l2.
+      simpl in l2.
+      destruct (HalfOpenRange.contains r 0) eqn:E.
+      + destruct (HalfOpenRange.length r) eqn:E'.
+        * simpl.
+          f_equal.
+          apply length_update_first_n.
+        * simpl.
+          f_equal.
+          apply length_update_first_n.
+        * simpl.
+          auto.
+      + simpl.
+        f_equal.
+        apply IHl.
   Qed.
