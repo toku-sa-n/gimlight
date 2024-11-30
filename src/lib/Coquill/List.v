@@ -23,7 +23,7 @@ match l with
     | _ :: l' => N.succ (length l')
     end.
 
-  Hint Unfold length : list.
+Hint Unfold length : list.
 
 Lemma app_length : forall (l1 l2 : list A), length (l1 ++ l2) = length l1 + length l2.
   Proof.
@@ -32,8 +32,8 @@ Lemma app_length : forall (l1 l2 : list A), length (l1 ++ l2) = length l1 + leng
 - simpl.
       intros.
       rewrite IHl1.
-rewrite N.add_succ_l.
-auto.
+      rewrite N.add_succ_l.
+      auto.
 Qed.
 
   Hint Resolve app_length : list.
@@ -629,7 +629,7 @@ Section UpdateRange.
         apply IHl.
   Qed.
 
-  Theorem nth_error_update_range_update_first_n : forall (l : list A) r x H H1, (HalfOpenRange.lower r = 0) -> update_range l r x H = update_first_n l (HalfOpenRange.length r) x H1.
+  Theorem lower_0_update_range_update_first_n : forall (l : list A) r x H H1, (HalfOpenRange.lower r = 0) -> update_range l r x H = update_first_n l (HalfOpenRange.length r) x H1.
   Proof.
     induction l.
     - intros.
@@ -680,37 +680,7 @@ Section UpdateRange.
           lia.
   Qed.
 
-  Theorem nth_update_range_update_first_n : forall (l : list A) r n x H H1 H2 H3, (HalfOpenRange.lower r = 0) -> nth (update_range l r x H) n H1 = nth (update_first_n l (HalfOpenRange.length r) x H2) n H3.
-  Proof.
-    intros.
-    unfold nth.
-    set (nth_obligation_1 _ _ _).
-    clearbody y.
-    simpl in y.
-    set (nth_obligation_1 _ _ _).
-    clearbody y0.
-    simpl in y0.
-    destruct nth_error eqn:E.
-    - destruct (nth_error (update_first_n l (HalfOpenRange.length r) x H2) n) eqn:E1.
-      + assert (Some a = Some a0).
-        {
-          rewrite <- E.
-          rewrite <- E1.
-          rewrite nth_error_update_range_update_first_n with (H1 := H2); auto.
-        }
-        injection H4.
-        intros.
-        auto.
-      + apply nth_error_none_length in E1.
-        lia.
-    - destruct (nth_error (update_first_n l (HalfOpenRange.length r) x H2) n) eqn:E1.
-      + apply nth_error_none_length in E.
-        lia.
-      + apply nth_error_none_length in E1.
-        lia.
-  Qed.
-
-  Theorem nth_error_update_range : forall (l : list A) r x idx y H, (HalfOpenRange.contains r idx) -> nth_error (update_range l r x H) idx = Some y -> x = y.
+  Theorem nth_error_update_range : forall (l : list A) r x idx H, (HalfOpenRange.contains r idx) -> nth_error (update_range l r x H) idx = Some x.
   Proof.
     induction l.
     - intros.
@@ -718,29 +688,15 @@ Section UpdateRange.
       assert (HalfOpenRange.upper r > 0) by apply HalfOpenRange.upper_is_positive.
       lia.
     - intros.
-      simpl in H1.
-      set (update_range_obligation_2 _ _ _ _ _ _) in H1.
+      unfold update_range.
+      set (update_range_obligation_2 _ _ _ _ _ _).
       clearbody l0.
       simpl in l0.
-      set (update_first_n_obligation_2 _ _ _ _ _ _) in H1.
+      set (update_range_obligation_3 _ _ _ _ _ _).
       clearbody l1.
       simpl in l1.
-      set (update_range_obligation_3 _ _ _ _ _ _) in H1.
+      set (update_range_obligation_4 _ _ _ _ _ _).
       clearbody l2.
       simpl in l2.
-      set (update_range_obligation_4 _ _ _ _ _ _) in H1.
-      clearbody l3.
-      simpl in l3.
       destruct (HalfOpenRange.lower r =? 0) eqn:E.
-      + destruct (HalfOpenRange.length r) eqn:E'.
-        * simpl in H1.
-          destruct idx eqn:E''.
-          -- inversion H1.
-             auto.
-          -- rewrite N.eqb_eq in E.
-             apply nth_error_update_first_n_eq in H1; auto.
-             apply nth_error_some_length in H1.
-             rewrite length_update_first_n in H1.
-             rewrite <- E'' in *.
-             simpl in *.
-             apply n_pos_1_m_succ in H.
+      + 
