@@ -90,8 +90,6 @@ Proof.
   set (length_obligation_1 _).
   clearbody p.
   simpl in p.
-  destruct (upper r - lower r) eqn:E.
-  - assert (lower r < upper r) by apply lower_lt_upper.
-    lia.
-  - lia.
+  assert (lower r < upper r) by apply lower_lt_upper.
+  destruct (upper r - lower r) eqn:E; lia.
 Qed.
