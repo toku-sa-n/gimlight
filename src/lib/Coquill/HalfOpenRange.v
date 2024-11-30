@@ -108,3 +108,12 @@ Proof.
   assert (lower r < upper r) by apply lower_lt_upper.
   destruct (upper r - lower r) eqn:E; lia.
 Qed.
+
+Theorem lower_0_not_contained_gt (r : t) (n : N) : lower r = 0 -> ~ contains r n -> n >= upper r.
+Proof.
+  intros.
+  unfold contains in H0.
+  unfold not in H0.
+  rewrite H in H0.
+  lia.
+Qed.
