@@ -38,6 +38,21 @@ Proof.
     split; auto.
 Qed.
 
+Theorem containsb_contains_neq (r : t) (n : N) : containsb r n = false -> ~ contains r n.
+Proof.
+  intros H H1.
+  rewrite <- containsb_contains in H1.
+  rewrite H in H1.
+  discriminate.
+Qed.
+
+Theorem lower_is_contained (r : t) : contains r (lower r).
+Proof.
+  unfold contains.
+  split; try lia.
+  apply lower_lt_upper.
+Qed.
+
 Program Definition length (r : t) : positive := 
   let l : N := upper r - lower r in
   match l with
