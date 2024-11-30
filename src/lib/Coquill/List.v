@@ -717,3 +717,19 @@ Section UpdateRange.
              lia.
   Qed.
 
+  Theorem nth_update_range : forall (l : list A) r x idx H H1, (HalfOpenRange.contains r idx) -> nth (update_range l r x H) idx H1 = x.
+  Proof.
+    intros.
+    unfold nth.
+    set (nth_obligation_1 _ _ _).
+    clearbody y.
+    simpl in y.
+    destruct nth_error eqn:Heq.
+    - rewrite nth_error_update_range in Heq.
+      + injection Heq.
+        intros.
+        auto.
+      + auto.
+    - apply nth_error_none_length in Heq.
+      lia.
+  Qed.
