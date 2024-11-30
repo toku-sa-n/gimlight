@@ -695,4 +695,5 @@ Section UpdateRange.
       clearbody l2.
       simpl in l2.
       destruct (HalfOpenRange.lower r =? 0) eqn:E.
-      + 
+      + apply nth_error_update_first_n_eq.
+        simpl in *.
