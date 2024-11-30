@@ -697,3 +697,9 @@ Section UpdateRange.
       destruct (HalfOpenRange.lower r =? 0) eqn:E.
       + apply nth_error_update_first_n_eq.
         simpl in *.
+        unfold HalfOpenRange.contains in H0.
+        destruct H0.
+        rewrite HalfOpenRange.lower_0_length_eq_upper; auto.
+        rewrite N.eqb_eq in E.
+        auto.
+      + 
