@@ -448,44 +448,32 @@ Section UpdateFirstN.
 
   Hint Resolve update_first_n_in : list.
 
-  Theorem nth_error_update_first_n_eq : forall (l : list A) n idx x y H, idx < N.pos n -> nth_error (update_first_n l n x H) idx = Some y -> x = y.
+  Theorem nth_error_update_first_n_eq : forall (l : list A) n idx x H, idx < N.pos n -> nth_error (update_first_n l n x H) idx = Some x.
   Proof.
     induction l.
     - intros.
       simpl in H.
       lia.
     - intros.
-      simpl in H1.
-      destruct n.
-      + simpl in H1.
+      simpl.
+      destruct n eqn:En.
+      + simpl.
         destruct idx.
-        * injection H1.
-          intros.
-          auto.
-        * set (update_first_n_obligation_2 _ _ _ _ _ _ _ _ _) in H1.
-          clearbody l0.
-          simpl in H.
-          simpl in l0.
-          apply IHl with (n := xO n) (idx := (N.pred (N.pos p))) (H := l0).
-          -- simpl.
-             lia.
-          -- auto.
-      + set (update_first_n_obligation_2 _ _ _ _ _ _ _ _ _) in H1.
-        clearbody l0.
-        simpl in H1.
+        * auto.
+        * simpl.
+          apply IHl.
+          lia.
+      + simpl.
         destruct idx.
-        * inversion H1.
-          auto.
-        * apply IHl with (n := (Pos.pred_double n)) (idx := (N.pred (N.pos p))) (H := l0).
-          -- simpl.
-             lia.
-          -- auto.
-      + simpl in H1.
-        destruct idx.
-        * injection H1.
-          intros.
-          auto.
-        * lia.
+        * auto.
+        * simpl.
+          apply IHl.
+          lia.
+      + simpl.
+        destruct idx eqn:Eidx.
+        * auto.
+        * simpl.
+          lia.
   Qed.
 
   Hint Resolve nth_error_update_first_n_eq : list.
@@ -498,7 +486,15 @@ Section UpdateFirstN.
     clearbody y.
     simpl in y.
     destruct nth_error eqn:Heq.
-    - apply nth_error_update_first_n_eq in Heq; auto.
+    - assert (nth_error (update_first_n l n x H) idx = Some x).
+      {
+        apply nth_error_update_first_n_eq.
+        auto.
+      }
+      rewrite Heq in H2.
+      injection H2.
+      intros.
+      auto.
     - apply nth_error_none_length in Heq.
       lia.
   Qed.
