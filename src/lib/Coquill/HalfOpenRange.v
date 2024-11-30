@@ -83,15 +83,15 @@ Proof.
   lia.
 Qed.
 
-Theorem length_le_upper (r : t) : N.pos (length r) <= upper r.
+Theorem lower_0_length_eq_upper (r : t) : lower r = 0 -> N.pos (length r) = upper r.
 Proof.
+  intros.
   unfold length.
   set (length_obligation_1 _).
   clearbody p.
   simpl in p.
-  destruct (upper r - lower r) eqn:H.
+  destruct (upper r - lower r) eqn:E.
   - assert (lower r < upper r) by apply lower_lt_upper.
     lia.
-  - rewrite <- H.
-    lia.
+  - lia.
 Qed.
