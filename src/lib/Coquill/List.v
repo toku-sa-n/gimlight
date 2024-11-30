@@ -777,3 +777,31 @@ Section UpdateRange.
           unfold HalfOpenRange.contains in H0.
           lia.
   Qed.
+
+  Theorem nth_update_range_neq : forall (l : list A) r x idx H H1 H2, ~ (HalfOpenRange.contains r idx) -> nth (update_range l r x H) idx H1 = nth l idx H2.
+  Proof.
+    intros.
+    unfold nth.
+    set (nth_obligation_1 _ _ _).
+    clearbody y.
+    simpl in y.
+    set (nth_obligation_1 _ _ _).
+    clearbody y0.
+    simpl in y0.
+    destruct nth_error eqn:Heq.
+    - destruct (nth_error l idx) eqn:Heq'.
+      + apply nth_error_update_range_neq with (l := l) (r := r) (x := x) (H := H) in H0.
+        rewrite H0 in Heq.
+        rewrite Heq in Heq'.
+        injection Heq'.
+        intros.
+        auto.
+      + apply nth_error_none_length in Heq'.
+        lia.
+    - destruct (nth_error l idx) eqn:Heq'.
+      + apply nth_error_none_length in Heq.
+        lia.
+      + apply nth_error_none_length in Heq.
+        lia.
+  Qed.
+End UpdateRange.
