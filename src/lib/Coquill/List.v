@@ -34,7 +34,7 @@ Lemma app_length : forall (l1 l2 : list A), length (l1 ++ l2) = length l1 + leng
       rewrite IHl1.
 rewrite N.add_succ_l.
 auto.
-  Qed.
+Qed.
 
   Hint Resolve app_length : list.
 End Length.
@@ -567,7 +567,7 @@ Section UpdateRange.
     match l with
     | [] => _
     | y :: l' =>
-      match HalfOpenRange.containsb r 0 with
+      match HalfOpenRange.lower r =? 0 with
       | true => update_first_n l (HalfOpenRange.length r) x _
       | false => y :: update_range l' (HalfOpenRange.shift_minus r 1 _) x _
       end
@@ -589,13 +589,8 @@ Section UpdateRange.
   Proof.
     unfold HalfOpenRange.contains in Heq_anonymous.
     symmetry in Heq_anonymous.
-    apply Bool.andb_false_iff in Heq_anonymous.
-    destruct Heq_anonymous.
-    - apply N.leb_gt in H.
-      lia.
-    - apply N.ltb_ge in H.
-      assert (HalfOpenRange.upper r > 0) by apply HalfOpenRange.upper_is_positive.
-      lia.
+    apply N.eqb_neq in Heq_anonymous.
+    lia.
   Qed.
   Next Obligation.
   Proof.
@@ -620,7 +615,7 @@ Section UpdateRange.
       set (update_range_obligation_4 _ _ _ _ _ _).
       clearbody l2.
       simpl in l2.
-      destruct (HalfOpenRange.containsb r 0) eqn:E.
+      destruct (HalfOpenRange.lower r =? 0) eqn:E.
       + destruct (HalfOpenRange.length r) eqn:E'.
         * simpl.
           f_equal.
@@ -628,8 +623,7 @@ Section UpdateRange.
         * simpl.
           f_equal.
           apply length_update_first_n.
-        * simpl.
-          auto.
+        * auto.
       + simpl.
         f_equal.
         apply IHl.
@@ -655,7 +649,7 @@ Section UpdateRange.
       set (update_first_n_obligation_2 _ _ _ _ _ _).
       clearbody l3.
       simpl in l3.
-      destruct (HalfOpenRange.containsb r 0) eqn:E.
+      destruct (HalfOpenRange.lower r =? 0) eqn:E.
       + destruct (HalfOpenRange.length r) eqn:E'.
         * simpl.
           f_equal.
@@ -676,29 +670,44 @@ Section UpdateRange.
         * auto.
       + destruct (HalfOpenRange.length r) eqn:E'.
         * simpl.
-          apply HalfOpenRange.containsb_contains_neq in E.
-          exfalso.
-          apply E.
-          unfold HalfOpenRange.contains.
-          split.
-          -- lia.
-          -- lia.
+          rewrite N.eqb_neq in E.
+          lia.
         * simpl.
-          apply HalfOpenRange.containsb_contains_neq in E.
-          exfalso.
-          apply E.
-          unfold HalfOpenRange.contains.
-          split.
-          -- lia.
-          -- lia.
+          rewrite N.eqb_neq in E.
+          lia.
         * simpl.
-          apply HalfOpenRange.containsb_contains_neq in E.
-          exfalso.
-          apply E.
-          unfold HalfOpenRange.contains.
-          split.
-          -- lia.
-          -- lia.
+          rewrite N.eqb_neq in E.
+          lia.
+  Qed.
+
+  Theorem nth_update_range_update_first_n : forall (l : list A) r n x H H1 H2 H3, (HalfOpenRange.lower r = 0) -> nth (update_range l r x H) n H1 = nth (update_first_n l (HalfOpenRange.length r) x H2) n H3.
+  Proof.
+    intros.
+    unfold nth.
+    set (nth_obligation_1 _ _ _).
+    clearbody y.
+    simpl in y.
+    set (nth_obligation_1 _ _ _).
+    clearbody y0.
+    simpl in y0.
+    destruct nth_error eqn:E.
+    - destruct (nth_error (update_first_n l (HalfOpenRange.length r) x H2) n) eqn:E1.
+      + assert (Some a = Some a0).
+        {
+          rewrite <- E.
+          rewrite <- E1.
+          rewrite nth_error_update_range_update_first_n with (H1 := H2); auto.
+        }
+        injection H4.
+        intros.
+        auto.
+      + apply nth_error_none_length in E1.
+        lia.
+    - destruct (nth_error (update_first_n l (HalfOpenRange.length r) x H2) n) eqn:E1.
+      + apply nth_error_none_length in E.
+        lia.
+      + apply nth_error_none_length in E1.
+        lia.
   Qed.
 
   Theorem nth_error_update_range : forall (l : list A) r x idx y H, (HalfOpenRange.contains r idx) -> nth_error (update_range l r x H) idx = Some y -> x = y.
@@ -722,18 +731,16 @@ Section UpdateRange.
       set (update_range_obligation_4 _ _ _ _ _ _) in H1.
       clearbody l3.
       simpl in l3.
-      destruct (HalfOpenRange.containsb r 0) eqn:E.
+      destruct (HalfOpenRange.lower r =? 0) eqn:E.
       + destruct (HalfOpenRange.length r) eqn:E'.
         * simpl in H1.
-          destruct idx eqn:Hidx.
-          -- simpl in H1.
-             injection H1.
-             intros.
+          destruct idx eqn:E''.
+          -- inversion H1.
              auto.
-          -- simpl in *.
-             unfold HalfOpenRange.contains in *.
-             rewrite <- Hidx in *.
+          -- rewrite N.eqb_eq in E.
              apply nth_error_update_first_n_eq in H1; auto.
              apply nth_error_some_length in H1.
              rewrite length_update_first_n in H1.
-             apply n_pos_1_m_succ in l0.
+             rewrite <- E'' in *.
+             simpl in *.
+             apply n_pos_1_m_succ in H.
