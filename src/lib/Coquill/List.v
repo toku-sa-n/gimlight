@@ -702,4 +702,18 @@ Section UpdateRange.
         rewrite HalfOpenRange.lower_0_length_eq_upper; auto.
         rewrite N.eqb_eq in E.
         auto.
-      + 
+      + rewrite N.eqb_neq in E.
+        unfold HalfOpenRange.contains in H0.
+        simpl.
+        destruct idx eqn:E'.
+        * lia.
+        * apply IHl. 
+          simpl.
+          unfold HalfOpenRange.contains.
+          split.
+          -- simpl.
+             lia.
+          -- simpl.
+             lia.
+  Qed.
+
