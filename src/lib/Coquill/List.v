@@ -733,3 +733,47 @@ Section UpdateRange.
     - apply nth_error_none_length in Heq.
       lia.
   Qed.
+
+  Theorem nth_error_update_range_neq : forall (l : list A) r x idx H, ~ (HalfOpenRange.contains r idx) -> nth_error (update_range l r x H) idx = nth_error l idx.
+  Proof.
+    induction l.
+    - intros.
+      simpl in H.
+      assert (HalfOpenRange.upper r > 0) by apply HalfOpenRange.upper_is_positive.
+      lia.
+    - intros.
+      unfold update_range.
+      set (update_range_obligation_2 _ _ _ _ _ _).
+      clearbody l0.
+      simpl in l0.
+      set (update_range_obligation_3 _ _ _ _ _ _).
+      clearbody l1.
+      simpl in l1.
+      set (update_range_obligation_4 _ _ _ _ _ _).
+      clearbody l2.
+      simpl in l2.
+      destruct (HalfOpenRange.lower r =? 0) eqn:E.
+      + apply nth_error_update_first_n_neq.
+        assert (N.pos (HalfOpenRange.length r) = HalfOpenRange.upper r).
+        {
+          apply HalfOpenRange.lower_0_length_eq_upper.
+          rewrite N.eqb_eq in E.
+          auto.
+        }
+        rewrite H1.
+        apply (HalfOpenRange.lower_0_not_contained_gt r idx).
+        * rewrite N.eqb_eq in E.
+          auto.
+        * auto.
+      + simpl.
+        destruct idx eqn:E'.
+        * auto.
+        * apply IHl.
+          simpl.
+          unfold HalfOpenRange.contains.
+          intro.
+          unfold HalfOpenRange.shift_minus in H1.
+          simpl in H1.
+          unfold HalfOpenRange.contains in H0.
+          lia.
+  Qed.
