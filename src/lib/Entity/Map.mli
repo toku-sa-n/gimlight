@@ -1,3 +1,3 @@
-type t = Kernel.t1
+type t = Kernel.t2
 
-val all_wall_map : Big_int_Z.big_int -> Big_int_Z.big_int -> t
+val initial_map : t

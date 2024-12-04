@@ -15,7 +15,7 @@ class game_widget =
           let text =
             List.fold_left
               (fun acc is_wall ->
-                let text = if is_wall then "#" else "*" in
+                let text = if is_wall then "#" else " " in
                 acc ^ text)
               "" row
           in

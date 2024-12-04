@@ -16,4 +16,4 @@ Extraction Language OCaml.
 
    The name "Kernel" comes from Ruby's Kernel module.
 *)
-Extraction "Kernel.ml" Map.all_wall_map.
+Extraction "Kernel.ml" Map.initial_map.

@@ -21,3 +21,11 @@ Section UpdateRange.
   Program Definition update_range (arr : t A n) (r : HalfOpenRange.t) (x : A) (upper_spec : HalfOpenRange.upper r <= N.pos n) : t A n :=
     make (Array.update_range arr r x _).
 End UpdateRange.
+
+Section MapNth.
+  Context {A : Type}.
+  Context {n : positive}.
+
+  Program Definition map_nth (arr : t A n) (i : N) (f : A -> A) (i_spec : i < Npos n) : t A n :=
+    make (Array.map_nth arr i f _).
+End MapNth.

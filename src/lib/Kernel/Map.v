@@ -8,10 +8,29 @@ From Coquill Require Import PArith.
 From Coquill Require HalfOpenRange.
 From Coquill Require NonEmptyArray.
 
-Open Scope Z_scope.
+Open Scope N_scope.
 
 Definition t (width height : positive) : Type := NonEmptyArray.t (NonEmptyArray.t bool width) height.
 
 Definition all_wall_map (width height : positive) : t width height :=
   NonEmptyArray.repeat (NonEmptyArray.repeat true width) height.
 
+Program Definition build_horizontal_road
+  {width height : positive}
+  (x : HalfOpenRange.t)
+  (y : N)
+  (map : t width height)
+  (x_spec : HalfOpenRange.upper x <= N.pos width)
+  (y_spec : y < N.pos height) : t width height :=
+  NonEmptyArray.map_nth map y (fun row => NonEmptyArray.update_range row x false x_spec) _.
+
+Program Definition initial_map : t 80 50 :=
+  build_horizontal_road (HalfOpenRange.make 10 50 _) 25 (all_wall_map 80 50) _ _.
+Next Obligation.
+Proof.
+  lia.
+Qed.
+Next Obligation.
+Proof.
+  lia.
+Qed.

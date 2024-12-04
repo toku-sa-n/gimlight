@@ -955,3 +955,18 @@ Section MapNth.
     - apply nth_error_none_length in Heq.
       lia.
   Qed.
+
+  Theorem map_nth_id : forall (l : list A) n H, map_nth l n (fun x => x) H = l.
+  Proof.
+    induction l.
+    - intros.
+      simpl in H.
+      lia.
+    - intros.
+      simpl.
+      destruct n.
+      + auto.
+      + f_equal.
+        apply IHl.
+  Qed.
+End MapNth.

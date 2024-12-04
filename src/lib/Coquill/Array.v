@@ -46,3 +46,21 @@ Section UpdateRange.
     apply length_spec.
   Qed. 
 End UpdateRange.
+
+Section MapNth.
+  Context {A : Type}.
+  Context {n : N}.
+
+  Program Definition map_nth (arr : t A n) (i : N) (f : A -> A) (i_spec : i < n) : t A n :=
+    make (List.map_nth (inner_list arr) i f _) _.
+  Next Obligation.
+  Proof.
+    rewrite length_spec.
+    auto.
+  Qed.
+  Next Obligation.
+  Proof.
+    rewrite length_map_nth.
+    apply length_spec.
+  Qed.
+End MapNth.

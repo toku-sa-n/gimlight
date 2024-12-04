@@ -1,3 +1,3 @@
-type t = Kernel.t1
+type t = Kernel.t2
 
-let all_wall_map = Kernel.all_wall_map
+let initial_map = Kernel.initial_map

@@ -1,4 +1,4 @@
 type t = { get : unit -> Entity.Map.t }
 
-let game_map = ref (Entity.Map.all_wall_map (Z.of_int 80) (Z.of_int 50))
+let game_map = ref Entity.Map.initial_map
 let make = { get = (fun () -> !game_map) }
