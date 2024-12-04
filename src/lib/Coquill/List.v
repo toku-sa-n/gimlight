@@ -1100,3 +1100,23 @@ Section MapFirstN.
         simpl in H0.
         lia.
   Qed.
+
+  Theorem map_first_id : forall (l : list A) n H, map_first_n l n (fun x => x) H = l.
+  Proof.
+    induction l.
+    - intros.
+      simpl in H.
+      lia.
+    - intros.
+      simpl.
+      destruct n.
+      + auto.
+        f_equal.
+        set (map_first_n_obligation_2 _ _ _ _ _ _ _ _ _).
+        clearbody l0.
+        simpl in l0.
+        apply IHl.
+      + f_equal.
+        apply IHl.
+      + auto.
+  Qed.
