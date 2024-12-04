@@ -970,3 +970,47 @@ Section MapNth.
         apply IHl.
   Qed.
 End MapNth.
+
+Section MapFirstN.
+  Context {A : Type}.
+
+  Program Fixpoint map_first_n (l : list A) (n : positive) (f : A -> A) (n_spec : N.pos n <= length l) : list A :=
+    match l with
+    | [] => _
+    | x :: l' =>
+      match n with
+      | xH => f x :: l'
+      | _ => f x :: map_first_n l' (Pos.pred n) f _
+      end
+    end.
+  Next Obligation.
+  Proof.
+    simpl in n_spec.
+    lia.
+  Qed.
+  Next Obligation.
+  Proof.
+    simpl in n_spec.
+    lia.
+  Qed.
+
+  Theorem length_map_first_n : forall (l : list A) n f H, length (map_first_n l n f H) = length l.
+  Proof.
+    induction l.
+    - intros.
+      simpl in H.
+      lia.
+    - intros.
+      simpl.
+      destruct n.
+      + simpl.
+        set (map_first_n_obligation_2 _ _ _ _ _ _ _ _ _).
+        clearbody l0.
+        simpl in l0.
+        f_equal.
+        apply IHl.
+      + simpl.
+        f_equal.
+        apply IHl.
+      + auto.
+  Qed.
