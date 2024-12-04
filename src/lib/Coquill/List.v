@@ -1014,3 +1014,32 @@ Section MapFirstN.
         apply IHl.
       + auto.
   Qed.
+
+  Theorem nth_error_map_first_n : forall (l : list A) n idx f H, idx < N.pos n -> nth_error (map_first_n l n f H) idx = option_map f (nth_error l idx).
+  Proof.
+    induction l.
+    - intros.
+      simpl in H.
+      lia.
+    - intros.
+      simpl.
+      destruct n.
+      + simpl.
+        destruct idx.
+        * auto.
+        * simpl.
+          apply IHl.
+          lia.
+      + simpl.
+        destruct idx.
+        * auto.
+        * simpl.
+          apply IHl.
+          lia.
+      + simpl.
+        destruct idx eqn:E.
+        * simpl.
+          auto.
+        * simpl.
+          lia.
+  Qed.
