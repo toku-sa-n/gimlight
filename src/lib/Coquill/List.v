@@ -1070,3 +1070,33 @@ Section MapFirstN.
       + apply nth_error_none_length in Heq.
         lia.
   Qed.
+
+  Theorem map_first_n_map : forall (l : list A) n f H, length l = N.pos n -> map_first_n l n f H = map f l.
+  Proof.
+    induction l.
+    - intros.
+      simpl in H.
+      lia.
+    - intros.
+      simpl.
+      destruct n.
+      + simpl in H.
+        f_equal.
+        set (map_first_n_obligation_2 _ _ _ _ _ _ _ _ _).
+        clearbody l0.
+        simpl in l0.
+        apply IHl.
+        simpl in H0.
+        lia.
+      + simpl in H.
+        f_equal.
+        apply IHl.
+        simpl in H.
+        simpl in H0.
+        lia.
+      + f_equal.
+        simpl in H0.
+        destruct l; auto.
+        simpl in H0.
+        lia.
+  Qed.
