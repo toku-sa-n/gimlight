@@ -805,3 +805,118 @@ Section UpdateRange.
         lia.
   Qed.
 End UpdateRange.
+
+Section MapNth.
+  Context {A : Type}.
+
+  Program Fixpoint map_nth (l : list A) (n : N) (f : A -> A) (n_spec : n < length l) : list A :=
+    match l with
+    | [] => _
+    | x :: l' =>
+      match n with
+      | 0 => f x :: l'
+      | Npos p => x :: map_nth l' (N.pred n) f _
+      end
+    end.
+  Next Obligation.
+  Proof.
+    simpl in n_spec.
+    lia.
+  Qed.
+  Next Obligation.
+  Proof.
+    simpl in n_spec.
+    lia.
+  Qed.
+
+  Theorem length_map_nth : forall (l : list A) n f H, length (map_nth l n f H) = length l.
+  Proof.
+    induction l.
+    - intros.
+      simpl in H.
+      lia.
+    - intros.
+      simpl.
+      destruct n.
+      + simpl.
+        reflexivity.
+      + simpl.
+        f_equal.
+        apply IHl.
+  Qed.
+
+  Theorem nth_error_map_nth : forall (l : list A) n f H, nth_error (map_nth l n f H) n = option_map f (nth_error l n).
+  Proof.
+    induction l.
+    - intros.
+      simpl in H.
+      lia.
+    - intros.
+      simpl.
+      destruct n.
+      + simpl.
+        reflexivity.
+      + simpl.
+        apply IHl.
+  Qed.
+
+  Theorem nth_map_nth : forall (l : list A) n f H H1, nth (map_nth l n f H) n H1 = f (nth l n H).
+  Proof.
+    intros.
+    unfold nth.
+    set (nth_obligation_1 _ _ _).
+    clearbody y.
+    simpl in y.
+    set (nth_obligation_1 _ _ _).
+    clearbody y0.
+    simpl in y0.
+    destruct nth_error eqn:Heq.
+    - destruct (nth_error l n) eqn:Heq'.
+      + rewrite nth_error_map_nth in Heq.
+        rewrite Heq' in Heq.
+        injection Heq.
+        intros.
+        auto.
+      + rewrite nth_error_map_nth in Heq.
+        rewrite Heq' in Heq.
+        discriminate.
+    - destruct (nth_error l n) eqn:Heq'.
+      + rewrite nth_error_map_nth in Heq.
+        rewrite Heq' in Heq.
+        discriminate.
+      + apply nth_error_none_length in H1; try lia.
+        auto.
+  Qed.
+
+  Theorem map_nth_update_nth_error : forall (l : list A) n x f H, nth_error l n = Some x -> map_nth l n f H = update l n (f x) H.
+  Proof.
+    induction l.
+    - intros.
+      discriminate.
+    - intros.
+      simpl in H.
+      destruct n.
+      + simpl.
+        simpl in H0.
+        injection H0.
+        intros.
+        f_equal.
+        f_equal.
+        auto.
+      + simpl.
+        f_equal.
+        set (map_nth_obligation_2 _ _ _ _ _ _ _ _).
+        clearbody l0.
+        simpl in l0.
+        set (update_obligation_2 _ _ _ _ _ _ _ _).
+        clearbody l1.
+        simpl in l1.
+        simpl in H0.
+        eapply IHl in H0.
+        assert (l0 = l1).
+        {
+          apply proof_irrelevance.
+        }
+        rewrite H1.
+        apply H0.
+  Qed.
