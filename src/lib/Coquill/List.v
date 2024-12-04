@@ -279,7 +279,7 @@ Section Update.
 
   Hint Unfold update : list.
 
-  Theorem update_length : forall (l : list A) (n : N) (x : A) (n_spec : n < length l), length (update l n x n_spec) = length l.
+  Theorem length_update : forall (l : list A) (n : N) (x : A) (n_spec : n < length l), length (update l n x n_spec) = length l.
   Proof.
     induction l; intros.
     - simpl in n_spec.
@@ -293,7 +293,7 @@ Section Update.
         apply IHl.
   Qed.
 
-  Hint Resolve update_length : list.
+  Hint Resolve length_update : list.
 
   Theorem update_in : forall (l : list A) (n : N) (x : A) (n_spec : n < length l), In x (update l n x n_spec).
   Proof.

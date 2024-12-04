@@ -29,3 +29,11 @@ Section MapNth.
   Program Definition map_nth (arr : t A n) (i : N) (f : A -> A) (i_spec : i < Npos n) : t A n :=
     make (Array.map_nth arr i f _).
 End MapNth.
+
+Section Update.
+  Context {A : Type}.
+  Context {n : positive}.
+
+  Program Definition update (arr : t A n) (i : N) (x : A) (i_spec : i < Npos n) : t A n :=
+    make (Array.update arr i x _).
+End Update.

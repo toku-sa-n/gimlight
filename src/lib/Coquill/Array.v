@@ -64,3 +64,21 @@ Section MapNth.
     apply length_spec.
   Qed.
 End MapNth.
+
+Section Update.
+  Context {A : Type}.
+  Context {n : N}.
+
+  Program Definition update (arr : t A n) (i : N) (x : A) (i_spec : i < n) : t A n :=
+    make (List.update (inner_list arr) i x _) _.
+  Next Obligation.
+  Proof.
+    rewrite length_spec.
+    auto.
+  Qed.
+  Next Obligation.
+  Proof.
+    rewrite length_update.
+    apply length_spec.
+  Qed.
+End Update.
