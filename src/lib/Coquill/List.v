@@ -196,6 +196,20 @@ Section Nth.
     - apply nth_error_none_length in Heq.
       lia.
   Qed.
+
+  Theorem nth_error_nth : forall (l : list A) (n : N) H, nth_error l n = Some (nth l n H).
+  Proof.
+    intros.
+    unfold nth.
+    set (nth_obligation_1 _ _ _).
+    clearbody a.
+    simpl in a.
+    destruct nth_error eqn:Heq.
+    - apply nth_error_some_length in Heq.
+      auto.
+    - apply nth_error_none_length in Heq.
+      lia.
+  Qed.
 End Nth.
 
 Section Take.
@@ -919,4 +933,25 @@ Section MapNth.
         }
         rewrite H1.
         apply H0.
+  Qed.
+
+  Theorem map_nth_update_nth : forall (l : list A) n f H H1, map_nth l n f H = update l n (f (nth l n H1)) H.
+  Proof.
+    intros.
+    destruct (nth_error l n) eqn:Heq.
+    - assert (map_nth l n f H = update l n (f a) H).
+      {
+        apply map_nth_update_nth_error.
+        auto.
+      }
+      rewrite H0.
+      f_equal.
+      f_equal.
+      erewrite nth_error_nth in Heq.
+      injection Heq.
+      intros.
+      symmetry.
+      apply H2.
+    - apply nth_error_none_length in Heq.
+      lia.
   Qed.
