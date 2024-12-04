@@ -1043,3 +1043,30 @@ Section MapFirstN.
         * simpl.
           lia.
   Qed.
+
+  Theorem nth_map_first_n : forall (l : list A) n idx f H H1 H2, idx < N.pos n -> nth (map_first_n l n f H) idx H1 = f (nth l idx H2).
+  Proof.
+    intros.
+    unfold nth.
+    set (nth_obligation_1 _ _ _).
+    clearbody y.
+    simpl in y.
+    set (nth_obligation_1 _ _ _).
+    clearbody y0.
+    simpl in y0.
+    destruct nth_error eqn:Heq.
+    - rewrite nth_error_map_first_n in Heq.
+      + destruct (nth_error l idx) eqn:Heq'.
+        * simpl in Heq. 
+          injection Heq.
+          intros.
+          auto.
+        * apply nth_error_none_length in Heq'.
+          lia.
+      + auto.
+    - destruct (nth_error l idx) eqn:Heq'.
+      + apply nth_error_none_length in Heq.
+        lia.
+      + apply nth_error_none_length in Heq.
+        lia.
+  Qed.
