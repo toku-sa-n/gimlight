@@ -37,6 +37,8 @@ match l with
         auto.
   Qed.
 
+  Hint Resolve app_length : list.
+
   Theorem length_zero_iff_nil : forall (l : list A), length l = 0 <-> l = [].
   Proof.
     split.
@@ -49,7 +51,7 @@ match l with
       auto.
   Qed.
 
-  Hint Resolve app_length : list.
+  Hint Resolve length_zero_iff_nil : list.
 End Length.
 
 Section RepeatPos.
@@ -66,7 +68,7 @@ Section RepeatPos.
 
   Theorem repeat_pos_length : forall (x : A) (n : positive), length (repeat_pos x n) = Npos n.
   Proof.
-    induction n; try reflexivity; simpl; rewrite app_length; rewrite IHn; unfold N.succ; simpl; f_equal; auto with positive.
+    induction n; auto; simpl; rewrite app_length; rewrite IHn; lia.
   Qed.
 
   Hint Resolve repeat_pos_length : list.
