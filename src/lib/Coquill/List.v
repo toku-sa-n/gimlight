@@ -75,8 +75,15 @@ Section RepeatPos.
 
   Theorem repeat_pos_spec : forall (n : positive) (x y : A), In y (repeat_pos x n) -> y = x.
   Proof.
-    intros.
-    induction n; simpl in H; try destruct H; auto; try (apply IHn; apply in_app_or in H); destruct H; auto.
+    induction n; intros; simpl in H.
+    - destruct H; auto.
+      apply IHn.
+      apply in_app_or in H.
+      destruct H; auto.
+    - apply in_app_or in H.
+      destruct H; auto.
+    - destruct H; auto.
+      destruct H.
   Qed.
 
   Hint Resolve repeat_pos_spec : list.
