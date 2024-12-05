@@ -1120,3 +1120,245 @@ Section MapFirstN.
         apply IHl.
       + auto.
   Qed.
+End MapFirstN.
+
+Section MapRange.
+  Context {A : Type}.
+
+  Program Fixpoint map_range (l : list A) (r : HalfOpenRange.t) (f : A -> A) (r_spec : HalfOpenRange.upper r <= length l) : list A :=
+    match l with
+    | [] => _
+    | x :: l' =>
+      match HalfOpenRange.lower r =? 0 with
+      | true => map_first_n l (HalfOpenRange.length r) f _
+      | false => f x :: map_range l' (HalfOpenRange.shift_minus r 1 _) f _
+      end
+    end.
+  Next Obligation.
+  Proof.
+    simpl in r_spec.
+    assert (HalfOpenRange.upper r > 0) by apply HalfOpenRange.upper_is_positive.
+    lia.
+  Qed.
+  Next Obligation.
+  Proof.
+    simpl in r_spec.
+    simpl.
+    assert (N.pos (HalfOpenRange.length r) <= HalfOpenRange.upper r) by apply HalfOpenRange.length_le_upper.
+    lia.
+  Qed.
+  Next Obligation.
+  Proof.
+    unfold HalfOpenRange.contains in Heq_anonymous.
+    symmetry in Heq_anonymous.
+    apply N.eqb_neq in Heq_anonymous.
+    lia.
+  Qed.
+  Next Obligation.
+  Proof.
+    simpl in r_spec.
+    lia.
+  Qed.
+
+  Theorem length_map_range : forall (l : list A) r f H, length (map_range l r f H) = length l.
+  Proof.
+    induction l.
+    - intros.
+      assert (HalfOpenRange.upper r > 0) by apply HalfOpenRange.upper_is_positive.
+      simpl in H.
+      lia.
+    - intros.
+      simpl.
+      set (map_first_n_obligation_2 _ _ _ _ _ _).
+      clearbody l0.
+      set (map_range_obligation_3 _ _ _ _ _ _).
+      clearbody l1.
+      simpl in l1.
+      set (map_range_obligation_4 _ _ _ _ _ _).
+      clearbody l2.
+      simpl in l2.
+      destruct (HalfOpenRange.lower r =? 0) eqn:E.
+      + destruct (HalfOpenRange.length r) eqn:E'.
+        * simpl.
+          f_equal.
+          apply length_map_first_n.
+        * simpl.
+          f_equal.
+          apply length_map_first_n.
+        * auto.
+      + simpl.
+        f_equal.
+        apply IHl.
+  Qed.
+
+  Theorem lower_0_map_range_map_first_n : forall (l : list A) r f H H1, (HalfOpenRange.lower r = 0) -> map_range l r f H = map_first_n l (HalfOpenRange.length r) f H1.
+  Proof.
+    induction l.
+    - intros.
+      assert (HalfOpenRange.upper r > 0) by apply HalfOpenRange.upper_is_positive.
+      simpl in H1.
+      lia.
+    - intros.
+      simpl.
+      set (map_first_n_obligation_2 _ _ _ _ _ _).
+      clearbody l0.
+      simpl in l0.
+      set (map_range_obligation_3 _ _ _ _ _ _).
+      clearbody l1.
+      simpl in l1.
+      set (map_range_obligation_4 _ _ _ _ _ _).
+      clearbody l2.
+      simpl in l2.
+      set (map_first_n_obligation_2 _ _ _ _ _ _).
+      clearbody l3.
+      simpl in l3.
+      destruct (HalfOpenRange.lower r =? 0) eqn:E.
+      + destruct (HalfOpenRange.length r) eqn:E'.
+        * simpl.
+          f_equal.
+          assert (l0 = l3).
+          {
+            apply proof_irrelevance.
+          }
+          rewrite H2.
+          auto.
+        * simpl.
+          f_equal.
+          assert (l0 = l3).
+          {
+            apply proof_irrelevance.
+          }
+          rewrite H2.
+          auto.
+        * auto.
+      + destruct (HalfOpenRange.length r) eqn:E'.
+        * simpl.
+          rewrite N.eqb_neq in E.
+          lia.
+        * simpl.
+          rewrite N.eqb_neq in E.
+          lia.
+        * simpl.
+          rewrite N.eqb_neq in E.
+          lia.
+  Qed.
+
+  Theorem nth_error_map_range : forall (l : list A) r f idx H, HalfOpenRange.contains r idx -> nth_error (map_range l r f H) idx = option_map f (nth_error l idx).
+  Proof.
+    induction l.
+    - intros.
+      assert (HalfOpenRange.upper r > 0) by apply HalfOpenRange.upper_is_positive.
+      simpl in H.
+      lia.
+    - intros.
+      unfold map_range.
+      set (map_range_obligation_2 _ _ _ _ _ _).
+      clearbody l0.
+      simpl in l0.
+      set (map_range_obligation_3 _ _ _ _ _ _).
+      clearbody l1.
+      simpl in l1.
+      set (map_range_obligation_4 _ _ _ _ _ _).
+      clearbody l2.
+      simpl in l2.
+      destruct (HalfOpenRange.lower r =? 0) eqn:E.
+      + apply nth_error_map_first_n.
+        simpl in H.
+        unfold HalfOpenRange.contains in H0.
+        destruct H0.
+        rewrite HalfOpenRange.lower_0_length_eq_upper; auto.
+        rewrite N.eqb_eq in E.
+        auto.
+      + rewrite N.eqb_neq in E.
+        unfold HalfOpenRange.contains in H0.
+        simpl.
+        destruct idx eqn:E'.
+        * lia.
+        * apply IHl. 
+          simpl.
+          unfold HalfOpenRange.contains.
+          split.
+          -- simpl.
+             lia.
+          -- simpl.
+             lia.
+  Qed.
+
+  Theorem nth_map_range : forall (l : list A) r f idx H H1 H2, HalfOpenRange.contains r idx -> nth (map_range l r f H) idx H1 = f (nth l idx H2).
+  Proof.
+    intros.
+    unfold nth.
+    set (nth_obligation_1 _ _ _).
+    clearbody y.
+    simpl in y.
+    set (nth_obligation_1 _ _ _).
+    clearbody y0.
+    simpl in y0.
+    destruct nth_error eqn:Heq.
+    - rewrite nth_error_map_range in Heq.
+      + destruct (nth_error l idx) eqn:Heq'.
+        * simpl in Heq. 
+          injection Heq.
+          intros.
+          auto.
+        * apply nth_error_none_length in Heq'.
+          lia.
+      + auto.
+    - destruct (nth_error l idx) eqn:Heq'.
+      + apply nth_error_none_length in Heq.
+        lia.
+      + apply nth_error_none_length in Heq.
+        lia.
+  Qed.
+
+  Theorem map_range_map : forall (l : list A) r f H, length l = HalfOpenRange.upper r -> map_range l r f H = map f l.
+  Proof.
+    induction l.
+    - intros.
+      assert (HalfOpenRange.upper r > 0) by apply HalfOpenRange.upper_is_positive.
+      simpl in H.
+      lia.
+    - intros.
+      simpl.
+      set (map_first_n_obligation_2 _ _ _ _ _ _).
+      clearbody l0.
+      simpl in l0.
+      set (map_range_obligation_3 _ _ _ _ _ _).
+      clearbody l1.
+      simpl in l1.
+      set (map_range_obligation_4 _ _ _ _ _ _).
+      clearbody l2.
+      simpl in l2.
+      destruct (HalfOpenRange.lower r =? 0) eqn:E.
+      + destruct (HalfOpenRange.length r) eqn:E'.
+        * simpl.
+          f_equal.
+          apply map_first_n_map.
+          simpl in H0.
+          rewrite N.eqb_eq in E.
+          rewrite <- HalfOpenRange.lower_0_length_eq_upper in H0; auto.
+          rewrite E' in H0.
+          lia.
+        * f_equal.
+          simpl.
+          apply map_first_n_map.
+          simpl in H0.
+          rewrite N.eqb_eq in E.
+          rewrite <- HalfOpenRange.lower_0_length_eq_upper in H0; auto.
+          rewrite E' in H0.
+          lia.
+        * f_equal.
+          rewrite N.eqb_eq in E.
+          rewrite <- HalfOpenRange.lower_0_length_eq_upper in H0; auto.
+          rewrite E' in H0.
+          destruct l; auto.
+          simpl in H0.
+          lia.
+      + f_equal.
+        apply IHl.
+        simpl in H.
+        simpl in H0.
+        unfold HalfOpenRange.shift_minus.
+        simpl.
+        lia.
+  Qed.
