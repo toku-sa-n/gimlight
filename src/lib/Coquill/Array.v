@@ -82,3 +82,21 @@ Section Update.
     apply length_spec.
   Qed.
 End Update.
+
+Section MapRange.
+  Context {A : Type}.
+  Context {n : N}.
+
+  Program Definition map_range (arr : t A n) (r : HalfOpenRange.t) (f : A -> A) (r_spec : HalfOpenRange.upper r <= n) : t A n :=
+    make (List.map_range (inner_list arr) r f _) _.
+  Next Obligation.
+  Proof.
+    rewrite length_spec.
+    auto.
+  Qed.
+  Next Obligation.
+  Proof.
+    rewrite length_map_range.
+    apply length_spec.
+  Qed.
+End MapRange.
