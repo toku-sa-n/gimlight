@@ -90,9 +90,17 @@ Section RepeatPos.
 
   Theorem repeat_pos_non_empty (x : A) (n : positive) : repeat_pos x n <> [].
   Proof.
-    induction n; simpl; intros H; try inversion H.
-    apply app_eq_nil in H.
-    easy.
+    induction n.
+    - simpl.
+      discriminate.
+    - simpl.
+      intros H.
+      apply IHn.
+      apply app_eq_nil in H.
+      destruct H.
+      auto.
+    - intros H.
+      discriminate.
   Qed.
 
   Hint Resolve repeat_pos_non_empty : list.
