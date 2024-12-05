@@ -30,18 +30,18 @@ open Lwt
 let loop () =
   let waiter, wakener = wait () in
 
-  let game_map_repository = Repository.Game_map.make in
+  let map_repository = Repository.Map.make in
 
   let game_widget = new View.Terminal.game_widget in
 
-  let model = { View.Model.is_wall = game_map_repository.get () } in
+  let model = { View.Model.is_wall = map_repository.get () } in
 
   game_widget#set_model model;
 
   let event_handler = function
     | LTerm_event.Key { LTerm_key.code = LTerm_key.Escape; _ } ->
-        wakeup wakener ();
-        true
+      wakeup wakener ();
+      true
     | _ -> false
   in
 
