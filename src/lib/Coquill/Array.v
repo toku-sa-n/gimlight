@@ -22,12 +22,16 @@ Hint Constructors t : array.
 
 Definition empty (A : Type) : t A 0 := make [] eq_refl.
 
-Program Definition repeat {A : Type} (x : A) (n : N) : t A n :=
-  make (List.repeat x n) _.
-Next Obligation.
-Proof.
-  apply repeat_length.
-Qed.
+Section Repeat.
+  Context {A : Type}.
+
+  Program Definition repeat (x : A) (n : N) : t A n :=
+    make (List.repeat x n) _.
+  Next Obligation.
+  Proof.
+    apply repeat_length.
+  Qed.
+End Repeat.
 
 Section UpdateRange.
   Context {A : Type}.
