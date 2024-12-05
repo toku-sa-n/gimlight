@@ -6,6 +6,7 @@ From Coq Require Import ProofIrrelevance.
 
 From Coquill Require Import NArith.
 From Coquill Require Import PArith.
+
 From Coquill Require HalfOpenRange.
 
 Export ListNotations.
@@ -23,18 +24,30 @@ match l with
     | _ :: l' => N.succ (length l')
     end.
 
-Hint Unfold length : list.
+  Hint Unfold length : list.
 
-Lemma app_length : forall (l1 l2 : list A), length (l1 ++ l2) = length l1 + length l2.
+  Theorem app_length : forall (l1 l2 : list A), length (l1 ++ l2) = length l1 + length l2.
+    Proof.
+      induction l1.
+      - reflexivity.
+      - simpl.
+        intros.
+        rewrite IHl1.
+        rewrite N.add_succ_l.
+        auto.
+  Qed.
+
+  Theorem length_zero_iff_nil : forall (l : list A), length l = 0 <-> l = [].
   Proof.
-    induction l1.
-    - reflexivity.
-- simpl.
-      intros.
-      rewrite IHl1.
-      rewrite N.add_succ_l.
+    split.
+    - destruct l.
+      + auto.
+      + simpl.
+        lia.
+    - intros.
+      rewrite H.
       auto.
-Qed.
+  Qed.
 
   Hint Resolve app_length : list.
 End Length.
