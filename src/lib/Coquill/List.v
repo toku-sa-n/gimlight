@@ -174,19 +174,28 @@ Section NthError.
           lia.
   Qed.
 
-  Theorem nth_error_none_length : forall (l : list A) (n : N), nth_error l n = None -> n >= length l.
+  Theorem nth_error_none_length : forall (l : list A) (n : N), nth_error l n = None <-> n >= length l.
   Proof.
-    induction l.
-    - intros.
-      simpl.
-      lia.
-    - destruct n.
+    split.
+    - generalize dependent n.
+      induction l.
       + intros.
-        discriminate.
-      + simpl.
-        intros.
-        apply IHl in H.
+        simpl.
         lia.
+      + destruct n.
+        * intros.
+          discriminate.
+        * simpl.
+          intros.
+          apply IHl in H.
+          lia.
+    - generalize dependent n.
+      induction l.
+      + auto.
+      + destruct n; simpl; intros.
+        * lia.
+        * apply IHl.
+          lia.
   Qed.
 End NthError.
 
@@ -1578,4 +1587,5 @@ Hint Resolve app_length
 
              nth_error_some_in
              nth_error_some_length
+             nth_error_none_length
              : list.
