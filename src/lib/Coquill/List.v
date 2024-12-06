@@ -94,25 +94,35 @@ Section Repeat.
     | Npos p => repeat_pos x p
     end.
 
-  Hint Unfold repeat : list.
-
-  Theorem repeat_length : forall (x : A) (n : N), length (repeat x n) = n.
+  Theorem length_repeat : forall (x : A) (n : N), length (repeat x n) = n.
   Proof.
     intros.
-    destruct n.
-    - auto.
-    - simpl.
-      apply length_repeat_pos.
+    destruct n; auto.
+    simpl.
+    apply length_repeat_pos.
   Qed.
 
-  Hint Resolve repeat_length : list.
-
-  Theorem repeat_spec : forall (x : A) (n : N) (y : A), In y (repeat x n) -> y = x.
+  Theorem repeat_in : forall (x : A) (n : N) (y : A), In y (repeat x n) -> y = x.
   Proof.
     intros.
     destruct n.
     - easy.
     - apply repeat_pos_in in H.
+      easy.
+  Qed.
+
+  Theorem repeat_empty_iff_zero : forall (x : A) (n : N), repeat x n = [] <-> n = 0.
+  Proof.
+    intros.
+    split.
+    - intros.
+      destruct n.
+      + easy.
+      + simpl in H.
+        apply repeat_pos_non_empty in H.
+        easy.
+    - intros.
+      rewrite H.
       easy.
   Qed.
 End Repeat.
@@ -1547,11 +1557,7 @@ Create HintDb list.
 
 Hint Unfold length
             repeat_pos
-            update
-            nth
-            map_nth
-            map_first_n
-            map_range
+            repeat
             : list.
 Hint Resolve app_length
              length_zero_iff_nil
@@ -1559,4 +1565,8 @@ Hint Resolve app_length
              length_repeat_pos
              repeat_pos_in
              repeat_pos_non_empty
+             
+             length_repeat
+             repeat_in
+             repeat_empty_iff_zero
              : list.
