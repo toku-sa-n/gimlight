@@ -144,28 +144,22 @@ Section NthError.
   Proof.
     induction l; intros.
     - discriminate.
-    - destruct n.
-      + simpl in H.
+    - destruct n; simpl in H.
+      + left.
         injection H.
-        intros.
-        left.
-        auto.
-      + simpl in H.
+        easy.
+      + right.
         apply IHl in H.
-        right.
-        auto.
+        easy.
   Qed.
 
   Theorem nth_error_some_length : forall (l : list A) (n : N) (x : A), nth_error l n = Some x -> n < length l.
   Proof.
     induction l; intros.
     - discriminate.
-    - destruct n.
-      + simpl.
-        lia.
-      + simpl.
-        simpl in H.
-        apply IHl in H.
+    - destruct n; simpl in *.
+      + lia.
+      + apply IHl in H.
         lia.
   Qed.
 
@@ -1558,6 +1552,7 @@ Create HintDb list.
 Hint Unfold length
             repeat_pos
             repeat
+            nth_error
             : list.
 Hint Resolve app_length
              length_zero_iff_nil
@@ -1569,4 +1564,7 @@ Hint Resolve app_length
              length_repeat
              repeat_in
              repeat_empty_iff_zero
+
+             nth_error_some_in
+             nth_error_some_length
              : list.
