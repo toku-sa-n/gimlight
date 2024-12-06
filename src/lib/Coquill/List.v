@@ -56,12 +56,12 @@ Section RepeatPos.
     | xI n' => x::repeat_pos x n' ++ repeat_pos x n'
     end.
 
-  Theorem repeat_pos_length : forall (x : A) (n : positive), length (repeat_pos x n) = Npos n.
+  Theorem length_repeat_pos : forall (x : A) (n : positive), length (repeat_pos x n) = Npos n.
   Proof.
     induction n; auto; simpl; rewrite app_length; rewrite IHn; lia.
   Qed.
 
-  Theorem repeat_pos_spec : forall (n : positive) (x y : A), In y (repeat_pos x n) -> y = x.
+  Theorem repeat_pos_in : forall (n : positive) (x y : A), In y (repeat_pos x n) -> y = x.
   Proof.
     induction n; intros; simpl in H.
     - destruct H; auto.
@@ -102,7 +102,7 @@ Section Repeat.
     destruct n.
     - auto.
     - simpl.
-      apply repeat_pos_length.
+      apply length_repeat_pos.
   Qed.
 
   Hint Resolve repeat_length : list.
@@ -112,7 +112,7 @@ Section Repeat.
     intros.
     destruct n.
     - easy.
-    - apply repeat_pos_spec in H.
+    - apply repeat_pos_in in H.
       easy.
   Qed.
 End Repeat.
@@ -1545,6 +1545,18 @@ End MapRange.
 
 Create HintDb list.
 
-Hint Unfold length update update_first_n update_range map_nth map_first_n map_range : list.
-Hint Resolve length_update length_update_first_n length_update_range length_map_nth length_map_first_n length_map_range : list.
+Hint Unfold length
+            repeat_pos
+            update
+            nth
+            map_nth
+            map_first_n
+            map_range
+            : list.
+Hint Resolve app_length
+             length_zero_iff_nil
 
+             length_repeat_pos
+             repeat_pos_in
+             repeat_pos_non_empty
+             : list.
