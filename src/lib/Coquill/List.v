@@ -1567,7 +1567,9 @@ Hint Unfold length
             repeat_pos
             repeat
             nth_error
+            nth
             : list.
+
 Hint Resolve app_length
              length_zero_iff_nil
 
