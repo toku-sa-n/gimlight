@@ -153,14 +153,25 @@ Section NthError.
         easy.
   Qed.
 
-  Theorem nth_error_some_length : forall (l : list A) (n : N) (x : A), nth_error l n = Some x -> n < length l.
+  Theorem nth_error_some_length : forall (l : list A) (n : N), nth_error l n <> None <-> n < length l.
   Proof.
-    induction l; intros.
-    - discriminate.
-    - destruct n; simpl in *.
-      + lia.
-      + apply IHl in H.
+    split.
+    - generalize dependent n.
+      induction l; intros.
+      + simpl in H.
+        easy.
+      + destruct n; simpl in *.
+        * lia.
+        * apply IHl in H.
+          lia.
+    - generalize dependent n.
+      induction l; intros.
+      + simpl in H.
         lia.
+      + destruct n; simpl in *.
+        * easy.
+        * apply IHl.
+          lia.
   Qed.
 
   Theorem nth_error_none_length : forall (l : list A) (n : N), nth_error l n = None -> n >= length l.
