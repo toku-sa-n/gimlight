@@ -13,8 +13,6 @@ Export ListNotations.
 
 Open Scope N_scope.
 
-Create HintDb list.
-
 Section Length.
   Context {A : Type}.
 
@@ -23,8 +21,6 @@ match l with
     | [] => 0
     | _ :: l' => N.succ (length l')
     end.
-
-  Hint Unfold length : list.
 
   Theorem app_length : forall (l1 l2 : list A), length (l1 ++ l2) = length l1 + length l2.
     Proof.
@@ -37,8 +33,6 @@ match l with
         auto.
   Qed.
 
-  Hint Resolve app_length : list.
-
   Theorem length_zero_iff_nil : forall (l : list A), length l = 0 <-> l = [].
   Proof.
     split.
@@ -50,8 +44,6 @@ match l with
       rewrite H.
       auto.
   Qed.
-
-  Hint Resolve length_zero_iff_nil : list.
 End Length.
 
 Section RepeatPos.
@@ -64,14 +56,10 @@ Section RepeatPos.
     | xI n' => x::repeat_pos x n' ++ repeat_pos x n'
     end.
 
-  Hint Unfold repeat_pos : list.
-
   Theorem repeat_pos_length : forall (x : A) (n : positive), length (repeat_pos x n) = Npos n.
   Proof.
     induction n; auto; simpl; rewrite app_length; rewrite IHn; lia.
   Qed.
-
-  Hint Resolve repeat_pos_length : list.
 
   Theorem repeat_pos_spec : forall (n : positive) (x y : A), In y (repeat_pos x n) -> y = x.
   Proof.
@@ -86,24 +74,15 @@ Section RepeatPos.
       destruct H.
   Qed.
 
-  Hint Resolve repeat_pos_spec : list.
-
   Theorem repeat_pos_non_empty (x : A) (n : positive) : repeat_pos x n <> [].
   Proof.
-    induction n.
-    - simpl.
-      discriminate.
-    - simpl.
-      intros H.
-      apply IHn.
-      apply app_eq_nil in H.
-      destruct H.
-      auto.
-    - intros H.
-      discriminate.
+    induction n; simpl; try discriminate.
+    intros H.
+    apply IHn.
+    apply app_eq_nil in H.
+    destruct H.
+    auto.
   Qed.
-
-  Hint Resolve repeat_pos_non_empty : list.
 End RepeatPos.
 
 Section Repeat.
@@ -1563,3 +1542,9 @@ Section MapRange.
         lia.
   Qed.
 End MapRange.
+
+Create HintDb list.
+
+Hint Unfold length update update_first_n update_range map_nth map_first_n map_range : list.
+Hint Resolve length_update length_update_first_n length_update_range length_map_nth length_map_first_n length_map_range : list.
+
