@@ -210,8 +210,6 @@ Section Nth.
     lia.
   Qed.
 
-  Hint Unfold nth : list.
-
   Theorem nth_in : forall (l : list A) (n : N) H, In (nth l n H) l.
   Proof.
     intros.
