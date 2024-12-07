@@ -315,23 +315,9 @@ Section UpdateFirstN.
 
   Theorem nth_update_first_n_eq : forall (l : list A) n idx x H H1, idx < N.pos n -> nth (update_first_n l n x H) idx H1 = x.
   Proof.
-    intros.
-    unfold nth.
-    set (nth_obligation_1 _ _ _).
-    clearbody y.
-    simpl in y.
-    destruct nth_error eqn:Heq.
-    - assert (nth_error (update_first_n l n x H) idx = Some x).
-      {
-        apply nth_error_update_first_n_eq.
-        auto.
-      }
-      rewrite Heq in H2.
-      injection H2.
-      intros.
-      auto.
-    - apply nth_error_none_length in Heq.
-      lia.
+    induction l; intros; simpl in *.
+    - lia.
+    - destruct n, idx; simpl; auto; try apply IHl; lia.
   Qed.
 
   Hint Resolve nth_update_first_n_eq : list.
