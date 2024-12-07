@@ -1326,4 +1326,6 @@ Hint Resolve app_length
              update_first_n_in
              nth_update_first_n_eq
              nth_update_first_n_neq
+
+             length_update_range
              : list.
