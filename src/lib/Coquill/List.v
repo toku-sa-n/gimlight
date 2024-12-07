@@ -127,115 +127,39 @@ Section Repeat.
   Qed.
 End Repeat.
 
-Section NthError.
-  Context {A : Type}.
-
-  Program Fixpoint nth_error (l : list A) (n : N) : option A :=
-    match l with
-    | [] => None
-    | x :: l' =>
-      match n with
-      | 0 => Some x
-      | Npos p => nth_error l' (N.pred n)
-      end
-    end.
-
-  Theorem nth_error_some_in : forall (l : list A) (n : N) (x : A), nth_error l n = Some x -> In x l.
-  Proof.
-    induction l; intros.
-    - discriminate.
-    - destruct n; simpl in H.
-      + left.
-        injection H.
-        easy.
-      + right.
-        apply IHl in H.
-        easy.
-  Qed.
-
-  Theorem nth_error_some_length : forall (l : list A) (n : N), nth_error l n <> None <-> n < length l.
-  Proof.
-    split.
-    - generalize dependent n.
-      induction l; intros.
-      + simpl in H.
-        easy.
-      + destruct n; simpl in *.
-        * lia.
-        * apply IHl in H.
-          lia.
-    - generalize dependent n.
-      induction l; intros.
-      + simpl in H.
-        lia.
-      + destruct n; simpl in *.
-        * easy.
-        * apply IHl.
-          lia.
-  Qed.
-
-  Theorem nth_error_none_length : forall (l : list A) (n : N), nth_error l n = None <-> n >= length l.
-  Proof.
-    split; generalize dependent n; induction l.
-    - intros.
-      simpl.
-      lia.
-    - destruct n.
-      + intros.
-        discriminate.
-      + simpl.
-        intros.
-        apply IHl in H.
-        lia.
-    - auto.
-    - destruct n; simpl; intros.
-      + lia.
-      + apply IHl.
-        lia.
-  Qed.
-End NthError.
-
 Section Nth.
   Context {A : Type}.
 
-  Program Definition nth (l : list A) (n : N) (n_spec : n < length l) : A :=
-    match nth_error l n with
-    | Some x => x
-    | None => _
+  Program Fixpoint nth (l : list A) (n : N) (n_spec : n < length l) : A :=
+    match l, n with
+    | h :: _, 0 => h
+    | _ :: t, Npos p => nth t (N.pred n) _
+    | [], _ => _
     end.
   Next Obligation.
   Proof.
-    symmetry in Heq_anonymous.
-    apply nth_error_none_length in Heq_anonymous.
+    simpl in n_spec.
+    lia.
+  Qed.
+  Next Obligation.
+  Proof.
+    simpl in n_spec.
     lia.
   Qed.
 
+
   Theorem nth_in : forall (l : list A) (n : N) H, In (nth l n H) l.
   Proof.
-    intros.
-    unfold nth.
-    set (nth_obligation_1 _ _ _).
-    clearbody a.
-    simpl in a.
-    destruct nth_error eqn:Heq.
-    - apply nth_error_some_in in Heq.
-      auto.
-    - apply nth_error_none_length in Heq.
+    induction l.
+    - intros.
+      simpl in H.
       lia.
-  Qed.
-
-  Theorem nth_error_nth : forall (l : list A) (n : N) H, nth_error l n = Some (nth l n H).
-  Proof.
-    intros.
-    unfold nth.
-    set (nth_obligation_1 _ _ _).
-    clearbody a.
-    simpl in a.
-    destruct nth_error eqn:Heq.
-    - apply nth_error_some_length in H.
-      auto.
-    - apply nth_error_none_length in Heq.
-      lia.
+    - simpl.
+      destruct n.
+      + left.
+        easy.
+      + right.
+        apply IHl.
   Qed.
 End Nth.
 
@@ -1568,6 +1492,7 @@ Hint Unfold length
             repeat
             nth_error
             nth
+            take
             : list.
 
 Hint Resolve app_length
@@ -1584,4 +1509,6 @@ Hint Resolve app_length
              nth_error_some_in
              nth_error_some_length
              nth_error_none_length
+
+             nth_in
              : list.
