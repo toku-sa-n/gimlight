@@ -253,8 +253,6 @@ Section Update.
       + apply IHl.
   Qed.
 
-  Hint Resolve nth_update_eq : list.
-
   Theorem nth_error_update_neq : forall (l : list A) (n m : N) (x : A) H, n <> m -> nth_error (update l n x H) m = nth_error l m.
   Proof.
     induction l.
