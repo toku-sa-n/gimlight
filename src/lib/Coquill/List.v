@@ -392,53 +392,20 @@ Section UpdateRange.
 
   Theorem lower_0_update_range_update_first_n : forall (l : list A) r x H H1, (HalfOpenRange.lower r = 0) -> update_range l r x H = update_first_n l (HalfOpenRange.length r) x H1.
   Proof.
-    induction l.
-    - intros.
-      simpl in H1.
-      lia.
-    - intros.
-      simpl.
+    induction l; intros; simpl in *.
+    - lia.
+    - set (update_first_n_obligation_2 _ _ _ _ _ _).
+      set (update_range_obligation_3 _ _ _ _ _ _).
+      set (update_range_obligation_4 _ _ _ _ _ _).
       set (update_first_n_obligation_2 _ _ _ _ _ _).
       clearbody l0.
-      simpl in l0.
-      set (update_range_obligation_3 _ _ _ _ _ _).
       clearbody l1.
-      simpl in l1.
-      set (update_range_obligation_4 _ _ _ _ _ _).
       clearbody l2.
-      simpl in l2.
-      set (update_first_n_obligation_2 _ _ _ _ _ _).
       clearbody l3.
-      simpl in l3.
+      simpl in *. 
       destruct (HalfOpenRange.lower r =? 0) eqn:E.
-      + destruct (HalfOpenRange.length r) eqn:E'.
-        * simpl.
-          f_equal.
-          assert (l0 = l3).
-          {
-            apply proof_irrelevance.
-          }
-          rewrite H2.
-          auto.
-        * simpl.
-          f_equal.
-          assert (l0 = l3).
-          {
-            apply proof_irrelevance.
-          }
-          rewrite H2.
-          auto.
-        * auto.
-      + destruct (HalfOpenRange.length r) eqn:E'.
-        * simpl.
-          rewrite N.eqb_neq in E.
-          lia.
-        * simpl.
-          rewrite N.eqb_neq in E.
-          lia.
-        * simpl.
-          rewrite N.eqb_neq in E.
-          lia.
+      + destruct (HalfOpenRange.length r) eqn:E'; simpl; f_equal; auto; assert (l0 = l3) by apply proof_irrelevance; now rewrite H2.
+      + destruct (HalfOpenRange.length r) eqn:E'; simpl; rewrite N.eqb_neq in E; lia.
   Qed.
 
   Theorem nth_error_update_range : forall (l : list A) r x idx H, (HalfOpenRange.contains r idx) -> nth_error (update_range l r x H) idx = Some x.
