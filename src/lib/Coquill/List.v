@@ -299,25 +299,12 @@ Section UpdateFirstN.
     lia.
   Qed.
 
-  Hint Unfold update_first_n : list.
-
   Theorem length_update_first_n : forall (l : list A) n x H, length (update_first_n l n x H) = length l.
   Proof.
-    induction l; intros.
-    - simpl in H.
-      lia.
-    - simpl.
-      destruct n.
-      + simpl.
-        f_equal.
-        apply IHl.
-      + simpl.
-        f_equal.
-        apply IHl.
-      + auto.
+    induction l; intros; simpl in *.
+    - lia.
+    - destruct n; auto; simpl; now f_equal.
   Qed.
-
-  Hint Resolve update_first_n : list.
 
   Theorem update_first_n_in : forall (l : list A) n x H, In x (update_first_n l n x H).
   Proof.
