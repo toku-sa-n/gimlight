@@ -320,35 +320,6 @@ Section UpdateFirstN.
     - destruct n, idx; simpl; auto; try apply IHl; lia.
   Qed.
 
-  Hint Resolve nth_update_first_n_eq : list.
-
-  Theorem nth_error_update_first_n_neq : forall (l : list A) n m x H, m >= N.pos n -> nth_error (update_first_n l n x H) m = nth_error l m.
-  Proof.
-    induction l.
-    - intros.
-      simpl in H.
-      lia.
-    - intros.
-      simpl.
-      destruct n eqn:Hn.
-      + simpl.
-        destruct m eqn:Hm.
-        * lia.
-        * simpl.
-          apply IHl.
-          lia.
-      + simpl.
-        destruct m eqn:Hm.
-        * lia.
-        * simpl.
-          apply IHl.
-          lia.
-      + simpl.
-        destruct m eqn:Hm.
-        * lia.
-        * auto.
-  Qed.
-
   Theorem nth_update_first_n_neq : forall (l : list A) n m x H H1 H2, m >= N.pos n -> nth (update_first_n l n x H) m H1 = nth l m H2.
   Proof.
     intros.
