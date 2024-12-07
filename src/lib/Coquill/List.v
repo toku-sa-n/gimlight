@@ -244,38 +244,13 @@ Section Update.
         easy.
   Qed.
 
-  Theorem nth_error_update_eq : forall (l : list A) (n : N) (x y : A) H, nth_error (update l n x H) n = Some y -> x = y.
-  Proof.
-    induction l.
-    - intros.
-      simpl in H.
-      lia.
-    - intros.
-      simpl in H0.
-      destruct n.
-      + simpl in H0.
-        injection H0.
-        intros.
-        auto.
-      + simpl in H0.
-        apply IHl in H0.
-        auto.
-  Qed.
-
-  Hint Resolve nth_error_update_eq : list.
-
   Theorem nth_update_eq : forall (l : list A) n x H H1, nth (update l n x H) n H1 = x.
   Proof.
-    intros.
-    unfold nth.
-    set (nth_obligation_1 _ _ _).
-    clearbody y.
-    simpl in y.
-    destruct nth_error eqn:Heq.
-    - apply nth_error_update_eq in Heq.
-      auto.
-    - apply nth_error_none_length in Heq.
-      lia.
+    induction l; intros; simpl in *.
+    - lia.
+    - destruct n.
+      + easy.
+      + apply IHl.
   Qed.
 
   Hint Resolve nth_update_eq : list.
