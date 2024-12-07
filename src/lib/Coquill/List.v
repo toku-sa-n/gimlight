@@ -255,30 +255,24 @@ Section Update.
 
   Theorem nth_update_neq : forall (l : list A) n m x H H1 H2, n <> m -> nth (update l n x H) m H1 = nth l m H2.
   Proof.
-    induction l.
-    - intros.
-      simpl in H.
-      lia.
-    - intros.
-      simpl.
-      destruct n.
-      + destruct m.
-        * lia.
-        * simpl.
-          set (nth_obligation_1 _ _ _ _ _ _ _ _).
-          set (nth_obligation_1 _ _ _ _ _ _ _ _).
-          clearbody l0.
-          clearbody l1.
-          assert (l0 = l1).
-          {
-            apply proof_irrelevance.
-          }
-          now rewrite H3.
-      + destruct m.
-        * easy.
-        * simpl.
-          apply IHl.
-          lia.
+    induction l; intros; simpl in *.
+    - lia.
+    - destruct n, m.
+      + lia.
+      + simpl.
+        set (nth_obligation_1 _ _ _ _ _ _ _ _).
+        set (nth_obligation_1 _ _ _ _ _ _ _ _).
+        clearbody l0.
+        clearbody l1.
+        assert (l0 = l1).
+        {
+          apply proof_irrelevance.
+        }
+        now rewrite H3.
+      + easy.
+      + simpl.
+        apply IHl.
+        lia.
   Qed.
 End Update.
 
