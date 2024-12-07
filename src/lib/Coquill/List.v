@@ -235,17 +235,13 @@ Section Update.
 
   Theorem update_in : forall (l : list A) (n : N) (x : A) (n_spec : n < length l), In x (update l n x n_spec).
   Proof.
-    induction l; intros.
-    - simpl in n_spec.
-      lia.
-    - simpl in n_spec.
-      destruct n.
-      + simpl.
-        left.
-        reflexivity.
-      + simpl.
-        right.
-        apply IHl.
+    induction l; intros; simpl in *.
+    - lia.
+    - destruct n; simpl.
+      + left.
+        easy.
+      + right.
+        easy.
   Qed.
 
   Hint Resolve update_in : list.
