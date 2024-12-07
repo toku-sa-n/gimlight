@@ -188,7 +188,7 @@ Section Take.
 
   Hint Unfold take : list.
 
-  Theorem take_length : forall (l : list A) n H, length (take l n H) = N.pos n.
+  Theorem length_take : forall (l : list A) n H, length (take l n H) = N.pos n.
   Proof.
     induction l; intros.
     - simpl in H.
@@ -1511,4 +1511,6 @@ Hint Resolve app_length
              nth_error_none_length
 
              nth_in
+
+             length_take
              : list.
