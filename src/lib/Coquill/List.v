@@ -244,8 +244,6 @@ Section Update.
         easy.
   Qed.
 
-  Hint Resolve update_in : list.
-
   Theorem nth_error_update_eq : forall (l : list A) (n : N) (x y : A) H, nth_error (update l n x H) n = Some y -> x = y.
   Proof.
     induction l.
@@ -1497,4 +1495,7 @@ Hint Resolve app_length
              nth_in
 
              length_take
+
+             length_update
+             update_in
              : list.
