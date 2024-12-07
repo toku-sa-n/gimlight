@@ -190,18 +190,14 @@ Section Take.
 
   Theorem length_take : forall (l : list A) n H, length (take l n H) = N.pos n.
   Proof.
-    induction l; intros.
-    - simpl in H.
-      lia.
-    - simpl.
-      destruct n.
-      + simpl.
-        apply n_succ_m_pos_1.
+    induction l; intros; simpl in *.
+    - lia.
+    - destruct n; simpl.
+      + apply n_succ_m_pos_1.
         apply IHl.
-      + simpl.
-        apply n_succ_m_pos_0.
+      + apply n_succ_m_pos_0.
         apply IHl.
-      + auto.
+      + easy.
   Qed.
 End Take.
 
