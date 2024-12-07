@@ -29,7 +29,7 @@ Section Repeat.
     make (List.repeat x n) _.
   Next Obligation.
   Proof.
-    apply repeat_length.
+    apply length_repeat.
   Qed.
 End Repeat.
 

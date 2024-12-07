@@ -232,7 +232,7 @@ Section Nth.
     clearbody a.
     simpl in a.
     destruct nth_error eqn:Heq.
-    - apply nth_error_some_length in Heq.
+    - apply nth_error_some_length in H.
       auto.
     - apply nth_error_none_length in Heq.
       lia.
