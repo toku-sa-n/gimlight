@@ -1489,6 +1489,7 @@ Hint Unfold length
             nth_error
             nth
             take
+            update
             : list.
 
 Hint Resolve app_length
