@@ -308,19 +308,9 @@ Section UpdateFirstN.
 
   Theorem update_first_n_in : forall (l : list A) n x H, In x (update_first_n l n x H).
   Proof.
-    induction l; intros.
-    - simpl in H.
-      lia.
-    - simpl.
-      destruct n.
-      + simpl.
-        right.
-        apply IHl.
-      + simpl.
-        right.
-        apply IHl.
-      + simpl.
-        auto.
+    induction l; intros; simpl in *.
+    - lia.
+    - destruct n; simpl; auto; right; auto.
   Qed.
 
   Hint Resolve update_first_n_in : list.
