@@ -374,33 +374,20 @@ Section UpdateRange.
 
   Theorem length_update_range : forall (l : list A) r x H, length (update_range l r x H) = length l.
   Proof.
-    induction l.
-    - intros.
-      assert (HalfOpenRange.upper r > 0) by apply HalfOpenRange.upper_is_positive.
-      simpl in H.
+    induction l; intros; simpl in *.
+    - assert (HalfOpenRange.upper r > 0) by apply HalfOpenRange.upper_is_positive.
       lia.
-    - intros.
-      simpl.
-      set (update_first_n_obligation_2 _ _ _ _ _ _).
-      clearbody l0.
+    - set (update_first_n_obligation_2 _ _ _ _ _ _).
       set (update_range_obligation_3 _ _ _ _ _ _).
-      clearbody l1.
-      simpl in l1.
       set (update_range_obligation_4 _ _ _ _ _ _).
+      clearbody l0.
+      clearbody l1.
       clearbody l2.
-      simpl in l2.
+      simpl in *.
       destruct (HalfOpenRange.lower r =? 0) eqn:E.
-      + destruct (HalfOpenRange.length r) eqn:E'.
-        * simpl.
-          f_equal.
-          apply length_update_first_n.
-        * simpl.
-          f_equal.
-          apply length_update_first_n.
-        * auto.
+      + destruct (HalfOpenRange.length r) eqn:E'; simpl; f_equal; auto using length_update_first_n.
       + simpl.
-        f_equal.
-        apply IHl.
+        now f_equal.
   Qed.
 
   Theorem lower_0_update_range_update_first_n : forall (l : list A) r x H H1, (HalfOpenRange.lower r = 0) -> update_range l r x H = update_first_n l (HalfOpenRange.length r) x H1.
@@ -1308,6 +1295,7 @@ Hint Unfold length
             take
             update
             update_first_n
+            update_range 
             : list.
 
 Hint Resolve app_length
