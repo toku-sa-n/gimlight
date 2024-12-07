@@ -224,16 +224,13 @@ Section Update.
 
   Theorem length_update : forall (l : list A) (n : N) (x : A) (n_spec : n < length l), length (update l n x n_spec) = length l.
   Proof.
-    induction l; intros.
-    - simpl in n_spec.
-      lia.
-    - simpl in n_spec.
-      destruct n.
-      + simpl.
-        reflexivity.
+    induction l; intros; simpl in *.
+    - lia.
+    - destruct n; simpl in *.
+      + easy.
       + simpl.
         f_equal.
-        apply IHl.
+        easy.
   Qed.
 
   Hint Resolve length_update : list.
