@@ -408,47 +408,6 @@ Section UpdateRange.
       + destruct (HalfOpenRange.length r) eqn:E'; simpl; rewrite N.eqb_neq in E; lia.
   Qed.
 
-  Theorem nth_error_update_range : forall (l : list A) r x idx H, (HalfOpenRange.contains r idx) -> nth_error (update_range l r x H) idx = Some x.
-  Proof.
-    induction l.
-    - intros.
-      simpl in H.
-      assert (HalfOpenRange.upper r > 0) by apply HalfOpenRange.upper_is_positive.
-      lia.
-    - intros.
-      unfold update_range.
-      set (update_range_obligation_2 _ _ _ _ _ _).
-      clearbody l0.
-      simpl in l0.
-      set (update_range_obligation_3 _ _ _ _ _ _).
-      clearbody l1.
-      simpl in l1.
-      set (update_range_obligation_4 _ _ _ _ _ _).
-      clearbody l2.
-      simpl in l2.
-      destruct (HalfOpenRange.lower r =? 0) eqn:E.
-      + apply nth_error_update_first_n_eq.
-        simpl in *.
-        unfold HalfOpenRange.contains in H0.
-        destruct H0.
-        rewrite HalfOpenRange.lower_0_length_eq_upper; auto.
-        rewrite N.eqb_eq in E.
-        auto.
-      + rewrite N.eqb_neq in E.
-        unfold HalfOpenRange.contains in H0.
-        simpl.
-        destruct idx eqn:E'.
-        * lia.
-        * apply IHl. 
-          simpl.
-          unfold HalfOpenRange.contains.
-          split.
-          -- simpl.
-             lia.
-          -- simpl.
-             lia.
-  Qed.
-
   Theorem nth_update_range : forall (l : list A) r x idx H H1, (HalfOpenRange.contains r idx) -> nth (update_range l r x H) idx H1 = x.
   Proof.
     intros.
@@ -1295,4 +1254,5 @@ Hint Resolve app_length
              nth_update_first_n_neq
 
              length_update_range
+             lower_0_update_range_update_first_n
              : list.
