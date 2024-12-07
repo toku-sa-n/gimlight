@@ -322,35 +322,15 @@ Section UpdateFirstN.
 
   Theorem nth_update_first_n_neq : forall (l : list A) n m x H H1 H2, m >= N.pos n -> nth (update_first_n l n x H) m H1 = nth l m H2.
   Proof.
-    induction l.
-    - intros.
-      simpl in H.
-      lia.
-    - intros.
-      simpl.
-      destruct n.
-      + simpl.
-        destruct m.
-        * lia.
-        * simpl.
-          apply IHl.
-          lia.
-      + simpl.
-        destruct m.
-        * lia.
-        * simpl.
-          apply IHl.
-          lia.
-      + simpl.
-        destruct m.
-        * lia.
-        * simpl.
-          set (nth_obligation_1 _ _ _ _ _ _ _ _).
-          set (nth_obligation_1 _ _ _ _ _ _ _ _).
-          clearbody l0.
-          clearbody l1.
-          assert (l0 = l1) by apply proof_irrelevance.
-          now rewrite H3.
+    induction l; intros; simpl in *.
+    - lia.
+    - destruct n, m; simpl; try apply IHl; try lia.
+      set (nth_obligation_1 _ _ _ _ _ _ _ _).
+      set (nth_obligation_1 _ _ _ _ _ _ _ _).
+      clearbody l0.
+      clearbody l1.
+      assert (l0 = l1) by apply proof_irrelevance.
+      now rewrite H3.
   Qed.
 End UpdateFirstN.
 
