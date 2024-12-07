@@ -186,8 +186,6 @@ Section Take.
     lia.
   Qed.
 
-  Hint Unfold take : list.
-
   Theorem length_take : forall (l : list A) n H, length (take l n H) = N.pos n.
   Proof.
     induction l; intros; simpl in *.
