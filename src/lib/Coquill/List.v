@@ -233,8 +233,6 @@ Section Update.
         easy.
   Qed.
 
-  Hint Resolve length_update : list.
-
   Theorem update_in : forall (l : list A) (n : N) (x : A) (n_spec : n < length l), In x (update l n x n_spec).
   Proof.
     induction l; intros.
