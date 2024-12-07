@@ -1321,6 +1321,7 @@ Hint Unfold length
             nth
             take
             update
+            update_first_n
             : list.
 
 Hint Resolve app_length
@@ -1346,4 +1347,9 @@ Hint Resolve app_length
              update_in
              nth_update_eq
              nth_update_neq
+
+             length_update_first_n
+             update_first_n_in
+             nth_update_first_n_eq
+             nth_update_first_n_neq
              : list.
