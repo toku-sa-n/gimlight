@@ -222,8 +222,6 @@ Section Update.
     lia.
   Qed.
 
-  Hint Unfold update : list.
-
   Theorem length_update : forall (l : list A) (n : N) (x : A) (n_spec : n < length l), length (update l n x n_spec) = length l.
   Proof.
     induction l; intros.
