@@ -1175,10 +1175,6 @@ Hint Resolve app_length
              repeat_in
              repeat_empty_iff_zero
 
-             nth_error_some_in
-             nth_error_some_length
-             nth_error_none_length
-
              nth_in
 
              length_take
