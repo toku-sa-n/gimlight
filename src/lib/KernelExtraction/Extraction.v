@@ -2,7 +2,7 @@ From Coq Require Import Extraction.
 From Coq Require Import ExtrOcamlBasic.
 From Coq Require Import ExtrOcamlZBigInt.
 
-From Entity Require GameModel.
+From Kernel Require Map.
 
 Extraction Language OCaml.
 
@@ -13,5 +13,7 @@ Extraction Language OCaml.
 
   To maintain a manageable project structure without flattening our directory hierarchy, we opt to extract all definitions into a single OCaml file. 
   This approach simplifies the build process and avoids potential complications associated with unsupported nested module extractions.
+
+   The name "Kernel" comes from Ruby's Kernel module.
 *)
-Extraction "Entity.ml" GameModel.init_game_model GameModel.increment GameModel.get_count.
+Extraction "Kernel.ml" Map.initial_map.
