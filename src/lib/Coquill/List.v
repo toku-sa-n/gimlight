@@ -422,31 +422,10 @@ Section MapRange.
     - destruct lower, upper; try lia; destruct p eqn:Ep; simpl; f_equal; easy.
   Qed.
 
-  Theorem nth_map_range : forall (l : list A) r f idx H H1 H2, HalfOpenRange.contains r idx -> nth (map_range l r f H) idx H1 = f (nth l idx H2).
+  Theorem nth_map_range : forall (l : list A) lower upper f idx H H1 H2, lower <= idx < upper -> nth (map_range l lower upper f H) idx H1 = f (nth l idx H2).
   Proof.
-    intros.
-    unfold nth.
-    set (nth_obligation_1 _ _ _).
-    clearbody y.
-    simpl in y.
-    set (nth_obligation_1 _ _ _).
-    clearbody y0.
-    simpl in y0.
-    destruct nth_error eqn:Heq.
-    - rewrite nth_error_map_range in Heq.
-      + destruct (nth_error l idx) eqn:Heq'.
-        * simpl in Heq. 
-          injection Heq.
-          intros.
-          auto.
-        * apply nth_error_none_length in Heq'.
-          lia.
-      + auto.
-    - destruct (nth_error l idx) eqn:Heq'.
-      + apply nth_error_none_length in Heq.
-        lia.
-      + apply nth_error_none_length in Heq.
-        lia.
+    induction l; intros; simpl in *; try lia.
+    destruct lower, upper; try lia; destruct idx, p; simpl; try apply IHl; try lia; easy.
   Qed.
 
   Theorem map_range_map : forall (l : list A) r f H, HalfOpenRange.lower r = 0 -> HalfOpenRange.upper r = length l -> map_range l r f H = map f l.
