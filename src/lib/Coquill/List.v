@@ -1188,11 +1188,6 @@ Hint Resolve app_length
              nth_update_eq
              nth_update_neq
 
-             length_update_first_n
-             update_first_n_in
-             nth_update_first_n_eq
-             nth_update_first_n_neq
-
              length_update_range
              lower_0_update_range_update_first_n
              : list.
