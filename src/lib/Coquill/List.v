@@ -296,75 +296,48 @@ Section UpdateRange.
           lia.
   Qed.
 
-  Theorem nth_error_update_range_neq : forall (l : list A) r x idx H, ~ (HalfOpenRange.contains r idx) -> nth_error (update_range l r x H) idx = nth_error l idx.
+  Theorem nth_update_range_neq : forall (l : list A) lower upper x idx H H1 H2, ~ (lower <= idx < upper) -> nth (update_range l lower upper x H) idx H1 = nth l idx H2.
   Proof.
     induction l.
     - intros.
       simpl in H.
-      assert (HalfOpenRange.upper r > 0) by apply HalfOpenRange.upper_is_positive.
       lia.
     - intros.
-      unfold update_range.
-      set (update_range_obligation_2 _ _ _ _ _ _).
-      clearbody l0.
-      simpl in l0.
-      set (update_range_obligation_3 _ _ _ _ _ _).
-      clearbody l1.
-      simpl in l1.
-      set (update_range_obligation_4 _ _ _ _ _ _).
-      clearbody l2.
-      simpl in l2.
-      destruct (HalfOpenRange.lower r =? 0) eqn:E.
-      + apply nth_error_update_first_n_neq.
-        assert (N.pos (HalfOpenRange.length r) = HalfOpenRange.upper r).
-        {
-          apply HalfOpenRange.lower_0_length_eq_upper.
-          rewrite N.eqb_eq in E.
-          auto.
-        }
-        rewrite H1.
-        apply (HalfOpenRange.lower_0_not_contained_gt r idx).
-        * rewrite N.eqb_eq in E.
-          auto.
-        * auto.
+      simpl.
+      destruct lower.
+      + destruct upper.
+        * lia.
+        * destruct p.
+          -- simpl.
+             destruct idx.
+             ++ lia.
+             ++ simpl.
+                apply IHl.
+                lia.
+          -- simpl.
+             destruct idx.
+             ++ lia.
+             ++ simpl.
+                apply IHl.
+                lia.
+          -- simpl.
+             destruct idx eqn:E.
+             ++ lia.
+             ++ simpl.
+                set (nth_obligation_1 _ _ _ _ _ _ _ _).
+                set (nth_obligation_1 _ _ _ _ _ _ _ _).
+                clearbody l0.
+                clearbody l1.
+                assert (l0 = l1) by apply proof_irrelevance.
+                now rewrite H3.
       + simpl.
-        destruct idx eqn:E'.
-        * auto.
-        * apply IHl.
-          simpl.
-          unfold HalfOpenRange.contains.
-          intro.
-          unfold HalfOpenRange.shift_minus in H1.
-          simpl in H1.
-          unfold HalfOpenRange.contains in H0.
-          lia.
-  Qed.
-
-  Theorem nth_update_range_neq : forall (l : list A) r x idx H H1 H2, ~ (HalfOpenRange.contains r idx) -> nth (update_range l r x H) idx H1 = nth l idx H2.
-  Proof.
-    intros.
-    unfold nth.
-    set (nth_obligation_1 _ _ _).
-    clearbody y.
-    simpl in y.
-    set (nth_obligation_1 _ _ _).
-    clearbody y0.
-    simpl in y0.
-    destruct nth_error eqn:Heq.
-    - destruct (nth_error l idx) eqn:Heq'.
-      + apply nth_error_update_range_neq with (l := l) (r := r) (x := x) (H := H) in H0.
-        rewrite H0 in Heq.
-        rewrite Heq in Heq'.
-        injection Heq'.
-        intros.
-        auto.
-      + apply nth_error_none_length in Heq'.
-        lia.
-    - destruct (nth_error l idx) eqn:Heq'.
-      + apply nth_error_none_length in Heq.
-        lia.
-      + apply nth_error_none_length in Heq.
-        lia.
+        destruct upper.
+        * lia.
+        * destruct idx.
+          -- easy.
+          -- simpl.
+             apply IHl.
+             lia.
   Qed.
 End UpdateRange.
 
