@@ -276,75 +276,20 @@ Section Update.
   Qed.
 End Update.
 
-Section UpdateFirstN.
-  Context {A : Type}.
-
-  Program Fixpoint update_first_n (l : list A) (n : positive) (x : A) (n_spec : N.pos n <= length l) : list A :=
-    match l with
-    | [] => _
-    | y :: l' =>
-      match n with
-      | xH => x :: l'
-      | _ => x :: update_first_n l' (Pos.pred n) x _
-      end
-    end.
-  Next Obligation.
-  Proof.
-    simpl in n_spec.
-    lia.
-  Qed.
-  Next Obligation.
-  Proof.
-    simpl in n_spec.
-    lia.
-  Qed.
-
-  Theorem length_update_first_n : forall (l : list A) n x H, length (update_first_n l n x H) = length l.
-  Proof.
-    induction l; intros; simpl in *.
-    - lia.
-    - destruct n; auto; simpl; now f_equal.
-  Qed.
-
-  Theorem update_first_n_in : forall (l : list A) n x H, In x (update_first_n l n x H).
-  Proof.
-    induction l; intros; simpl in *.
-    - lia.
-    - destruct n; simpl; auto; right; auto.
-  Qed.
-
-  Theorem nth_update_first_n_eq : forall (l : list A) n idx x H H1, idx < N.pos n -> nth (update_first_n l n x H) idx H1 = x.
-  Proof.
-    induction l; intros; simpl in *.
-    - lia.
-    - destruct n, idx; simpl; auto; try apply IHl; lia.
-  Qed.
-
-  Theorem nth_update_first_n_neq : forall (l : list A) n m x H H1 H2, m >= N.pos n -> nth (update_first_n l n x H) m H1 = nth l m H2.
-  Proof.
-    induction l; intros; simpl in *.
-    - lia.
-    - destruct n, m; simpl; try apply IHl; try lia.
-      set (nth_obligation_1 _ _ _ _ _ _ _ _).
-      set (nth_obligation_1 _ _ _ _ _ _ _ _).
-      clearbody l0.
-      clearbody l1.
-      assert (l0 = l1) by apply proof_irrelevance.
-      now rewrite H3.
-  Qed.
-End UpdateFirstN.
-
 Section UpdateRange.
   Context {A : Type}.
 
   Program Fixpoint update_range (l : list A) (r : HalfOpenRange.t) (x : A) (r_spec : HalfOpenRange.upper r <= length l) : list A :=
     match l with
     | [] => _
-    | y :: l' =>
-      match HalfOpenRange.lower r =? 0 with
-      | true => update_first_n l (HalfOpenRange.length r) x _
-      | false => y :: update_range l' (HalfOpenRange.shift_minus r 1 _) x _
-      end
+    | h :: t =>
+        match r with
+        | HalfOpenRange.make N0 N0 _ => _
+        | HalfOpenRange.make N0 (Npos xH) _ => x :: t
+        | HalfOpenRange.make N0 (Npos (xO _))_ => x :: update_range t (HalfOpenRange.make 0 (N.pred (HalfOpenRange.upper r)) _) x _
+        | HalfOpenRange.make N0 (Npos (xI _))_ => x :: update_range t (HalfOpenRange.make 0 (N.pred (HalfOpenRange.upper r)) _) x _
+        | HalfOpenRange.make (N.pos _) _ _ => h :: update_range t (HalfOpenRange.shift_minus r 1 _) x _
+        end
     end.
   Next Obligation.
   Proof.
@@ -354,21 +299,17 @@ Section UpdateRange.
   Qed.
   Next Obligation.
   Proof.
-    simpl in r_spec.
-    simpl.
-    assert (N.pos (HalfOpenRange.length r) <= HalfOpenRange.upper r) by apply HalfOpenRange.length_le_upper.
+    simpl in *.
     lia.
   Qed.
   Next Obligation.
   Proof.
-    unfold HalfOpenRange.contains in Heq_anonymous.
-    symmetry in Heq_anonymous.
-    apply N.eqb_neq in Heq_anonymous.
+    simpl in *.
     lia.
   Qed.
   Next Obligation.
   Proof.
-    simpl in r_spec.
+    simpl in *.
     lia.
   Qed.
 
