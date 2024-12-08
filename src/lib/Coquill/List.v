@@ -1161,7 +1161,6 @@ Hint Unfold length
             nth
             take
             update
-            update_first_n
             update_range 
             : list.
 
