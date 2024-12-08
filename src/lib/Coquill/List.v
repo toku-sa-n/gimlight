@@ -982,4 +982,5 @@ Hint Resolve app_length
              length_map_nth
              nth_map_nth
              map_nth_update_nth
+             map_nth_id
              : list.
