@@ -276,6 +276,11 @@ Section UpdateRange.
     simpl in *.
     lia.
   Qed.
+  Next Obligation.
+  Proof.
+    simpl in *.
+    lia.
+  Qed.
 
   Theorem length_update_range : forall (l : list A) r x H, length (update_range l r x H) = length l.
   Proof.
