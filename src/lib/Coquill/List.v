@@ -355,39 +355,6 @@ Section MapNth.
       now rewrite H0.
   Qed.
 
-  Theorem map_nth_update_nth_error : forall (l : list A) n x f H, nth_error l n = Some x -> map_nth l n f H = update l n (f x) H.
-  Proof.
-    induction l.
-    - intros.
-      discriminate.
-    - intros.
-      simpl in H.
-      destruct n.
-      + simpl.
-        simpl in H0.
-        injection H0.
-        intros.
-        f_equal.
-        f_equal.
-        auto.
-      + simpl.
-        f_equal.
-        set (map_nth_obligation_2 _ _ _ _ _ _ _ _).
-        clearbody l0.
-        simpl in l0.
-        set (update_obligation_2 _ _ _ _ _ _ _ _).
-        clearbody l1.
-        simpl in l1.
-        simpl in H0.
-        eapply IHl in H0.
-        assert (l0 = l1).
-        {
-          apply proof_irrelevance.
-        }
-        rewrite H1.
-        apply H0.
-  Qed.
-
   Theorem map_nth_update_nth : forall (l : list A) n f H H1, map_nth l n f H = update l n (f (nth l n H1)) H.
   Proof.
     intros.
@@ -1022,4 +989,5 @@ Hint Resolve app_length
              nth_update_range_neq
 
              length_map_nth
+             nth_map_nth
              : list.
