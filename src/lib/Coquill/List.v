@@ -300,19 +300,13 @@ Section UpdateRange.
   Proof.
     induction l; intros; simpl in *.
     - lia.
-    - destruct lower, upper; try lia.
-      + destruct p, idx; simpl; try apply IHl; try lia.
-        set (nth_obligation_1 _ _ _ _ _ _ _ _).
-        set (nth_obligation_1 _ _ _ _ _ _ _ _).
-        clearbody l0.
-        clearbody l1.
-        assert (l0 = l1) by apply proof_irrelevance.
-        now rewrite H3.
-      + destruct idx.
-        * easy.
-        * simpl.
-          apply IHl.
-          lia.
+    - destruct lower, upper; try lia; destruct idx, p; simpl; try apply IHl; try lia; auto.
+      set (nth_obligation_1 _ _ _ _ _ _ _).
+      set (nth_obligation_1 _ _ _ _ _ _ _).
+      clearbody l0.
+      clearbody l1.
+      assert (l0 = l1) by apply proof_irrelevance.
+      now rewrite H3.
   Qed.
 End UpdateRange.
 
