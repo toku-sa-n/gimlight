@@ -374,16 +374,11 @@ Section MapNth.
 
   Theorem map_nth_id : forall (l : list A) n H, map_nth l n (fun x => x) H = l.
   Proof.
-    induction l.
-    - intros.
-      simpl in H.
-      lia.
-    - intros.
+    induction l; intros; simpl in *.
+    - lia.
+    - destruct n; auto.
       simpl.
-      destruct n.
-      + auto.
-      + f_equal.
-        apply IHl.
+      now f_equal.
   Qed.
 End MapNth.
 
@@ -986,4 +981,5 @@ Hint Resolve app_length
 
              length_map_nth
              nth_map_nth
+             map_nth_update_nth
              : list.
