@@ -279,6 +279,39 @@ Section UpdateRange.
 
   Theorem nth_update_range : forall (l : list A) lower upper x idx H H1, lower <= idx < upper -> nth (update_range l lower upper x H) idx H1 = x.
   Proof.
+    induction l.
+    - intros.
+      simpl in H.
+      lia.
+    - intros.
+      simpl.
+      destruct lower.
+      + destruct upper.
+        * lia.
+        * destruct p.
+          -- simpl.
+             destruct idx.
+             ++ easy.
+             ++ simpl.
+                apply IHl.
+                lia.
+          -- simpl.
+             destruct idx.
+             ++ easy.
+             ++ simpl.
+                apply IHl.
+                lia.
+          -- simpl.
+             destruct idx.
+             ++ easy.
+             ++ lia.
+      + simpl.
+        destruct idx.
+        * lia.
+        * simpl.
+          apply IHl.
+          lia.
+  Qed.
 
   Theorem nth_error_update_range_neq : forall (l : list A) r x idx H, ~ (HalfOpenRange.contains r idx) -> nth_error (update_range l r x H) idx = nth_error l idx.
   Proof.
