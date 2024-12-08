@@ -637,4 +637,5 @@ Hint Resolve app_length
              map_nth_id
 
              length_map_range
+             nth_map_range
              : list.
