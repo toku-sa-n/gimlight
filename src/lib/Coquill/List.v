@@ -285,7 +285,7 @@ Section UpdateRange.
     | h :: t =>
         match r with
         | HalfOpenRange.make 0 0 _ => _
-        | HalfOpenRange.make 0 (Npos xH) _ => x :: t
+        | HalfOpenRange.make 0 1 _ => x :: t
         | HalfOpenRange.make 0 (Npos (xO _))_ => x :: update_range t (HalfOpenRange.make 0 (N.pred (HalfOpenRange.upper r)) _) x _
         | HalfOpenRange.make 0 (Npos (xI _))_ => x :: update_range t (HalfOpenRange.make 0 (N.pred (HalfOpenRange.upper r)) _) x _
         | HalfOpenRange.make (N.pos _) _ _ => h :: update_range t (HalfOpenRange.shift_minus r 1 _) x _
