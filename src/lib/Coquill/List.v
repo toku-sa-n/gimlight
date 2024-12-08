@@ -335,61 +335,29 @@ Section MapNth.
 
   Theorem length_map_nth : forall (l : list A) n f H, length (map_nth l n f H) = length l.
   Proof.
-    induction l.
-    - intros.
-      simpl in H.
-      lia.
-    - intros.
-      simpl.
-      destruct n.
-      + simpl.
-        reflexivity.
-      + simpl.
-        f_equal.
-        apply IHl.
-  Qed.
-
-  Theorem nth_error_map_nth : forall (l : list A) n f H, nth_error (map_nth l n f H) n = option_map f (nth_error l n).
-  Proof.
-    induction l.
-    - intros.
-      simpl in H.
-      lia.
-    - intros.
-      simpl.
-      destruct n.
-      + simpl.
-        reflexivity.
-      + simpl.
-        apply IHl.
+    induction l; intros; simpl in *.
+    - lia.
+    - destruct n; simpl; f_equal; auto.
   Qed.
 
   Theorem nth_map_nth : forall (l : list A) n f H H1, nth (map_nth l n f H) n H1 = f (nth l n H).
   Proof.
-    intros.
-    unfold nth.
-    set (nth_obligation_1 _ _ _).
-    clearbody y.
-    simpl in y.
-    set (nth_obligation_1 _ _ _).
-    clearbody y0.
-    simpl in y0.
-    destruct nth_error eqn:Heq.
-    - destruct (nth_error l n) eqn:Heq'.
-      + rewrite nth_error_map_nth in Heq.
-        rewrite Heq' in Heq.
-        injection Heq.
-        intros.
-        auto.
-      + rewrite nth_error_map_nth in Heq.
-        rewrite Heq' in Heq.
-        discriminate.
-    - destruct (nth_error l n) eqn:Heq'.
-      + rewrite nth_error_map_nth in Heq.
-        rewrite Heq' in Heq.
-        discriminate.
-      + apply nth_error_none_length in H1; try lia.
-        auto.
+    induction l.
+    - intros.
+      simpl in H.
+      lia.
+    - intros.
+      simpl.
+      destruct n.
+      + auto.
+      + simpl.
+        rewrite IHl.
+        set (nth_obligation_1 _ _ _ _ _ _ _ _).
+        set (map_nth_obligation_2 _ _ _ _ _ _ _ _).
+        clearbody l0.
+        clearbody l1.
+        assert (l0 = l1) by apply proof_irrelevance.
+        now rewrite H0.
   Qed.
 
   Theorem map_nth_update_nth_error : forall (l : list A) n x f H, nth_error l n = Some x -> map_nth l n f H = update l n (f x) H.
@@ -1057,4 +1025,6 @@ Hint Resolve app_length
              length_update_range
              nth_update_range_eq
              nth_update_range_neq
+
+             length_map_nth
              : list.
