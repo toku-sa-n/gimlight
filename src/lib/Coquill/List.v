@@ -1123,7 +1123,6 @@ Hint Unfold length
             repeat
             nth_error
             nth
-            take
             update
             update_range 
             : list.
@@ -1140,8 +1139,6 @@ Hint Resolve app_length
              repeat_empty_iff_zero
 
              nth_in
-
-             length_take
 
              length_update
              update_in
