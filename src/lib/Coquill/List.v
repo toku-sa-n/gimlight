@@ -1033,6 +1033,7 @@ Hint Unfold length
             nth
             update
             update_range 
+            map_nth
             : list.
 
 Hint Resolve app_length
