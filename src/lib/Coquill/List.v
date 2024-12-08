@@ -298,46 +298,21 @@ Section UpdateRange.
 
   Theorem nth_update_range_neq : forall (l : list A) lower upper x idx H H1 H2, ~ (lower <= idx < upper) -> nth (update_range l lower upper x H) idx H1 = nth l idx H2.
   Proof.
-    induction l.
-    - intros.
-      simpl in H.
-      lia.
-    - intros.
-      simpl.
-      destruct lower.
-      + destruct upper.
-        * lia.
-        * destruct p.
-          -- simpl.
-             destruct idx.
-             ++ lia.
-             ++ simpl.
-                apply IHl.
-                lia.
-          -- simpl.
-             destruct idx.
-             ++ lia.
-             ++ simpl.
-                apply IHl.
-                lia.
-          -- simpl.
-             destruct idx eqn:E.
-             ++ lia.
-             ++ simpl.
-                set (nth_obligation_1 _ _ _ _ _ _ _ _).
-                set (nth_obligation_1 _ _ _ _ _ _ _ _).
-                clearbody l0.
-                clearbody l1.
-                assert (l0 = l1) by apply proof_irrelevance.
-                now rewrite H3.
-      + simpl.
-        destruct upper.
-        * lia.
-        * destruct idx.
-          -- easy.
-          -- simpl.
-             apply IHl.
-             lia.
+    induction l; intros; simpl in *.
+    - lia.
+    - destruct lower, upper; try lia.
+      + destruct p, idx; simpl; try apply IHl; try lia.
+        set (nth_obligation_1 _ _ _ _ _ _ _ _).
+        set (nth_obligation_1 _ _ _ _ _ _ _ _).
+        clearbody l0.
+        clearbody l1.
+        assert (l0 = l1) by apply proof_irrelevance.
+        now rewrite H3.
+      + destruct idx.
+        * easy.
+        * simpl.
+          apply IHl.
+          lia.
   Qed.
 End UpdateRange.
 
