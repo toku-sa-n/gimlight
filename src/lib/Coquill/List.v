@@ -357,23 +357,24 @@ Section MapNth.
 
   Theorem map_nth_update_nth : forall (l : list A) n f H H1, map_nth l n f H = update l n (f (nth l n H1)) H.
   Proof.
-    intros.
-    destruct (nth_error l n) eqn:Heq.
-    - assert (map_nth l n f H = update l n (f a) H).
-      {
-        apply map_nth_update_nth_error.
-        auto.
-      }
-      rewrite H0.
-      f_equal.
-      f_equal.
-      erewrite nth_error_nth in Heq.
-      injection Heq.
-      intros.
-      symmetry.
-      apply H2.
-    - apply nth_error_none_length in Heq.
+    induction l.
+    - intros.
+      simpl in H.
       lia.
+    - intros.
+      simpl.
+      destruct n.
+      + auto.
+      + simpl.
+        f_equal.
+        set (map_nth_obligation_2 _ _ _ _ _ _ _ _).
+        set (update_obligation_2 _ _ _ _ _ _ _ _).
+        set (nth_obligation_1 _ _ _ _ _ _ _ _).
+        clearbody l0.
+        clearbody l1.
+        clearbody l2.
+        assert (l0 = l1) by apply proof_irrelevance.
+        now rewrite H0.
   Qed.
 
   Theorem map_nth_id : forall (l : list A) n H, map_nth l n (fun x => x) H = l.
