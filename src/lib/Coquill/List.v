@@ -357,24 +357,19 @@ Section MapNth.
 
   Theorem map_nth_update_nth : forall (l : list A) n f H H1, map_nth l n f H = update l n (f (nth l n H1)) H.
   Proof.
-    induction l.
-    - intros.
-      simpl in H.
-      lia.
-    - intros.
+    induction l; intros; simpl in *.
+    - lia.
+    - destruct n; auto.
       simpl.
-      destruct n.
-      + auto.
-      + simpl.
-        f_equal.
-        set (map_nth_obligation_2 _ _ _ _ _ _ _ _).
-        set (update_obligation_2 _ _ _ _ _ _ _ _).
-        set (nth_obligation_1 _ _ _ _ _ _ _ _).
-        clearbody l0.
-        clearbody l1.
-        clearbody l2.
-        assert (l0 = l1) by apply proof_irrelevance.
-        now rewrite H0.
+      f_equal.
+      set (map_nth_obligation_2 _ _ _ _ _ _ _ _).
+      set (update_obligation_2 _ _ _ _ _ _ _ _).
+      set (nth_obligation_1 _ _ _ _ _ _ _ _).
+      clearbody l0.
+      clearbody l1.
+      clearbody l2.
+      assert (l0 = l1) by apply proof_irrelevance.
+      now rewrite H0.
   Qed.
 
   Theorem map_nth_id : forall (l : list A) n H, map_nth l n (fun x => x) H = l.
