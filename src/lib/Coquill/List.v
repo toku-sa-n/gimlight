@@ -243,43 +243,31 @@ End Update.
 Section UpdateRange.
   Context {A : Type}.
 
-  Program Fixpoint update_range (l : list A) (r : HalfOpenRange.t) (x : A) (r_spec : HalfOpenRange.upper r <= length l) : list A :=
-    match l with
-    | [] => _
-    | h :: t =>
-        match r with
-        | HalfOpenRange.make 0 0 _ => _
-        | HalfOpenRange.make 0 1 _ => x :: t
-        | HalfOpenRange.make 0 (Npos (xO _)) _
-        | HalfOpenRange.make 0 (Npos (xI _)) _ => x :: update_range t (HalfOpenRange.make 0 (N.pred (HalfOpenRange.upper r)) _) x _
-        | HalfOpenRange.make (N.pos _) _ _ => h :: update_range t (HalfOpenRange.shift_minus r 1 _) x _
-        end
+  Program Fixpoint update_range (l : list A) (lower upper : N) (x : A) (H : 0 <= lower /\ lower < upper /\ upper <= length l) : list A :=
+    match l, lower, upper with
+    | [], _, _ => _
+    | h :: t, 0, 0 => _
+    | h :: t, 0, Npos xH => x :: t
+    | h :: t, 0, Npos (xO _) => x :: update_range t 0 (N.pred upper) x _
+    | h :: t, 0, Npos (xI _) => x :: update_range t 0 (N.pred upper) x _
+    | h :: t, Npos _, _ => h :: update_range t (N.pred lower) (N.pred upper) x _
     end.
   Next Obligation.
   Proof.
-    simpl in r_spec.
-    assert (HalfOpenRange.upper r > 0) by apply HalfOpenRange.upper_is_positive.
+    simpl in H1.
     lia.
   Qed.
   Next Obligation.
   Proof.
-    simpl in *.
-    lia.
+    split; simpl in *; lia.
   Qed.
   Next Obligation.
   Proof.
-    simpl in *.
-    lia.
+    split; simpl in *; lia.
   Qed.
   Next Obligation.
   Proof.
-    simpl in *.
-    lia.
-  Qed.
-  Next Obligation.
-  Proof.
-    simpl in *.
-    lia.
+    split; simpl in *; lia.
   Qed.
 
   Theorem length_update_range : forall (l : list A) r x H, length (update_range l r x H) = length l.
@@ -287,18 +275,22 @@ Section UpdateRange.
     induction l; intros; simpl in *.
     - assert (HalfOpenRange.upper r > 0) by apply HalfOpenRange.upper_is_positive.
       lia.
-    - set (update_first_n_obligation_2 _ _ _ _ _ _).
+    - set (update_range_obligation_2 _ _ _ _ _ _).
       set (update_range_obligation_3 _ _ _ _ _ _).
       set (update_range_obligation_4 _ _ _ _ _ _).
+      set (update_range_obligation_5 _ _ _ _ _ _).
+      set (update_range_obligation_6 _ _ _ _ _ _).
+      set (update_range_obligation_7 _ _ _ _ _ _).
+      set (update_range_obligation_8 _ _ _ _ _ _).
       clearbody l0.
       clearbody l1.
       clearbody l2.
+      clearbody l3.
+      clearbody l4.
+      clearbody l5.
+      clearbody l6.
       simpl in *.
-      destruct (HalfOpenRange.lower r =? 0) eqn:E.
-      + destruct (HalfOpenRange.length r) eqn:E'; simpl; f_equal; auto using length_update_first_n.
-      + simpl.
-        now f_equal.
-  Qed.
+      destruct (HalfOpenRange.lower r) eqn:E.
 
   Theorem lower_0_update_range_update_first_n : forall (l : list A) r x H H1, (HalfOpenRange.lower r = 0) -> update_range l r x H = update_first_n l (HalfOpenRange.length r) x H1.
   Proof.
