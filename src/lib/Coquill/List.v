@@ -415,35 +415,11 @@ Section MapRange.
     lia.
   Qed.
 
-  Theorem length_map_range : forall (l : list A) r f H, length (map_range l r f H) = length l.
+  Theorem length_map_range : forall (l : list A) lower upper f H, length (map_range l lower upper f H) = length l.
   Proof.
-    induction l.
-    - intros.
-      assert (HalfOpenRange.upper r > 0) by apply HalfOpenRange.upper_is_positive.
-      simpl in H.
-      lia.
-    - intros.
-      simpl.
-      set (map_first_n_obligation_2 _ _ _ _ _ _).
-      clearbody l0.
-      set (map_range_obligation_3 _ _ _ _ _ _).
-      clearbody l1.
-      simpl in l1.
-      set (map_range_obligation_4 _ _ _ _ _ _).
-      clearbody l2.
-      simpl in l2.
-      destruct (HalfOpenRange.lower r =? 0) eqn:E.
-      + destruct (HalfOpenRange.length r) eqn:E'.
-        * simpl.
-          f_equal.
-          apply length_map_first_n.
-        * simpl.
-          f_equal.
-          apply length_map_first_n.
-        * auto.
-      + simpl.
-        f_equal.
-        apply IHl.
+    induction l; intros; simpl in *.
+    - lia.
+    - destruct lower, upper; try lia; destruct p eqn:Ep; simpl; f_equal; easy.
   Qed.
 
   Theorem lower_0_map_range_map_first_n : forall (l : list A) r f H H1, (HalfOpenRange.lower r = 0) -> map_range l r f H = map_first_n l (HalfOpenRange.length r) f H1.
@@ -744,6 +720,7 @@ Hint Unfold length
             update
             update_range 
             map_nth
+            map_range
             : list.
 
 Hint Resolve app_length
@@ -772,4 +749,6 @@ Hint Resolve app_length
              nth_map_nth
              map_nth_update_nth
              map_nth_id
+
+             length_map_range
              : list.
