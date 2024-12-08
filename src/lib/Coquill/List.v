@@ -385,38 +385,33 @@ End MapNth.
 Section MapRange.
   Context {A : Type}.
 
-  Program Fixpoint map_range (l : list A) (r : HalfOpenRange.t) (f : A -> A) (r_spec : HalfOpenRange.upper r <= length l) : list A :=
-    match l with
-    | [] => _
-    | x :: l' =>
-      match HalfOpenRange.lower r =? 0 with
-      | true => map_first_n l (HalfOpenRange.length r) f _
-      | false => x :: map_range l' (HalfOpenRange.shift_minus r 1 _) f _
-      end
+  Program Fixpoint map_range (l : list A) (lower upper : N) (f : A -> A) (H : 0 <= lower /\ lower < upper /\ upper <= length l) : list A :=
+    match l, lower, upper with
+    | [], _, _ => _
+    | h :: t, 0, 0 => _
+    | h :: t, 0, Npos xH => f h :: t
+    | h :: t, 0, Npos (xO _) => f h :: map_range t 0 (N.pred upper) f _
+    | h :: t, 0, Npos (xI _) => f h :: map_range t 0 (N.pred upper) f _
+    | h :: t, Npos _, _ => h :: map_range t (N.pred lower) (N.pred upper) f _
     end.
   Next Obligation.
   Proof.
-    simpl in r_spec.
-    assert (HalfOpenRange.upper r > 0) by apply HalfOpenRange.upper_is_positive.
+    simpl in H1.
     lia.
   Qed.
   Next Obligation.
   Proof.
-    simpl in r_spec.
-    simpl.
-    assert (N.pos (HalfOpenRange.length r) <= HalfOpenRange.upper r) by apply HalfOpenRange.length_le_upper.
+    simpl in H1.
     lia.
   Qed.
   Next Obligation.
   Proof.
-    unfold HalfOpenRange.contains in Heq_anonymous.
-    symmetry in Heq_anonymous.
-    apply N.eqb_neq in Heq_anonymous.
+    simpl in H1.
     lia.
   Qed.
   Next Obligation.
   Proof.
-    simpl in r_spec.
+    simpl in H1.
     lia.
   Qed.
 
