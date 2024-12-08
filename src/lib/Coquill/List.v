@@ -163,42 +163,6 @@ Section Nth.
   Qed.
 End Nth.
 
-Section Take.
-  Context {A : Type}.
-
-  Program Fixpoint take (l : list A) (n : positive) (n_spec : N.pos n <= length l) : list A :=
-    match l with
-    | [] => _
-    | x :: l' =>
-      match n with
-      | xH => [x]
-      | _ => x :: take l' (Pos.pred n) _
-      end
-    end.
-  Next Obligation.
-  Proof.
-    simpl in n_spec.
-    lia.
-  Qed.
-  Next Obligation.
-  Proof.
-    simpl in n_spec.
-    lia.
-  Qed.
-
-  Theorem length_take : forall (l : list A) n H, length (take l n H) = N.pos n.
-  Proof.
-    induction l; intros; simpl in *.
-    - lia.
-    - destruct n; simpl.
-      + apply n_succ_m_pos_1.
-        apply IHl.
-      + apply n_succ_m_pos_0.
-        apply IHl.
-      + easy.
-  Qed.
-End Take.
-
 Section Update.
   Context {A : Type}.
 
