@@ -270,62 +270,15 @@ Section UpdateRange.
     split; simpl in *; lia.
   Qed.
 
-  Theorem length_update_range : forall (l : list A) r x H, length (update_range l r x H) = length l.
-  Proof.
-    induction l; intros; simpl in *.
-    - assert (HalfOpenRange.upper r > 0) by apply HalfOpenRange.upper_is_positive.
-      lia.
-    - set (update_range_obligation_2 _ _ _ _ _ _).
-      set (update_range_obligation_3 _ _ _ _ _ _).
-      set (update_range_obligation_4 _ _ _ _ _ _).
-      set (update_range_obligation_5 _ _ _ _ _ _).
-      set (update_range_obligation_6 _ _ _ _ _ _).
-      set (update_range_obligation_7 _ _ _ _ _ _).
-      set (update_range_obligation_8 _ _ _ _ _ _).
-      clearbody l0.
-      clearbody l1.
-      clearbody l2.
-      clearbody l3.
-      clearbody l4.
-      clearbody l5.
-      clearbody l6.
-      simpl in *.
-      destruct (HalfOpenRange.lower r) eqn:E.
-
-  Theorem lower_0_update_range_update_first_n : forall (l : list A) r x H H1, (HalfOpenRange.lower r = 0) -> update_range l r x H = update_first_n l (HalfOpenRange.length r) x H1.
+  Theorem length_update_range : forall (l : list A) lower upper x H, length (update_range l lower upper x H) = length l.
   Proof.
     induction l; intros; simpl in *.
     - lia.
-    - set (update_first_n_obligation_2 _ _ _ _ _ _).
-      set (update_range_obligation_3 _ _ _ _ _ _).
-      set (update_range_obligation_4 _ _ _ _ _ _).
-      set (update_first_n_obligation_2 _ _ _ _ _ _).
-      clearbody l0.
-      clearbody l1.
-      clearbody l2.
-      clearbody l3.
-      simpl in *. 
-      destruct (HalfOpenRange.lower r =? 0) eqn:E.
-      + destruct (HalfOpenRange.length r) eqn:E'; simpl; f_equal; auto; assert (l0 = l3) by apply proof_irrelevance; now rewrite H2.
-      + destruct (HalfOpenRange.length r) eqn:E'; simpl; rewrite N.eqb_neq in E; lia.
+    - destruct lower, upper; try lia; destruct p eqn:Ep; simpl; f_equal; easy.
   Qed.
 
-  Theorem nth_update_range : forall (l : list A) r x idx H H1, (HalfOpenRange.contains r idx) -> nth (update_range l r x H) idx H1 = x.
+  Theorem nth_update_range : forall (l : list A) lower upper x idx H H1, lower <= idx < upper -> nth (update_range l lower upper x H) idx H1 = x.
   Proof.
-    intros.
-    unfold nth.
-    set (nth_obligation_1 _ _ _).
-    clearbody y.
-    simpl in y.
-    destruct nth_error eqn:Heq.
-    - rewrite nth_error_update_range in Heq.
-      + injection Heq.
-        intros.
-        auto.
-      + auto.
-    - apply nth_error_none_length in Heq.
-      lia.
-  Qed.
 
   Theorem nth_error_update_range_neq : forall (l : list A) r x idx H, ~ (HalfOpenRange.contains r idx) -> nth_error (update_range l r x H) idx = nth_error l idx.
   Proof.
