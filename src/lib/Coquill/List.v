@@ -277,7 +277,7 @@ Section UpdateRange.
     - destruct lower, upper; try lia; destruct p eqn:Ep; simpl; f_equal; easy.
   Qed.
 
-  Theorem nth_update_range : forall (l : list A) lower upper x idx H H1, lower <= idx < upper -> nth (update_range l lower upper x H) idx H1 = x.
+  Theorem nth_update_range_eq : forall (l : list A) lower upper x idx H H1, lower <= idx < upper -> nth (update_range l lower upper x H) idx H1 = x.
   Proof.
     induction l; intros; simpl in *.
     - lia.
@@ -1054,5 +1054,6 @@ Hint Resolve app_length
              nth_update_neq
 
              length_update_range
-             lower_0_update_range_update_first_n
+             nth_update_range_eq
+             nth_update_range_neq
              : list.
