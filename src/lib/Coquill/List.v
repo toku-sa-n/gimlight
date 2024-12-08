@@ -281,33 +281,15 @@ Section UpdateRange.
   Proof.
     induction l; intros; simpl in *.
     - lia.
-    - destruct lower, upper.
+    - destruct lower, upper; simpl.
       + lia.
-      + destruct p.
-        * simpl.
-          destruct idx.
-          -- easy.
-          -- simpl.
-             apply IHl.
-             lia.
-        * simpl.
-          destruct idx.
-          -- easy.
-          -- simpl.
-             apply IHl.
-             lia.
-        * simpl.
-          destruct idx.
-          -- easy.
-          -- lia.
-      + simpl.
-        destruct idx.
+      + destruct p, idx; simpl; try apply IHl; try lia; easy.
+      + destruct idx.
         * lia.
         * simpl.
           apply IHl.
           lia.
-      + simpl.
-        destruct idx.
+      + destruct idx.
         * easy.
         * simpl.
           apply IHl.
