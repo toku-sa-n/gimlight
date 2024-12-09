@@ -32,7 +32,7 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
-      - uses: ocaml/setup-ocaml@41635ce4469ebffde345bae7c35663532ac1a0fc # v3.0.15
+      - uses: ocaml/setup-ocaml@af1c9cf0526a6481505a27dd87047029492a5e1c # v3.1.4
         with:
           ocaml-compiler: "4.14.1"
           dune-cache: true
@@ -40,7 +40,7 @@ jobs:
       - name: Install Coq
         run: opam install coq
 
-      - uses: ocaml/setup-ocaml/lint-doc@41635ce4469ebffde345bae7c35663532ac1a0fc # v3.0.15
+      - uses: ocaml/setup-ocaml/lint-doc@af1c9cf0526a6481505a27dd87047029492a5e1c # v3.1.4
 
   markdown-lint:
     runs-on: ubuntu-latest
@@ -59,7 +59,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
-      - uses: ocaml/setup-ocaml@41635ce4469ebffde345bae7c35663532ac1a0fc # v3.0.15
+      - uses: ocaml/setup-ocaml@af1c9cf0526a6481505a27dd87047029492a5e1c # v3.1.4
         with:
           ocaml-compiler: "4.14.1"
           dune-cache: true
@@ -69,7 +69,7 @@ jobs:
           sudo apt update
           sudo apt install coq
 
-      - uses: ocaml/setup-ocaml/lint-fmt@41635ce4469ebffde345bae7c35663532ac1a0fc # v3.0.15
+      - uses: ocaml/setup-ocaml/lint-fmt@af1c9cf0526a6481505a27dd87047029492a5e1c # v3.1.4
 
   opamlint:
     runs-on: ubuntu-latest
@@ -77,12 +77,12 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
-      - uses: ocaml/setup-ocaml@41635ce4469ebffde345bae7c35663532ac1a0fc # v3.0.15
+      - uses: ocaml/setup-ocaml@af1c9cf0526a6481505a27dd87047029492a5e1c # v3.1.4
         with:
           ocaml-compiler: "4.14.1"
           dune-cache: true
 
-      - uses: ocaml/setup-ocaml/lint-opam@41635ce4469ebffde345bae7c35663532ac1a0fc # v3.0.15
+      - uses: ocaml/setup-ocaml/lint-opam@af1c9cf0526a6481505a27dd87047029492a5e1c # v3.1.4
 
   prettier:
     runs-on: ubuntu-latest
@@ -109,7 +109,7 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       # See https://github.com/ocaml-opam/opam-repository-mingw#updates for `opam-repositories`.
-      - uses: ocaml/setup-ocaml@41635ce4469ebffde345bae7c35663532ac1a0fc # v3.0.15
+      - uses: ocaml/setup-ocaml@af1c9cf0526a6481505a27dd87047029492a5e1c # v3.1.4
         with:
           ocaml-compiler: "4.14.1"
           opam-repositories: |
