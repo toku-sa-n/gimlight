@@ -3,24 +3,21 @@ Set Default Goal Selector "!".
 From Coq Require Import ZArith.
 From Coq Require Import Lia.
 
-From Coquill Require Import PArith.
-
-From Coquill Require HalfOpenRange.
-From Coquill Require NonEmptyArray.
+From Coquill Require Import Array.
 
 Open Scope N_scope.
 
-Definition t (width height : positive) : Type := NonEmptyArray.t (NonEmptyArray.t bool width) height.
+Definition t (width height : positive) : Type := Array.t (Array.t bool (N.pos height)) (N.pos width).
 
 Definition all_wall_map (width height : positive) : t width height :=
-  NonEmptyArray.repeat (NonEmptyArray.repeat true width) height.
+  Array.make_matrix (N.pos width) (N.pos height) true.
 
 Program Definition build_horizontal_road
   {width height : positive}
-  (x : HalfOpenRange.t)
+  (x_from x_to : N)
   (y : N)
   (map : t width height)
-  (x_spec : HalfOpenRange.upper x <= N.pos width) 
+  (x_spec : x_from < x_to <= N.pos width)
   (y_spec : y < N.pos height) : t width height :=
   NonEmptyArray.map_nth map y (fun row => NonEmptyArray.update_range row x false x_spec) _.
 
