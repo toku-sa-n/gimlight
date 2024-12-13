@@ -30,25 +30,21 @@ open Lwt
 let loop () =
   let waiter, wakener = wait () in
 
-  let game_model_repository = Repository.Game_model.make in
-
-  let initialize_game_model_usecase =
-    Usecase.Initialize_game_model.make game_model_repository
-  in
-  let press_first_button_usecase =
-    Usecase.Press_first_button.make game_model_repository
-  in
-
-  let () = initialize_game_model_usecase.execute () in
+  let map_repository = Repository.Map.make in
 
   let game_widget = new View.Terminal.game_widget in
 
+  let initer = Usecase.Game_initialization.make map_repository in
+
+  let Usecase.Game_initialization.{ initial_map } =
+    Usecase.Game_initialization.execute initer
+  in
+
+  let model = { View.Model.is_wall = initial_map } in
+
+  game_widget#set_model model;
+
   let event_handler = function
-    | LTerm_event.Key { LTerm_key.code = LTerm_key.Enter; _ } ->
-        let new_count = press_first_button_usecase.execute () in
-        let model = { View.Model.count = Z.to_int new_count } in
-        game_widget#set_model model;
-        false
     | LTerm_event.Key { LTerm_key.code = LTerm_key.Escape; _ } ->
         wakeup wakener ();
         true

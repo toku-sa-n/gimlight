@@ -1,2 +1,4 @@
-(coq.theory
- (name Entity))
+(library
+ (name entity)
+ (public_name gimlight.entity)
+ (libraries gimlight.kernel))
