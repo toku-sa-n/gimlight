@@ -5,8 +5,13 @@
 
 (coq.extraction
  (prelude Extraction)
- (extracted_modules Kernel)
- (theories Coquill Kernel))
+ (extracted_modules
+  BinNat
+  FixedSizeArray
+  GameInitializationUsecase
+  Map
+  MapRepository)
+ (theories Coquill Entity Repository Usecase))
 
 (env
  (dev

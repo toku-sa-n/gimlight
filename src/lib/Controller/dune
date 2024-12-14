@@ -2,6 +2,7 @@
  (name controller)
  (public_name gimlight.controller)
  (libraries
+  gimlight.infrastructure
   gimlight.repository
   gimlight.usecase
   gimlight.view

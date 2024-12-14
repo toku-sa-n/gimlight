@@ -30,15 +30,13 @@ open Lwt
 let loop () =
   let waiter, wakener = wait () in
 
-  let map_repository = Repository.Map.make in
+  let map_repository = Infrastructure.Map.make in
 
   let game_widget = new View.Terminal.game_widget in
 
   let initer = Usecase.Game_initialization.make map_repository in
 
-  let Usecase.Game_initialization.{ initial_map } =
-    Usecase.Game_initialization.execute initer
-  in
+  let initial_map = Usecase.Game_initialization.execute initer in
 
   let model = { View.Model.is_wall = initial_map } in
 

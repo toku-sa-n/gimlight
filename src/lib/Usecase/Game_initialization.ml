@@ -1,5 +1,9 @@
-type t = { map_repository : Repository.Map.t }
-type output = { initial_map : bool array array }
+module M = Kernel.GameInitializationUsecase
 
-let make map_repository = { map_repository }
-let execute { map_repository } = { initial_map = map_repository.get () }
+type t = M.t
+type output = M.output
+
+let make x = x
+
+(* TODO Assign the correct numbers *)
+let execute = M.execute Z.zero Z.zero
