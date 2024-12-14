@@ -1,3 +1,3 @@
-type t = Kernel.t0
+type t = Kernel.Map.t
 
 val initial_map : t

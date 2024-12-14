@@ -1,3 +1,6 @@
+(* We cannot use the name `Array` because it conflicts with OCaml's `Array`
+ * module when extracting. *)
+
 Set Default Goal Selector "!".
 
 From Coq Require Import NArith.
