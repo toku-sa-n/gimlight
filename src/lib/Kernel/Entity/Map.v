@@ -56,6 +56,23 @@ Proof.
   - apply proof_irrelevance.
 Qed.
 
+Theorem build_room_eq_build_vertical_road {width height : positive} x y_from y_to H1 H2 H3 H4 (map : t width height) :
+  build_room x (x + 1) y_from y_to H1 H2 map = build_vertical_road x y_from y_to H3 H4 map.
+Proof.
+  unfold build_room, build_vertical_road.
+  set (build_room_obligation_1 _ _ _ _ _ _ _ _).
+  set (build_room_obligation_2 _ _ _ _ _ _ _ _).
+  set (build_vertical_road_obligation_1 _ _ _ _).
+  set (build_vertical_road_obligation_2 _ _ _ _ _ _ _).
+  clearbody a a0 l a1.
+  erewrite map_range_eq_map_nth.
+  f_equal.
+  apply functional_extensionality.
+  intros.
+  assert (a = a1) by apply proof_irrelevance.
+  now rewrite H.
+Qed.
+
 Program Definition initial_map : t 80 50 :=
   build_vertical_road 40 10 30 _ _ (build_horizontal_road 10 50 25 _ _ (all_wall_map 80 50)).
 Next Obligation.
