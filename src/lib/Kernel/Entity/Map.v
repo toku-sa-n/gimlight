@@ -32,6 +32,22 @@ Program Definition build_vertical_road
   (map : t width height) : t width height :=
   FixedSizeArray.map_nth x (FixedSizeArray.update_range y_from y_to false _) _ map.
 
+Theorem build_horizontal_road_eq_build_vertical_road {width height : positive} x y H1 H2 H3 H4 (map : t width height) :
+  build_horizontal_road x (x + 1) y H1 H2 map = build_vertical_road x y (y + 1) H3 H4 map.
+Proof.
+  unfold build_horizontal_road, build_vertical_road.
+  set (build_horizontal_road_obligation_1 _ _ _ _ _ _ _).
+  set (build_horizontal_road_obligation_2 _ _ _ _).
+  set (build_vertical_road_obligation_1 _ _ _ _).
+  set (build_vertical_road_obligation_2 _ _ _ _ _ _ _).
+  clearbody l a a0 l0.
+  erewrite map_range_eq_map_nth.
+  f_equal.
+  apply functional_extensionality.
+  intros.
+  now erewrite update_range_eq_update_nth.
+Qed.
+
 Program Definition build_room
   {width height : positive}
   (x_from x_to y_from y_to : N)
