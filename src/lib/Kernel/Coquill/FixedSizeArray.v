@@ -146,6 +146,8 @@ Section MapNth.
     assert (l0 = l1) by apply proof_irrelevance.
     now rewrite H0, H1.
   Qed.
+End MapNth.
+
 Section MapRange.
   Context {A : Type}.
 
@@ -206,6 +208,14 @@ Section UpdateNth.
   Proof.
     easy.
   Qed.
+
+  Theorem update_nth_eq_get : forall {n : N} (i : N) y H (xs : t A n),
+    get i H (update_nth i y H xs) = y.
+  Proof.
+    intros.
+    unfold update_nth.
+    apply map_nth_eq_get.
+  Qed.
 End UpdateNth.
 
 Section UpdateRange.
@@ -235,3 +245,4 @@ Extract Inductive t => "array" ["[||]" "(fun (_, x, xs) -> Array.append [|x|] xs
 Extract Constant append => "Array.append".
 Extract Constant make => "(fun n x -> Array.make (Z.to_int n) x)".
 Extract Constant make_matrix => "(fun width height x -> Array.make_matrix (Z.to_int width) (Z.to_int height) x)".
+Extract Constant get => "(fun i xs -> Array.get (Z.to_int i) xs)".

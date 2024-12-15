@@ -7,12 +7,17 @@ From Coq Require Import Lia.
 
 From Coquill Require Import FixedSizeArray.
 
+From Entity Require Coord.
+
 Open Scope N_scope.
 
 Definition t (width height : positive) : Type := FixedSizeArray.t (FixedSizeArray.t bool (N.pos height)) (N.pos width).
 
 Definition all_wall_map (width height : positive) : t width height :=
   FixedSizeArray.make_matrix (N.pos width) (N.pos height) true.
+
+Program Definition get_at {width height : positive} (x y : N) (H1 : x < N.pos width) (H2 : y < N.pos height) (map : t width height) : bool :=
+  get y _ (get x _ map).
 
 Program Definition build_horizontal_road
   {width height : positive}
