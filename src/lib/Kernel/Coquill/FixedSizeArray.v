@@ -86,6 +86,25 @@ Section MakeMatrix.
     make width (make height x).
 End MakeMatrix.
 
+Section Get.
+  Context {A : Type}.
+
+  Program Fixpoint get {n : N} (i : N) (H : i < n) (xs : t A n) : A :=
+    match xs, i with
+    | [| |], _ => _
+    | x :|: _, 0 => x
+    | _ :|: xs', N.pos i' => get (N.pred i) _ xs'
+    end.
+  Next Obligation.
+  Proof.
+    lia.
+  Qed.
+  Next Obligation.
+  Proof.
+    lia.
+  Qed.
+End Get.
+
 Section MapNth.
   Context {A : Type}.
 
@@ -108,8 +127,25 @@ Section MapNth.
     simpl.
     destruct i; f_equal; easy.
   Qed.
-End MapNth.
 
+  Theorem map_nth_eq_get : forall {n : N} (i : N) f H (xs : t A n),
+    get i H (map_nth i f H xs) = f (get i H xs).
+  Proof.
+    intros.
+    generalize dependent i.
+    generalize dependent f.
+    induction xs; intros; try lia.
+    simpl.
+    destruct i; auto.
+    simpl.
+    set (map_nth_obligation_2 _ _ _ _ _ _ _ _ _ _ _).
+    set (get_obligation_2 _ _ _ _ _ _ _ _ _ _ _).
+    set (get_obligation_2 _ _ _ _ _ _ _ _ _ _ _).
+    clearbody l l0 l1.
+    assert (l = l1) by apply proof_irrelevance.
+    assert (l0 = l1) by apply proof_irrelevance.
+    now rewrite H0, H1.
+  Qed.
 Section MapRange.
   Context {A : Type}.
 
