@@ -30,3 +30,7 @@ Inductive reachable {width height} (map : t width height) : Coord.t -> Coord.t -
         reachable map src mid ->
         can_move map mid dst H1 H2 ->
         reachable map src dst.
+
+Definition connected {width height} (map : t width height) : Prop :=
+  forall p1 p2 (H1 : in_bounds map p1) (H2 : in_bounds map p2),
+    reachable map p1 p2.
