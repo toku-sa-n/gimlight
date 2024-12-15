@@ -16,8 +16,16 @@ Definition t (width height : positive) : Type := FixedSizeArray.t (FixedSizeArra
 Definition all_wall_map (width height : positive) : t width height :=
   FixedSizeArray.make_matrix (N.pos width) (N.pos height) true.
 
-Program Definition get_at {width height : positive} (x y : N) (H1 : x < N.pos width) (H2 : y < N.pos height) (map : t width height) : bool :=
-  get y _ (get x _ map).
+Program Definition get_at
+  {width height : positive}
+  (p : Coord.t)
+  (H1 : let (x, _) := p in x < N.pos width)
+  (H2 : let (_, y) := p in y < N.pos height)
+  (map : t width height) : bool :=
+  match p with
+  | (x, y) => FixedSizeArray.get y _ (FixedSizeArray.get x _ map)
+  end.
+
 
 Program Definition build_horizontal_road
   {width height : positive}
