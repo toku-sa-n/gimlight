@@ -29,3 +29,14 @@ Next Obligation.
   now destruct H1.
 Qed.
 
+Inductive reachable
+  {width height}
+  (map : t width height)
+  : N -> N -> N -> N -> Prop :=
+  | reachable_refl : forall x y, in_bounds map x y -> reachable map x y x y
+  | reachable_step :
+      forall x y x' y' x'' y'' H1 H2,
+      in_bounds map x y ->
+      can_move map x y x' y' H1 H2 ->
+      reachable map x' y' x'' y'' ->
+      reachable map x y x'' y''.
