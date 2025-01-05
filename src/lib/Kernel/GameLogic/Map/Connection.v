@@ -2,8 +2,8 @@ Set Default Goal Selector "!".
 
 From Coq Require Import NArith.
 
-From Entity Require Import Coord.
-From Entity Require Import Map.
+From GameLogic Require Import Coord.
+From GameLogic Require Import Map.
 
 Definition in_bounds {width height} (map : t width height) (p : Coord.t) : Prop :=
   match p with

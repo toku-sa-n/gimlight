@@ -7,7 +7,7 @@ From Coq Require Import Lia.
 
 From Coquill Require Import FixedSizeArray.
 
-From Entity Require Coord.
+From GameLogic Require Coord.
 
 Open Scope N_scope.
 

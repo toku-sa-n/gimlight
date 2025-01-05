@@ -1,4 +1,4 @@
 (library
  (name entity)
- (public_name gimlight.entity)
+ (public_name gimlight.game_logic)
  (libraries gimlight.kernel))
