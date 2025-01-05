@@ -43,35 +43,22 @@ Section Append.
   Qed.
 End Append.
 
-Section MakeNonempty.
-  Context {A : Type}.
-
-  Program Fixpoint make_nonempty (n : positive) (x : A) : t A (N.pos n) :=
-    match n with
-    | xH => [| x |]
-    | xO n' => append (make_nonempty n' x) (make_nonempty n' x)
-    | xI n' => x :|: append (make_nonempty n' x) (make_nonempty n' x)
-    end.
-  Next Obligation.
-  Proof.
-    f_equal.
-    apply Pos.add_diag.
-  Qed.
-  Next Obligation.
-  Proof.
-    f_equal.
-    now rewrite Pos.add_diag.
-  Qed.
-End MakeNonempty.
-
 Section Make.
   Context {A : Type}.
 
-  Definition make {A : Type} (n : N) (x : A) : t A n :=
+  Program Fixpoint make {A : Type} (n : N) (x : A) {measure (N.to_nat n)} : t A n :=
     match n with
     | 0 => empty
-    | Npos n' => make_nonempty n' x
+    | N.pos _ => x :|: make (N.pred n) x
     end.
+  Next Obligation.
+  Proof.
+    lia.
+  Qed.
+  Next Obligation.
+  Proof.
+    lia.
+  Qed.
 
   Theorem make_0_eq_empty : forall {A : Type} (x : A), make 0 x = [| |].
   Proof.
