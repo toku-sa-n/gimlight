@@ -4,7 +4,7 @@ From Coq Require Import Extraction.
 From Coq Require Import ExtrOcamlBasic.
 From Coq Require Import ExtrOcamlZBigInt.
 
-From Entity Require Map.
+From GameLogic Require Map.
 
 (* We need the `Repository` repetition to avoid a name conflict with the `Map`
    module from `Entity`.
@@ -17,7 +17,7 @@ From Usecase Require Import GameInitializationUsecase.
 Extraction Language OCaml.
 
 Separate Extraction
-  Entity.Map.initial_map
+  GameLogic.Map.initial_map
 
   Repository.MapRepository.t
 

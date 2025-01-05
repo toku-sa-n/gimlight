@@ -11,7 +11,7 @@
   GameInitializationUsecase
   Map
   MapRepository)
- (theories Coquill Entity Repository Usecase))
+ (theories Coquill GameLogic Repository Usecase))
 
 (env
  (dev
