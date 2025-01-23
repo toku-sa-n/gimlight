@@ -1,4 +1,3 @@
-(library
- (name repository)
- (public_name gimlight.repository)
- (libraries gimlight.game_logic gimlight.kernel))
+(coq.theory
+ (name Repository)
+ (theories GameLogic))

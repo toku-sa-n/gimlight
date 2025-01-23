@@ -27,24 +27,22 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 open Lwt
 
-let loop () =
-  let waiter, wakener = wait () in
-
-  let map_repository = Infrastructure.Map.make in
+let loop map_repository select_button_handler =
+  let waiter, weakner = wait () in
 
   let game_widget = new View.Terminal.game_widget in
 
-  let initer = Usecase.Game_initialization.make map_repository in
-
-  let initial_map = Usecase.Game_initialization.execute initer in
-
-  let model = { View.Model.is_wall = initial_map } in
-
-  game_widget#set_model model;
-
   let event_handler = function
     | LTerm_event.Key { LTerm_key.code = LTerm_key.Escape; _ } ->
-        wakeup wakener ();
+        wakeup weakner ();
+        true
+    | LTerm_event.Key { LTerm_key.code = LTerm_key.Enter; _ } ->
+        let output = select_button_handler map_repository in
+
+        let model = { View.Model.is_wall = output } in
+
+        game_widget#set_model model;
+
         true
     | _ -> false
   in
@@ -54,4 +52,5 @@ let loop () =
   Lazy.force LTerm.stdout >>= fun term ->
   LTerm_widget.run term game_widget waiter
 
-let main () = Lwt_main.run (loop ())
+let run map_repository select_button_handler =
+  Lwt_main.run (loop map_repository select_button_handler)

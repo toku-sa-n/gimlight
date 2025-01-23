@@ -4,6 +4,7 @@ From Coq Require Import NArith.
 From Coq Require Import PArith.
 
 From Coquill Require Import FixedSizeArray.
+From Coquill Require IO.
 
 From Repository Require Import MapRepository.
 
@@ -17,8 +18,9 @@ Inductive output (width height : positive) :=
 
 Arguments initial_map {width height} _.
 
-Definition execute {width height : positive} (r : t width height) : output width height :=
+Definition execute {width height : positive} (r : t width height) : IO.t (output width height) :=
   match r with
-  | make repository => initial_map (MapRepository.get repository tt)
+  | make repository => 
+      IO.bind (MapRepository.get repository tt) (fun m => IO.ret (initial_map m))
   end.
 
