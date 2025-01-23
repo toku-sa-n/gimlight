@@ -1,4 +1,3 @@
-(library
- (name entity)
- (public_name gimlight.game_logic)
- (libraries gimlight.kernel))
+(coq.theory
+ (name GameLogic)
+ (theories Coquill))

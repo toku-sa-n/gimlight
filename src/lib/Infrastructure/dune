@@ -1,4 +1,0 @@
-(library
- (name infrastructure)
- (public_name gimlight.infrastructure)
- (libraries gimlight.game_logic gimlight.repository))

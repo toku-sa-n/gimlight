@@ -1,17 +1,20 @@
 (library
- (name kernel)
- (public_name gimlight.kernel)
- (libraries zarith))
+ (name gimlight)
+ (libraries controller zarith))
 
 (coq.extraction
  (prelude Extraction)
  (extracted_modules
   BinNat
+  EventHandler
   FixedSizeArray
   GameInitializationUsecase
+  IO
+  Main
   Map
+  MapStore
   MapRepository)
- (theories Coquill GameLogic Repository Usecase))
+ (theories Controller Coquill GameLogic RAMStore Repository Usecase))
 
 (env
  (dev

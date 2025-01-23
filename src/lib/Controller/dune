@@ -1,10 +1,7 @@
 (library
  (name controller)
- (public_name gimlight.controller)
- (libraries
-  gimlight.infrastructure
-  gimlight.repository
-  gimlight.usecase
-  gimlight.view
-  lambda-term
-  lwt))
+ (libraries lambda-term lwt view))
+
+(coq.theory
+ (name Controller)
+ (theories Coquill Usecase RAMStore))
