@@ -6,13 +6,15 @@ From Coq Require Import ExtrOcamlZBigInt.
 
 From Coquill Require IO.
 
-From Controller Require Main.
+From Controller Require Import Run.
+
+From Main Require Import Main.
 
 From GameLogic Require Map.
 
 Extraction Language OCaml.
 
-Extract Constant Controller.Main.run => "Controller.Run.run".
+Extract Constant Controller.Run.run => "Controller.Run.run".
 Extract Constant RAMStore.MapStore.make => "
   (fun width height ->
     let store = ref Map.initial_map in
@@ -27,4 +29,4 @@ Extract Constant IO.bind => "(fun v f -> f v)".
 
 Separate Extraction 
   Map.initial_map
-  Controller.Main.main.
+  Main.Main.main.
