@@ -4,4 +4,4 @@
 
 (coq.theory
  (name Controller)
- (theories Coquill Usecase RAMStore))
+ (theories Coquill Usecase))

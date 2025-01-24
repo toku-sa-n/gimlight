@@ -13,8 +13,9 @@
   Main
   Map
   MapStore
-  MapRepository)
- (theories Controller Coquill GameLogic RAMStore Repository Usecase))
+  MapRepository
+  Run)
+ (theories Controller Coquill GameLogic Main RAMStore Repository Usecase))
 
 (env
  (dev
