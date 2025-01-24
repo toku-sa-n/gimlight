@@ -13,6 +13,5 @@ Open Scope positive_scope.
 
 Axiom run : 
   forall 
-    (map_repository : MapRepository.t 100 100)
-    (enter_handler : MapRepository.t 100 100 -> IO.t (GameInitializationUsecase.output 100 100)),
+    (select_button_handler : unit -> IO.t (GameInitializationUsecase.output 100 100)),
     IO.t unit.

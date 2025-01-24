@@ -9,13 +9,22 @@
   EventHandler
   FixedSizeArray
   GameInitializationUsecase
+  GameInitializationUsecaseImpl
   IO
   Main
   Map
-  MapStore
   MapRepository
+  MapStore
   Run)
- (theories Controller Coquill GameLogic Main RAMStore Repository Usecase))
+ (theories
+  Controller
+  Coquill
+  GameLogic
+  Main
+  RAMStore
+  Repository
+  Usecase
+  UsecaseImpl))
 
 (env
  (dev

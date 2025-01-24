@@ -1,26 +1,18 @@
 Set Default Goal Selector "!".
 
-From Coq Require Import NArith.
 From Coq Require Import PArith.
+From Coq Require Import NArith.
 
-From Coquill Require Import FixedSizeArray.
+From Coquill Require FixedSizeArray.
 From Coquill Require IO.
-
-From Repository Require Import MapRepository.
-
-Inductive t (width height : positive) :=
-  | make : MapRepository.t width height -> t width height.
-
-Arguments make {width height} _.
 
 Inductive output (width height : positive) :=
   | initial_map : FixedSizeArray.t (FixedSizeArray.t bool (N.pos height)) (N.pos width) -> output width height.
 
 Arguments initial_map {width height} _.
 
-Definition execute {width height : positive} (r : t width height) : IO.t (output width height) :=
-  match r with
-  | make repository => 
-      IO.bind (MapRepository.get repository tt) (fun m => IO.ret (initial_map m))
-  end.
+Structure t (width height : positive) := {
+  execute : unit -> IO.t (output width height);
+}.
 
+Arguments execute {width height} _.

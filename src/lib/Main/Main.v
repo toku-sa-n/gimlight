@@ -9,6 +9,10 @@ From Controller Require Import EventHandler.
 
 From RAMStore Require MapStore.
 
+From UsecaseImpl Require GameInitializationUsecaseImpl.
+
 Definition main : IO.t unit :=
   let map_repository := MapStore.make 100 100 in
-  run map_repository select_button_handler.
+  let game_initialization_usecase :=
+    GameInitializationUsecaseImpl.make map_repository in
+  run (select_button_handler game_initialization_usecase).
