@@ -190,14 +190,16 @@ Section MapRange.
       erewrite IHxs; try lia.
       f_equal.
   Qed.
+End MapRange.
+
 Section UpdateNth.
   Context {A : Type}.
 
-  Definition update_nth {n : N} (i : N) (y : A) (H : i < n) (xs : t A n) : t A n :=
-    map_nth i (fun _ => y) H xs.
+  Definition update_nth (xs : t A) (i : N) (y : A) (H : i < length xs) : t A :=
+    map_nth xs i (fun _ => y) H.
 
-  Theorem update_nth_eq_map_nth : forall {n : N} idx y H (xs : t A n),
-    update_nth idx y H xs = map_nth idx (fun _ => y) H xs.
+  Theorem update_nth_eq_map_nth : forall xs idx y H,
+    update_nth xs idx y H = map_nth xs idx (fun _ => y) H.
   Proof.
     easy.
   Qed.
