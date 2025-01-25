@@ -79,7 +79,7 @@ End MakeNonempty.
 Section Make.
   Context {A : Type}.
 
-  Definition make {A : Type} (n : N) (x : A) : t A n :=
+  Definition make {A : Type} (n : N) (x : A) : t A :=
     match n with
     | 0 => empty
     | Npos n' => make_nonempty n' x
@@ -87,6 +87,13 @@ Section Make.
 
   Theorem make_0_eq_empty : forall {A : Type} (x : A), make 0 x = [| |].
   Proof.
+    reflexivity.
+  Qed.
+
+  Theorem length_make : forall (n : N) (x : A), length (make n x) = n.
+  Proof.
+    intros n x.
+    destruct n; try apply length_make_nonempty.
     reflexivity.
   Qed.
 End Make.
