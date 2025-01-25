@@ -221,22 +221,36 @@ Section UpdateNth.
   Proof.
     easy.
   Qed.
+
+  Theorem length_update_nth : forall (xs : t A) (i : N) (y : A) (H : i < length xs),
+    length (update_nth xs i y H) = length xs.
+  Proof.
+    intros.
+    apply length_map_nth.
+  Qed.
 End UpdateNth.
 
 Section UpdateRange.
   Context {A : Type}.
 
-  Definition update_range {n : N} (from to : N) (y : A) (H : from < to <= n) (xs : t A n) : t A n :=
-    map_range from to (fun _ => y) H xs.
+  Definition update_range (xs : t A) (from to : N) (y : A) (H : from < to <= length xs) : t A :=
+    map_range xs from to (fun _ => y) H.
 
-  Theorem update_range_eq_map_range : forall {n : N} from to y H (xs : t A n),
-    update_range from to y H xs = map_range from to (fun _ => y) H xs.
+  Theorem length_update_range : forall (xs : t A) from to y H,
+    length (update_range xs from to y H) = length xs.
+  Proof.
+    intros.
+    apply length_map_range.
+  Qed.
+
+  Theorem update_range_eq_map_range : forall (xs : t A) from to y H,
+    update_range xs from to y H = map_range xs from to (fun _ => y) H.
   Proof.
     easy.
   Qed.
 
-  Theorem update_range_eq_update_nth : forall {n : N} idx y H H1 (xs : t A n),
-    update_range idx (idx + 1) y H xs = update_nth idx y H1 xs.
+  Theorem update_range_eq_update_nth : forall (xs : t A) idx y H H1,
+    update_range xs idx (idx + 1) y H = update_nth xs idx y H1.
   Proof.
     intros.
     unfold update_range, update_nth.
