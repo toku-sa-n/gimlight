@@ -5,14 +5,14 @@ From Coq Require Import ProofIrrelevance.
 From Coq Require Import ZArith.
 From Coq Require Import Lia.
 
-From Coquill Require Import FixedSizeArray.
+From Coquill Require Import CArray.
 
 Open Scope N_scope.
 
-Definition t (width height : positive) : Type := FixedSizeArray.t (FixedSizeArray.t bool (N.pos height)) (N.pos width).
+Definition t (width height : positive) : Type := CArray.t (CArray.t bool (N.pos height)) (N.pos width).
 
 Definition all_wall_map (width height : positive) : t width height :=
-  FixedSizeArray.make_matrix (N.pos width) (N.pos height) true.
+  CArray.make_matrix (N.pos width) (N.pos height) true.
 
 Program Definition build_horizontal_road
   {width height : positive}
@@ -21,7 +21,7 @@ Program Definition build_horizontal_road
   (x_spec : x_from < x_to <= N.pos width)
   (y_spec : y < N.pos height)
   (map : t width height) : t width height :=
-  FixedSizeArray.map_range x_from x_to (FixedSizeArray.update_nth y false _) _ map.
+  CArray.map_range x_from x_to (CArray.update_nth y false _) _ map.
 
 Program Definition build_vertical_road
   {width height : positive}
@@ -30,7 +30,7 @@ Program Definition build_vertical_road
   (x_spec : x < N.pos width) 
   (y_spec : y_from < y_to <= N.pos height)
   (map : t width height) : t width height :=
-  FixedSizeArray.map_nth x (FixedSizeArray.update_range y_from y_to false _) _ map.
+  CArray.map_nth x (CArray.update_range y_from y_to false _) _ map.
 
 Theorem build_horizontal_road_eq_build_vertical_road {width height : positive} x y H1 H2 H3 H4 (map : t width height) :
   build_horizontal_road x (x + 1) y H1 H2 map = build_vertical_road x y (y + 1) H3 H4 map.
@@ -54,7 +54,7 @@ Program Definition build_room
   (x_spec : x_from < x_to <= N.pos width)
   (y_spec : y_from < y_to <= N.pos height)
   (map : t width height) : t width height :=
-  FixedSizeArray.map_range x_from x_to (FixedSizeArray.update_range y_from y_to false _) _ map.
+  CArray.map_range x_from x_to (CArray.update_range y_from y_to false _) _ map.
 
 Theorem build_room_eq_build_horizontal_road {width height : positive} x_from x_to y H1 H2 H3 H4 (map : t width height) :
   build_room x_from x_to y (y + 1) H1 H2 map = build_horizontal_road x_from x_to y H3 H4 map.

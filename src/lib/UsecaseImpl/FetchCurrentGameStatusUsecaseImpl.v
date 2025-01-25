@@ -3,7 +3,7 @@ Set Default Goal Selector "!".
 From Coq Require Import NArith.
 From Coq Require Import PArith.
 
-From Coquill Require Import FixedSizeArray.
+From Coquill Require Import CArray.
 From Coquill Require IO.
 
 From Repository Require Import MapRepository.
