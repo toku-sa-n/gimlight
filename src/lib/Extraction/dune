@@ -7,24 +7,29 @@
  (extracted_modules
   BinNat
   EventHandler
+  FetchCurrentGameStatusUsecase
+  FetchCurrentGameStatusUsecaseImpl
   FixedSizeArray
-  GameInitializationUsecase
-  GameInitializationUsecaseImpl
   IO
   Main
   Map
   MapRepository
   MapStore
-  Run)
+  Refresher
+  Run
+  TerminalRefresher
+  ViewModel)
  (theories
   Controller
   Coquill
   GameLogic
   Main
+  Presenter
   RAMStore
   Repository
   Usecase
-  UsecaseImpl))
+  UsecaseImpl
+  TerminalPresenter))
 
 (env
  (dev

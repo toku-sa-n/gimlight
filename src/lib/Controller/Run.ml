@@ -27,22 +27,20 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 open Lwt
 
-let loop select_button_handler =
+let loop select_button_handler refresh =
   let waiter, weakner = wait () in
 
-  let game_widget = new View.Terminal.game_widget in
+  let game_widget = new Terminal_view.Widget.game_widget in
+
+  refresh game_widget#set_model;
 
   let event_handler = function
     | LTerm_event.Key { LTerm_key.code = LTerm_key.Escape; _ } ->
         wakeup weakner ();
         true
     | LTerm_event.Key { LTerm_key.code = LTerm_key.Enter; _ } ->
-        let output = select_button_handler () in
-
-        let model = { View.Model.is_wall = output } in
-
-        game_widget#set_model model;
-
+        select_button_handler ();
+        refresh game_widget#set_model;
         true
     | _ -> false
   in
@@ -52,4 +50,5 @@ let loop select_button_handler =
   Lazy.force LTerm.stdout >>= fun term ->
   LTerm_widget.run term game_widget waiter
 
-let run select_button_handler = Lwt_main.run (loop select_button_handler)
+let run select_button_handler refresh =
+  Lwt_main.run (loop select_button_handler refresh)

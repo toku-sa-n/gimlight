@@ -1,1 +1,1 @@
-val run : (unit -> bool array array) -> unit
+val run : (unit -> unit) -> ((bool array array -> unit) -> unit) -> unit
