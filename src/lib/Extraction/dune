@@ -6,10 +6,10 @@
  (prelude Extraction)
  (extracted_modules
   BinNat
+  CArray
   EventHandler
   FetchCurrentGameStatusUsecase
   FetchCurrentGameStatusUsecaseImpl
-  FixedSizeArray
   IO
   Main
   Map
