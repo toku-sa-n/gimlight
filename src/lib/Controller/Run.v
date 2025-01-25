@@ -6,12 +6,15 @@ From Coquill Require IO.
 
 From Controller Require Import EventHandler.
 
-From Usecase Require GameInitializationUsecase.
+From Usecase Require FetchCurrentGameStatusUsecase.
+
+From Presenter Require Refresher.
 
 #[local]
 Open Scope positive_scope.
 
 Axiom run : 
   forall 
-    (select_button_handler : unit -> IO.t (GameInitializationUsecase.output 100 100)),
+    (select_button_handler : unit -> IO.t unit)
+    (refresher : Refresher.t 100 100),
     IO.t unit.

@@ -1,7 +1,7 @@
 (library
  (name controller)
- (libraries lambda-term lwt view))
+ (libraries lambda-term lwt terminal_view))
 
 (coq.theory
  (name Controller)
- (theories Coquill Usecase))
+ (theories Coquill Usecase Presenter))

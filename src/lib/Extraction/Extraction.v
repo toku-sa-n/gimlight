@@ -12,8 +12,6 @@ From Main Require Import Main.
 
 From GameLogic Require Map.
 
-From Usecase Require GameInitializationUsecase.
-
 Extraction Language OCaml.
 
 Extract Constant Controller.Run.run => "Controller.Run.run".

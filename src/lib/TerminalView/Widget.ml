@@ -1,22 +1,20 @@
 class game_widget =
   object (self)
     inherit LTerm_widget.t "game"
-    val mutable model = Model.initial_model
+    val mutable model = [| [| true |] |]
 
     method set_model m =
       model <- m;
       self#queue_draw
 
     method! draw ctx _ =
-      let { Model.is_wall } = model in
-
-      let rows = Array.make (Array.length is_wall.(0)) "" in
+      let rows = Array.make (Array.length model.(0)) "" in
       Array.iter
         (fun row ->
           Array.iteri
             (fun y cell -> rows.(y) <- (rows.(y) ^ if cell then "#" else " "))
             row)
-        is_wall;
+        model;
 
       Array.iteri
         (fun idx row ->

@@ -1,0 +1,3 @@
+(coq.theory
+ (name TerminalPresenter)
+ (theories Coquill Presenter Usecase))

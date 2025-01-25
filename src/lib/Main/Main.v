@@ -9,10 +9,16 @@ From Controller Require Import EventHandler.
 
 From RAMStore Require MapStore.
 
-From UsecaseImpl Require GameInitializationUsecaseImpl.
+From TerminalPresenter Require TerminalRefresher.
+
+From UsecaseImpl Require FetchCurrentGameStatusUsecaseImpl.
 
 Definition main : IO.t unit :=
   let map_repository := MapStore.make 100 100 in
-  let game_initialization_usecase :=
-    GameInitializationUsecaseImpl.make map_repository in
-  run (select_button_handler game_initialization_usecase).
+  let fetch_current_game_status_usecase :=
+    FetchCurrentGameStatusUsecaseImpl.make map_repository in
+
+  let refresher := TerminalRefresher.make fetch_current_game_status_usecase in
+  run
+    select_button_handler
+    refresher.
