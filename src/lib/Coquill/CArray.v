@@ -101,7 +101,7 @@ End Make.
 Section MakeMatrix.
   Context {A : Type}.
 
-  Definition make_matrix {A : Type} (width height : N) (x : A) : t (t A height) width :=
+  Definition make_matrix {A : Type} (width height : N) (x : A) : t (t A) :=
     make width (make height x).
 End MakeMatrix.
 
