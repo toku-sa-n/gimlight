@@ -127,44 +127,51 @@ Section MapNth.
 
   Theorem map_nth_id : forall (xs : t A) (i : N) (H : i < length xs), map_nth xs i (fun x => x) H = xs.
   Proof.
-    induction xs; intros i H; simpl in *; try lia; destruct i; f_equal; apply IHxs; lia.
+    induction xs as [ | h t IHxs]; intros i H; simpl in *; try lia; destruct i; f_equal; apply IHxs; lia.
   Qed.
 End MapNth.
 
 Section MapRange.
   Context {A : Type}.
 
-  Program Fixpoint map_range {n : N} (from to : N) (f : A -> A) (H : from < to <= n) (xs : t A n) : t A n :=
+  Program Fixpoint map_range (xs : t A) (from to : N) (f : A -> A) (H : from < to <= length xs) : t A :=
     match xs, from, to with
     | [| |], _, _ => _
     | x :|: xs', 0, 0 => _
     | x :|: xs', 0, N.pos xH => f x :|: xs'
     | x :|: xs', 0, N.pos (xO _)
-    | x :|: xs', 0, N.pos (xI _) => f x :|: map_range 0 (N.pred to) f _ xs'
+    | x :|: xs', 0, N.pos (xI _) => f x :|: map_range xs' 0 (N.pred to) f _
     | x :|: xs', N.pos _, 0 => _
-    | x :|: xs', N.pos _, N.pos _ => x :|: map_range (N.pred from) (N.pred to) f _ xs'
+    | x :|: xs', N.pos _, N.pos _ => x :|: map_range xs' (N.pred from) (N.pred to) f _
     end.
   Next Obligation.
   Proof.
+    simpl in *.
     lia.
   Qed.
   Next Obligation.
   Proof.
+    simpl in *.
     lia.
   Qed.
   Next Obligation.
   Proof.
+    simpl in *.
+    lia.
+  Qed.
+  Next Obligation.
+  Proof.
+    simpl in *.
     lia.
   Qed.
 
-  Theorem map_range_id : forall {n : N} from to H (xs : t A n), map_range from to (fun x => x) H xs = xs.
+  Theorem map_range_id : forall (xs : t A) from to H, map_range xs from to (fun x => x) H = xs.
   Proof.
-    intros.
-    generalize dependent from.
-    generalize dependent to.
-    induction xs; intros; try lia.
-    simpl.
-    destruct from, to; try destruct p; now f_equal.
+    induction xs as [ | h t IHxs]; intros from to H; simpl in *; try lia.
+    destruct from as [ | from'], to as [ | to']; try easy.
+    + destruct to' as [to' | to' | ]; auto; rewrite IHxs; auto.
+    + rewrite IHxs.
+      auto.
   Qed.
 
   Theorem map_range_eq_map_nth : forall {n : N} idx f H H1 (xs : t A n),
