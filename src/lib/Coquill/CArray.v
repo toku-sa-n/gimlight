@@ -13,35 +13,48 @@ From Coq Require Import ProofIrrelevance.
 
 Open Scope N_scope.
 
-Inductive t (A : Type) : N -> Type :=
-  | empty : t A 0
-  | cons : forall {n : N}, A -> t A n -> t A (n + 1).
+Inductive t (A : Type) : Type :=
+  | empty : t A
+  | cons : A -> t A -> t A.
 
 Arguments empty {A}.
-Arguments cons {A n} _ _.
+Arguments cons {A} _ _.
 
 Declare Scope array_scope.
 
 Infix ":|:" := cons (at level 60, right associativity) : array_scope.
 Delimit Scope array_scope with array.
 
-Local Open Scope array_scope.
+#[local]
+Open Scope array_scope.
 
 Notation "[| |]" := empty : array_scope.
 Notation "[| x |]" := (cons x empty) : array_scope.
 Notation "[| x ; .. ; y |]" := (cons x .. (cons y empty) ..) : array_scope.
 
+Section Length.
+  Context {A : Type}.
+
+  Fixpoint length (xs : t A) : N :=
+    match xs with
+    | empty => 0
+    | _ :|: xs' => N.succ (length xs')
+    end.
+End Length.
+
 Section Append.
   Context {A : Type}.
 
-  Program Fixpoint append {n m : N} (xs : t A n) (ys : t A m) : t A (n + m) :=
+  Fixpoint append (xs : t A) (ys : t A) : t A :=
     match xs with
     | empty => ys
     | x :|: xs' => x :|: append xs' ys
     end.
-  Next Obligation.
+  
+  Theorem length_append : forall (xs ys : t A), length (append xs ys) = length xs + length ys.
   Proof.
-    apply N.add_shuffle0.
+    intros xs ys.
+    induction xs as [ | h t IH]; simpl; lia.
   Qed.
 End Append.
 
