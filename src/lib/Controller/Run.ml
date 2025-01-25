@@ -49,13 +49,15 @@ let create_widget_and_waiter select_button_handler refresh =
 
   (game_widget, waiter)
 
+let run_widget widget waiter =
+  Lazy.force LTerm.stdout >>= fun term -> LTerm_widget.run term widget waiter
+
 let loop select_button_handler refresh =
   let game_widget, waiter =
     create_widget_and_waiter select_button_handler refresh
   in
 
-  Lazy.force LTerm.stdout >>= fun term ->
-  LTerm_widget.run term game_widget waiter
+  run_widget game_widget waiter
 
 let run select_button_handler refresh =
   Lwt_main.run (loop select_button_handler refresh)
