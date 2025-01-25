@@ -125,6 +125,14 @@ Section MapNth.
     lia.
   Qed.
 
+  Theorem length_map_nth : forall (xs : t A) (i : N) (f : A -> A) (H : i < length xs),
+    length (map_nth xs i f H) = length xs.
+  Proof.
+    induction xs as [ | h t IHxs]; intros i f H; simpl in *; try lia.
+    destruct i; simpl; auto.
+    now rewrite IHxs.
+  Qed.
+
   Theorem map_nth_id : forall (xs : t A) (i : N) (H : i < length xs), map_nth xs i (fun x => x) H = xs.
   Proof.
     induction xs as [ | h t IHxs]; intros i H; simpl in *; try lia; destruct i; f_equal; apply IHxs; lia.
@@ -163,6 +171,16 @@ Section MapRange.
   Proof.
     simpl in *.
     lia.
+  Qed.
+
+  Theorem length_map_range : forall (xs : t A) from to f H,
+    length (map_range xs from to f H) = length xs.
+  Proof.
+    induction xs as [ | h t IHxs]; intros from to f H; simpl in *; try lia.
+    destruct from as [ | from'], to as [ | to'];
+      try lia;
+      try (destruct to' as [to' | to' | ]; auto);
+      simpl; now f_equal.
   Qed.
 
   Theorem map_range_id : forall (xs : t A) from to H, map_range xs from to (fun x => x) H = xs.
