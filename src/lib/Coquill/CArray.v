@@ -108,24 +108,26 @@ End MakeMatrix.
 Section MapNth.
   Context {A : Type}.
 
-  Program Fixpoint map_nth {n : N} (i : N) (f : A -> A) (H : i < n) (xs : t A n) : t A n :=
+  Program Fixpoint map_nth (xs : t A) (i : N) (f : A -> A) (H : i < length xs)  : t A :=
     match xs, i with
     | [| |], _ => _
     | x :|: xs', 0 => f x :|: xs'
-    | x :|: xs', (N.pos _) => x :|: map_nth (N.pred i) f _ xs'
+    | x :|: xs', (N.pos _) => x :|: map_nth xs' (N.pred i) f _
     end.
   Next Obligation.
   Proof.
+    simpl in H.
+    lia.
+  Qed.
+  Next Obligation.
+  Proof.
+    simpl in H.
     lia.
   Qed.
 
-  Theorem map_nth_id : forall {n : N} (i : N) (H : i < n) (xs : t A n), map_nth i (fun x => x) H xs = xs.
+  Theorem map_nth_id : forall (xs : t A) (i : N) (H : i < length xs), map_nth xs i (fun x => x) H = xs.
   Proof.
-    intros.
-    generalize dependent i.
-    induction xs; intros; try lia.
-    simpl.
-    destruct i; f_equal; easy.
+    induction xs; intros i H; simpl in *; try lia; destruct i; f_equal; apply IHxs; lia.
   Qed.
 End MapNth.
 
