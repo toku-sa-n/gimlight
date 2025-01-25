@@ -1,4 +1,3 @@
-(library
- (name usecase)
- (public_name gimlight.usecase)
- (libraries gimlight.kernel gimlight.repository))
+(coq.theory
+ (name Usecase)
+ (theories GameLogic Repository))

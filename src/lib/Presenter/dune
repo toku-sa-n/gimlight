@@ -1,5 +1,5 @@
 (include_subdirs qualified)
 
 (coq.theory
- (name GameLogic)
+ (name Presenter)
  (theories Coquill))

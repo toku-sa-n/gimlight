@@ -1,0 +1,37 @@
+(library
+ (name gimlight)
+ (libraries controller zarith))
+
+(coq.extraction
+ (prelude Extraction)
+ (extracted_modules
+  BinNat
+  EventHandler
+  FetchCurrentGameStatusUsecase
+  FetchCurrentGameStatusUsecaseImpl
+  FixedSizeArray
+  IO
+  Main
+  Map
+  MapRepository
+  MapStore
+  Refresher
+  Run
+  TerminalRefresher
+  ViewModel)
+ (theories
+  Controller
+  Coquill
+  GameLogic
+  Main
+  Presenter
+  RAMStore
+  Repository
+  Usecase
+  UsecaseImpl
+  TerminalPresenter))
+
+(env
+ (dev
+  (flags
+   (:standard -w -a))))

@@ -1,1 +1,1 @@
-let () = Controller.Main.main ()
+let () = Gimlight.Main.main
