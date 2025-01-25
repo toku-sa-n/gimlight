@@ -11,65 +11,76 @@ From Coq Require Import extraction.Extraction.
 From Coq Require Import Lia.
 From Coq Require Import ProofIrrelevance.
 
+#[local]
 Open Scope N_scope.
 
-Inductive t (A : Type) : N -> Type :=
-  | empty : t A 0
-  | cons : forall {n : N}, A -> t A n -> t A (n + 1).
+Inductive t (A : Type) : Type :=
+  | empty : t A
+  | cons : A -> t A -> t A.
 
 Arguments empty {A}.
-Arguments cons {A n} _ _.
+Arguments cons {A} _ _.
 
 Declare Scope array_scope.
 
 Infix ":|:" := cons (at level 60, right associativity) : array_scope.
 Delimit Scope array_scope with array.
 
-Local Open Scope array_scope.
+#[local]
+Open Scope array_scope.
 
 Notation "[| |]" := empty : array_scope.
 Notation "[| x |]" := (cons x empty) : array_scope.
 Notation "[| x ; .. ; y |]" := (cons x .. (cons y empty) ..) : array_scope.
 
+Section Length.
+  Context {A : Type}.
+
+  Fixpoint length (xs : t A) : N :=
+    match xs with
+    | empty => 0
+    | _ :|: xs' => N.succ (length xs')
+    end.
+End Length.
+
 Section Append.
   Context {A : Type}.
 
-  Program Fixpoint append {n m : N} (xs : t A n) (ys : t A m) : t A (n + m) :=
+  Fixpoint append (xs : t A) (ys : t A) : t A :=
     match xs with
     | empty => ys
     | x :|: xs' => x :|: append xs' ys
     end.
-  Next Obligation.
+  
+  Theorem length_append : forall (xs ys : t A), length (append xs ys) = length xs + length ys.
   Proof.
-    apply N.add_shuffle0.
+    intros xs ys.
+    induction xs as [ | h t IH]; simpl; lia.
   Qed.
 End Append.
 
 Section MakeNonempty.
   Context {A : Type}.
 
-  Program Fixpoint make_nonempty (n : positive) (x : A) : t A (N.pos n) :=
+  Fixpoint make_nonempty (n : positive) (x : A) : t A :=
     match n with
     | xH => [| x |]
     | xO n' => append (make_nonempty n' x) (make_nonempty n' x)
     | xI n' => x :|: append (make_nonempty n' x) (make_nonempty n' x)
     end.
-  Next Obligation.
+
+  Theorem length_make_nonempty : forall (n : positive) (x : A), length (make_nonempty n x) = N.pos n.
   Proof.
-    f_equal.
-    apply Pos.add_diag.
-  Qed.
-  Next Obligation.
-  Proof.
-    f_equal.
-    now rewrite Pos.add_diag.
+    intros n x.
+    induction n as [n' IHn' | n' IHn' | ];
+      simpl; try (rewrite length_append; rewrite IHn'); lia.
   Qed.
 End MakeNonempty.
 
 Section Make.
   Context {A : Type}.
 
-  Definition make {A : Type} (n : N) (x : A) : t A n :=
+  Definition make {A : Type} (n : N) (x : A) : t A :=
     match n with
     | 0 => empty
     | Npos n' => make_nonempty n' x
@@ -79,115 +90,168 @@ Section Make.
   Proof.
     reflexivity.
   Qed.
+
+  Theorem length_make : forall (n : N) (x : A), length (make n x) = n.
+  Proof.
+    intros n x.
+    destruct n; try apply length_make_nonempty.
+    reflexivity.
+  Qed.
 End Make.
 
 Section MakeMatrix.
   Context {A : Type}.
 
-  Definition make_matrix {A : Type} (width height : N) (x : A) : t (t A height) width :=
+  Definition make_matrix {A : Type} (width height : N) (x : A) : t (t A) :=
     make width (make height x).
 End MakeMatrix.
 
 Section MapNth.
   Context {A : Type}.
 
-  Program Fixpoint map_nth {n : N} (i : N) (f : A -> A) (H : i < n) (xs : t A n) : t A n :=
+  Program Fixpoint map_nth (xs : t A) (i : N) (f : A -> A) (H : i < length xs)  : t A :=
     match xs, i with
     | [| |], _ => _
     | x :|: xs', 0 => f x :|: xs'
-    | x :|: xs', (N.pos _) => x :|: map_nth (N.pred i) f _ xs'
+    | x :|: xs', (N.pos _) => x :|: map_nth xs' (N.pred i) f _
     end.
   Next Obligation.
   Proof.
+    simpl in H.
+    lia.
+  Qed.
+  Next Obligation.
+  Proof.
+    simpl in H.
     lia.
   Qed.
 
-  Theorem map_nth_id : forall {n : N} (i : N) (H : i < n) (xs : t A n), map_nth i (fun x => x) H xs = xs.
+  Theorem length_map_nth : forall (xs : t A) (i : N) (f : A -> A) (H : i < length xs),
+    length (map_nth xs i f H) = length xs.
   Proof.
-    intros.
-    generalize dependent i.
-    induction xs; intros; try lia.
-    simpl.
-    destruct i; f_equal; easy.
+    induction xs as [ | h t IHxs]; intros i f H; simpl in *; try lia.
+    destruct i; simpl; auto.
+    now rewrite IHxs.
+  Qed.
+
+  Theorem map_nth_id : forall (xs : t A) (i : N) (H : i < length xs), map_nth xs i (fun x => x) H = xs.
+  Proof.
+    induction xs as [ | h t IHxs]; intros i H; simpl in *; try lia; destruct i; f_equal; apply IHxs; lia.
   Qed.
 End MapNth.
 
 Section MapRange.
   Context {A : Type}.
 
-  Program Fixpoint map_range {n : N} (from to : N) (f : A -> A) (H : from < to <= n) (xs : t A n) : t A n :=
+  Program Fixpoint map_range (xs : t A) (from to : N) (f : A -> A) (H : from < to <= length xs) : t A :=
     match xs, from, to with
     | [| |], _, _ => _
     | x :|: xs', 0, 0 => _
     | x :|: xs', 0, N.pos xH => f x :|: xs'
     | x :|: xs', 0, N.pos (xO _)
-    | x :|: xs', 0, N.pos (xI _) => f x :|: map_range 0 (N.pred to) f _ xs'
+    | x :|: xs', 0, N.pos (xI _) => f x :|: map_range xs' 0 (N.pred to) f _
     | x :|: xs', N.pos _, 0 => _
-    | x :|: xs', N.pos _, N.pos _ => x :|: map_range (N.pred from) (N.pred to) f _ xs'
+    | x :|: xs', N.pos _, N.pos _ => x :|: map_range xs' (N.pred from) (N.pred to) f _
     end.
   Next Obligation.
   Proof.
+    simpl in *.
     lia.
   Qed.
   Next Obligation.
   Proof.
+    simpl in *.
     lia.
   Qed.
   Next Obligation.
   Proof.
+    simpl in *.
+    lia.
+  Qed.
+  Next Obligation.
+  Proof.
+    simpl in *.
     lia.
   Qed.
 
-  Theorem map_range_id : forall {n : N} from to H (xs : t A n), map_range from to (fun x => x) H xs = xs.
+  Theorem length_map_range : forall (xs : t A) from to f H,
+    length (map_range xs from to f H) = length xs.
   Proof.
-    intros.
-    generalize dependent from.
-    generalize dependent to.
-    induction xs; intros; try lia.
-    simpl.
-    destruct from, to; try destruct p; now f_equal.
+    induction xs as [ | h t IHxs]; intros from to f H; simpl in *; try lia.
+    destruct from as [ | from'], to as [ | to'];
+      try lia;
+      try (destruct to' as [to' | to' | ]; auto);
+      simpl; now f_equal.
   Qed.
 
-  Theorem map_range_eq_map_nth : forall {n : N} idx f H H1 (xs : t A n),
-    map_range idx (idx + 1) f H xs = map_nth idx f H1 xs.
+  Theorem map_range_id : forall (xs : t A) from to H, map_range xs from to (fun x => x) H = xs.
   Proof.
-    intros.
+    induction xs as [ | h t IHxs]; intros from to H; simpl in *; try lia.
+    destruct from as [ | from'], to as [ | to']; try easy.
+    + destruct to' as [to' | to' | ]; auto; rewrite IHxs; auto.
+    + rewrite IHxs.
+      auto.
+  Qed.
+
+  Theorem map_range_eq_map_nth : forall (xs : t A) idx f H H1,
+    map_range xs idx (idx + 1) f H = map_nth xs idx f H1.
+  Proof.
+    intros xs idx.
     remember (idx + 1) as to.
     generalize dependent idx.
     generalize dependent to.
-    induction xs; intros; try lia.
-    simpl.
-    destruct idx, to; try destruct p; try easy; f_equal; apply IHxs; lia.
+    induction xs as [ | h t IHxs]; intros to idx H H1; simpl in *; try lia.
+    destruct idx as [ | idx'], to as [ | to']; try lia; simpl in *.
+    - assert (H0 : to' = 1%positive) by lia.
+      rewrite H0.
+      auto.
+    - intros H0 H2.
+      erewrite IHxs; try lia.
+      f_equal.
   Qed.
 End MapRange.
 
 Section UpdateNth.
   Context {A : Type}.
 
-  Definition update_nth {n : N} (i : N) (y : A) (H : i < n) (xs : t A n) : t A n :=
-    map_nth i (fun _ => y) H xs.
+  Definition update_nth (xs : t A) (i : N) (y : A) (H : i < length xs) : t A :=
+    map_nth xs i (fun _ => y) H.
 
-  Theorem update_nth_eq_map_nth : forall {n : N} idx y H (xs : t A n),
-    update_nth idx y H xs = map_nth idx (fun _ => y) H xs.
+  Theorem update_nth_eq_map_nth : forall xs idx y H,
+    update_nth xs idx y H = map_nth xs idx (fun _ => y) H.
   Proof.
     easy.
+  Qed.
+
+  Theorem length_update_nth : forall (xs : t A) (i : N) (y : A) (H : i < length xs),
+    length (update_nth xs i y H) = length xs.
+  Proof.
+    intros.
+    apply length_map_nth.
   Qed.
 End UpdateNth.
 
 Section UpdateRange.
   Context {A : Type}.
 
-  Definition update_range {n : N} (from to : N) (y : A) (H : from < to <= n) (xs : t A n) : t A n :=
-    map_range from to (fun _ => y) H xs.
+  Definition update_range (xs : t A) (from to : N) (y : A) (H : from < to <= length xs) : t A :=
+    map_range xs from to (fun _ => y) H.
 
-  Theorem update_range_eq_map_range : forall {n : N} from to y H (xs : t A n),
-    update_range from to y H xs = map_range from to (fun _ => y) H xs.
+  Theorem length_update_range : forall (xs : t A) from to y H,
+    length (update_range xs from to y H) = length xs.
+  Proof.
+    intros.
+    apply length_map_range.
+  Qed.
+
+  Theorem update_range_eq_map_range : forall (xs : t A) from to y H,
+    update_range xs from to y H = map_range xs from to (fun _ => y) H.
   Proof.
     easy.
   Qed.
 
-  Theorem update_range_eq_update_nth : forall {n : N} idx y H H1 (xs : t A n),
-    update_range idx (idx + 1) y H xs = update_nth idx y H1 xs.
+  Theorem update_range_eq_update_nth : forall (xs : t A) idx y H H1,
+    update_range xs idx (idx + 1) y H = update_nth xs idx y H1.
   Proof.
     intros.
     unfold update_range, update_nth.

@@ -5,13 +5,13 @@ From Coq Require Import ProofIrrelevance.
 From Coq Require Import ZArith.
 From Coq Require Import Lia.
 
-From Coquill Require Import CArray.
+From Coquill Require Import NonEmptyArray.
 
 Open Scope N_scope.
 
-Definition t (width height : positive) : Type := CArray.t (CArray.t bool (N.pos height)) (N.pos width).
+Definition t : Type := NonEmptyArray.t (NonEmptyArray.t bool).
 
-Definition all_wall_map (width height : positive) : t width height :=
+Definition all_wall_map (width height : positive) : t :=
   CArray.make_matrix (N.pos width) (N.pos height) true.
 
 Program Definition build_horizontal_road
@@ -20,8 +20,11 @@ Program Definition build_horizontal_road
   (y : N)
   (x_spec : x_from < x_to <= N.pos width)
   (y_spec : y < N.pos height)
-  (map : t width height) : t width height :=
-  CArray.map_range x_from x_to (CArray.update_nth y false _) _ map.
+  (map : t) : t :=
+  CArray.map_range map x_from x_to (fun row => CArray.update_nth row y false _) _.
+Next Obligation.
+Proof.
+  lia.
 
 Program Definition build_vertical_road
   {width height : positive}
