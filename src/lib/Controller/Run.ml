@@ -27,7 +27,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 open Lwt
 
-let loop select_button_handler refresh =
+let create_widget_and_waiter select_button_handler refresh =
   let waiter, weakner = wait () in
 
   let game_widget = new Terminal_view.Widget.game_widget in
@@ -46,6 +46,13 @@ let loop select_button_handler refresh =
   in
 
   game_widget#on_event event_handler;
+
+  (game_widget, waiter)
+
+let loop select_button_handler refresh =
+  let game_widget, waiter =
+    create_widget_and_waiter select_button_handler refresh
+  in
 
   Lazy.force LTerm.stdout >>= fun term ->
   LTerm_widget.run term game_widget waiter
