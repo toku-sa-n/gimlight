@@ -23,7 +23,7 @@ Arguments cons {A} _ _.
 
 Declare Scope array_scope.
 
-Infix "::" := cons (at level 60, right associativity) : array_scope.
+Infix ":|:" := cons (at level 60, right associativity) : array_scope.
 Delimit Scope array_scope with array.
 
 #[local]
@@ -39,7 +39,7 @@ Section Length.
   Fixpoint length (xs : t A) : N :=
     match xs with
     | empty => 0
-    | _ :: xs' => N.succ (length xs')
+    | _ :|: xs' => N.succ (length xs')
     end.
 End Length.
 
@@ -49,7 +49,7 @@ Section Append.
   Fixpoint append (xs : t A) (ys : t A) : t A :=
     match xs with
     | empty => ys
-    | x :: xs' => x :: append xs' ys
+    | x :|: xs' => x :|: append xs' ys
     end.
   
   Theorem length_append : forall (xs ys : t A), length (append xs ys) = length xs + length ys.
@@ -66,7 +66,7 @@ Section MakeNonempty.
     match n with
     | xH => [| x |]
     | xO n' => append (make_nonempty n' x) (make_nonempty n' x)
-    | xI n' => x :: append (make_nonempty n' x) (make_nonempty n' x)
+    | xI n' => x :|: append (make_nonempty n' x) (make_nonempty n' x)
     end.
 
   Theorem length_make_nonempty : forall (n : positive) (x : A), length (make_nonempty n x) = N.pos n.
@@ -112,8 +112,8 @@ Section MapNth.
   Program Fixpoint map_nth (xs : t A) (i : N) (f : A -> A) (H : i < length xs)  : t A :=
     match xs, i with
     | [| |], _ => _
-    | x :: xs', 0 => f x :: xs'
-    | x :: xs', (N.pos _) => x :: map_nth xs' (N.pred i) f _
+    | x :|: xs', 0 => f x :|: xs'
+    | x :|: xs', (N.pos _) => x :|: map_nth xs' (N.pred i) f _
     end.
   Next Obligation.
   Proof.
@@ -146,12 +146,12 @@ Section MapRange.
   Program Fixpoint map_range (xs : t A) (from to : N) (f : A -> A) (H : from < to <= length xs) : t A :=
     match xs, from, to with
     | [| |], _, _ => _
-    | x :: xs', 0, 0 => _
-    | x :: xs', 0, N.pos xH => f x :: xs'
-    | x :: xs', 0, N.pos (xO _)
-    | x :: xs', 0, N.pos (xI _) => f x :: map_range xs' 0 (N.pred to) f _
-    | x :: xs', N.pos _, 0 => _
-    | x :: xs', N.pos _, N.pos _ => x :: map_range xs' (N.pred from) (N.pred to) f _
+    | x :|: xs', 0, 0 => _
+    | x :|: xs', 0, N.pos xH => f x :|: xs'
+    | x :|: xs', 0, N.pos (xO _)
+    | x :|: xs', 0, N.pos (xI _) => f x :|: map_range xs' 0 (N.pred to) f _
+    | x :|: xs', N.pos _, 0 => _
+    | x :|: xs', N.pos _, N.pos _ => x :|: map_range xs' (N.pred from) (N.pred to) f _
     end.
   Next Obligation.
   Proof.
