@@ -8,4 +8,4 @@ From Coquill Require CArray.
 #[local]
 Open Scope positive_scope.
 
-Definition t := CArray.t (CArray.t bool (N.pos 100)) (N.pos 100).
+Definition t := CArray.t (CArray.t bool).

@@ -11,6 +11,7 @@ From Coq Require Import extraction.Extraction.
 From Coq Require Import Lia.
 From Coq Require Import ProofIrrelevance.
 
+#[local]
 Open Scope N_scope.
 
 Inductive t (A : Type) : Type :=
