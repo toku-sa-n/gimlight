@@ -61,21 +61,18 @@ End Append.
 Section MakeNonempty.
   Context {A : Type}.
 
-  Program Fixpoint make_nonempty (n : positive) (x : A) : t A (N.pos n) :=
+  Fixpoint make_nonempty (n : positive) (x : A) : t A :=
     match n with
     | xH => [| x |]
     | xO n' => append (make_nonempty n' x) (make_nonempty n' x)
     | xI n' => x :|: append (make_nonempty n' x) (make_nonempty n' x)
     end.
-  Next Obligation.
+
+  Theorem length_make_nonempty : forall (n : positive) (x : A), length (make_nonempty n x) = N.pos n.
   Proof.
-    f_equal.
-    apply Pos.add_diag.
-  Qed.
-  Next Obligation.
-  Proof.
-    f_equal.
-    now rewrite Pos.add_diag.
+    intros n x.
+    induction n as [n' IHn' | n' IHn' | ];
+      simpl; try (rewrite length_append; rewrite IHn'); lia.
   Qed.
 End MakeNonempty.
 
