@@ -174,19 +174,22 @@ Section MapRange.
       auto.
   Qed.
 
-  Theorem map_range_eq_map_nth : forall {n : N} idx f H H1 (xs : t A n),
-    map_range idx (idx + 1) f H xs = map_nth idx f H1 xs.
+  Theorem map_range_eq_map_nth : forall (xs : t A) idx f H H1,
+    map_range xs idx (idx + 1) f H = map_nth xs idx f H1.
   Proof.
-    intros.
+    intros xs idx.
     remember (idx + 1) as to.
     generalize dependent idx.
     generalize dependent to.
-    induction xs; intros; try lia.
-    simpl.
-    destruct idx, to; try destruct p; try easy; f_equal; apply IHxs; lia.
+    induction xs as [ | h t IHxs]; intros to idx H H1; simpl in *; try lia.
+    destruct idx as [ | idx'], to as [ | to']; try lia; simpl in *.
+    - assert (H0 : to' = 1%positive) by lia.
+      rewrite H0.
+      auto.
+    - intros H0 H2.
+      erewrite IHxs; try lia.
+      f_equal.
   Qed.
-End MapRange.
-
 Section UpdateNth.
   Context {A : Type}.
 
