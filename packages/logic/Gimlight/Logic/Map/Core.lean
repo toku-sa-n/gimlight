@@ -72,7 +72,4 @@ public theorem Map.tileAt?_ne_none_of_in_bounds (map : Map) (position : Position
       Nat.mul_le_mul_right map.dimensions.width inBounds.2
     _ = map.dimensions.width * map.dimensions.height := Nat.mul_comm _ _
 
-public def Map.reachable (map : Map) (source target : Position) : Prop :=
-  FloorReachable map.tiles map.dimensions.width source target
-
 end Gimlight
