@@ -39,6 +39,7 @@ For one or a few declarations belonging to a type, prefer direct qualified defin
 
 `Gimlight.Loop` may internally depend on `Gimlight.Logic`, but it must not re-export it with `public import`; add an explicit `public import Gimlight.Logic` in `Gimlight.lean` only when the logic module is intended to be part of the package public API.
 Mark APIs intentionally: reserve `public` for types, operations, theorems, and instances that must be available outside their defining module, and prefer `private` for implementation helpers.
+Do not add unused public theorems that merely re-expose invariants maintained by private proof fields; expose them only when they are required as part of the external API.
 For proof-valued fields whose types already make their proof role clear, avoid a redundant `Proof` suffix and name the field after the invariant itself.
 Keep constructors of types with internal representations private by default. When a read-only field's name and type are part of the public contract, prefer a private constructor with a public field instead of a trivial getter. The private constructor permits field reads while preventing external construction and record updates. Use a private field with a getter when its name, type, or representation must remain changeable. Public members remain appropriate when the data representation itself is an intentional contract, including DTO fields, enumeration constructors, and type class methods.
 

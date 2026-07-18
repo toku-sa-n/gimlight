@@ -79,15 +79,6 @@ public def Map.start (map : Map) : Position := map.firstRoomCenter
 public def Map.reachable (map : Map) (source target : Position) : Prop :=
   FloorReachable map.tiles map.dimensions.width source target
 
-public theorem Map.connected (map : Map) (source target : Position)
-    (fromFloor : map.tileAt source = .floor) (toFloor : map.tileAt target = .floor) :
-    map.reachable source target := by
-  apply map.allFloorsConnected
-  · simp only [Map.tileAt] at fromFloor
-    cases lookup : map.tiles[source.y * map.dimensions.width + source.x]? <;> simp_all
-  · simp only [Map.tileAt] at toFloor
-    cases lookup : map.tiles[target.y * map.dimensions.width + target.x]? <;> simp_all
-
 public theorem Map.start_is_floor (map : Map) : map.tileAt map.start = .floor := by
   simp only [Map.tileAt, Map.start]
   rw [map.firstRoomCenterFloor]
