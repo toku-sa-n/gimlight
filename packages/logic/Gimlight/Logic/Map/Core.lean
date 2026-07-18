@@ -18,6 +18,9 @@ public structure FloorReachable (tiles : Array Tile) (width : Nat)
 
 public structure Map where private mk ::
   public dimensions : Dimensions
+  -- Tiles are stored in row-major order at `y * dimensions.width + x`. A flat array lets
+  -- `tiles.size = dimensions.width * dimensions.height` guarantee a rectangular map, without ragged
+  -- rows or separate length proofs for every row as with `Array (Array Tile)`.
   private tiles : Array Tile
   private tilesSize : tiles.size = dimensions.width * dimensions.height
   private rooms : Array Room
@@ -46,6 +49,7 @@ public protected def Map.create (dimensions : Dimensions) (tiles : Array Tile)
   .mk dimensions tiles tilesSize rooms firstRoomCenter firstRoomCenterInBounds
     firstRoomCenterFloor allFloorsConnected
 
+-- Convert a two-dimensional position to its row-major index.
 private def Map.index (map : Map) (position : Position) : Option Nat :=
   if position.x < map.dimensions.width ∧ position.y < map.dimensions.height then
     some (position.y * map.dimensions.width + position.x)
