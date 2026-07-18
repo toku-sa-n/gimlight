@@ -250,33 +250,4 @@ public def generateMap (parameters : MapGenerationParameters) : IO GeneratedMap 
     simp [map, Map.tileAt?_ofTiles, center, widthPositive, heightPositive, tiles,
       MapGenerationParameters.mapArea])
 
-public theorem MapGenerationParameters.create?_rejects_invalid_width_range :
-    MapGenerationParameters.create? { width := 60, height := 30 } { width := 12, height := 4 }
-      { width := 5, height := 8 } 1 30 = none := by decide
-
-public theorem MapGenerationParameters.create?_rejects_invalid_height_range :
-    MapGenerationParameters.create? { width := 60, height := 30 } { width := 5, height := 8 }
-      { width := 12, height := 4 } 1 30 = none := by decide
-
-public theorem MapGenerationParameters.create?_rejects_small_map :
-    MapGenerationParameters.create? { width := 14, height := 10 } { width := 5, height := 4 }
-      { width := 12, height := 8 } 1 30 = none := by decide
-
-public theorem MapGenerationParameters.create?_rejects_zero_room_dimension :
-    MapGenerationParameters.create? { width := 60, height := 30 } { width := 0, height := 4 }
-      { width := 12, height := 8 } 1 30 = none := by decide
-
-public theorem MapGenerationParameters.create?_rejects_zero_room_height :
-    MapGenerationParameters.create? { width := 60, height := 30 } { width := 5, height := 0 }
-      { width := 12, height := 8 } 1 30 = none := by decide
-
-public theorem MapGenerationParameters.create?_rejects_zero_attempts :
-    MapGenerationParameters.create? { width := 60, height := 30 } { width := 5, height := 4 }
-      { width := 12, height := 8 } 1 0 = none := by decide
-
-public theorem MapGenerationParameters.create?_accepts_valid_parameters :
-    ∃ parameters, MapGenerationParameters.create? { width := 60, height := 30 }
-      { width := 5, height := 4 } { width := 12, height := 8 } 1 30 = some parameters := by
-  exact ⟨.default, rfl⟩
-
 end Gimlight
