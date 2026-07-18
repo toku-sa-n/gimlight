@@ -28,7 +28,7 @@ public structure Map where private mk ::
     FloorReachable tiles dimensions.width source target
 deriving Repr
 
-public protected def Map.create (dimensions : Dimensions) (tiles : Array Tile)
+public protected def Map.ofTiles (dimensions : Dimensions) (tiles : Array Tile)
     (tilesSize : tiles.size = dimensions.width * dimensions.height)
     (allFloorsConnected : ∀ source target,
       tiles[source.y * dimensions.width + source.x]? = some .floor →
@@ -42,7 +42,7 @@ public def Map.tileAt (map : Map) (position : Position) : Tile :=
   else
     .wall
 
-public theorem Map.tileAt_create (dimensions : Dimensions) (tiles : Array Tile)
+public theorem Map.tileAt_ofTiles (dimensions : Dimensions) (tiles : Array Tile)
     (tilesSize : tiles.size = dimensions.width * dimensions.height)
     (allFloorsConnected : ∀ source target,
       tiles[source.y * dimensions.width + source.x]? = some .floor →
@@ -50,9 +50,9 @@ public theorem Map.tileAt_create (dimensions : Dimensions) (tiles : Array Tile)
       FloorReachable tiles dimensions.width source target)
     (position : Position)
     (inBounds : position.x < dimensions.width ∧ position.y < dimensions.height) :
-    (Map.create dimensions tiles tilesSize allFloorsConnected).tileAt position =
+    (Map.ofTiles dimensions tiles tilesSize allFloorsConnected).tileAt position =
       tiles[position.y * dimensions.width + position.x]?.getD .wall := by
-  simp [Map.tileAt, Map.create, inBounds]
+  simp [Map.tileAt, Map.ofTiles, inBounds]
 
 public def Map.reachable (map : Map) (source target : Position) : Prop :=
   FloorReachable map.tiles map.dimensions.width source target

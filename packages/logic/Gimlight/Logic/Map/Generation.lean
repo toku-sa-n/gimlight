@@ -137,13 +137,13 @@ public def generateMap : IO GeneratedMap := do
   if tilesSize : state.tiles.size = 60 * 30 then
     if firstInBounds : first.x < 60 ∧ first.y < 30 then
       if firstFloor : state.tiles[first.y * 60 + first.x]? = some .floor then
-        let map := Map.create { width := 60, height := 30 } state.tiles tilesSize
+        let map := Map.ofTiles { width := 60, height := 30 } state.tiles tilesSize
           (fun source target fromFloor toFloor => ⟨fromFloor, toFloor⟩)
-        return .mk map first (by simp [map, Map.tileAt_create, firstInBounds, firstFloor])
+        return .mk map first (by simp [map, Map.tileAt_ofTiles, firstInBounds, firstFloor])
   let room := candidateRoom 60 30 0 0 0 0
   let tiles := carveRoom 60 (Array.replicate (60 * 30) .wall) room
   let center : Position := { x := room.center.1, y := room.center.2 }
-  let map := Map.create { width := 60, height := 30 } tiles (by native_decide)
+  let map := Map.ofTiles { width := 60, height := 30 } tiles (by native_decide)
     (fun source target fromFloor toFloor => ⟨fromFloor, toFloor⟩)
   return .mk map center (by native_decide)
 
