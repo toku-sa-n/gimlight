@@ -25,22 +25,18 @@ public structure MapGenerationParameters where private mk ::
 
 public def MapGenerationParameters.create? (dimensions minRoomDimensions maxRoomDimensions : Dimensions)
     (outerWallMargin attempts : Nat) : Option MapGenerationParameters :=
-  if minRoomWidthPositive : 0 < minRoomDimensions.width then
-    if roomWidthOrdered : minRoomDimensions.width ≤ maxRoomDimensions.width then
-      if minRoomHeightPositive : 0 < minRoomDimensions.height then
-        if roomHeightOrdered : minRoomDimensions.height ≤ maxRoomDimensions.height then
-          if roomWidthFits : maxRoomDimensions.width + outerWallMargin * 2 < dimensions.width then
-            if roomHeightFits : maxRoomDimensions.height + outerWallMargin * 2 < dimensions.height then
-              if attemptsPositive : 0 < attempts then
-                some (.mk dimensions minRoomDimensions maxRoomDimensions outerWallMargin attempts
-                  minRoomWidthPositive roomWidthOrdered
-                  minRoomHeightPositive roomHeightOrdered roomWidthFits roomHeightFits attemptsPositive)
-              else none
-            else none
-          else none
-        else none
-      else none
-    else none
+  if valid : 0 < minRoomDimensions.width ∧
+      minRoomDimensions.width ≤ maxRoomDimensions.width ∧
+      0 < minRoomDimensions.height ∧
+      minRoomDimensions.height ≤ maxRoomDimensions.height ∧
+      maxRoomDimensions.width + outerWallMargin * 2 < dimensions.width ∧
+      maxRoomDimensions.height + outerWallMargin * 2 < dimensions.height ∧
+      0 < attempts then
+    let ⟨minRoomWidthPositive, roomWidthOrdered, minRoomHeightPositive, roomHeightOrdered,
+      roomWidthFits, roomHeightFits, attemptsPositive⟩ := valid
+    some (.mk dimensions minRoomDimensions maxRoomDimensions outerWallMargin attempts
+      minRoomWidthPositive roomWidthOrdered minRoomHeightPositive roomHeightOrdered roomWidthFits
+      roomHeightFits attemptsPositive)
   else none
 
 public def MapGenerationParameters.default : MapGenerationParameters :=
@@ -277,5 +273,10 @@ public theorem MapGenerationParameters.create?_rejects_zero_room_height :
 public theorem MapGenerationParameters.create?_rejects_zero_attempts :
     MapGenerationParameters.create? { width := 60, height := 30 } { width := 5, height := 4 }
       { width := 12, height := 8 } 1 0 = none := by decide
+
+public theorem MapGenerationParameters.create?_accepts_valid_parameters :
+    ∃ parameters, MapGenerationParameters.create? { width := 60, height := 30 }
+      { width := 5, height := 4 } { width := 12, height := 8 } 1 30 = some parameters := by
+  exact ⟨.default, rfl⟩
 
 end Gimlight
