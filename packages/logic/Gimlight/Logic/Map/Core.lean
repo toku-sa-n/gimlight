@@ -75,11 +75,4 @@ public theorem Map.tileAt?_ne_none_of_in_bounds (map : Map) (position : Position
 public def Map.reachable (map : Map) (source target : Position) : Prop :=
   FloorReachable map.tiles map.dimensions.width source target
 
-public theorem Map.tileAt?_eq_none_of_not_in_bounds (map : Map) (position : Position)
-    (outOfBounds : map.dimensions.width ≤ position.x ∨ map.dimensions.height ≤ position.y) :
-    map.tileAt? position = none := by
-  simp only [Map.tileAt?]
-  rw [if_neg]
-  omega
-
 end Gimlight
