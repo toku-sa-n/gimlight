@@ -59,8 +59,11 @@ public structure FloorReachable (tiles : Array Tile) (width : Nat)
 public structure Map where private mk ::
   public dimensions : Dimensions
   private tiles : Array Tile
+  private tilesSize : tiles.size = dimensions.width * dimensions.height
   private rooms : Array Room
   private firstRoomCenter : Position
+  private firstRoomCenterInBounds :
+    firstRoomCenter.x < dimensions.width ∧ firstRoomCenter.y < dimensions.height
   private firstRoomCenterFloor :
     tiles[firstRoomCenter.y * dimensions.width + firstRoomCenter.x]? = some .floor
   private allFloorsConnected : ∀ source target,
@@ -69,8 +72,16 @@ public structure Map where private mk ::
     FloorReachable tiles dimensions.width source target
 deriving Repr
 
+private def Map.index (map : Map) (position : Position) : Option Nat :=
+  if position.x < map.dimensions.width ∧ position.y < map.dimensions.height then
+    some (position.y * map.dimensions.width + position.x)
+  else
+    none
+
 public def Map.tileAt (map : Map) (position : Position) : Tile :=
-  map.tiles[position.y * map.dimensions.width + position.x]?.getD .wall
+  match map.index position with
+  | some index => map.tiles[index]?.getD .wall
+  | none => .wall
 
 public def Map.roomList (map : Map) : Array Room := map.rooms
 
@@ -80,9 +91,16 @@ public def Map.reachable (map : Map) (source target : Position) : Prop :=
   FloorReachable map.tiles map.dimensions.width source target
 
 public theorem Map.start_is_floor (map : Map) : map.tileAt map.start = .floor := by
-  simp only [Map.tileAt, Map.start]
+  simp only [Map.tileAt, Map.index, Map.start, if_pos map.firstRoomCenterInBounds]
   rw [map.firstRoomCenterFloor]
   rfl
+
+public theorem Map.tileAt_eq_wall_of_not_in_bounds (map : Map) (position : Position)
+    (outOfBounds : map.dimensions.width ≤ position.x ∨ map.dimensions.height ≤ position.y) :
+    map.tileAt position = .wall := by
+  simp only [Map.tileAt, Map.index]
+  rw [if_neg]
+  omega
 
 private def setFloor (width : Nat) (tiles : Array Tile) (x y : Nat) : Array Tile :=
   tiles.set! (y * width + x) .floor
@@ -202,14 +220,15 @@ public def generateMap : IO Map := do
   let state ← generateState
   let first := state.first.getD { x := 30, y := 15 }
   -- The first candidate is always accepted, so this fallback is unreachable.
-  if firstFloor : state.tiles[first.y * 60 + first.x]? = some .floor then
-    return .mk { width := 60, height := 30 } state.tiles state.rooms first firstFloor
-      (fun source target fromFloor toFloor => ⟨fromFloor, toFloor⟩)
-  else
-    let room := candidateRoom 60 30 0 0 0 0
-    let tiles := carveRoom 60 (Array.replicate (60 * 30) .wall) room
-    let center : Position := { x := room.center.1, y := room.center.2 }
-    return .mk { width := 60, height := 30 } tiles #[room] center (by native_decide)
-      (fun source target fromFloor toFloor => ⟨fromFloor, toFloor⟩)
+  if tilesSize : state.tiles.size = 60 * 30 then
+    if firstInBounds : first.x < 60 ∧ first.y < 30 then
+      if firstFloor : state.tiles[first.y * 60 + first.x]? = some .floor then
+        return .mk { width := 60, height := 30 } state.tiles tilesSize state.rooms first firstInBounds firstFloor
+          (fun source target fromFloor toFloor => ⟨fromFloor, toFloor⟩)
+  let room := candidateRoom 60 30 0 0 0 0
+  let tiles := carveRoom 60 (Array.replicate (60 * 30) .wall) room
+  let center : Position := { x := room.center.1, y := room.center.2 }
+  return .mk { width := 60, height := 30 } tiles (by native_decide) #[room] center (by native_decide)
+    (by native_decide) (fun source target fromFloor toFloor => ⟨fromFloor, toFloor⟩)
 
 end Gimlight
