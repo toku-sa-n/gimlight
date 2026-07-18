@@ -82,12 +82,4 @@ public theorem Map.tileAt?_eq_none_of_not_in_bounds (map : Map) (position : Posi
   rw [if_neg]
   omega
 
-public theorem Map.tileAt?_eq_none_of_x_not_in_bounds (map : Map) (position : Position)
-    (outOfBounds : map.width ≤ position.x) : map.tileAt? position = none :=
-  map.tileAt?_eq_none_of_not_in_bounds position (Or.inl outOfBounds)
-
-public theorem Map.tileAt?_eq_none_of_y_not_in_bounds (map : Map) (position : Position)
-    (outOfBounds : map.height ≤ position.y) : map.tileAt? position = none :=
-  map.tileAt?_eq_none_of_not_in_bounds position (Or.inr outOfBounds)
-
 end Gimlight
