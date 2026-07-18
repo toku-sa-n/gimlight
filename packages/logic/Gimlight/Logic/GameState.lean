@@ -14,7 +14,7 @@ deriving Repr
 
 public def initialState : IO GameState := do
   let generated ← generateMap
-  return .mk generated.map generated.start generated.start_is_floor
+  return .mk generated.map generated.start generated.startOnFloor
 
 public def move (direction : Direction) (state : GameState) : GameState :=
   match state.player.step direction with

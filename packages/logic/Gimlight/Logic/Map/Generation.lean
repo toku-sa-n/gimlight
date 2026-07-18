@@ -26,11 +26,7 @@ private def roomYRange (height : Nat) : Nat := height - (maxRoomHeight + outerWa
 public structure GeneratedMap where private mk ::
   public map : Map
   public start : Position
-  private startOnFloor : map.tileAt? start = some .floor
-
-public theorem GeneratedMap.start_is_floor (generated : GeneratedMap) :
-    generated.map.tileAt? generated.start = some .floor :=
-  generated.startOnFloor
+  public startOnFloor : map.tileAt? start = some .floor
 
 private def setFloor (width : Nat) (tiles : Array Tile) (x y : Nat) : Array Tile :=
   tiles.set! (y * width + x) .floor
