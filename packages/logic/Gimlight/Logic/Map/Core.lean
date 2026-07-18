@@ -1,7 +1,6 @@
 module
 
 public import Gimlight.Logic.Position.Basic
-public import Gimlight.Logic.Room
 public import Gimlight.Logic.Dimensions
 
 namespace Gimlight
@@ -23,12 +22,11 @@ public structure Map where private mk ::
   -- rows or separate length proofs for every row as with `Array (Array Tile)`.
   private tiles : Array Tile
   private tilesSize : tiles.size = dimensions.width * dimensions.height
-  private rooms : Array Room
-  private firstRoomCenter : Position
-  private firstRoomCenterInBounds :
-    firstRoomCenter.x < dimensions.width ∧ firstRoomCenter.y < dimensions.height
-  private firstRoomCenterFloor :
-    tiles[firstRoomCenter.y * dimensions.width + firstRoomCenter.x]? = some .floor
+  private startPosition : Position
+  private startPositionInBounds :
+    startPosition.x < dimensions.width ∧ startPosition.y < dimensions.height
+  private startPositionFloor :
+    tiles[startPosition.y * dimensions.width + startPosition.x]? = some .floor
   private allFloorsConnected : ∀ source target,
     tiles[source.y * dimensions.width + source.x]? = some .floor →
     tiles[target.y * dimensions.width + target.x]? = some .floor →
@@ -36,18 +34,17 @@ public structure Map where private mk ::
 deriving Repr
 
 public protected def Map.create (dimensions : Dimensions) (tiles : Array Tile)
-    (tilesSize : tiles.size = dimensions.width * dimensions.height) (rooms : Array Room)
-    (firstRoomCenter : Position)
-    (firstRoomCenterInBounds :
-      firstRoomCenter.x < dimensions.width ∧ firstRoomCenter.y < dimensions.height)
-    (firstRoomCenterFloor :
-      tiles[firstRoomCenter.y * dimensions.width + firstRoomCenter.x]? = some .floor)
+    (tilesSize : tiles.size = dimensions.width * dimensions.height) (startPosition : Position)
+    (startPositionInBounds :
+      startPosition.x < dimensions.width ∧ startPosition.y < dimensions.height)
+    (startPositionFloor :
+      tiles[startPosition.y * dimensions.width + startPosition.x]? = some .floor)
     (allFloorsConnected : ∀ source target,
       tiles[source.y * dimensions.width + source.x]? = some .floor →
       tiles[target.y * dimensions.width + target.x]? = some .floor →
       FloorReachable tiles dimensions.width source target) : Map :=
-  .mk dimensions tiles tilesSize rooms firstRoomCenter firstRoomCenterInBounds
-    firstRoomCenterFloor allFloorsConnected
+  .mk dimensions tiles tilesSize startPosition startPositionInBounds startPositionFloor
+    allFloorsConnected
 
 -- Convert a two-dimensional position to its row-major index.
 private def Map.index (map : Map) (position : Position) : Option Nat :=
@@ -61,16 +58,14 @@ public def Map.tileAt (map : Map) (position : Position) : Tile :=
   | some index => map.tiles[index]?.getD .wall
   | none => .wall
 
-public def Map.roomList (map : Map) : Array Room := map.rooms
-
-public def Map.start (map : Map) : Position := map.firstRoomCenter
+public def Map.start (map : Map) : Position := map.startPosition
 
 public def Map.reachable (map : Map) (source target : Position) : Prop :=
   FloorReachable map.tiles map.dimensions.width source target
 
 public theorem Map.start_is_floor (map : Map) : map.tileAt map.start = .floor := by
-  simp only [Map.tileAt, Map.index, Map.start, if_pos map.firstRoomCenterInBounds]
-  rw [map.firstRoomCenterFloor]
+  simp only [Map.tileAt, Map.index, Map.start, if_pos map.startPositionInBounds]
+  rw [map.startPositionFloor]
   rfl
 
 public theorem Map.tileAt_eq_wall_of_not_in_bounds (map : Map) (position : Position)

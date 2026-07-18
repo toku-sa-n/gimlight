@@ -1,7 +1,9 @@
 module
 
 public import Gimlight.Logic.Map.Core
+public import Gimlight.Logic.Room
 public meta import Gimlight.Logic.Map.Core
+public meta import Gimlight.Logic.Room
 
 namespace Gimlight
 
@@ -126,13 +128,13 @@ public def generateMap : IO Map := do
   if tilesSize : state.tiles.size = 60 * 30 then
     if firstInBounds : first.x < 60 ∧ first.y < 30 then
       if firstFloor : state.tiles[first.y * 60 + first.x]? = some .floor then
-        return Map.create { width := 60, height := 30 } state.tiles tilesSize state.rooms first
-          firstInBounds firstFloor
+        return Map.create { width := 60, height := 30 } state.tiles tilesSize first firstInBounds
+          firstFloor
           (fun source target fromFloor toFloor => ⟨fromFloor, toFloor⟩)
   let room := candidateRoom 60 30 0 0 0 0
   let tiles := carveRoom 60 (Array.replicate (60 * 30) .wall) room
   let center : Position := { x := room.center.1, y := room.center.2 }
-  return Map.create { width := 60, height := 30 } tiles (by native_decide) #[room] center
+  return Map.create { width := 60, height := 30 } tiles (by native_decide) center
     (by native_decide)
     (by native_decide) (fun source target fromFloor toFloor => ⟨fromFloor, toFloor⟩)
 
