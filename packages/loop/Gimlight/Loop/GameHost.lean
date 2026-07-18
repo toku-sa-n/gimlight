@@ -13,8 +13,8 @@ public class GameHost (m : Type -> Type) where
 namespace GameHost
 
 private def gameViewOfState (state : GameState) : GameView :=
-  { width := state.map.width
-    height := state.map.height
+  { width := state.map.dimensions.width
+    height := state.map.dimensions.height
     playerX := state.player.x
     playerY := state.player.y }
 
