@@ -16,11 +16,24 @@ private def gameViewOfState (state : GameState) : GameView :=
   { width := state.map.dimensions.width
     height := state.map.dimensions.height
     tiles := Array.ofFn fun index : Fin (state.map.dimensions.width * state.map.dimensions.height) =>
+      have widthPositive : 0 < state.map.dimensions.width := by
+        apply Nat.pos_of_ne_zero
+        intro widthZero
+        simp [widthZero] at index
+        exact Fin.elim0 index
       let position : Position :=
         { x := index.val % state.map.dimensions.width, y := index.val / state.map.dimensions.width }
-      match state.map.tileAt position with
-      | .wall => .wall
-      | .floor => .floor
+      have positionInBounds :
+          position.x < state.map.dimensions.width ∧ position.y < state.map.dimensions.height := by
+        constructor
+        · exact Nat.mod_lt _ widthPositive
+        · apply (Nat.div_lt_iff_lt_mul widthPositive).2
+          exact Nat.lt_of_lt_of_eq index.isLt (Nat.mul_comm _ _)
+      match tile : state.map.tileAt? position with
+      | some .wall => .wall
+      | some .floor => .floor
+      | none => by
+        exact (state.map.tileAt?_ne_none_of_in_bounds position positionInBounds tile).elim
     playerX := state.player.x
     playerY := state.player.y }
 

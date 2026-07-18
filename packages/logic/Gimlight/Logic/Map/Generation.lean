@@ -10,10 +10,10 @@ namespace Gimlight
 public structure GeneratedMap where private mk ::
   public map : Map
   public start : Position
-  private startOnFloor : map.tileAt start = .floor
+  private startOnFloor : map.tileAt? start = some .floor
 
 public theorem GeneratedMap.start_is_floor (generated : GeneratedMap) :
-    generated.map.tileAt generated.start = .floor :=
+    generated.map.tileAt? generated.start = some .floor :=
   generated.startOnFloor
 
 private def setFloor (width : Nat) (tiles : Array Tile) (x y : Nat) : Array Tile :=
@@ -139,7 +139,7 @@ public def generateMap : IO GeneratedMap := do
       if firstFloor : state.tiles[first.y * 60 + first.x]? = some .floor then
         let map := Map.ofTiles { width := 60, height := 30 } state.tiles tilesSize
           (fun source target fromFloor toFloor => ⟨fromFloor, toFloor⟩)
-        return .mk map first (by simp [map, Map.tileAt_ofTiles, firstInBounds, firstFloor])
+        return .mk map first (by simp [map, Map.tileAt?_ofTiles, firstInBounds, firstFloor])
   let room := candidateRoom 60 30 0 0 0 0
   let tiles := carveRoom 60 (Array.replicate (60 * 30) .wall) room
   let center : Position := { x := room.center.1, y := room.center.2 }

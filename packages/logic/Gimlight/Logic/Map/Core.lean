@@ -36,13 +36,13 @@ public protected def Map.ofTiles (dimensions : Dimensions) (tiles : Array Tile)
       FloorReachable tiles dimensions.width source target) : Map :=
   .mk dimensions tiles tilesSize allFloorsConnected
 
-public def Map.tileAt (map : Map) (position : Position) : Tile :=
+public def Map.tileAt? (map : Map) (position : Position) : Option Tile :=
   if position.x < map.dimensions.width ∧ position.y < map.dimensions.height then
-    map.tiles[position.y * map.dimensions.width + position.x]?.getD .wall
+    map.tiles[position.y * map.dimensions.width + position.x]?
   else
-    .wall
+    none
 
-public theorem Map.tileAt_ofTiles (dimensions : Dimensions) (tiles : Array Tile)
+public theorem Map.tileAt?_ofTiles (dimensions : Dimensions) (tiles : Array Tile)
     (tilesSize : tiles.size = dimensions.width * dimensions.height)
     (allFloorsConnected : ∀ source target,
       tiles[source.y * dimensions.width + source.x]? = some .floor →
@@ -50,18 +50,44 @@ public theorem Map.tileAt_ofTiles (dimensions : Dimensions) (tiles : Array Tile)
       FloorReachable tiles dimensions.width source target)
     (position : Position)
     (inBounds : position.x < dimensions.width ∧ position.y < dimensions.height) :
-    (Map.ofTiles dimensions tiles tilesSize allFloorsConnected).tileAt position =
-      tiles[position.y * dimensions.width + position.x]?.getD .wall := by
-  simp [Map.tileAt, Map.ofTiles, inBounds]
+    (Map.ofTiles dimensions tiles tilesSize allFloorsConnected).tileAt? position =
+      tiles[position.y * dimensions.width + position.x]? := by
+  simp [Map.tileAt?, Map.ofTiles, inBounds]
+
+public theorem Map.tileAt?_ne_none_of_in_bounds (map : Map) (position : Position)
+    (inBounds : position.x < map.dimensions.width ∧ position.y < map.dimensions.height) :
+    map.tileAt? position ≠ none := by
+  intro tileIsNone
+  simp only [Map.tileAt?, inBounds] at tileIsNone
+  have indexOutOfBounds := (getElem?_eq_none_iff map.tiles
+    (position.y * map.dimensions.width + position.x)).mp tileIsNone
+  apply indexOutOfBounds
+  rw [map.tilesSize]
+  calc
+    position.y * map.dimensions.width + position.x <
+        (position.y + 1) * map.dimensions.width := by
+      rw [Nat.add_mul]
+      simpa using Nat.add_lt_add_left inBounds.1 (position.y * map.dimensions.width)
+    _ ≤ map.dimensions.height * map.dimensions.width :=
+      Nat.mul_le_mul_right map.dimensions.width inBounds.2
+    _ = map.dimensions.width * map.dimensions.height := Nat.mul_comm _ _
 
 public def Map.reachable (map : Map) (source target : Position) : Prop :=
   FloorReachable map.tiles map.dimensions.width source target
 
-public theorem Map.tileAt_eq_wall_of_not_in_bounds (map : Map) (position : Position)
+public theorem Map.tileAt?_eq_none_of_not_in_bounds (map : Map) (position : Position)
     (outOfBounds : map.dimensions.width ≤ position.x ∨ map.dimensions.height ≤ position.y) :
-    map.tileAt position = .wall := by
-  simp only [Map.tileAt]
+    map.tileAt? position = none := by
+  simp only [Map.tileAt?]
   rw [if_neg]
   omega
+
+public theorem Map.tileAt?_eq_none_of_x_not_in_bounds (map : Map) (position : Position)
+    (outOfBounds : map.width ≤ position.x) : map.tileAt? position = none :=
+  map.tileAt?_eq_none_of_not_in_bounds position (Or.inl outOfBounds)
+
+public theorem Map.tileAt?_eq_none_of_y_not_in_bounds (map : Map) (position : Position)
+    (outOfBounds : map.height ≤ position.y) : map.tileAt? position = none :=
+  map.tileAt?_eq_none_of_not_in_bounds position (Or.inr outOfBounds)
 
 end Gimlight
