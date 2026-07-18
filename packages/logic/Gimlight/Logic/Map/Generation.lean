@@ -11,31 +11,29 @@ private def randomUpperBound : Nat := 1000000
 
 public structure MapGenerationParameters where private mk ::
   public dimensions : Dimensions
-  public minRoomWidth : Nat
-  public maxRoomWidth : Nat
-  public minRoomHeight : Nat
-  public maxRoomHeight : Nat
+  public minRoomDimensions : Dimensions
+  public maxRoomDimensions : Dimensions
   public outerWallMargin : Nat
   public attempts : Nat
-  private minRoomWidthPositive : 0 < minRoomWidth
-  private roomWidthOrdered : minRoomWidth ≤ maxRoomWidth
-  private minRoomHeightPositive : 0 < minRoomHeight
-  private roomHeightOrdered : minRoomHeight ≤ maxRoomHeight
-  private roomWidthFits : maxRoomWidth + outerWallMargin * 2 < dimensions.width
-  private roomHeightFits : maxRoomHeight + outerWallMargin * 2 < dimensions.height
+  private minRoomWidthPositive : 0 < minRoomDimensions.width
+  private roomWidthOrdered : minRoomDimensions.width ≤ maxRoomDimensions.width
+  private minRoomHeightPositive : 0 < minRoomDimensions.height
+  private roomHeightOrdered : minRoomDimensions.height ≤ maxRoomDimensions.height
+  private roomWidthFits : maxRoomDimensions.width + outerWallMargin * 2 < dimensions.width
+  private roomHeightFits : maxRoomDimensions.height + outerWallMargin * 2 < dimensions.height
   private attemptsPositive : 0 < attempts
 
-public def MapGenerationParameters.create? (dimensions : Dimensions) (minRoomWidth maxRoomWidth
-    minRoomHeight maxRoomHeight outerWallMargin attempts : Nat) : Option MapGenerationParameters :=
-  if minRoomWidthPositive : 0 < minRoomWidth then
-    if roomWidthOrdered : minRoomWidth ≤ maxRoomWidth then
-      if minRoomHeightPositive : 0 < minRoomHeight then
-        if roomHeightOrdered : minRoomHeight ≤ maxRoomHeight then
-          if roomWidthFits : maxRoomWidth + outerWallMargin * 2 < dimensions.width then
-            if roomHeightFits : maxRoomHeight + outerWallMargin * 2 < dimensions.height then
+public def MapGenerationParameters.create? (dimensions minRoomDimensions maxRoomDimensions : Dimensions)
+    (outerWallMargin attempts : Nat) : Option MapGenerationParameters :=
+  if minRoomWidthPositive : 0 < minRoomDimensions.width then
+    if roomWidthOrdered : minRoomDimensions.width ≤ maxRoomDimensions.width then
+      if minRoomHeightPositive : 0 < minRoomDimensions.height then
+        if roomHeightOrdered : minRoomDimensions.height ≤ maxRoomDimensions.height then
+          if roomWidthFits : maxRoomDimensions.width + outerWallMargin * 2 < dimensions.width then
+            if roomHeightFits : maxRoomDimensions.height + outerWallMargin * 2 < dimensions.height then
               if attemptsPositive : 0 < attempts then
-                some (.mk dimensions minRoomWidth maxRoomWidth minRoomHeight maxRoomHeight
-                  outerWallMargin attempts minRoomWidthPositive roomWidthOrdered
+                some (.mk dimensions minRoomDimensions maxRoomDimensions outerWallMargin attempts
+                  minRoomWidthPositive roomWidthOrdered
                   minRoomHeightPositive roomHeightOrdered roomWidthFits roomHeightFits attemptsPositive)
               else none
             else none
@@ -46,23 +44,23 @@ public def MapGenerationParameters.create? (dimensions : Dimensions) (minRoomWid
   else none
 
 public def MapGenerationParameters.default : MapGenerationParameters :=
-  .mk { width := 60, height := 30 } 5 12 4 8 1 30 (by decide) (by decide) (by decide) (by decide) (by decide)
-    (by decide) (by decide)
+  .mk { width := 60, height := 30 } { width := 5, height := 4 } { width := 12, height := 8 }
+    1 30 (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide)
 
 private def MapGenerationParameters.mapArea (parameters : MapGenerationParameters) : Nat :=
   parameters.dimensions.width * parameters.dimensions.height
 
 private def MapGenerationParameters.roomWidthRange (parameters : MapGenerationParameters) : Nat :=
-  parameters.maxRoomWidth - parameters.minRoomWidth + 1
+  parameters.maxRoomDimensions.width - parameters.minRoomDimensions.width + 1
 
 private def MapGenerationParameters.roomHeightRange (parameters : MapGenerationParameters) : Nat :=
-  parameters.maxRoomHeight - parameters.minRoomHeight + 1
+  parameters.maxRoomDimensions.height - parameters.minRoomDimensions.height + 1
 
 private def MapGenerationParameters.roomXRange (parameters : MapGenerationParameters) : Nat :=
-  parameters.dimensions.width - (parameters.maxRoomWidth + parameters.outerWallMargin * 2)
+  parameters.dimensions.width - (parameters.maxRoomDimensions.width + parameters.outerWallMargin * 2)
 
 private def MapGenerationParameters.roomYRange (parameters : MapGenerationParameters) : Nat :=
-  parameters.dimensions.height - (parameters.maxRoomHeight + parameters.outerWallMargin * 2)
+  parameters.dimensions.height - (parameters.maxRoomDimensions.height + parameters.outerWallMargin * 2)
 
 public structure GeneratedMap where private mk ::
   public map : Map
@@ -112,8 +110,8 @@ public structure GenerationState where
 
 public def candidateRoom (parameters : MapGenerationParameters)
     (widthRoll heightRoll xRoll yRoll : Nat) : Room :=
-  let roomWidth := parameters.minRoomWidth + widthRoll % parameters.roomWidthRange
-  let roomHeight := parameters.minRoomHeight + heightRoll % parameters.roomHeightRange
+  let roomWidth := parameters.minRoomDimensions.width + widthRoll % parameters.roomWidthRange
+  let roomHeight := parameters.minRoomDimensions.height + heightRoll % parameters.roomHeightRange
   { x := parameters.outerWallMargin + xRoll % parameters.roomXRange
     y := parameters.outerWallMargin + yRoll % parameters.roomYRange
     width := roomWidth
@@ -122,20 +120,24 @@ public def candidateRoom (parameters : MapGenerationParameters)
 public theorem candidateRoom_width (parameters : MapGenerationParameters)
     (widthRoll heightRoll xRoll yRoll : Nat) :
     let room := candidateRoom parameters widthRoll heightRoll xRoll yRoll
-    parameters.minRoomWidth ≤ room.width ∧ room.width ≤ parameters.maxRoomWidth := by
+    parameters.minRoomDimensions.width ≤ room.width ∧
+      room.width ≤ parameters.maxRoomDimensions.width := by
   simp [candidateRoom, MapGenerationParameters.roomWidthRange]
   have := parameters.roomWidthOrdered
-  have rangePositive : 0 < parameters.maxRoomWidth - parameters.minRoomWidth + 1 := by omega
+  have rangePositive :
+      0 < parameters.maxRoomDimensions.width - parameters.minRoomDimensions.width + 1 := by omega
   have rollInRange := Nat.mod_lt widthRoll rangePositive
   omega
 
 public theorem candidateRoom_height (parameters : MapGenerationParameters)
     (widthRoll heightRoll xRoll yRoll : Nat) :
     let room := candidateRoom parameters widthRoll heightRoll xRoll yRoll
-    parameters.minRoomHeight ≤ room.height ∧ room.height ≤ parameters.maxRoomHeight := by
+    parameters.minRoomDimensions.height ≤ room.height ∧
+      room.height ≤ parameters.maxRoomDimensions.height := by
   simp [candidateRoom, MapGenerationParameters.roomHeightRange]
   have := parameters.roomHeightOrdered
-  have rangePositive : 0 < parameters.maxRoomHeight - parameters.minRoomHeight + 1 := by omega
+  have rangePositive :
+      0 < parameters.maxRoomDimensions.height - parameters.minRoomDimensions.height + 1 := by omega
   have rollInRange := Nat.mod_lt heightRoll rangePositive
   omega
 
@@ -253,21 +255,27 @@ public def generateMap (parameters : MapGenerationParameters) : IO GeneratedMap 
       MapGenerationParameters.mapArea])
 
 public theorem MapGenerationParameters.create?_rejects_invalid_width_range :
-    MapGenerationParameters.create? { width := 60, height := 30 } 12 5 4 8 1 30 = none := by decide
+    MapGenerationParameters.create? { width := 60, height := 30 } { width := 12, height := 4 }
+      { width := 5, height := 8 } 1 30 = none := by decide
 
 public theorem MapGenerationParameters.create?_rejects_invalid_height_range :
-    MapGenerationParameters.create? { width := 60, height := 30 } 5 12 8 4 1 30 = none := by decide
+    MapGenerationParameters.create? { width := 60, height := 30 } { width := 5, height := 8 }
+      { width := 12, height := 4 } 1 30 = none := by decide
 
 public theorem MapGenerationParameters.create?_rejects_small_map :
-    MapGenerationParameters.create? { width := 14, height := 10 } 5 12 4 8 1 30 = none := by decide
+    MapGenerationParameters.create? { width := 14, height := 10 } { width := 5, height := 4 }
+      { width := 12, height := 8 } 1 30 = none := by decide
 
 public theorem MapGenerationParameters.create?_rejects_zero_room_dimension :
-    MapGenerationParameters.create? { width := 60, height := 30 } 0 12 4 8 1 30 = none := by decide
+    MapGenerationParameters.create? { width := 60, height := 30 } { width := 0, height := 4 }
+      { width := 12, height := 8 } 1 30 = none := by decide
 
 public theorem MapGenerationParameters.create?_rejects_zero_room_height :
-    MapGenerationParameters.create? { width := 60, height := 30 } 5 12 0 8 1 30 = none := by decide
+    MapGenerationParameters.create? { width := 60, height := 30 } { width := 5, height := 0 }
+      { width := 12, height := 8 } 1 30 = none := by decide
 
 public theorem MapGenerationParameters.create?_rejects_zero_attempts :
-    MapGenerationParameters.create? { width := 60, height := 30 } 5 12 4 8 1 0 = none := by decide
+    MapGenerationParameters.create? { width := 60, height := 30 } { width := 5, height := 4 }
+      { width := 12, height := 8 } 1 0 = none := by decide
 
 end Gimlight
