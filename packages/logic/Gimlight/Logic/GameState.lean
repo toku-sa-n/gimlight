@@ -13,8 +13,8 @@ public structure GameState where private mk ::
 deriving Repr
 
 public def initialState : IO GameState := do
-  let map ← generateMap
-  return .mk map map.start map.start_is_floor
+  let generated ← generateMap
+  return .mk generated.map generated.start generated.start_is_floor
 
 public def move (direction : Direction) (state : GameState) : GameState :=
   match state.player.step direction with
