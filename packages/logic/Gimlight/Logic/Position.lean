@@ -1,7 +1,7 @@
 module
 
 public import Gimlight.Logic.Direction
-public import Gimlight.Logic.Map.Basic
+public import Gimlight.Logic.Map.Core
 
 namespace Gimlight
 

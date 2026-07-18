@@ -1,7 +1,7 @@
 module
 
-public import Gimlight.Logic.Map.Basic
-public meta import Gimlight.Logic.Map.Basic
+public import Gimlight.Logic.Map.Core
+public meta import Gimlight.Logic.Map.Core
 
 namespace Gimlight
 

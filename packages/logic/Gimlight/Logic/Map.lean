@@ -1,4 +1,4 @@
 module
 
-public import Gimlight.Logic.Map.Basic
+public import Gimlight.Logic.Map.Core
 public import Gimlight.Logic.Map.Generation
