@@ -1,0 +1,213 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Build
+        uses: leanprover/lean-action@38fbc41a8c28c4cbaec22d7f7de508ec2e7c0dd9 # v1.5.0
+        with:
+          build: true
+          build-args: "--wfail"
+
+  c-format:
+    name: C Format
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Check C formatting
+        run: git ls-files -z -- '*.c' '*.h' | xargs -0 -r clang-format --dry-run --Werror
+
+  c-lint:
+    name: C Lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Set up Lean
+        uses: leanprover/lean-action@38fbc41a8c28c4cbaec22d7f7de508ec2e7c0dd9 # v1.5.0
+        with:
+          auto-config: false
+
+      - name: Lint C
+        run: |
+          lean_prefix="$(lean --print-prefix)"
+          mapfile -d '' files < <(git ls-files -z -- '*.c' '*.h')
+
+          if (( ${#files[@]} > 0 )); then
+            clang-tidy "${files[@]}" -- -std=c11 -isystem "$lean_prefix/include"
+          fi
+
+  rust-format:
+    name: Rust Format
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: packages/terminal/native/terminal
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Install Rust
+        run: rustup toolchain install stable --profile minimal --component rustfmt
+
+      - name: Check Rust formatting
+        run: cargo fmt --check
+
+  rust-lint:
+    name: Rust Lint
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: packages/terminal/native/terminal
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Install Rust
+        run: rustup toolchain install stable --profile minimal --component clippy
+
+      - name: Set up Lean
+        uses: leanprover/lean-action@38fbc41a8c28c4cbaec22d7f7de508ec2e7c0dd9 # v1.5.0
+        with:
+          auto-config: false
+
+      - name: Lint Rust
+        run: lake env cargo clippy --locked --all-targets -- -D warnings
+
+  rust-test:
+    name: Rust Test
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: packages/terminal/native/terminal
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Install Rust
+        run: rustup toolchain install stable --profile minimal
+
+      - name: Set up Lean
+        uses: leanprover/lean-action@38fbc41a8c28c4cbaec22d7f7de508ec2e7c0dd9 # v1.5.0
+        with:
+          auto-config: false
+
+      - name: Test Rust
+        run: lake env cargo test --locked
+
+  toml-format:
+    name: TOML Format
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Install Taplo
+        run: |
+          cargo install taplo-cli --locked --version 0.10.0
+          echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
+
+      - name: Check TOML files
+        run: taplo fmt --check $(git ls-files -- '*.toml')
+
+  prettier-format:
+    name: Prettier Format
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Check YAML, Markdown, and JSON files
+        run: npx --yes prettier@3.9.5 --check $(git ls-files -- '*.json' '*.md' '*.yaml' '*.yml')
+
+  binary-files:
+    name: Binary Files
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Check binary files
+        shell: bash
+        run: |
+          failed=0
+
+          while IFS= read -r -d '' file; do
+            if [[ -s "$file" ]] && ! LC_ALL=C grep -Iq . "$file"; then
+              echo "::error file=$file::binary files are not allowed"
+              failed=1
+            fi
+          done < <(git ls-files -z)
+
+          exit "$failed"
+
+  final-newline:
+    name: Final Newline
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Check final newline
+        shell: bash
+        run: |
+          failed=0
+
+          while IFS= read -r -d '' file; do
+            if [[ -s "$file" ]] && [[ $(tail -c 1 "$file" | wc -l) -eq 0 ]]; then
+              echo "::error file=$file::file must end with a newline"
+              failed=1
+            fi
+          done < <(git ls-files -z)
+
+          exit "$failed"
+
+  crlf-line-endings:
+    name: CRLF Line Endings
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Check CRLF line endings
+        shell: bash
+        run: |
+          failed=0
+
+          while IFS= read -r -d '' file; do
+            if LC_ALL=C grep -q $'\r' "$file"; then
+              echo "::error file=$file::CRLF line endings are not allowed"
+              failed=1
+            fi
+          done < <(git ls-files -z)
+
+          exit "$failed"

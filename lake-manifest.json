@@ -1,0 +1,36 @@
+{
+  "version": "1.2.0",
+  "packagesDir": ".lake/packages",
+  "packages": [
+    {
+      "type": "path",
+      "scope": "",
+      "name": "terminal",
+      "manifestFile": "lake-manifest.json",
+      "inherited": false,
+      "dir": "./packages/terminal",
+      "configFile": "lakefile.lean"
+    },
+    {
+      "type": "path",
+      "scope": "",
+      "name": "loop",
+      "manifestFile": "lake-manifest.json",
+      "inherited": false,
+      "dir": "./packages/loop",
+      "configFile": "lakefile.toml"
+    },
+    {
+      "type": "path",
+      "scope": "",
+      "name": "logic",
+      "manifestFile": "lake-manifest.json",
+      "inherited": true,
+      "dir": "./packages/loop/../logic",
+      "configFile": "lakefile.toml"
+    }
+  ],
+  "name": "gimlight",
+  "lakeDir": ".lake",
+  "fixedToolchain": false
+}
