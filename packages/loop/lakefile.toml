@@ -1,0 +1,9 @@
+name = "loop"
+version = "0.1.0"
+
+[[require]]
+name = "logic"
+path = "../logic"
+
+[[lean_lib]]
+name = "Gimlight.Loop"
