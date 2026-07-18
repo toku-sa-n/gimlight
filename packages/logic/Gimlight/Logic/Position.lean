@@ -11,10 +11,10 @@ public structure Position where private mk ::
 deriving DecidableEq, Repr
 
 public def Position.inBounds (map : Map) (position : Position) : Prop :=
-  position.x < map.width ∧ position.y < map.height
+  position.x < map.dimensions.width ∧ position.y < map.dimensions.height
 
 public def Position.centeredOn (map : Map) : Position :=
-  .mk (map.width / 2) (map.height / 2)
+  .mk (map.dimensions.width / 2) (map.dimensions.height / 2)
 
 public theorem Position.centeredOn_in_bounds
     (map : Map) :
@@ -28,11 +28,11 @@ public def Position.move (map : Map) (direction : Direction) (position : Positio
   | .left =>
     if position.x = 0 then position else .mk (position.x - 1) position.y
   | .right =>
-    if position.x + 1 < map.width then .mk (position.x + 1) position.y else position
+    if position.x + 1 < map.dimensions.width then .mk (position.x + 1) position.y else position
   | .up =>
     if position.y = 0 then position else .mk position.x (position.y - 1)
   | .down =>
-    if position.y + 1 < map.height then .mk position.x (position.y + 1) else position
+    if position.y + 1 < map.dimensions.height then .mk position.x (position.y + 1) else position
 
 public theorem Position.move_preserves_bounds
     (map : Map)
@@ -47,7 +47,7 @@ public theorem Position.move_preserves_bounds
     · simp [Position.inBounds, Position.move, atLeft] at inBounds ⊢
       omega
   | right =>
-    by_cases canMove : position.x + 1 < map.width
+    by_cases canMove : position.x + 1 < map.dimensions.width
     · simpa [Position.inBounds, Position.move, canMove] using
         And.intro canMove inBounds.2
     · simpa [Position.inBounds, Position.move, canMove] using inBounds
@@ -57,7 +57,7 @@ public theorem Position.move_preserves_bounds
     · simp [Position.inBounds, Position.move, atTop] at inBounds ⊢
       omega
   | down =>
-    by_cases canMove : position.y + 1 < map.height
+    by_cases canMove : position.y + 1 < map.dimensions.height
     · simpa [Position.inBounds, Position.move, canMove] using
         And.intro inBounds.1 canMove
     · simpa [Position.inBounds, Position.move, canMove] using inBounds

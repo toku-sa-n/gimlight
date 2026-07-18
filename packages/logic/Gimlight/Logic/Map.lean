@@ -1,20 +1,19 @@
 module
 
-import Std
+public import Gimlight.Logic.Dimensions
 
 namespace Gimlight
 
 public structure Map where private mk ::
-  public width : Nat
-  public height : Nat
-  private positiveDimensions : 0 < width ∧ 0 < height
+  public dimensions : Dimensions
+  private positiveDimensions : 0 < dimensions.width ∧ 0 < dimensions.height
 deriving DecidableEq, Repr
 
 public def defaultMap : Map :=
-  .mk 20 10 (by decide)
+  .mk { width := 20, height := 10 } (by decide)
 
 public theorem Map.dimensionsPositive (map : Map) :
-    0 < map.width ∧ 0 < map.height :=
+    0 < map.dimensions.width ∧ 0 < map.dimensions.height :=
   map.positiveDimensions
 
 end Gimlight
