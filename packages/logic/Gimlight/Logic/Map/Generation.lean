@@ -153,18 +153,6 @@ private def tryRoom (parameters : MapGenerationParameters) (state : GenerationSt
         (withTunnel.positionIndex_lt state.first state.firstInBounds)
       previous := room }
 
-private theorem tryRoom_rejected_unchanged (parameters : MapGenerationParameters)
-    (state : GenerationState parameters) (room : Room)
-    (horizontalFirst : Bool) (overlaps : state.rooms.any (!room.separated ·)) :
-    tryRoom parameters state room horizontalFirst = state := by
-  simp [tryRoom, overlaps]
-
-private theorem tryRoom_accepted_adds_room (parameters : MapGenerationParameters)
-    (state : GenerationState parameters) (room : Room)
-    (horizontalFirst : Bool) (clear : state.rooms.any (!room.separated ·) = false) :
-    (tryRoom parameters state room horizontalFirst).rooms = state.rooms.push room := by
-  simp [tryRoom, clear]
-
 private def randomRoom (parameters : MapGenerationParameters) : IO (CandidateRoom parameters) := do
   let widthRoll ← Random.fin parameters.roomWidthRange (by
     simp [MapGenerationParameters.roomWidthRange])
