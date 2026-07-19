@@ -2,46 +2,13 @@ module
 
 public import Gimlight.Logic.Map.Core
 public import Gimlight.Logic.Room
+public import Gimlight.Logic.Map.Generation.Parameters
 public meta import Gimlight.Logic.Map.Core
 public meta import Gimlight.Logic.Room
 
 namespace Gimlight
 
 private def randomUpperBound : Nat := 1000000
-
-public structure MapGenerationParameters where private mk ::
-  public dimensions : Dimensions
-  public minRoomDimensions : Dimensions
-  public maxRoomDimensions : Dimensions
-  public outerWallMargin : Nat
-  public attempts : Nat
-  private minRoomWidthPositive : 0 < minRoomDimensions.width
-  private roomWidthOrdered : minRoomDimensions.width ≤ maxRoomDimensions.width
-  private minRoomHeightPositive : 0 < minRoomDimensions.height
-  private roomHeightOrdered : minRoomDimensions.height ≤ maxRoomDimensions.height
-  private roomWidthFits : maxRoomDimensions.width + outerWallMargin * 2 < dimensions.width
-  private roomHeightFits : maxRoomDimensions.height + outerWallMargin * 2 < dimensions.height
-  private attemptsPositive : 0 < attempts
-
-public def MapGenerationParameters.create? (dimensions minRoomDimensions maxRoomDimensions : Dimensions)
-    (outerWallMargin attempts : Nat) : Option MapGenerationParameters :=
-  if valid : 0 < minRoomDimensions.width ∧
-      minRoomDimensions.width ≤ maxRoomDimensions.width ∧
-      0 < minRoomDimensions.height ∧
-      minRoomDimensions.height ≤ maxRoomDimensions.height ∧
-      maxRoomDimensions.width + outerWallMargin * 2 < dimensions.width ∧
-      maxRoomDimensions.height + outerWallMargin * 2 < dimensions.height ∧
-      0 < attempts then
-    let ⟨minRoomWidthPositive, roomWidthOrdered, minRoomHeightPositive, roomHeightOrdered,
-      roomWidthFits, roomHeightFits, attemptsPositive⟩ := valid
-    some (.mk dimensions minRoomDimensions maxRoomDimensions outerWallMargin attempts
-      minRoomWidthPositive roomWidthOrdered minRoomHeightPositive roomHeightOrdered roomWidthFits
-      roomHeightFits attemptsPositive)
-  else none
-
-public def MapGenerationParameters.default : MapGenerationParameters :=
-  .mk { width := 60, height := 30 } { width := 5, height := 4 } { width := 12, height := 8 }
-    1 30 (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide)
 
 private def MapGenerationParameters.mapArea (parameters : MapGenerationParameters) : Nat :=
   parameters.dimensions.width * parameters.dimensions.height
@@ -66,30 +33,20 @@ public structure GeneratedMap where private mk ::
 private def setFloor (width : Nat) (tiles : Array Tile) (x y : Nat) : Array Tile :=
   tiles.set! (y * width + x) .floor
 
-private def carveRoom (width : Nat) (tiles : Array Tile) (room : Room) : Array Tile := Id.run do
-  let mut result := tiles
-  for y in [room.y:room.y + room.height] do
-    for x in [room.x:room.x + room.width] do
-      result := setFloor width result x y
-  return result
+private def carveRoom (width : Nat) (tiles : Array Tile) (room : Room) : Array Tile :=
+  (List.range' room.y room.height).foldl (fun result y =>
+    (List.range' room.x room.width).foldl (fun result x => setFloor width result x y) result)
+    tiles
 
 private def carveHorizontal (width : Nat) (tiles : Array Tile) (y sourceX targetX : Nat) : Array Tile :=
   let low := min sourceX targetX
   let high := max sourceX targetX
-  Id.run do
-    let mut result := tiles
-    for x in [low:high + 1] do
-      result := setFloor width result x y
-    return result
+  (List.range' low (high + 1 - low)).foldl (fun result x => setFloor width result x y) tiles
 
 private def carveVertical (width : Nat) (tiles : Array Tile) (x sourceY targetY : Nat) : Array Tile :=
   let low := min sourceY targetY
   let high := max sourceY targetY
-  Id.run do
-    let mut result := tiles
-    for y in [low:high + 1] do
-      result := setFloor width result x y
-    return result
+  (List.range' low (high + 1 - low)).foldl (fun result y => setFloor width result x y) tiles
 
 private def carveTunnel (width : Nat) (tiles : Array Tile) (source target : Nat × Nat)
     (horizontalFirst : Bool) : Array Tile :=
@@ -98,13 +55,59 @@ private def carveTunnel (width : Nat) (tiles : Array Tile) (source target : Nat 
   else
     carveHorizontal width (carveVertical width tiles source.1 source.2 target.2) target.2 source.1 target.1
 
-public structure GenerationState where
-  tiles : Array Tile
-  rooms : Array Room
-  first : Option Position
-  previous : Option Room
+private theorem setFloor_size (width : Nat) (tiles : Array Tile) (x y : Nat) :
+    (setFloor width tiles x y).size = tiles.size := by
+  simp [setFloor, Array.size_setIfInBounds]
 
-public def candidateRoom (parameters : MapGenerationParameters)
+private theorem foldl_size (items : List α) (initial : Array Tile)
+    (operation : Array Tile → α → Array Tile)
+    (preservesSize : ∀ tiles item, (operation tiles item).size = tiles.size) :
+    (items.foldl operation initial).size = initial.size := by
+  induction items generalizing initial with
+  | nil => rfl
+  | cons item items induction =>
+      simp only [List.foldl_cons]
+      rw [induction, preservesSize]
+
+private theorem carveRoom_size (width : Nat) (tiles : Array Tile) (room : Room) :
+    (carveRoom width tiles room).size = tiles.size := by
+  simp only [carveRoom, setFloor]
+  apply foldl_size
+  intro row y
+  apply foldl_size
+  simp
+
+private theorem carveHorizontal_size (width : Nat) (tiles : Array Tile)
+    (y sourceX targetX : Nat) :
+    (carveHorizontal width tiles y sourceX targetX).size = tiles.size := by
+  simp only [carveHorizontal, setFloor]
+  apply foldl_size
+  simp
+
+private theorem carveVertical_size (width : Nat) (tiles : Array Tile)
+    (x sourceY targetY : Nat) :
+    (carveVertical width tiles x sourceY targetY).size = tiles.size := by
+  simp only [carveVertical, setFloor]
+  apply foldl_size
+  simp
+
+private theorem carveTunnel_size (width : Nat) (tiles : Array Tile) (source target : Nat × Nat)
+    (horizontalFirst : Bool) :
+    (carveTunnel width tiles source target horizontalFirst).size = tiles.size := by
+  cases horizontalFirst <;>
+    simp [carveTunnel, carveHorizontal_size, carveVertical_size]
+
+private structure GenerationState (parameters : MapGenerationParameters) where
+  tiles : Array Tile
+  tilesSize : tiles.size = parameters.mapArea
+  rooms : Array Room
+  first : Position
+  firstInBounds : first.x < parameters.dimensions.width ∧
+    first.y < parameters.dimensions.height
+  firstFloor : tiles[first.y * parameters.dimensions.width + first.x]? = some .floor
+  previous : Room
+
+private def candidateRoom (parameters : MapGenerationParameters)
     (widthRoll heightRoll xRoll yRoll : Nat) : Room :=
   let roomWidth := parameters.minRoomDimensions.width + widthRoll % parameters.roomWidthRange
   let roomHeight := parameters.minRoomDimensions.height + heightRoll % parameters.roomHeightRange
@@ -113,39 +116,39 @@ public def candidateRoom (parameters : MapGenerationParameters)
     width := roomWidth
     height := roomHeight }
 
-public theorem candidateRoom_width (parameters : MapGenerationParameters)
+private theorem candidateRoom_width (parameters : MapGenerationParameters)
     (widthRoll heightRoll xRoll yRoll : Nat) :
     let room := candidateRoom parameters widthRoll heightRoll xRoll yRoll
     parameters.minRoomDimensions.width ≤ room.width ∧
       room.width ≤ parameters.maxRoomDimensions.width := by
   simp [candidateRoom, MapGenerationParameters.roomWidthRange]
-  have := parameters.roomWidthOrdered
+  have := parameters.valid.2.1
   have rangePositive :
       0 < parameters.maxRoomDimensions.width - parameters.minRoomDimensions.width + 1 := by omega
   have rollInRange := Nat.mod_lt widthRoll rangePositive
   omega
 
-public theorem candidateRoom_height (parameters : MapGenerationParameters)
+private theorem candidateRoom_height (parameters : MapGenerationParameters)
     (widthRoll heightRoll xRoll yRoll : Nat) :
     let room := candidateRoom parameters widthRoll heightRoll xRoll yRoll
     parameters.minRoomDimensions.height ≤ room.height ∧
       room.height ≤ parameters.maxRoomDimensions.height := by
   simp [candidateRoom, MapGenerationParameters.roomHeightRange]
-  have := parameters.roomHeightOrdered
+  have := parameters.valid.2.2.2.1
   have rangePositive :
       0 < parameters.maxRoomDimensions.height - parameters.minRoomDimensions.height + 1 := by omega
   have rollInRange := Nat.mod_lt heightRoll rangePositive
   omega
 
-public theorem candidateRoom_inside_outer_wall (parameters : MapGenerationParameters)
+private theorem candidateRoom_inside_outer_wall (parameters : MapGenerationParameters)
     (widthRoll heightRoll xRoll yRoll : Nat) :
     let room := candidateRoom parameters widthRoll heightRoll xRoll yRoll
     parameters.outerWallMargin ≤ room.x ∧
       room.x + room.width + parameters.outerWallMargin < parameters.dimensions.width ∧
       parameters.outerWallMargin ≤ room.y ∧
       room.y + room.height + parameters.outerWallMargin < parameters.dimensions.height := by
-  have widthFits := parameters.roomWidthFits
-  have heightFits := parameters.roomHeightFits
+  have widthFits := parameters.valid.2.2.2.2.1
+  have heightFits := parameters.valid.2.2.2.2.2.1
   have xRangePositive : 0 < parameters.roomXRange := by
     simp [MapGenerationParameters.roomXRange]
     omega
@@ -160,94 +163,128 @@ public theorem candidateRoom_inside_outer_wall (parameters : MapGenerationParame
     MapGenerationParameters.roomYRange] at *
   omega
 
-public theorem default_candidateRoom_inside_outer_wall (widthRoll heightRoll xRoll yRoll : Nat) :
-    let room := candidateRoom .default widthRoll heightRoll xRoll yRoll
-    0 < room.x ∧ room.x + room.width < 60 ∧
-      0 < room.y ∧ room.y + room.height < 30 := by
-  have inside := candidateRoom_inside_outer_wall .default widthRoll heightRoll xRoll yRoll
-  simp [MapGenerationParameters.default] at inside ⊢
-  omega
+private theorem positionIndex_lt (parameters : MapGenerationParameters) (tiles : Array Tile)
+    (tilesSize : tiles.size = parameters.mapArea) (position : Position)
+    (inBounds : position.x < parameters.dimensions.width ∧
+      position.y < parameters.dimensions.height) :
+    position.y * parameters.dimensions.width + position.x < tiles.size := by
+  rw [tilesSize]
+  simp [MapGenerationParameters.mapArea]
+  calc
+    position.y * parameters.dimensions.width + position.x <
+        (position.y + 1) * parameters.dimensions.width := by
+      rw [Nat.add_mul]
+      simpa using Nat.add_lt_add_left inBounds.1
+        (position.y * parameters.dimensions.width)
+    _ ≤ parameters.dimensions.height * parameters.dimensions.width :=
+      Nat.mul_le_mul_right parameters.dimensions.width inBounds.2
+    _ = parameters.dimensions.width * parameters.dimensions.height := Nat.mul_comm _ _
 
-public def tryRoom (parameters : MapGenerationParameters) (state : GenerationState) (room : Room)
-    (horizontalFirst : Bool) : GenerationState :=
+private theorem setFloor_at (width : Nat) (tiles : Array Tile) (position : Position)
+    (inBounds : position.y * width + position.x < tiles.size) :
+    (setFloor width tiles position.x position.y)[position.y * width + position.x]? =
+      some .floor := by
+  simp [setFloor, inBounds]
+
+private def tryRoom (parameters : MapGenerationParameters) (state : GenerationState parameters)
+    (room : Room) (horizontalFirst : Bool) : GenerationState parameters :=
   if state.rooms.any (!room.separated ·) then
     state
   else
     let center := room.center
     let withRoom := carveRoom parameters.dimensions.width state.tiles room
-    let withTunnel := match state.previous with
-      | none => withRoom
-      | some previous => carveTunnel parameters.dimensions.width withRoom previous.center center horizontalFirst
-    { tiles := withTunnel
+    let withTunnel := carveTunnel parameters.dimensions.width withRoom state.previous.center center
+      horizontalFirst
+    let tiles := setFloor parameters.dimensions.width withTunnel state.first.x state.first.y
+    { tiles
+      tilesSize := by
+        simp [tiles, withTunnel, withRoom, setFloor_size, carveTunnel_size, carveRoom_size,
+          state.tilesSize]
       rooms := state.rooms.push room
-      first := state.first.orElse fun _ => some { x := center.1, y := center.2 }
-      previous := some room }
+      first := state.first
+      firstInBounds := state.firstInBounds
+      firstFloor := setFloor_at parameters.dimensions.width withTunnel state.first
+        (by
+          apply positionIndex_lt parameters withTunnel
+          · simp [withTunnel, withRoom, carveTunnel_size, carveRoom_size, state.tilesSize]
+          · exact state.firstInBounds)
+      previous := room }
 
-public theorem tryRoom_rejected_unchanged (parameters : MapGenerationParameters)
-    (state : GenerationState) (room : Room)
+private theorem tryRoom_rejected_unchanged (parameters : MapGenerationParameters)
+    (state : GenerationState parameters) (room : Room)
     (horizontalFirst : Bool) (overlaps : state.rooms.any (!room.separated ·)) :
     tryRoom parameters state room horizontalFirst = state := by
   simp [tryRoom, overlaps]
 
-public theorem tryRoom_accepted_adds_room (parameters : MapGenerationParameters)
-    (state : GenerationState) (room : Room)
+private theorem tryRoom_accepted_adds_room (parameters : MapGenerationParameters)
+    (state : GenerationState parameters) (room : Room)
     (horizontalFirst : Bool) (clear : state.rooms.any (!room.separated ·) = false) :
     (tryRoom parameters state room horizontalFirst).rooms = state.rooms.push room := by
   simp [tryRoom, clear]
 
-public theorem tryRoom_accepted_preserves_connection (parameters : MapGenerationParameters)
-    (state : GenerationState) (room : Room)
-    (horizontalFirst : Bool) (invariant : state.previous.isSome → state.first.isSome) :
-    (tryRoom parameters state room horizontalFirst).previous.isSome →
-      (tryRoom parameters state room horizontalFirst).first.isSome := by
-  unfold tryRoom
-  split
-  · exact invariant
-  · simp
-
-private def randomRoom (parameters : MapGenerationParameters) : IO Room := do
+private def randomRoom (parameters : MapGenerationParameters) : IO
+    { room : Room // parameters.outerWallMargin ≤ room.x ∧
+      room.x + room.width + parameters.outerWallMargin < parameters.dimensions.width ∧
+      parameters.outerWallMargin ≤ room.y ∧
+      room.y + room.height + parameters.outerWallMargin < parameters.dimensions.height } := do
   let widthRoll ← IO.rand 0 randomUpperBound
   let heightRoll ← IO.rand 0 randomUpperBound
   let xRoll ← IO.rand 0 randomUpperBound
   let yRoll ← IO.rand 0 randomUpperBound
-  return candidateRoom parameters widthRoll heightRoll xRoll yRoll
+  return ⟨candidateRoom parameters widthRoll heightRoll xRoll yRoll,
+    candidateRoom_inside_outer_wall parameters widthRoll heightRoll xRoll yRoll⟩
 
-private def generateState (parameters : MapGenerationParameters) : IO GenerationState := do
-  let mut state : GenerationState :=
-    { tiles := Array.replicate parameters.mapArea .wall, rooms := #[], first := none, previous := none }
-  for _ in [0:parameters.attempts] do
+private def initialState (parameters : MapGenerationParameters)
+    (candidate : { room : Room // parameters.outerWallMargin ≤ room.x ∧
+      room.x + room.width + parameters.outerWallMargin < parameters.dimensions.width ∧
+      parameters.outerWallMargin ≤ room.y ∧
+      room.y + room.height + parameters.outerWallMargin < parameters.dimensions.height }) :
+    GenerationState parameters :=
+  let room := candidate.1
+  let center : Position := { x := room.x + room.width / 2, y := room.y + room.height / 2 }
+  let base := Array.replicate parameters.mapArea .wall
+  let carved := carveRoom parameters.dimensions.width base room
+  let tiles := setFloor parameters.dimensions.width carved center.x center.y
+  have centerInBounds : center.x < parameters.dimensions.width ∧
+      center.y < parameters.dimensions.height := by
+    have inside := candidate.2
+    have widthHalf := Nat.div_le_self room.width 2
+    have heightHalf := Nat.div_le_self room.height 2
+    change room.x + room.width / 2 < parameters.dimensions.width ∧
+      room.y + room.height / 2 < parameters.dimensions.height
+    change parameters.outerWallMargin ≤ room.x ∧
+      room.x + room.width + parameters.outerWallMargin < parameters.dimensions.width ∧
+      parameters.outerWallMargin ≤ room.y ∧
+      room.y + room.height + parameters.outerWallMargin < parameters.dimensions.height at inside
+    omega
+  { tiles
+    tilesSize := by
+      simp [tiles, carved, base, setFloor_size, carveRoom_size,
+        MapGenerationParameters.mapArea]
+    rooms := #[room]
+    first := center
+    firstInBounds := centerInBounds
+    firstFloor := setFloor_at parameters.dimensions.width carved center
+      (by
+        apply positionIndex_lt parameters carved
+        · simp [carved, base, carveRoom_size, MapGenerationParameters.mapArea]
+        · exact centerInBounds)
+    previous := room }
+
+private def generateState (parameters : MapGenerationParameters) : IO (GenerationState parameters) := do
+  let first ← randomRoom parameters
+  let mut state := initialState parameters first
+  for _ in [1:parameters.attempts] do
     let room ← randomRoom parameters
     let turnRoll ← IO.rand 0 1
-    state := tryRoom parameters state room (turnRoll == 0)
+    state := tryRoom parameters state room.1 (turnRoll == 0)
   return state
 
 public def generateMap (parameters : MapGenerationParameters) : IO GeneratedMap := do
   let state ← generateState parameters
-  let first := state.first.getD
-    { x := parameters.dimensions.width / 2, y := parameters.dimensions.height / 2 }
-  -- The first candidate is always accepted, so this fallback is unreachable.
-  if tilesSize : state.tiles.size = parameters.mapArea then
-    if firstInBounds : first.x < parameters.dimensions.width ∧
-        first.y < parameters.dimensions.height then
-      if firstFloor : state.tiles[first.y * parameters.dimensions.width + first.x]? = some .floor then
-        let map := Map.ofTiles parameters.dimensions state.tiles tilesSize
-          (fun source target fromFloor toFloor => ⟨fromFloor, toFloor⟩)
-        return .mk map first (by simp [map, Map.tileAt?_ofTiles, firstInBounds, firstFloor])
-  let tiles := (Array.replicate parameters.mapArea .wall).set! 0 .floor
-  let center : Position := { x := 0, y := 0 }
-  let map := Map.ofTiles parameters.dimensions tiles (by
-      dsimp [tiles]
-      rw [Array.size_setIfInBounds]
-      simp [MapGenerationParameters.mapArea])
+  let map := Map.ofTiles parameters.dimensions state.tiles state.tilesSize
     (fun source target fromFloor toFloor => ⟨fromFloor, toFloor⟩)
-  return .mk map center (by
-    have widthPositive : 0 < parameters.dimensions.width := by
-      have := parameters.roomWidthFits
-      omega
-    have heightPositive : 0 < parameters.dimensions.height := by
-      have := parameters.roomHeightFits
-      omega
-    simp [map, Map.tileAt?_ofTiles, center, widthPositive, heightPositive, tiles,
-      MapGenerationParameters.mapArea])
+  return .mk map state.first (by
+    simp [map, Map.tileAt?_ofTiles, state.firstInBounds, state.firstFloor])
 
 end Gimlight
