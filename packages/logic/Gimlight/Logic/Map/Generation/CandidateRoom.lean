@@ -7,18 +7,6 @@ public meta import Gimlight.Logic.Room
 
 namespace Gimlight.MapGeneration
 
-private def roomWidthRange (parameters : MapGenerationParameters) : Nat :=
-  parameters.maxRoomDimensions.width - parameters.minRoomDimensions.width + 1
-
-private def roomHeightRange (parameters : MapGenerationParameters) : Nat :=
-  parameters.maxRoomDimensions.height - parameters.minRoomDimensions.height + 1
-
-private def roomXRange (parameters : MapGenerationParameters) : Nat :=
-  parameters.dimensions.width - (parameters.maxRoomDimensions.width + parameters.outerWallMargin * 2)
-
-private def roomYRange (parameters : MapGenerationParameters) : Nat :=
-  parameters.dimensions.height - (parameters.maxRoomDimensions.height + parameters.outerWallMargin * 2)
-
 public abbrev CandidateRoomValid (parameters : MapGenerationParameters) (room : Room) : Prop :=
   parameters.minRoomDimensions.width ≤ room.width ∧
     room.width ≤ parameters.maxRoomDimensions.width ∧
@@ -33,40 +21,43 @@ public abbrev CandidateRoom (parameters : MapGenerationParameters) :=
   { room : Room // CandidateRoomValid parameters room }
 
 private def candidateRoom (parameters : MapGenerationParameters)
-    (widthRoll : Fin (roomWidthRange parameters))
-    (heightRoll : Fin (roomHeightRange parameters))
-    (xRoll : Fin (roomXRange parameters))
-    (yRoll : Fin (roomYRange parameters)) : CandidateRoom parameters :=
-  let roomWidth := parameters.minRoomDimensions.width + widthRoll.val
-  let roomHeight := parameters.minRoomDimensions.height + heightRoll.val
+    (roomWidth : NatRange parameters.minRoomDimensions.width parameters.maxRoomDimensions.width)
+    (roomHeight : NatRange parameters.minRoomDimensions.height parameters.maxRoomDimensions.height)
+    (roomX : NatRange parameters.outerWallMargin
+      (parameters.dimensions.width - parameters.maxRoomDimensions.width -
+        parameters.outerWallMargin - 1))
+    (roomY : NatRange parameters.outerWallMargin
+      (parameters.dimensions.height - parameters.maxRoomDimensions.height -
+        parameters.outerWallMargin - 1)) : CandidateRoom parameters :=
   let room : Room :=
-    { x := parameters.outerWallMargin + xRoll.val
-      y := parameters.outerWallMargin + yRoll.val
-      width := roomWidth
-      height := roomHeight }
+    { x := roomX.val
+      y := roomY.val
+      width := roomWidth.val
+      height := roomHeight.val }
   ⟨room, by
   obtain ⟨_, _, _, _, widthFits, heightFits, _⟩ := parameters.valid
-  have widthRollInRange := widthRoll.isLt
-  have heightRollInRange := heightRoll.isLt
-  have xRollInRange := xRoll.isLt
-  have yRollInRange := yRoll.isLt
-  simp [CandidateRoomValid, room, roomWidth, roomHeight,
-    roomWidthRange, roomHeightRange, roomXRange, roomYRange] at *
+  obtain ⟨widthMin, widthMax⟩ := roomWidth.property
+  obtain ⟨heightMin, heightMax⟩ := roomHeight.property
+  obtain ⟨xMin, xMax⟩ := roomX.property
+  obtain ⟨yMin, yMax⟩ := roomY.property
+  simp [CandidateRoomValid, room] at *
   omega⟩
 
 public def randomRoom (parameters : MapGenerationParameters) : IO (CandidateRoom parameters) := do
-  let widthRoll ← Random.fin (roomWidthRange parameters) (by
-    simp [roomWidthRange])
-  let heightRoll ← Random.fin (roomHeightRange parameters) (by
-    simp [roomHeightRange])
-  let xRoll ← Random.fin (roomXRange parameters) (by
-    simp [roomXRange]
-    obtain ⟨_, _, _, _, widthFits, _, _⟩ := parameters.valid
-    omega)
-  let yRoll ← Random.fin (roomYRange parameters) (by
-    simp [roomYRange]
-    obtain ⟨_, _, _, _, _, heightFits, _⟩ := parameters.valid
-    omega)
-  return candidateRoom parameters widthRoll heightRoll xRoll yRoll
+  have widthOrdered := parameters.valid.2.1
+  have heightOrdered := parameters.valid.2.2.2.1
+  have widthFits := parameters.valid.2.2.2.2.1
+  have heightFits := parameters.valid.2.2.2.2.2.1
+  let roomWidth ← Random.natRange parameters.minRoomDimensions.width
+    parameters.maxRoomDimensions.width widthOrdered
+  let roomHeight ← Random.natRange parameters.minRoomDimensions.height
+    parameters.maxRoomDimensions.height heightOrdered
+  let roomX ← Random.natRange parameters.outerWallMargin
+    (parameters.dimensions.width - parameters.maxRoomDimensions.width -
+      parameters.outerWallMargin - 1) (by omega)
+  let roomY ← Random.natRange parameters.outerWallMargin
+    (parameters.dimensions.height - parameters.maxRoomDimensions.height -
+      parameters.outerWallMargin - 1) (by omega)
+  return candidateRoom parameters roomWidth roomHeight roomX roomY
 
 end Gimlight.MapGeneration

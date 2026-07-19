@@ -1,5 +1,7 @@
 module
 
+public import Gimlight.Logic.NatRange
+
 namespace Gimlight
 
 /--
@@ -11,6 +13,13 @@ public def Random.fin (size : Nat) (positive : 0 < size) : IO (Fin size) := do
   let value ← IO.rand 0 (size - 1)
   let _ : NeZero size := ⟨Nat.ne_of_gt positive⟩
   return Fin.ofNat size value
+
+/-- Returns a uniformly random natural number in the inclusive interval `[min, max]`. -/
+public def Random.natRange (min max : Nat) (ordered : min ≤ max) : IO (NatRange min max) := do
+  let offset ← Random.fin (max - min + 1) (by omega)
+  return ⟨min + offset.val, by
+    have offsetInRange := offset.isLt
+    omega⟩
 
 /-- Returns a uniformly random boolean. -/
 public def Random.bool : IO Bool := do
