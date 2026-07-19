@@ -12,4 +12,8 @@ public def Random.fin (size : Nat) (positive : 0 < size) : IO (Fin size) := do
   let _ : NeZero size := ⟨Nat.ne_of_gt positive⟩
   return Fin.ofNat size value
 
+/-- Returns a uniformly random boolean. -/
+public def Random.bool : IO Bool := do
+  return (← IO.rand 0 1) == 0
+
 end Gimlight

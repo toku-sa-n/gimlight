@@ -208,8 +208,8 @@ private def generateState (parameters : MapGenerationParameters) : IO (Generatio
   let mut state := initialState parameters first
   for _ in [1:parameters.attempts] do
     let room ← randomRoom parameters
-    let turnRoll ← Random.fin 2 (by omega)
-    state := tryRoom parameters state room.1 (turnRoll == 0)
+    let horizontalFirst ← Random.bool
+    state := tryRoom parameters state room.1 horizontalFirst
   return state
 
 public def generateMap (parameters : MapGenerationParameters) : IO GeneratedMap := do
