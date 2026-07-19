@@ -21,14 +21,16 @@ public abbrev CandidateRoom (parameters : MapGenerationParameters) :=
   { room : Room // CandidateRoomValid parameters room }
 
 private def candidateRoom (parameters : MapGenerationParameters)
-    (roomWidth : NatRange parameters.minRoomDimensions.width parameters.maxRoomDimensions.width)
-    (roomHeight : NatRange parameters.minRoomDimensions.height parameters.maxRoomDimensions.height)
+    (roomWidth : NatRange parameters.minRoomDimensions.width
+      (parameters.maxRoomDimensions.width + 1))
+    (roomHeight : NatRange parameters.minRoomDimensions.height
+      (parameters.maxRoomDimensions.height + 1))
     (roomX : NatRange parameters.outerWallMargin
       (parameters.dimensions.width - parameters.maxRoomDimensions.width -
-        parameters.outerWallMargin - 1))
+        parameters.outerWallMargin))
     (roomY : NatRange parameters.outerWallMargin
       (parameters.dimensions.height - parameters.maxRoomDimensions.height -
-        parameters.outerWallMargin - 1)) : CandidateRoom parameters :=
+        parameters.outerWallMargin)) : CandidateRoom parameters :=
   let room : Room :=
     { x := roomX.val
       y := roomY.val
@@ -49,15 +51,15 @@ public def randomRoom (parameters : MapGenerationParameters) : IO (CandidateRoom
   have widthFits := parameters.valid.2.2.2.2.1
   have heightFits := parameters.valid.2.2.2.2.2.1
   let roomWidth ← Random.natRange parameters.minRoomDimensions.width
-    parameters.maxRoomDimensions.width widthOrdered
+    (parameters.maxRoomDimensions.width + 1) (by omega)
   let roomHeight ← Random.natRange parameters.minRoomDimensions.height
-    parameters.maxRoomDimensions.height heightOrdered
+    (parameters.maxRoomDimensions.height + 1) (by omega)
   let roomX ← Random.natRange parameters.outerWallMargin
     (parameters.dimensions.width - parameters.maxRoomDimensions.width -
-      parameters.outerWallMargin - 1) (by omega)
+      parameters.outerWallMargin) (by omega)
   let roomY ← Random.natRange parameters.outerWallMargin
     (parameters.dimensions.height - parameters.maxRoomDimensions.height -
-      parameters.outerWallMargin - 1) (by omega)
+      parameters.outerWallMargin) (by omega)
   return candidateRoom parameters roomWidth roomHeight roomX roomY
 
 end Gimlight.MapGeneration
