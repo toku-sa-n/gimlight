@@ -20,36 +20,8 @@ public abbrev CandidateRoomValid (parameters : MapGenerationParameters) (room : 
 public abbrev CandidateRoom (parameters : MapGenerationParameters) :=
   { room : Room // CandidateRoomValid parameters room }
 
-private def candidateRoom (parameters : MapGenerationParameters)
-    (roomWidth : NatRange parameters.minRoomDimensions.width
-      (parameters.maxRoomDimensions.width + 1))
-    (roomHeight : NatRange parameters.minRoomDimensions.height
-      (parameters.maxRoomDimensions.height + 1))
-    (roomX : NatRange parameters.outerWallMargin
-      (parameters.dimensions.width - parameters.maxRoomDimensions.width -
-        parameters.outerWallMargin))
-    (roomY : NatRange parameters.outerWallMargin
-      (parameters.dimensions.height - parameters.maxRoomDimensions.height -
-        parameters.outerWallMargin)) : CandidateRoom parameters :=
-  let room : Room :=
-    { x := roomX.val
-      y := roomY.val
-      width := roomWidth.val
-      height := roomHeight.val }
-  ⟨room, by
-  obtain ⟨_, _, _, _, widthFits, heightFits, _⟩ := parameters.valid
-  obtain ⟨widthMin, widthMax⟩ := roomWidth.property
-  obtain ⟨heightMin, heightMax⟩ := roomHeight.property
-  obtain ⟨xMin, xMax⟩ := roomX.property
-  obtain ⟨yMin, yMax⟩ := roomY.property
-  simp [CandidateRoomValid, room] at *
-  omega⟩
-
 public def randomRoom (parameters : MapGenerationParameters) : IO (CandidateRoom parameters) := do
-  have widthOrdered := parameters.valid.2.1
-  have heightOrdered := parameters.valid.2.2.2.1
-  have widthFits := parameters.valid.2.2.2.2.1
-  have heightFits := parameters.valid.2.2.2.2.2.1
+  let ⟨_, widthOrdered, _, heightOrdered, widthFits, heightFits, _⟩ := parameters.valid
   let roomWidth ← Random.natRange parameters.minRoomDimensions.width
     (parameters.maxRoomDimensions.width + 1) (by omega)
   let roomHeight ← Random.natRange parameters.minRoomDimensions.height
@@ -60,6 +32,17 @@ public def randomRoom (parameters : MapGenerationParameters) : IO (CandidateRoom
   let roomY ← Random.natRange parameters.outerWallMargin
     (parameters.dimensions.height - parameters.maxRoomDimensions.height -
       parameters.outerWallMargin) (by omega)
-  return candidateRoom parameters roomWidth roomHeight roomX roomY
+  let ⟨roomWidthMin, roomWidthMax⟩ := roomWidth.property
+  let ⟨roomHeightMin, roomHeightMax⟩ := roomHeight.property
+  let ⟨roomXMin, roomXMax⟩ := roomX.property
+  let ⟨roomYMin, roomYMax⟩ := roomY.property
+  let room : Room :=
+    { x := roomX.val
+      y := roomY.val
+      width := roomWidth.val
+      height := roomHeight.val }
+  return ⟨room, by
+    simp only [CandidateRoomValid, room]
+    omega⟩
 
 end Gimlight.MapGeneration
