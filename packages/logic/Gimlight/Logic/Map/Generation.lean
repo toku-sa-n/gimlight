@@ -3,12 +3,11 @@ module
 public import Gimlight.Logic.Map.Core
 public import Gimlight.Logic.Room
 public import Gimlight.Logic.Map.Generation.Parameters
+import Gimlight.Logic.Random
 public meta import Gimlight.Logic.Map.Core
 public meta import Gimlight.Logic.Room
 
 namespace Gimlight
-
-private def randomUpperBound : Nat := 1000000
 
 private def MapGenerationParameters.mapArea (parameters : MapGenerationParameters) : Nat :=
   parameters.dimensions.width * parameters.dimensions.height
@@ -108,40 +107,50 @@ private structure GenerationState (parameters : MapGenerationParameters) where
   previous : Room
 
 private def candidateRoom (parameters : MapGenerationParameters)
-    (widthRoll heightRoll xRoll yRoll : Nat) : Room :=
-  let roomWidth := parameters.minRoomDimensions.width + widthRoll % parameters.roomWidthRange
-  let roomHeight := parameters.minRoomDimensions.height + heightRoll % parameters.roomHeightRange
-  { x := parameters.outerWallMargin + xRoll % parameters.roomXRange
-    y := parameters.outerWallMargin + yRoll % parameters.roomYRange
+    (widthRoll : Fin parameters.roomWidthRange)
+    (heightRoll : Fin parameters.roomHeightRange)
+    (xRoll : Fin parameters.roomXRange)
+    (yRoll : Fin parameters.roomYRange) : Room :=
+  let roomWidth := parameters.minRoomDimensions.width + widthRoll.val
+  let roomHeight := parameters.minRoomDimensions.height + heightRoll.val
+  { x := parameters.outerWallMargin + xRoll.val
+    y := parameters.outerWallMargin + yRoll.val
     width := roomWidth
     height := roomHeight }
 
 private theorem candidateRoom_width (parameters : MapGenerationParameters)
-    (widthRoll heightRoll xRoll yRoll : Nat) :
+    (widthRoll : Fin parameters.roomWidthRange)
+    (heightRoll : Fin parameters.roomHeightRange)
+    (xRoll : Fin parameters.roomXRange)
+    (yRoll : Fin parameters.roomYRange) :
     let room := candidateRoom parameters widthRoll heightRoll xRoll yRoll
     parameters.minRoomDimensions.width ≤ room.width ∧
       room.width ≤ parameters.maxRoomDimensions.width := by
   simp [candidateRoom, MapGenerationParameters.roomWidthRange]
   have := parameters.valid.2.1
-  have rangePositive :
-      0 < parameters.maxRoomDimensions.width - parameters.minRoomDimensions.width + 1 := by omega
-  have rollInRange := Nat.mod_lt widthRoll rangePositive
+  have rollInRange := widthRoll.isLt
+  simp [MapGenerationParameters.roomWidthRange] at rollInRange
   omega
 
 private theorem candidateRoom_height (parameters : MapGenerationParameters)
-    (widthRoll heightRoll xRoll yRoll : Nat) :
+    (widthRoll : Fin parameters.roomWidthRange)
+    (heightRoll : Fin parameters.roomHeightRange)
+    (xRoll : Fin parameters.roomXRange)
+    (yRoll : Fin parameters.roomYRange) :
     let room := candidateRoom parameters widthRoll heightRoll xRoll yRoll
     parameters.minRoomDimensions.height ≤ room.height ∧
       room.height ≤ parameters.maxRoomDimensions.height := by
   simp [candidateRoom, MapGenerationParameters.roomHeightRange]
   have := parameters.valid.2.2.2.1
-  have rangePositive :
-      0 < parameters.maxRoomDimensions.height - parameters.minRoomDimensions.height + 1 := by omega
-  have rollInRange := Nat.mod_lt heightRoll rangePositive
+  have rollInRange := heightRoll.isLt
+  simp [MapGenerationParameters.roomHeightRange] at rollInRange
   omega
 
 private theorem candidateRoom_inside_outer_wall (parameters : MapGenerationParameters)
-    (widthRoll heightRoll xRoll yRoll : Nat) :
+    (widthRoll : Fin parameters.roomWidthRange)
+    (heightRoll : Fin parameters.roomHeightRange)
+    (xRoll : Fin parameters.roomXRange)
+    (yRoll : Fin parameters.roomYRange) :
     let room := candidateRoom parameters widthRoll heightRoll xRoll yRoll
     parameters.outerWallMargin ≤ room.x ∧
       room.x + room.width + parameters.outerWallMargin < parameters.dimensions.width ∧
@@ -149,14 +158,8 @@ private theorem candidateRoom_inside_outer_wall (parameters : MapGenerationParam
       room.y + room.height + parameters.outerWallMargin < parameters.dimensions.height := by
   have widthFits := parameters.valid.2.2.2.2.1
   have heightFits := parameters.valid.2.2.2.2.2.1
-  have xRangePositive : 0 < parameters.roomXRange := by
-    simp [MapGenerationParameters.roomXRange]
-    omega
-  have yRangePositive : 0 < parameters.roomYRange := by
-    simp [MapGenerationParameters.roomYRange]
-    omega
-  have xRollInRange := Nat.mod_lt xRoll xRangePositive
-  have yRollInRange := Nat.mod_lt yRoll yRangePositive
+  have xRollInRange := xRoll.isLt
+  have yRollInRange := yRoll.isLt
   have roomWidthInRange := candidateRoom_width parameters widthRoll heightRoll xRoll yRoll
   have roomHeightInRange := candidateRoom_height parameters widthRoll heightRoll xRoll yRoll
   simp [candidateRoom, MapGenerationParameters.roomXRange,
@@ -227,10 +230,18 @@ private def randomRoom (parameters : MapGenerationParameters) : IO
       room.x + room.width + parameters.outerWallMargin < parameters.dimensions.width ∧
       parameters.outerWallMargin ≤ room.y ∧
       room.y + room.height + parameters.outerWallMargin < parameters.dimensions.height } := do
-  let widthRoll ← IO.rand 0 randomUpperBound
-  let heightRoll ← IO.rand 0 randomUpperBound
-  let xRoll ← IO.rand 0 randomUpperBound
-  let yRoll ← IO.rand 0 randomUpperBound
+  let widthRoll ← Random.fin parameters.roomWidthRange (by
+    simp [MapGenerationParameters.roomWidthRange])
+  let heightRoll ← Random.fin parameters.roomHeightRange (by
+    simp [MapGenerationParameters.roomHeightRange])
+  let xRoll ← Random.fin parameters.roomXRange (by
+    simp [MapGenerationParameters.roomXRange]
+    have := parameters.valid.2.2.2.2.1
+    omega)
+  let yRoll ← Random.fin parameters.roomYRange (by
+    simp [MapGenerationParameters.roomYRange]
+    have := parameters.valid.2.2.2.2.2.1
+    omega)
   return ⟨candidateRoom parameters widthRoll heightRoll xRoll yRoll,
     candidateRoom_inside_outer_wall parameters widthRoll heightRoll xRoll yRoll⟩
 
@@ -276,7 +287,7 @@ private def generateState (parameters : MapGenerationParameters) : IO (Generatio
   let mut state := initialState parameters first
   for _ in [1:parameters.attempts] do
     let room ← randomRoom parameters
-    let turnRoll ← IO.rand 0 1
+    let turnRoll ← Random.fin 2 (by omega)
     state := tryRoom parameters state room.1 (turnRoll == 0)
   return state
 
