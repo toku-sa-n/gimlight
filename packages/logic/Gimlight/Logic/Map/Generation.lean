@@ -127,7 +127,7 @@ private theorem candidateRoom_width (parameters : MapGenerationParameters)
     parameters.minRoomDimensions.width ≤ room.width ∧
       room.width ≤ parameters.maxRoomDimensions.width := by
   simp [candidateRoom, MapGenerationParameters.roomWidthRange]
-  have := parameters.valid.2.1
+  obtain ⟨_, roomWidthOrdered, _, _, _, _, _⟩ := parameters.valid
   have rollInRange := widthRoll.isLt
   simp [MapGenerationParameters.roomWidthRange] at rollInRange
   omega
@@ -141,7 +141,7 @@ private theorem candidateRoom_height (parameters : MapGenerationParameters)
     parameters.minRoomDimensions.height ≤ room.height ∧
       room.height ≤ parameters.maxRoomDimensions.height := by
   simp [candidateRoom, MapGenerationParameters.roomHeightRange]
-  have := parameters.valid.2.2.2.1
+  obtain ⟨_, _, _, roomHeightOrdered, _, _, _⟩ := parameters.valid
   have rollInRange := heightRoll.isLt
   simp [MapGenerationParameters.roomHeightRange] at rollInRange
   omega
@@ -156,8 +156,7 @@ private theorem candidateRoom_inside_outer_wall (parameters : MapGenerationParam
       room.x + room.width + parameters.outerWallMargin < parameters.dimensions.width ∧
       parameters.outerWallMargin ≤ room.y ∧
       room.y + room.height + parameters.outerWallMargin < parameters.dimensions.height := by
-  have widthFits := parameters.valid.2.2.2.2.1
-  have heightFits := parameters.valid.2.2.2.2.2.1
+  obtain ⟨_, _, _, _, widthFits, heightFits, _⟩ := parameters.valid
   have xRollInRange := xRoll.isLt
   have yRollInRange := yRoll.isLt
   have roomWidthInRange := candidateRoom_width parameters widthRoll heightRoll xRoll yRoll
@@ -236,11 +235,11 @@ private def randomRoom (parameters : MapGenerationParameters) : IO
     simp [MapGenerationParameters.roomHeightRange])
   let xRoll ← Random.fin parameters.roomXRange (by
     simp [MapGenerationParameters.roomXRange]
-    have := parameters.valid.2.2.2.2.1
+    obtain ⟨_, _, _, _, widthFits, _, _⟩ := parameters.valid
     omega)
   let yRoll ← Random.fin parameters.roomYRange (by
     simp [MapGenerationParameters.roomYRange]
-    have := parameters.valid.2.2.2.2.2.1
+    obtain ⟨_, _, _, _, _, heightFits, _⟩ := parameters.valid
     omega)
   return ⟨candidateRoom parameters widthRoll heightRoll xRoll yRoll,
     candidateRoom_inside_outer_wall parameters widthRoll heightRoll xRoll yRoll⟩
