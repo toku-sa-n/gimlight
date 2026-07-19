@@ -23,6 +23,10 @@ public def SizedTiles.setFloor (tiles : SizedTiles parameters) (x y : Nat) :
   { tiles := tiles.tiles.set! (y * parameters.dimensions.width + x) .floor
     sizeEq := by simpa [Array.size_setIfInBounds] using tiles.sizeEq }
 
+public def SizedTiles.setFloorAt (tiles : SizedTiles parameters) (position : Position) :
+    SizedTiles parameters :=
+  tiles.setFloor position.x position.y
+
 public def SizedTiles.carveRoom (tiles : SizedTiles parameters) (room : Room) :
     SizedTiles parameters :=
   (List.range' room.y room.height).foldl (fun result y =>
@@ -48,7 +52,7 @@ public def SizedTiles.carveTunnel (tiles : SizedTiles parameters) (source target
   else
     (tiles.carveVertical source.x source.y target.y).carveHorizontal target.y source.x target.x
 
-public theorem SizedTiles.positionIndex_lt (tiles : SizedTiles parameters) (position : Position)
+private theorem SizedTiles.positionIndex_lt (tiles : SizedTiles parameters) (position : Position)
     (inBounds : position.x < parameters.dimensions.width ∧
       position.y < parameters.dimensions.height) :
     position.y * parameters.dimensions.width + position.x < tiles.tiles.size := by
@@ -64,11 +68,12 @@ public theorem SizedTiles.positionIndex_lt (tiles : SizedTiles parameters) (posi
       Nat.mul_le_mul_right parameters.dimensions.width inBounds.2
     _ = parameters.dimensions.width * parameters.dimensions.height := Nat.mul_comm _ _
 
-public theorem SizedTiles.setFloor_at (tiles : SizedTiles parameters) (position : Position)
-    (inBounds : position.y * parameters.dimensions.width + position.x < tiles.tiles.size) :
-    (tiles.setFloor position.x position.y).tiles[
+public theorem SizedTiles.setFloorAt_at (tiles : SizedTiles parameters) (position : Position)
+    (inBounds : position.x < parameters.dimensions.width ∧
+      position.y < parameters.dimensions.height) :
+    (tiles.setFloorAt position).tiles[
       position.y * parameters.dimensions.width + position.x]? =
       some .floor := by
-  simp [SizedTiles.setFloor, inBounds]
+  simp [SizedTiles.setFloorAt, SizedTiles.setFloor, tiles.positionIndex_lt position inBounds]
 
 end Gimlight.MapGeneration

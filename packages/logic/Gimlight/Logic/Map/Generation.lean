@@ -21,52 +21,46 @@ namespace MapGeneration
 private structure GenerationState (parameters : MapGenerationParameters) where
   tiles : SizedTiles parameters
   rooms : Array Room
-  first : Position
-  firstInBounds : first.x < parameters.dimensions.width ∧
-    first.y < parameters.dimensions.height
-  firstFloor : tiles.tiles[first.y * parameters.dimensions.width + first.x]? = some .floor
-  previous : Room
+  start : Position
+  startInBounds : start.x < parameters.dimensions.width ∧
+    start.y < parameters.dimensions.height
+  startFloor : tiles.tiles[start.y * parameters.dimensions.width + start.x]? = some .floor
+  lastRoom : Room
+
+private def GenerationState.withTiles (state : GenerationState parameters)
+    (updated : SizedTiles parameters) : GenerationState parameters :=
+  let tiles := updated.setFloorAt state.start
+  { state with
+    tiles
+    startFloor := updated.setFloorAt_at state.start state.startInBounds }
+
+private def GenerationState.canPlace (state : GenerationState parameters) (room : Room) : Bool :=
+  !state.rooms.any (!room.separated ·)
+
+private def GenerationState.carve (state : GenerationState parameters) (room : Room)
+    (horizontalFirst : Bool) : GenerationState parameters :=
+  let tiles := (state.tiles.carveRoom room).carveTunnel state.lastRoom.center room.center
+    horizontalFirst
+  { state.withTiles tiles with
+    rooms := state.rooms.push room
+    lastRoom := room }
 
 private def tryRoom (parameters : MapGenerationParameters) (state : GenerationState parameters)
     (room : Room) (horizontalFirst : Bool) : GenerationState parameters :=
-  if state.rooms.any (!room.separated ·) then
-    state
-  else
-    let center := room.center
-    let withRoom := state.tiles.carveRoom room
-    let withTunnel := withRoom.carveTunnel state.previous.center center horizontalFirst
-    -- Reapply the start floor because carving tracks size, but deliberately carries no tile proofs.
-    let tiles := withTunnel.setFloor state.first.x state.first.y
-    { tiles
-      rooms := state.rooms.push room
-      first := state.first
-      firstInBounds := state.firstInBounds
-      firstFloor := withTunnel.setFloor_at state.first
-        (withTunnel.positionIndex_lt state.first state.firstInBounds)
-      previous := room }
+  if state.canPlace room then state.carve room horizontalFirst else state
 
 private def initialState (parameters : MapGenerationParameters) (candidate : CandidateRoom parameters) :
     GenerationState parameters :=
   let room := candidate.1
-  let center : Position := { x := room.x + room.width / 2, y := room.y + room.height / 2 }
+  let start := candidate.center
   let carved := (SizedTiles.walls parameters).carveRoom room
-  let tiles := carved.setFloor center.x center.y
-  have centerInBounds : center.x < parameters.dimensions.width ∧
-      center.y < parameters.dimensions.height := by
-    have inside := candidate.2
-    have widthHalf := Nat.div_le_self room.width 2
-    have heightHalf := Nat.div_le_self room.height 2
-    change room.x + room.width / 2 < parameters.dimensions.width ∧
-      room.y + room.height / 2 < parameters.dimensions.height
-    change CandidateRoomValid parameters room at inside
-    simp only [CandidateRoomValid] at inside
-    omega
+  let tiles := carved.setFloorAt start
   { tiles
     rooms := #[room]
-    first := center
-    firstInBounds := centerInBounds
-    firstFloor := carved.setFloor_at center (carved.positionIndex_lt center centerInBounds)
-    previous := room }
+    start
+    startInBounds := candidate.centerInBounds
+    startFloor := carved.setFloorAt_at start candidate.centerInBounds
+    lastRoom := room }
 
 private def generateState (parameters : MapGenerationParameters) : IO (GenerationState parameters) := do
   let first ← randomRoom parameters
@@ -83,7 +77,7 @@ public def generateMap (parameters : MapGenerationParameters) : IO GeneratedMap 
   let state ← MapGeneration.generateState parameters
   let map := Map.ofTiles parameters.dimensions state.tiles.tiles state.tiles.sizeEq
     (fun source target fromFloor toFloor => ⟨fromFloor, toFloor⟩)
-  return .mk map state.first (by
-    simp [map, Map.tileAt?_ofTiles, state.firstInBounds, state.firstFloor])
+  return .mk map state.start (by
+    simp [map, Map.tileAt?_ofTiles, state.startInBounds, state.startFloor])
 
 end Gimlight

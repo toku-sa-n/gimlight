@@ -20,6 +20,21 @@ public abbrev CandidateRoomValid (parameters : MapGenerationParameters) (room : 
 public abbrev CandidateRoom (parameters : MapGenerationParameters) :=
   { room : Room // CandidateRoomValid parameters room }
 
+public def CandidateRoom.center (candidate : CandidateRoom parameters) : Position :=
+  { x := candidate.1.x + candidate.1.width / 2
+    y := candidate.1.y + candidate.1.height / 2 }
+
+public theorem CandidateRoom.centerInBounds (candidate : CandidateRoom parameters) :
+    candidate.center.x < parameters.dimensions.width ∧
+      candidate.center.y < parameters.dimensions.height := by
+  have inside := candidate.2
+  have widthHalf := Nat.div_le_self candidate.1.width 2
+  have heightHalf := Nat.div_le_self candidate.1.height 2
+  change CandidateRoomValid parameters candidate.1 at inside
+  simp only [CandidateRoomValid] at inside
+  simp only [CandidateRoom.center]
+  omega
+
 public def randomRoom (parameters : MapGenerationParameters) : IO (CandidateRoom parameters) := do
   let ⟨_, widthOrdered, _, heightOrdered, widthFits, heightFits, _⟩ := parameters.valid
   let roomWidth ← Random.natRange parameters.minRoomDimensions.width
