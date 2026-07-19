@@ -18,6 +18,13 @@ public def SizedTiles.walls (parameters : MapGenerationParameters) : SizedTiles 
   { tiles := Array.replicate (mapArea parameters) .wall
     sizeEq := by simp }
 
+public theorem SizedTiles.walls_not_floor (parameters : MapGenerationParameters)
+    (position : Position) :
+    (SizedTiles.walls parameters).tiles[
+      position.y * parameters.dimensions.width + position.x]? ≠ some .floor := by
+  simp only [SizedTiles.walls, Array.getElem?_replicate]
+  split <;> simp
+
 public def SizedTiles.setFloor (tiles : SizedTiles parameters) (x y : Nat) :
     SizedTiles parameters :=
   { tiles := tiles.tiles.set! (y * parameters.dimensions.width + x) .floor
@@ -75,5 +82,26 @@ public theorem SizedTiles.setFloorAt_at (tiles : SizedTiles parameters) (positio
       position.y * parameters.dimensions.width + position.x]? =
       some .floor := by
   simp [SizedTiles.setFloorAt, SizedTiles.setFloor, tiles.positionIndex_lt position inBounds]
+
+public theorem SizedTiles.setFloorAt_preservesFloor (tiles : SizedTiles parameters)
+    (position target : Position)
+    (positionInBounds : position.x < parameters.dimensions.width ∧
+      position.y < parameters.dimensions.height)
+    (targetFloor : tiles.tiles[target.y * parameters.dimensions.width + target.x]? =
+      some .floor) :
+    (tiles.setFloorAt position).tiles[
+      target.y * parameters.dimensions.width + target.x]? = some .floor := by
+  simp [SizedTiles.setFloorAt, SizedTiles.setFloor, Array.getElem?_setIfInBounds,
+    tiles.positionIndex_lt position positionInBounds, targetFloor]
+
+public theorem SizedTiles.floor_of_setFloorAt_floor_of_index_ne
+    (tiles : SizedTiles parameters) (position target : Position)
+    (indexNe : position.y * parameters.dimensions.width + position.x ≠
+      target.y * parameters.dimensions.width + target.x)
+    (targetFloor : (tiles.setFloorAt position).tiles[
+      target.y * parameters.dimensions.width + target.x]? = some .floor) :
+    tiles.tiles[target.y * parameters.dimensions.width + target.x]? = some .floor := by
+  simpa [SizedTiles.setFloorAt, SizedTiles.setFloor, Array.getElem?_setIfInBounds, indexNe]
+    using targetFloor
 
 end Gimlight.MapGeneration

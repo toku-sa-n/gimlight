@@ -11,4 +11,10 @@ public inductive Direction where
   | down
 deriving DecidableEq, Repr
 
+@[expose] public def Direction.opposite : Direction → Direction
+  | .left => .right
+  | .right => .left
+  | .up => .down
+  | .down => .up
+
 end Gimlight
