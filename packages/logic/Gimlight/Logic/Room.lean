@@ -1,6 +1,6 @@
 module
 
-import Std
+public import Gimlight.Logic.Position.Basic
 
 namespace Gimlight
 
@@ -15,8 +15,8 @@ public def Room.right (room : Room) : Nat := room.x + room.width - 1
 
 public def Room.bottom (room : Room) : Nat := room.y + room.height - 1
 
-public def Room.center (room : Room) : Nat × Nat :=
-  (room.x + room.width / 2, room.y + room.height / 2)
+public def Room.center (room : Room) : Position :=
+  { x := room.x + room.width / 2, y := room.y + room.height / 2 }
 
 public def Room.contains (room : Room) (x y : Nat) : Bool :=
   room.x ≤ x && x < room.x + room.width && room.y ≤ y && y < room.y + room.height

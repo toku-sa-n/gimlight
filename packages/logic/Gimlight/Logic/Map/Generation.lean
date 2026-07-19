@@ -47,12 +47,12 @@ private def carveVertical (width : Nat) (tiles : Array Tile) (x sourceY targetY 
   let high := max sourceY targetY
   (List.range' low (high + 1 - low)).foldl (fun result y => setFloor width result x y) tiles
 
-private def carveTunnel (width : Nat) (tiles : Array Tile) (source target : Nat × Nat)
+private def carveTunnel (width : Nat) (tiles : Array Tile) (source target : Position)
     (horizontalFirst : Bool) : Array Tile :=
   if horizontalFirst then
-    carveVertical width (carveHorizontal width tiles source.2 source.1 target.1) target.1 source.2 target.2
+    carveVertical width (carveHorizontal width tiles source.y source.x target.x) target.x source.y target.y
   else
-    carveHorizontal width (carveVertical width tiles source.1 source.2 target.2) target.2 source.1 target.1
+    carveHorizontal width (carveVertical width tiles source.x source.y target.y) target.y source.x target.x
 
 private theorem setFloor_size (width : Nat) (tiles : Array Tile) (x y : Nat) :
     (setFloor width tiles x y).size = tiles.size := by
@@ -90,7 +90,7 @@ private theorem carveVertical_size (width : Nat) (tiles : Array Tile)
   apply foldl_size
   simp
 
-private theorem carveTunnel_size (width : Nat) (tiles : Array Tile) (source target : Nat × Nat)
+private theorem carveTunnel_size (width : Nat) (tiles : Array Tile) (source target : Position)
     (horizontalFirst : Bool) :
     (carveTunnel width tiles source target horizontalFirst).size = tiles.size := by
   cases horizontalFirst <;>
