@@ -1,6 +1,7 @@
 module
 
 public import Gimlight.Loop
+import Gimlight.Loop.GameHost
 import Gimlight.Terminal.FFI
 import Gimlight.Terminal.View
 
