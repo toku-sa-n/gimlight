@@ -16,124 +16,37 @@ jobs:
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
+      - name: Set up OCaml
+        uses: ocaml/setup-ocaml@v3
+        with:
+          ocaml-compiler: 4.14.x
+          dune-cache: true
+
+      - name: Install dependencies
+        run: opam install . --deps-only
+
       - name: Build
-        uses: leanprover/lean-action@38fbc41a8c28c4cbaec22d7f7de508ec2e7c0dd9 # v1.5.0
+        run: dune build
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Set up OCaml
+        uses: ocaml/setup-ocaml@v3
         with:
-          build: true
-          build-args: "--wfail"
+          ocaml-compiler: 4.14.x
+          dune-cache: true
 
-  c-format:
-    name: C Format
-    runs-on: ubuntu-latest
+      - name: Install dependencies
+        run: opam install . --deps-only
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
-
-      - name: Check C formatting
-        run: git ls-files -z -- '*.c' '*.h' | xargs -0 -r clang-format --dry-run --Werror
-
-  c-lint:
-    name: C Lint
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
-
-      - name: Set up Lean
-        uses: leanprover/lean-action@38fbc41a8c28c4cbaec22d7f7de508ec2e7c0dd9 # v1.5.0
-        with:
-          auto-config: false
-
-      - name: Lint C
-        run: |
-          lean_prefix="$(lean --print-prefix)"
-          mapfile -d '' files < <(git ls-files -z -- '*.c' '*.h')
-
-          if (( ${#files[@]} > 0 )); then
-            clang-tidy "${files[@]}" -- -std=c11 -isystem "$lean_prefix/include"
-          fi
-
-  rust-format:
-    name: Rust Format
-    runs-on: ubuntu-latest
-
-    defaults:
-      run:
-        working-directory: packages/terminal/native/terminal
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
-
-      - name: Install Rust
-        run: rustup toolchain install stable --profile minimal --component rustfmt
-
-      - name: Check Rust formatting
-        run: cargo fmt --check
-
-  rust-lint:
-    name: Rust Lint
-    runs-on: ubuntu-latest
-
-    defaults:
-      run:
-        working-directory: packages/terminal/native/terminal
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
-
-      - name: Install Rust
-        run: rustup toolchain install stable --profile minimal --component clippy
-
-      - name: Set up Lean
-        uses: leanprover/lean-action@38fbc41a8c28c4cbaec22d7f7de508ec2e7c0dd9 # v1.5.0
-        with:
-          auto-config: false
-
-      - name: Lint Rust
-        run: lake env cargo clippy --locked --all-targets -- -D warnings
-
-  rust-test:
-    name: Rust Test
-    runs-on: ubuntu-latest
-
-    defaults:
-      run:
-        working-directory: packages/terminal/native/terminal
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
-
-      - name: Install Rust
-        run: rustup toolchain install stable --profile minimal
-
-      - name: Set up Lean
-        uses: leanprover/lean-action@38fbc41a8c28c4cbaec22d7f7de508ec2e7c0dd9 # v1.5.0
-        with:
-          auto-config: false
-
-      - name: Test Rust
-        run: lake env cargo test --locked
-
-  toml-format:
-    name: TOML Format
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
-
-      - name: Install Taplo
-        run: |
-          cargo install taplo-cli --locked --version 0.10.0
-          echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
-
-      - name: Check TOML files
-        run: taplo fmt --check $(git ls-files -- '*.toml')
+      - name: Run tests
+        run: dune runtest
 
   prettier-format:
     name: Prettier Format

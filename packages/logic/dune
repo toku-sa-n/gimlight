@@ -1,0 +1,4 @@
+(coq.theory
+ (name Gimlight.Logic)
+ (modules Dimensions Direction Map Position GameState Logic)
+ (theories Stdlib))

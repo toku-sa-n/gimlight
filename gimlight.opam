@@ -1,0 +1,17 @@
+opam-version: "2.0"
+name: "gimlight"
+version: "0.1.0"
+synopsis: "A small verified terminal game"
+maintainer: "Hiroki Tokunaga <tokusan441@gmail.com>"
+authors: ["Hiroki Tokunaga <tokusan441@gmail.com>"]
+homepage: "https://github.com/toku-sa-n/gimlight"
+bug-reports: "https://github.com/toku-sa-n/gimlight/issues"
+depends: [
+  "dune" {>= "3.19"}
+  "rocq-prover" {>= "9.0"}
+  "rocq-stdlib" {>= "9.0"}
+  "zarith"
+]
+build: [
+  ["dune" "build"]
+]

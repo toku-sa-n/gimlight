@@ -1,5 +1,5 @@
-/.lake
-packages/*/.lake/
-target/
-native/**/target/
-packages/**/target/
+_build/
+*.vo
+*.glob
+*.v.d
+.lake/

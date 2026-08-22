@@ -1,0 +1,10 @@
+(coq.extraction
+ (prelude Extraction)
+ (extracted_modules gimlight_logic)
+ (theories Gimlight.Logic Stdlib))
+
+(library
+ (name gimlight_logic)
+ (modules gimlight_logic)
+ (flags (:standard -w -39 -warn-error -39))
+ (libraries zarith))
