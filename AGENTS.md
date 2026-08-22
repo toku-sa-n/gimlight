@@ -39,6 +39,12 @@ Use modules for the major domain types (`Dimensions`, `Map`, `Position`,
 loop independent of Unix and keep terminal-specific behavior in
 `packages/terminal/`.
 
+Every concrete Rocq `Module` must have a corresponding public `<ModuleName>Api`
+`Module Type` and must be declared with `Module <ModuleName> :
+<ModuleName>Api.`. Keep implementation details out of the module type. This
+requirement also applies to future concrete Rocq modules; `Logic.v`, extraction
+files, and test files should not introduce additional module types.
+
 ## Testing Guidelines
 
 Rocq proofs should be named theorems, not anonymous examples. Check important

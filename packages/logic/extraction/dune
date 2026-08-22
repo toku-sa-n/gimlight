@@ -6,5 +6,5 @@
 (library
  (name gimlight_logic)
  (modules gimlight_logic)
- (flags (:standard -w -39 -warn-error -39))
+ (flags (:standard -w -32-34-39 -warn-error -32-34-39))
  (libraries zarith))

@@ -1,6 +1,19 @@
 From Stdlib Require Import BinPos ZArith.
 
-Module Dimensions.
+Module Type DimensionsApi.
+
+Record t : Set := {
+  width : positive;
+  height : positive
+}.
+
+Parameter width_nat : t -> nat.
+
+Parameter height_nat : t -> nat.
+
+End DimensionsApi.
+
+Module Dimensions : DimensionsApi.
 
 Record t : Set := {
   width : positive;

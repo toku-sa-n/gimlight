@@ -1,7 +1,19 @@
 From Stdlib Require Import ZArith.
 Require Import Dimensions.
 
-Module Map.
+Module Type MapApi.
+
+Record t : Set := {
+  dimensions : Dimensions.t
+}.
+
+Parameter make : Dimensions.t -> t.
+
+Parameter default : t.
+
+End MapApi.
+
+Module Map : MapApi.
 
 Record t : Set := {
   dimensions : Dimensions.t
