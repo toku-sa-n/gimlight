@@ -2,10 +2,11 @@ Require Import Map Position Direction.
 
 Module Type GameStateApi.
 
-Record t : Set := {
-  map : Map.t;
-  player : Position.t map
-}.
+Parameter t : Set.
+
+Parameter map : t -> Map.t.
+
+Parameter player : forall (state : t), Position.t (map state).
 
 Parameter initialState : t.
 

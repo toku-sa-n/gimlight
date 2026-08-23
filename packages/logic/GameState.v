@@ -2,10 +2,12 @@ Require Import Map Position Direction GameStateApi.
 
 Module GameState : GameStateApi.
 
-Record t : Set := {
+Record state : Set := {
   map : Map.t;
   player : Position.t map
 }.
+
+Definition t : Set := state.
 
 Definition initialState : t :=
   {| map := Map.default;
