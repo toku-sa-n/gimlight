@@ -26,7 +26,7 @@ jobs:
         run: opam install . --deps-only
 
       - name: Build
-        run: dune build
+        run: opam exec -- dune build
 
   test:
     name: Test
@@ -46,7 +46,7 @@ jobs:
         run: opam install . --deps-only
 
       - name: Run tests
-        run: dune runtest
+        run: opam exec -- dune runtest
 
   prettier-format:
     name: Prettier Format
