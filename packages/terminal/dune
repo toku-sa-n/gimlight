@@ -1,0 +1,4 @@
+(library
+ (name gimlight_terminal)
+ (wrapped false)
+ (libraries gimlight_loop unix))

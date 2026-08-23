@@ -1,0 +1,4 @@
+(library
+ (name gimlight_loop)
+ (wrapped false)
+ (libraries gimlight_logic zarith))

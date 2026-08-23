@@ -1,0 +1,19 @@
+(rocq.theory
+ (name Gimlight.Logic)
+ (modules
+  DimensionsApi
+  DirectionApi
+  Dimensions
+  Direction
+  MapApi
+  Map
+  PositionApi
+  Position
+  GameInputApi
+  GameInput
+  GameStateApi
+  GameState
+  GameStepApi
+  GameStep
+  Logic)
+ (theories Stdlib))

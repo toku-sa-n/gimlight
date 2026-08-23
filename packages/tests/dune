@@ -1,0 +1,20 @@
+(test
+ (name test_logic)
+ (libraries gimlight_logic gimlight_loop))
+
+(test
+ (name test_loop)
+ (libraries gimlight_logic gimlight_loop))
+
+(test
+ (name test_terminal)
+ (libraries gimlight_terminal))
+
+(executable
+ (name terminal_exception)
+ (libraries gimlight_terminal))
+
+(rocq.theory
+ (name Gimlight.Tests)
+ (modules FunctorTest)
+ (theories Gimlight.Logic Stdlib))

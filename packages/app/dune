@@ -1,0 +1,3 @@
+(executable
+ (name gimlight)
+ (libraries gimlight_terminal))

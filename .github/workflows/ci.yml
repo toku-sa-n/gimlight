@@ -16,124 +16,91 @@ jobs:
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
+      - name: Set up OCaml
+        uses: ocaml/setup-ocaml@f92e0606b7ae4873dd1238465ea4bf6f8e40d85c # v3.7.2
+        with:
+          ocaml-compiler: 4.14.4
+          dune-cache: true
+
+      - name: Install dependencies
+        run: opam install . --deps-only
+
+      - name: Install Rocq compiler
+        run: opam install rocq-prover
+
       - name: Build
-        uses: leanprover/lean-action@38fbc41a8c28c4cbaec22d7f7de508ec2e7c0dd9 # v1.5.0
-        with:
-          build: true
-          build-args: "--wfail"
+        run: opam exec -- dune build
 
-  c-format:
-    name: C Format
+  test:
+    name: Test
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
-      - name: Check C formatting
-        run: git ls-files -z -- '*.c' '*.h' | xargs -0 -r clang-format --dry-run --Werror
+      - name: Set up OCaml
+        uses: ocaml/setup-ocaml@f92e0606b7ae4873dd1238465ea4bf6f8e40d85c # v3.7.2
+        with:
+          ocaml-compiler: 4.14.4
+          dune-cache: true
 
-  c-lint:
-    name: C Lint
+      - name: Install dependencies
+        run: opam install . --deps-only
+
+      - name: Install Rocq compiler
+        run: opam install rocq-prover
+
+      - name: Run tests
+        run: opam exec -- dune runtest
+
+  format:
+    name: Format
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
-      - name: Set up Lean
-        uses: leanprover/lean-action@38fbc41a8c28c4cbaec22d7f7de508ec2e7c0dd9 # v1.5.0
+      - name: Set up OCaml
+        uses: ocaml/setup-ocaml@f92e0606b7ae4873dd1238465ea4bf6f8e40d85c # v3.7.2
         with:
-          auto-config: false
+          ocaml-compiler: 4.14.4
+          dune-cache: true
 
-      - name: Lint C
+      - name: Install OCamlFormat
+        shell: bash
         run: |
-          lean_prefix="$(lean --print-prefix)"
-          mapfile -d '' files < <(git ls-files -z -- '*.c' '*.h')
-
-          if (( ${#files[@]} > 0 )); then
-            clang-tidy "${files[@]}" -- -std=c11 -isystem "$lean_prefix/include"
+          ocamlformat_version="$(sed -n 's/^version = //p' .ocamlformat | head -n 1)"
+          if [[ -z "$ocamlformat_version" ]]; then
+            echo "::error file=.ocamlformat::version must be set"
+            exit 1
           fi
+          opam install "ocamlformat.$ocamlformat_version"
 
-  rust-format:
-    name: Rust Format
+      - name: Check OCaml and Dune formatting
+        run: opam exec -- dune build @fmt
+
+  lint:
+    name: Lint
     runs-on: ubuntu-latest
-
-    defaults:
-      run:
-        working-directory: packages/terminal/native/terminal
 
     steps:
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
-      - name: Install Rust
-        run: rustup toolchain install stable --profile minimal --component rustfmt
-
-      - name: Check Rust formatting
-        run: cargo fmt --check
-
-  rust-lint:
-    name: Rust Lint
-    runs-on: ubuntu-latest
-
-    defaults:
-      run:
-        working-directory: packages/terminal/native/terminal
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
-
-      - name: Install Rust
-        run: rustup toolchain install stable --profile minimal --component clippy
-
-      - name: Set up Lean
-        uses: leanprover/lean-action@38fbc41a8c28c4cbaec22d7f7de508ec2e7c0dd9 # v1.5.0
+      - name: Set up OCaml
+        uses: ocaml/setup-ocaml@f92e0606b7ae4873dd1238465ea4bf6f8e40d85c # v3.7.2
         with:
-          auto-config: false
+          ocaml-compiler: 4.14.4
+          dune-cache: true
 
-      - name: Lint Rust
-        run: lake env cargo clippy --locked --all-targets -- -D warnings
+      # Dune processes the rocq.theory stanza during @lint, so the rocq executable is required.
+      - name: Install Rocq compiler
+        run: opam install rocq-prover
 
-  rust-test:
-    name: Rust Test
-    runs-on: ubuntu-latest
-
-    defaults:
-      run:
-        working-directory: packages/terminal/native/terminal
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
-
-      - name: Install Rust
-        run: rustup toolchain install stable --profile minimal
-
-      - name: Set up Lean
-        uses: leanprover/lean-action@38fbc41a8c28c4cbaec22d7f7de508ec2e7c0dd9 # v1.5.0
-        with:
-          auto-config: false
-
-      - name: Test Rust
-        run: lake env cargo test --locked
-
-  toml-format:
-    name: TOML Format
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
-
-      - name: Install Taplo
-        run: |
-          cargo install taplo-cli --locked --version 0.10.0
-          echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
-
-      - name: Check TOML files
-        run: taplo fmt --check $(git ls-files -- '*.toml')
+      - name: Run lint
+        run: opam exec -- dune build @lint
 
   prettier-format:
     name: Prettier Format
