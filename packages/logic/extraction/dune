@@ -1,4 +1,4 @@
-(coq.extraction
+(rocq.extraction
  (prelude Extraction)
  (extracted_modules gimlight_logic)
  (theories Gimlight.Logic Stdlib))

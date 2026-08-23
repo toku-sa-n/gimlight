@@ -7,7 +7,7 @@ authors: ["Hiroki Tokunaga <tokusan441@gmail.com>"]
 homepage: "https://github.com/toku-sa-n/gimlight"
 bug-reports: "https://github.com/toku-sa-n/gimlight/issues"
 depends: [
-  "dune" {>= "3.19"}
+  "dune" {>= "3.21"}
   "rocq-prover" {>= "9.0"}
   "rocq-stdlib" {>= "9.0"}
   "zarith"

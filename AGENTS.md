@@ -21,9 +21,8 @@ commands through that switch when its binaries are not already on `PATH`:
 - `opam exec -- dune exec packages/app/gimlight.exe`: run the terminal game.
 - `opam exec -- rocq repl`: inspect definitions or run `Print Assumptions`.
 
-`dune-project` uses Dune's Coq-language compatibility mode because the
-supported Dune version still exposes Rocq's build stanzas under the `coq.*`
-names. Do not reintroduce Lake, Lean, Rust, or C build configuration.
+`dune-project` uses Dune's native Rocq language mode and the `rocq.*` build
+stanzas. Do not reintroduce Lake, Lean, Rust, or C build configuration.
 
 ## Rocq and OCaml Style
 

@@ -14,7 +14,7 @@
  (name terminal_exception)
  (libraries gimlight_terminal))
 
-(coq.theory
+(rocq.theory
  (name Gimlight.Tests)
  (modules FunctorTest)
  (theories Gimlight.Logic Stdlib))
