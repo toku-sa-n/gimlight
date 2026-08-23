@@ -5,8 +5,6 @@ Extraction Language OCaml.
 
 Extraction "gimlight_logic.ml"
   Dimensions.t
-  Dimensions.width_nat
-  Dimensions.height_nat
   Direction.t
   Map.t
   Map.default

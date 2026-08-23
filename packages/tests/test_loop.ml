@@ -18,6 +18,8 @@ let () =
   Game_loop.run host;
   match List.rev !rendered with
   | [ initial; moved ] ->
+      if (initial.Game_view.width, initial.Game_view.height) <> (20, 10) then
+        failwith "loop should convert the initial dimensions";
       if (initial.Game_view.player_x, initial.Game_view.player_y) <> (10, 5) then
         failwith "loop should render the initial state";
       if (moved.Game_view.player_x, moved.Game_view.player_y) <> (9, 5) then

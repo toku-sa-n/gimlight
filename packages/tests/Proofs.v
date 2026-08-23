@@ -2,7 +2,7 @@ From Gimlight.Logic Require Import Logic.
 
 Check Dimensions.t.
 Check Dimensions.width.
-Check Dimensions.width_nat.
+Check Dimensions.height.
 Check Direction.t.
 Check Map.dimensions.
 Check Map.make.
