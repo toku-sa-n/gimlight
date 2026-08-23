@@ -88,9 +88,7 @@ jobs:
           ocaml-compiler: 4.14.4
           dune-cache: true
 
-      - name: Install dependencies
-        run: opam install . --deps-only
-
+      # Dune processes the rocq.theory stanza during @lint, so the rocq executable is required.
       - name: Install Rocq compiler
         run: opam install rocq-prover
 
