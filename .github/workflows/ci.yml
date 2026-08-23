@@ -68,9 +68,6 @@ jobs:
           ocaml-compiler: 4.14.4
           dune-cache: true
 
-      - name: Install Rocq compiler
-        run: opam install rocq-prover
-
       - name: Install OCamlFormat
         run: opam install ocamlformat.0.29.0
 
