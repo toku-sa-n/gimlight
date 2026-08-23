@@ -1,7 +1,7 @@
 From Stdlib Require Import BinPos.
 Require Import Dimensions DimensionsApi MapApi.
 
-Module MakeMap (Dimensions : DimensionsApi) : MapApi Dimensions.
+Module Make (Dimensions : DimensionsApi) : MapApi Dimensions.
 
 Record t : Set := {
   dimensions : Dimensions.t
@@ -14,7 +14,7 @@ Definition default : t :=
   make {| Dimensions.width := Pos.of_nat 20;
           Dimensions.height := Pos.of_nat 10 |}.
 
-End MakeMap.
+End Make.
 
 Module Map : MapApi Dimensions :=
-  MakeMap Dimensions.
+  Make Dimensions.

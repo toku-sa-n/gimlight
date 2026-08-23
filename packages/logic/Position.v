@@ -2,7 +2,7 @@ From Stdlib Require Import Lia BinPos PeanoNat Compare_dec Pnat.
 Require Import Dimensions Direction Map
   DimensionsApi MapApi DirectionApi PositionApi.
 
-Module MakePosition
+Module Make
     (Dimensions : DimensionsApi)
     (Map : MapApi Dimensions)
     (Direction : DirectionApi) : PositionApi Dimensions Map Direction.
@@ -112,7 +112,7 @@ Proof.
   apply position_in_bounds.
 Qed.
 
-End MakePosition.
+End Make.
 
 Module Position : PositionApi Dimensions Map Direction :=
-  MakePosition Dimensions Map Direction.
+  Make Dimensions Map Direction.

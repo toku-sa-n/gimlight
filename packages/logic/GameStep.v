@@ -2,7 +2,7 @@ Require Import Dimensions Map Direction Position GameInput GameState
   DimensionsApi MapApi DirectionApi PositionApi GameInputApi GameStateApi
   GameStepApi.
 
-Module MakeGameStep
+Module Make
     (Dimensions : DimensionsApi)
     (Map : MapApi Dimensions)
     (Direction : DirectionApi)
@@ -21,8 +21,8 @@ Definition step (input : GameInput.t) (state : GameState.t) : result :=
   | GameInput.Quit => Quit
   end.
 
-End MakeGameStep.
+End Make.
 
 Module GameStep :
     GameStepApi Dimensions Map Direction Position GameInput GameState :=
-  MakeGameStep Dimensions Map Direction Position GameInput GameState.
+  Make Dimensions Map Direction Position GameInput GameState.

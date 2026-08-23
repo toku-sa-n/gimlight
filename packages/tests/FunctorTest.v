@@ -21,26 +21,28 @@ Inductive t : Set :=
 End AlternativeDirection.
 
 Module AlternativeMap : MapApi AlternativeDimensions :=
-  MakeMap AlternativeDimensions.
+  Gimlight.Logic.Map.Make AlternativeDimensions.
 
 Module AlternativePosition :
     PositionApi AlternativeDimensions AlternativeMap AlternativeDirection :=
-  MakePosition AlternativeDimensions AlternativeMap AlternativeDirection.
+  Gimlight.Logic.Position.Make AlternativeDimensions AlternativeMap
+    AlternativeDirection.
 
 Module AlternativeGameInput : GameInputApi AlternativeDirection :=
-  MakeGameInput AlternativeDirection.
+  Gimlight.Logic.GameInput.Make AlternativeDirection.
 
 Module AlternativeGameState :
     GameStateApi AlternativeDimensions AlternativeMap AlternativeDirection
       AlternativePosition :=
-  MakeGameState AlternativeDimensions AlternativeMap AlternativeDirection
-    AlternativePosition.
+  Gimlight.Logic.GameState.Make AlternativeDimensions AlternativeMap
+    AlternativeDirection AlternativePosition.
 
 Module AlternativeGameStep :
     GameStepApi AlternativeDimensions AlternativeMap AlternativeDirection
       AlternativePosition AlternativeGameInput AlternativeGameState :=
-  MakeGameStep AlternativeDimensions AlternativeMap AlternativeDirection
-    AlternativePosition AlternativeGameInput AlternativeGameState.
+  Gimlight.Logic.GameStep.Make AlternativeDimensions AlternativeMap
+    AlternativeDirection AlternativePosition AlternativeGameInput
+    AlternativeGameState.
 
 Theorem alternative_initial_player_is_in_bounds :
   AlternativePosition.in_bounds

@@ -1,7 +1,7 @@
 Require Import Dimensions Map Direction Position
   DimensionsApi MapApi DirectionApi PositionApi GameStateApi.
 
-Module MakeGameState
+Module Make
     (Dimensions : DimensionsApi)
     (Map : MapApi Dimensions)
     (Direction : DirectionApi)
@@ -29,7 +29,7 @@ Proof.
   apply Position.position_in_bounds.
 Qed.
 
-End MakeGameState.
+End Make.
 
 Module GameState : GameStateApi Dimensions Map Direction Position :=
-  MakeGameState Dimensions Map Direction Position.
+  Make Dimensions Map Direction Position.
