@@ -1,8 +1,5 @@
 type direction = Left | Right | Up | Down
-
-type t =
-  | Move of direction
-  | Quit
+type t = Move of direction | Quit
 
 let to_logic_direction = function
   | Left -> Gimlight_logic.Direction.Rocq_left

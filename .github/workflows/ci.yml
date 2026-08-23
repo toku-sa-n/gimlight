@@ -54,6 +54,58 @@ jobs:
       - name: Run tests
         run: opam exec -- dune runtest
 
+  format:
+    name: Format
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Set up OCaml
+        uses: ocaml/setup-ocaml@f92e0606b7ae4873dd1238465ea4bf6f8e40d85c # v3.7.2
+        with:
+          ocaml-compiler: 4.14.4
+          dune-cache: true
+
+      - name: Install dependencies
+        run: opam install . --deps-only
+
+      - name: Install Rocq compiler
+        run: opam install rocq-prover
+
+      - name: Install OCamlFormat
+        run: opam install ocamlformat.0.29.0
+
+      - name: Check OCaml and Dune formatting
+        run: opam exec -- dune build @fmt
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Set up OCaml
+        uses: ocaml/setup-ocaml@f92e0606b7ae4873dd1238465ea4bf6f8e40d85c # v3.7.2
+        with:
+          ocaml-compiler: 4.14.4
+          dune-cache: true
+
+      - name: Install dependencies
+        run: opam install . --deps-only
+
+      - name: Install Rocq compiler
+        run: opam install rocq-prover
+
+      - name: Run lint
+        run: opam exec -- dune build @lint
+
+      - name: Build
+        run: opam exec -- dune build
+
   prettier-format:
     name: Prettier Format
     runs-on: ubuntu-latest

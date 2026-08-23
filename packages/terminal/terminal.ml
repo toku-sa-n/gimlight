@@ -21,10 +21,7 @@ let render view =
   output_string stdout (render_text view);
   flush stdout
 
-type session = {
-  original : Unix.terminal_io;
-  mutable restored : bool;
-}
+type session = { original : Unix.terminal_io; mutable restored : bool }
 
 let enter_raw_mode () =
   let original = Unix.tcgetattr Unix.stdin in
@@ -76,9 +73,7 @@ let rec read_input () =
 
 let with_raw_mode action =
   let session = enter_raw_mode () in
-  Fun.protect
-    ~finally:(fun () -> restore_terminal session)
-    action
+  Fun.protect ~finally:(fun () -> restore_terminal session) action
 
 let run () =
   with_raw_mode (fun () ->

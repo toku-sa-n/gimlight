@@ -1,5 +1,4 @@
 let fail message = failwith ("logic test failed: " ^ message)
-
 let check condition message = if not condition then fail message
 
 let coordinate state =
@@ -26,9 +25,7 @@ let () =
   let state = Gimlight_logic.GameState.initialState in
   check (coordinate state = (10, 5)) "initial state should be centered";
   check
-    (match
-       Gimlight_logic.GameStep.step Gimlight_logic.GameInput.Quit state
-     with
+    (match Gimlight_logic.GameStep.step Gimlight_logic.GameInput.Quit state with
     | Gimlight_logic.GameStep.Quit -> true
     | Gimlight_logic.GameStep.Continue _ -> false)
     "quit input should stop the game";
@@ -41,6 +38,4 @@ let () =
   let up = move_n Gimlight_logic.Direction.Rocq_up 20 state in
   check (coordinate up = (10, 0)) "up movement should stop at the boundary";
   let down = move_n Gimlight_logic.Direction.Rocq_down 20 state in
-  check
-    (coordinate down = (10, 9))
-    "down movement should stop at the boundary"
+  check (coordinate down = (10, 9)) "down movement should stop at the boundary"
