@@ -3,9 +3,9 @@ Require Import DirectionApi.
 Module Direction : DirectionApi.
 
 Inductive t : Set :=
-| Rocq_left
-| Rocq_right
-| Rocq_up
-| Rocq_down.
+| Left
+| Right
+| Up
+| Down.
 
 End Direction.

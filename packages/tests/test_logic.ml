@@ -29,13 +29,13 @@ let () =
     | Gimlight_logic.GameStep.Quit -> true
     | Gimlight_logic.GameStep.Continue _ -> false)
     "quit input should stop the game";
-  let left = move_n Gimlight_logic.Direction.Rocq_left 20 state in
+  let left = move_n Gimlight_logic.Direction.Left 20 state in
   check (coordinate left = (0, 5)) "left movement should stop at the boundary";
-  let right = move_n Gimlight_logic.Direction.Rocq_right 30 state in
+  let right = move_n Gimlight_logic.Direction.Right 30 state in
   check
     (coordinate right = (19, 5))
     "right movement should stop at the boundary";
-  let up = move_n Gimlight_logic.Direction.Rocq_up 20 state in
+  let up = move_n Gimlight_logic.Direction.Up 20 state in
   check (coordinate up = (10, 0)) "up movement should stop at the boundary";
-  let down = move_n Gimlight_logic.Direction.Rocq_down 20 state in
+  let down = move_n Gimlight_logic.Direction.Down 20 state in
   check (coordinate down = (10, 9)) "down movement should stop at the boundary"
