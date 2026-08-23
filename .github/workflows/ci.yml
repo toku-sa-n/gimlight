@@ -103,9 +103,6 @@ jobs:
       - name: Run lint
         run: opam exec -- dune build @lint
 
-      - name: Build
-        run: opam exec -- dune build
-
   prettier-format:
     name: Prettier Format
     runs-on: ubuntu-latest
