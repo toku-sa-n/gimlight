@@ -18,7 +18,7 @@ commands through that switch when its binaries are not already on `PATH`:
 
 - `opam exec -- dune build`: build Rocq proofs, extracted OCaml, libraries, and the executable.
 - `opam exec -- dune runtest`: run the Rocq test compilation and OCaml tests.
-- `opam install ocamlformat.0.29.0`: install the formatter required by the format check.
+- `ocamlformat_version="$(sed -n 's/^version = //p' .ocamlformat | head -n 1)" && test -n "$ocamlformat_version" && opam install "ocamlformat.$ocamlformat_version"`: install the formatter version specified in `.ocamlformat`.
 - `opam exec -- dune build @fmt`: check OCaml and Dune file formatting.
 - `opam exec -- dune build @lint`: run Dune's lint checks.
 - `opam exec -- dune exec packages/app/gimlight.exe`: run the terminal game.

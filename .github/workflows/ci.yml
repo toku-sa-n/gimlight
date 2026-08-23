@@ -69,7 +69,14 @@ jobs:
           dune-cache: true
 
       - name: Install OCamlFormat
-        run: opam install ocamlformat.0.29.0
+        shell: bash
+        run: |
+          ocamlformat_version="$(sed -n 's/^version = //p' .ocamlformat | head -n 1)"
+          if [[ -z "$ocamlformat_version" ]]; then
+            echo "::error file=.ocamlformat::version must be set"
+            exit 1
+          fi
+          opam install "ocamlformat.$ocamlformat_version"
 
       - name: Check OCaml and Dune formatting
         run: opam exec -- dune build @fmt
