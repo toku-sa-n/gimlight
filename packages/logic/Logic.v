@@ -1,1 +1,1 @@
-Require Export Dimensions Direction Map Position GameState.
+Require Export Dimensions Direction Map Position GameState GameInput GameStep.

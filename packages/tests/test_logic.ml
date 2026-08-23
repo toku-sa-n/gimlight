@@ -8,18 +8,30 @@ let coordinate state =
   ( Gimlight_logic.Position.x_value map player,
     Gimlight_logic.Position.y_value map player )
 
+let step input state =
+  match Gimlight_logic.GameStep.step input state with
+  | Gimlight_logic.GameStep.Continue next_state -> next_state
+  | Gimlight_logic.GameStep.Quit -> fail "a movement input should continue"
+
 let move_n direction count state =
   let rec loop remaining state =
     if remaining = 0 then state
     else
       loop (remaining - 1)
-        (Gimlight_logic.GameState.move direction state)
+        (step (Gimlight_logic.GameInput.Move direction) state)
   in
   loop count state
 
 let () =
   let state = Gimlight_logic.GameState.initialState in
   check (coordinate state = (10, 5)) "initial state should be centered";
+  check
+    (match
+       Gimlight_logic.GameStep.step Gimlight_logic.GameInput.Quit state
+     with
+    | Gimlight_logic.GameStep.Quit -> true
+    | Gimlight_logic.GameStep.Continue _ -> false)
+    "quit input should stop the game";
   let left = move_n Gimlight_logic.Direction.Coq_left 20 state in
   check (coordinate left = (0, 5)) "left movement should stop at the boundary";
   let right = move_n Gimlight_logic.Direction.Coq_right 30 state in

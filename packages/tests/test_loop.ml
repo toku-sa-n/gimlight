@@ -1,13 +1,17 @@
 let () =
   let rendered = ref [] in
+  let events = ref [] in
   let inputs =
     ref [ Game_input.Move Game_input.Left; Game_input.Quit ]
   in
   let host : (module Game_loop.Host) =
     (module struct
-      let render view = rendered := view :: !rendered
+      let render view =
+        events := "render" :: !events;
+        rendered := view :: !rendered
 
       let read_input () =
+        events := "input" :: !events;
         match !inputs with
         | input :: remaining ->
             inputs := remaining;
@@ -16,6 +20,8 @@ let () =
     end)
   in
   Game_loop.run host;
+  if List.rev !events <> [ "render"; "input"; "render"; "input" ] then
+    failwith "loop should render before every input";
   match List.rev !rendered with
   | [ initial; moved ] ->
       if (initial.Game_view.width, initial.Game_view.height) <> (20, 10) then

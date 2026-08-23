@@ -5,3 +5,4 @@ type t =
   | Quit
 
 val to_logic_direction : direction -> Gimlight_logic.Direction.t
+val to_logic_input : t -> Gimlight_logic.GameInput.t

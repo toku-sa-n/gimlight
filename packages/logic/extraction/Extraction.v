@@ -6,6 +6,7 @@ Extraction Language OCaml.
 Extraction "gimlight_logic.ml"
   Dimensions.t
   Direction.t
+  GameInput.t
   Map.t
   Map.default
   Position.t
@@ -15,4 +16,6 @@ Extraction "gimlight_logic.ml"
   Position.move
   GameState.t
   GameState.initialState
-  GameState.move.
+  GameState.move
+  GameStep.result
+  GameStep.step.
