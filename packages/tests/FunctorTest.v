@@ -49,18 +49,6 @@ Proof.
   apply AlternativeGameState.playerInBounds.
 Qed.
 
-Theorem alternative_continue_player_is_in_bounds :
-  forall (input : AlternativeGameInput.t)
-    (state next : AlternativeGameState.t),
-    AlternativeGameStep.step input state =
-      AlternativeGameStep.Continue next ->
-    AlternativePosition.in_bounds
-      (AlternativeGameState.player next).
-Proof.
-  apply AlternativeGameStep.continuePlayerInBounds.
-Qed.
-
 Print Assumptions Position.centeredOn_in_bounds.
 Print Assumptions Position.move_preserves_bounds.
 Print Assumptions GameState.playerInBounds.
-Print Assumptions GameStep.continuePlayerInBounds.

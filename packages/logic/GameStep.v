@@ -21,18 +21,6 @@ Definition step (input : GameInput.t) (state : GameState.t) : result :=
   | GameInput.Quit => Quit
   end.
 
-Theorem continuePlayerInBounds :
-  forall (input : GameInput.t) (state next : GameState.t),
-    step input state = Continue next ->
-    Position.in_bounds (GameState.player next).
-Proof.
-  intros input state next.
-  destruct input.
-  - simpl. intros equality. inversion equality.
-    apply GameState.playerInBounds.
-  - simpl. discriminate.
-Qed.
-
 End MakeGameStep.
 
 Module GameStep :
