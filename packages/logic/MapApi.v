@@ -1,4 +1,3 @@
-From Stdlib Require Import ZArith.
 Require Import Dimensions.
 
 Module Type MapApi.

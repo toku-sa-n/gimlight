@@ -1,4 +1,4 @@
-From Stdlib Require Import BinPos ZArith.
+From Stdlib Require Import BinPos.
 Require Import DimensionsApi.
 
 Module Dimensions : DimensionsApi.

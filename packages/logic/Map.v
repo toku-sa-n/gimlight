@@ -1,4 +1,4 @@
-From Stdlib Require Import ZArith.
+From Stdlib Require Import BinPos.
 Require Import Dimensions MapApi.
 
 Module Map : MapApi.

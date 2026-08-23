@@ -1,4 +1,4 @@
-From Stdlib Require Import Lia ZArith.
+From Stdlib Require Import Lia BinPos PeanoNat Compare_dec Pnat.
 Require Import Dimensions Map Direction PositionApi.
 
 Module Position : PositionApi.

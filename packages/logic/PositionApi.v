@@ -1,4 +1,4 @@
-From Stdlib Require Import ZArith.
+From Stdlib Require Import BinPos.
 Require Import Dimensions Map Direction.
 
 Module Type PositionApi.
