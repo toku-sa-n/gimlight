@@ -1,6 +1,10 @@
-Require Import Map Position Direction.
+Require Import DimensionsApi MapApi DirectionApi PositionApi.
 
-Module Type GameStateApi.
+Module Type GameStateApi
+    (Dimensions : DimensionsApi)
+    (Map : MapApi Dimensions)
+    (Direction : DirectionApi)
+    (Position : PositionApi Dimensions Map Direction).
 
 Parameter t : Set.
 

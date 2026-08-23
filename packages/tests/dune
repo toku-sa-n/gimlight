@@ -13,3 +13,8 @@
 (executable
  (name terminal_exception)
  (libraries gimlight_terminal))
+
+(coq.theory
+ (name Gimlight.Tests)
+ (modules FunctorTest)
+ (theories Gimlight.Logic Stdlib))

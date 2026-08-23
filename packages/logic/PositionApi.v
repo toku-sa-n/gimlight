@@ -1,7 +1,10 @@
 From Stdlib Require Import BinPos.
-Require Import Dimensions Map Direction.
+Require Import DimensionsApi MapApi DirectionApi.
 
-Module Type PositionApi.
+Module Type PositionApi
+    (Dimensions : DimensionsApi)
+    (Map : MapApi Dimensions)
+    (Direction : DirectionApi).
 
 Record t (map : Map.t) : Set := {
   x : { value : nat |

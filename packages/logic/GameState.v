@@ -1,6 +1,12 @@
-Require Import Map Position Direction GameStateApi.
+Require Import Dimensions Map Direction Position
+  DimensionsApi MapApi DirectionApi PositionApi GameStateApi.
 
-Module GameState : GameStateApi.
+Module MakeGameState
+    (Dimensions : DimensionsApi)
+    (Map : MapApi Dimensions)
+    (Direction : DirectionApi)
+    (Position : PositionApi Dimensions Map Direction) :
+    GameStateApi Dimensions Map Direction Position.
 
 Record state : Set := {
   map : Map.t;
@@ -23,4 +29,7 @@ Proof.
   apply Position.position_in_bounds.
 Qed.
 
-End GameState.
+End MakeGameState.
+
+Module GameState : GameStateApi Dimensions Map Direction Position :=
+  MakeGameState Dimensions Map Direction Position.

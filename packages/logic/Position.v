@@ -1,7 +1,11 @@
 From Stdlib Require Import Lia BinPos PeanoNat Compare_dec Pnat.
-Require Import Dimensions Map Direction PositionApi.
+Require Import Dimensions Direction Map
+  DimensionsApi MapApi DirectionApi PositionApi.
 
-Module Position : PositionApi.
+Module MakePosition
+    (Dimensions : DimensionsApi)
+    (Map : MapApi Dimensions)
+    (Direction : DirectionApi) : PositionApi Dimensions Map Direction.
 
 Definition coordinate (limit : positive) : Set :=
   { value : nat | value < Pos.to_nat limit }.
@@ -108,4 +112,7 @@ Proof.
   apply position_in_bounds.
 Qed.
 
-End Position.
+End MakePosition.
+
+Module Position : PositionApi Dimensions Map Direction :=
+  MakePosition Dimensions Map Direction.

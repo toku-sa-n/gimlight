@@ -1,6 +1,6 @@
-Require Import Direction.
+Require Import DirectionApi.
 
-Module Type GameInputApi.
+Module Type GameInputApi (Direction : DirectionApi).
 
 Inductive t : Set :=
 | Move (direction : Direction.t)

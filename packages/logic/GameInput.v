@@ -1,9 +1,12 @@
-Require Import Direction GameInputApi.
+Require Import Direction DirectionApi GameInputApi.
 
-Module GameInput : GameInputApi.
+Module MakeGameInput (Direction : DirectionApi) : GameInputApi Direction.
 
 Inductive t : Set :=
 | Move (direction : Direction.t)
 | Quit.
 
-End GameInput.
+End MakeGameInput.
+
+Module GameInput : GameInputApi Direction :=
+  MakeGameInput Direction.

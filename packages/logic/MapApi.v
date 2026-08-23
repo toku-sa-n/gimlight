@@ -1,6 +1,6 @@
-Require Import Dimensions.
+Require Import DimensionsApi.
 
-Module Type MapApi.
+Module Type MapApi (Dimensions : DimensionsApi).
 
 Record t : Set := {
   dimensions : Dimensions.t
